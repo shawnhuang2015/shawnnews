@@ -1,24 +1,3 @@
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
-#generate by ./gworkspace.sh
 # Compiled source #
 ###################
 *.com
@@ -64,11 +43,11 @@ third_party
 .externalToolBuilders/
 .settings/
 # Ignore other repos
-src/core/topology4
+src/core/topology
 src/core/gpe
 src/core/gse
 src/third_party
 src/gutil
 src/realtime
-src/distributed
+src/msg
 src/er

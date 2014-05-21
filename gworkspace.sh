@@ -173,7 +173,7 @@ update_gitignore_file()
     done < $gitignore_file
 
 
-	echo "#generate by $0" > "$temp_ignore_file"
+	echo -ne "" > "$temp_ignore_file"
 
 	# write out existing ignore rules minus other repos
 	for str in "${ignore_array[@]}"
