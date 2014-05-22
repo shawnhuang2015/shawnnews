@@ -47,7 +47,7 @@ src/core/topology
 src/core/gpe
 src/core/gse
 src/third_party
-src/gutil
+src/utility
 src/realtime
 src/msg
 src/er
