@@ -178,149 +178,85 @@ if  GetOption('gsql_parser') and \
 
 # Now that all build environment have been defined, let's define each project
 #------------------------------------
-# 3.1.0 Project: cse                |
-#------------------------------------
-cse_debug___build = debug___env.SConscript(DEBUG___DIR +
-                        '/graphsql/server/gstore/SConscript', {'env': debug___env})
-cse_release_build = release_env.SConscript(RELEASE_DIR +
-                        '/graphsql/server/gstore/SConscript', {'env': release_env})
-#------------------------------------
-# 3.1.1 Project: gse2               |
+# 3.1.0 Project: gse2               |
 #------------------------------------
 gse2_debug___build = debug___env.SConscript(DEBUG___DIR +
-                        '/graphsql/server/gse2/SConscript', {'env': debug___env})
+                        '/core/gse/SConscript', {'env': debug___env})
 gse2_release_build = release_env.SConscript(RELEASE_DIR +
-                        '/graphsql/server/gse2/SConscript', {'env': release_env})
+                        '/core/gse/SConscript', {'env': release_env})
 
 #---------------------------------------
 # 3.1.2 Project: gpelib and other libs |
 #---------------------------------------
 gpelib_debug___build = debug___env.SConscript(DEBUG___DIR + 
-                        '/graphsql/server/gpelib/SConscript', {'env': debug___env})
+                        '/core/gpe/SConscript', {'env': debug___env})
 gpelib_release_build = release_env.SConscript(RELEASE_DIR + 
-                        '/graphsql/server/gpelib/SConscript', {'env': release_env})
+                        '/core/gpe/SConscript', {'env': release_env})
 
 
 distlib_debug___build = debug___env.SConscript(DEBUG___DIR + 
-                        '/graphsql/distributed/SConscript', {'env': debug___env})
+                        '/msg/distributed/SConscript', {'env': debug___env})
 distlib_release_build = release_env.SConscript(RELEASE_DIR + 
-                        '/graphsql/distributed/SConscript', {'env': release_env})
+                        '/msg/distributed/SConscript', {'env': release_env})
 
 
 kafka_perf_producer_daemon_debug___build = debug___env.SConscript(DEBUG___DIR +
-                        '/graphsql/distributed/perf_test_utils/SConscript', {'env': debug___env})
+                        '/msg/distributed/perf_test_utils/SConscript', {'env': debug___env})
 kafka_perf_producer_daemon_release_build = release_env.SConscript(RELEASE_DIR +
-                        '/graphsql/distributed/perf_test_utils/SConscript', {'env': release_env})
+                        '/msg/distributed/perf_test_utils/SConscript', {'env': release_env})
 
 kafka_perf_consumer_daemon_debug___build = debug___env.SConscript(DEBUG___DIR +
-                        '/graphsql/distributed/perf_test_utils/SConscript', {'env': debug___env})
+                        '/msg/distributed/perf_test_utils/SConscript', {'env': debug___env})
 kafka_perf_consumer_daemon_release_build = release_env.SConscript(RELEASE_DIR +
-                        '/graphsql/distributed/perf_test_utils/SConscript', {'env': release_env})
+                        '/msg/distributed/perf_test_utils/SConscript', {'env': release_env})
 
 
-#---------------------------------------
-# 3.1.3 Project: partition_matrix      |
-#---------------------------------------
-partition_debug___build = debug___env.SConscript(DEBUG___DIR + 
-                        '/graphsql/server/partition_matrix/SConscript', {'env': debug___env})
-partition_release_build = release_env.SConscript(RELEASE_DIR + 
-                        '/graphsql/server/partition_matrix/SConscript', {'env': release_env})
-
-#---------------------------------------
-# 3.1.4 Project: gperun                |
-#---------------------------------------
-gperun_debug___build = debug___env.SConscript(DEBUG___DIR + 
-                        '/graphsql/server/gperun/SConscript', {'env': debug___env})
-gperun_release_build = release_env.SConscript(RELEASE_DIR + 
-                        '/graphsql/server/gperun/SConscript', {'env': release_env})
-
-#---------------------------------------
-# 3.1.5 Project: analyticsrun           |
-#---------------------------------------
-analyticsrun_debug___build = debug___env.SConscript(DEBUG___DIR + 
-                        '/graphsql/server/analyticsrun/SConscript', {'env': debug___env})
-analyticsrun_release_build = release_env.SConscript(RELEASE_DIR + 
-                        '/graphsql/server/analyticsrun/SConscript', {'env': release_env})
-
-#---------------------------------------
-# 3.1.5 Project: cselive           |
-#---------------------------------------
-cselive_debug___build = debug___env.SConscript(DEBUG___DIR +
-                        '/graphsql/server/gstore/rest_api/SConscript', {'env': debug___env})
-cselive_release_build = release_env.SConscript(RELEASE_DIR +
-                        '/graphsql/server/gstore/rest_api/SConscript', {'env': release_env})
 
 #------------------------------------------------------
 # 3.2 Determine default project to build, e.g. 'scons'|
 #------------------------------------------------------
-debug___env.Default(cse_debug___build,
-                    gse2_debug___build,
+debug___env.Default(gse2_debug___build,
                     gpelib_debug___build,
                     distlib_debug___build,
                     kafka_perf_producer_daemon_debug___build,
-                    kafka_perf_consumer_daemon_debug___build,
-                    gperun_debug___build,
-                    partition_debug___build,
-                    analyticsrun_debug___build)
-release_env.Default(cse_release_build,
-                    gse2_release_build,
+                    kafka_perf_consumer_daemon_debug___build)
+release_env.Default(gse2_release_build,
                     gpelib_release_build,
                     distlib_release_build,
                     kafka_perf_producer_daemon_release_build,
-                    kafka_perf_consumer_daemon_release_build,
-                    gperun_release_build,
-                    partition_release_build,
-                    analyticsrun_release_build)
+                    kafka_perf_consumer_daemon_release_build)
 
 #---------------------------------------------------------------------
 # 3.3 Determine a specific project to build, e.g. 'scons  gse2_debug' |
 #---------------------------------------------------------------------
-debug___env.Alias('cse_debug',          cse_debug___build)
 debug___env.Alias('gse2_debug',         gse2_debug___build)
-debug___env.Alias('cselive_debug',      cselive_debug___build)
 debug___env.Alias('gpelib_debug',       gpelib_debug___build)
 debug___env.Alias('distlib_debug',      distlib_debug___build)
 debug___env.Alias('kafka_perf_producer_daemon_debug',      kafka_perf_producer_daemon_debug___build)
 debug___env.Alias('kafka_perf_consumer_daemon_debug',      kafka_perf_consumer_daemon_debug___build)
-debug___env.Alias('gperun_debug',       gperun_debug___build)
-debug___env.Alias('partition_debug',    partition_debug___build)
-debug___env.Alias('analyticsrun_debug', analyticsrun_debug___build)
 
-release_env.Alias('cse_release',        cse_release_build)
 release_env.Alias('gse2_release',       gse2_release_build)
-release_env.Alias('cselive_release',    cselive_release_build)
 release_env.Alias('gpelib_release',     gpelib_release_build)
 release_env.Alias('distlib_release',    distlib_release_build)
 release_env.Alias('kafka_perf_producer_daemon_release',   kafka_perf_producer_daemon_release_build)
 release_env.Alias('kafka_perf_consumer_daemon_release',   kafka_perf_consumer_daemon_release_build)
-release_env.Alias('gperun_release',     gperun_release_build)
-release_env.Alias('partition_release',  partition_release_build)
-release_env.Alias('analyticsrun_release', analyticsrun_release_build)
 
 debug___env.Alias('debug',    
                     [
-                    cse_debug___build,
                     gse2_debug___build,
                     gpelib_debug___build,
                     distlib_debug___build,
                     kafka_perf_producer_daemon_debug___build,
-                    kafka_perf_consumer_daemon_debug___build,
-                    gperun_debug___build,
-                    partition_debug___build,
-                    analyticsrun_debug___build
+                    kafka_perf_consumer_daemon_debug___build
                     ]
                   )
 release_env.Alias('release',  
                     [
-                    cse_release_build,
                     gse2_release_build,
                     gpelib_release_build,
                     distlib_release_build,
                     kafka_perf_producer_daemon_release_build,
-                    kafka_perf_consumer_daemon_release_build,
-                    gperun_release_build,
-                    partition_release_build,
-                    analyticsrun_release_build
+                    kafka_perf_consumer_daemon_release_build
                     ]
                  )
 
@@ -337,23 +273,9 @@ if 'pkg' in COMMAND_LINE_TARGETS:
     subprocess.call('rm -rf '+rebuildDir, shell=True)
 
 release_env.Install(pkgdir, [
-                            cse_release_build,
-                            gse2_release_build,
-                            gperun_release_build,
-                            partition_release_build,
-                            analyticsrun_release_build
+                            gse2_release_build
                             ]
                     )
-release_env.Install(pkgdir,'#src/graphsql/server/gpe_delta_api/gv_delta_config.yaml')
-release_env.Install(pkgdir,'#/src/graphsql/server/gstore/rest_api/cselive_client.py')
-release_env.Install(pkgdir,'#/src/graphsql/server/gstore/rebuild')
-# copy gperun to pagerank, shortestpath, and gpe_service_xyz. 
-release_env.Command(pkgdir+'/shortestpath', pkgdir+'/gperun', localCopy)
-release_env.Command(pkgdir+'/pagerank', pkgdir+'/gperun', localCopy)
-release_env.Command(pkgdir+'/gpe_service_xyz', pkgdir+'/gperun', localCopy)
-# copy from analyticsrun to ana_service_123
-release_env.Command(pkgdir+'/ana_service_123', pkgdir+'/analyticsrun', localCopy)
-
 release_env.Alias('pkg', pkgdir)
 
 #############################################################
@@ -385,19 +307,6 @@ unit_release_build = unit_release_env.SConscript(RELEASE_DIR +
 unit___debug_env.Alias('unit_debug',    unit___debug_build)
 unit_release_env.Alias('unit_release',  unit_release_build)
 unit_release_env.Alias('unit',  unit_release_build)
-
-#############################################################
-# 5.1 : POC GSE unit test                                   #
-#############################################################
-if False:
-    poc_gse_test_debug_build = unit___debug_env.SConscript(DEBUG___DIR +
-                    '/customers/gse_base/test/SConscript', {'env': unit___debug_env})
-    poc_gse_test_release_build = unit_release_env.SConscript(RELEASE_DIR +
-                    '/customers/gse_base/test/SConscript', {'env': unit_release_env})
-    # Set up the keywords
-    unit___debug_env.Alias('test_poc_gse_debug',    poc_gse_test_debug_build)
-    unit_release_env.Alias('test_poc_gse_release',  poc_gse_test_release_build)
-    unit_release_env.Alias('test_poc_gse',  poc_gse_test_release_build)
 
 #############################################################
 # 6 : Testing framework                                     #
@@ -434,17 +343,6 @@ if 'test' in COMMAND_LINE_TARGETS:
 #############################################################
 # 11: D2D builds                                            #
 #############################################################
-#---------------------------------------
-# 11.1 gse_udf_demo                     |
-#---------------------------------------
-# Set up the debug and release targets
-gse_udf_demo_debug_build = debug___env.SConscript(DEBUG___DIR +
-                '/unittests/gse_udf_api/SConscript', {'env': debug___env})
-gse_udf_demo_release_build = release_env.SConscript(RELEASE_DIR +
-                '/unittests/gse_udf_api/SConscript', {'env': release_env})
-# Set up the keywords
-debug___env.Alias('gse_udf_demo_debug', gse_udf_demo_debug_build)
-release_env.Alias('gse_udf_demo_release', gse_udf_demo_release_build)
 
 
 #---------------------------------------
@@ -452,9 +350,9 @@ release_env.Alias('gse_udf_demo_release', gse_udf_demo_release_build)
 #---------------------------------------
 # Set up the debug and release targets
 gse_mock_worker_debug_build = debug___env.SConscript(DEBUG___DIR +
-                '/graphsql/server/gse2/test/SConscript', {'env': debug___env})
+                '/core/gse/gse2/test/SConscript', {'env': debug___env})
 gse_mock_worker_release_build = release_env.SConscript(RELEASE_DIR +
-                '/graphsql/server/gse2/test/SConscript', {'env': release_env})
+                '/core/gse/gse2/test/SConscript', {'env': release_env})
 # Set up the keywords
 debug___env.Alias('gse_mock_debug', gse_mock_worker_debug_build)
 release_env.Alias('gse_mock_release', gse_mock_worker_release_build)
@@ -462,9 +360,9 @@ release_env.Alias('gse_mock_release', gse_mock_worker_release_build)
 #  distributed test target                   |
 #---------------------------------------
 dist_test_debug_build = unit___debug_env.SConscript(DEBUG___DIR +
-                    '/graphsql/distributed/SConscriptTest', {'env': unit___debug_env})
+                    '/msg/distributed/SConscriptTest', {'env': unit___debug_env})
 dist_test_release_build = unit_release_env.SConscript(RELEASE_DIR +
-                   '/graphsql/distributed/SConscriptTest', {'env': unit_release_env})
+                   '/msg/distributed/SConscriptTest', {'env': unit_release_env})
 # Set up the keywords
 unit___debug_env.Alias('dist_test_debug',    dist_test_debug_build)
 unit_release_env.Alias('dist_test_release',  dist_test_release_build)

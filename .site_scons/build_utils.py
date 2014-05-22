@@ -325,12 +325,16 @@ def SetupCommonBuildEnv(common_env, verbose):
                              #/src/third_party/sparsehash/usr/local/include
                              #/src/third_party/glog/usr/local/include
                              #/src/third_party/jsoncpp/include
-                             #/src/graphsql/server
-                             #/src/graphsql/server/gpelib/src
-                             #/src/graphsql/distributed
                              #/src/third_party/redis/deps/hiredis
                              #/src/third_party/zlib
                              #/src/third_party/zookeeper_c/include/zookeeper
+                             #/src/core
+                             #/src/core/gse
+                             #/src/core/gpe
+                             #/src/core/topology
+                             #/src/utility
+                             #/src/msg
+                             #/src/msg/distributed
                    """)
     common_env.Append(CPPPATH=common_cpp_path)
 
@@ -381,8 +385,8 @@ def SetupDebugBuildEnv(debug___env, DEBUG___DIR):
     # !!!! gpelib has to be first as it depends on other libs !!! #
     #                                                             #
     ###############################################################
-    debug___lib_files=[ DEBUG___DIR + '/graphsql/server/gpelib/libgpelib.a',
-                        DEBUG___DIR + '/graphsql/distributed/libdistlib.a',
+    debug___lib_files=[ DEBUG___DIR + '/core/gpe/libgpelib.a',
+                        DEBUG___DIR + '/msg/distributed/libdistlib.a',
                         DEBUG___DIR + '/third_party/linenoise/liblinenoise.a',
                         DEBUG___DIR + '/third_party/murmurhash/libmurmurhash.a',
                         DEBUG___DIR + '/third_party/jsoncpp/libjson.a',
@@ -410,8 +414,8 @@ def SetupReleaseBuildEnv(release_env, RELEASE_DIR):
     # !!!! gpelib has to be first as it depends on other libs !!! #
     #                                                             #
     ###############################################################
-    release_lib_files=[ RELEASE_DIR + '/graphsql/server/gpelib/libgpelib.a',
-                        RELEASE_DIR + '/graphsql/distributed/libdistlib.a',
+    release_lib_files=[ RELEASE_DIR + '/core/gpe/libgpelib.a',
+                        RELEASE_DIR + '/msg/distributed/libdistlib.a',
                         RELEASE_DIR + '/third_party/linenoise/liblinenoise.a',
                         RELEASE_DIR + '/third_party/murmurhash/libmurmurhash.a',
                         RELEASE_DIR + '/third_party/jsoncpp/libjson.a',
@@ -442,8 +446,8 @@ def SetupSharedBuildEnv(release_env, RELEASE_DIR):
     # !!!! gpelib has to be first as it depends on other libs !!! #
     #                                                             #
     ###############################################################
-    release_lib_files=[ RELEASE_DIR + '/graphsql/server/gpelib/libgpelib-sh.a',
-                        RELEASE_DIR + '/graphsql/distributed/libdistlib-sh.a',
+    release_lib_files=[ RELEASE_DIR + '/core/gpe/libgpelib-sh.a',
+                        RELEASE_DIR + '/msg/distributed/libdistlib-sh.a',
                         RELEASE_DIR + '/third_party/linenoise/liblinenoise-sh.a',
                         RELEASE_DIR + '/third_party/murmurhash/libmurmurhash-sh.a',
                         RELEASE_DIR + '/third_party/jsoncpp/libjson-sh.a',
