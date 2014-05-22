@@ -128,10 +128,10 @@ populate_dir() {
 populate_repos() {
 	for i in "${!DIRECTORY[@]}"; do
 		if [ "${VERSION[$i]}" == "latest" ]; then
-	    	cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git fetch; cd ${CWD}")
+            cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; cd ${CWD}")
 	    else
-	    	if ! [ "${VERSION[$i]}" == "*" ]; then
-		    	cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git fetch; git checkout ${VERSION[$i]} -q; cd ${CWD}")
+	        if ! [ "${VERSION[$i]}" == "*" ]; then
+		        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; git checkout ${VERSION[$i]} -q; cd ${CWD}")
 		    fi
 	    fi
 	done
