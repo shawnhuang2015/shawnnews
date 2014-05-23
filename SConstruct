@@ -210,7 +210,23 @@ kafka_perf_consumer_daemon_debug___build = debug___env.SConscript(DEBUG___DIR +
 kafka_perf_consumer_daemon_release_build = release_env.SConscript(RELEASE_DIR +
                         '/msg/distributed/perf_test_utils/SConscript', {'env': release_env})
 
+#############################################################
+# 3.1.6: POC GSE BASE                                       #
+#############################################################
+## poc_gse ##
+poc_gse_debug_build = debug___env.SConscript(DEBUG___DIR + 
+                '/customer/core_ext/gse/SConscript', {'env': debug___env})
+poc_gse_release_build = release_env.SConscript(RELEASE_DIR + 
+                '/customer/core_ext/gse/SConscript', {'env': release_env})
 
+#############################################################
+# 3.1.7: POC GPE BASE                                       #
+#############################################################
+## poc_gpe ##
+poc_gpe_debug_build = debug___env.SConscript(DEBUG___DIR + 
+                '/customer/core_ext/gpe/SConscript', {'env': debug___env})
+poc_gpe_release_build = release_env.SConscript(RELEASE_DIR + 
+                '/customer/core_ext/gpe/SConscript', {'env': release_env})
 
 #------------------------------------------------------
 # 3.2 Determine default project to build, e.g. 'scons'|
@@ -234,12 +250,16 @@ debug___env.Alias('gpelib_debug',       gpelib_debug___build)
 debug___env.Alias('distlib_debug',      distlib_debug___build)
 debug___env.Alias('kafka_perf_producer_daemon_debug',      kafka_perf_producer_daemon_debug___build)
 debug___env.Alias('kafka_perf_consumer_daemon_debug',      kafka_perf_consumer_daemon_debug___build)
+debug___env.Alias('poc_gse_debug', poc_gse_debug_build)
+debug___env.Alias('poc_gpe_debug', poc_gpe_debug_build)
 
 release_env.Alias('gse2_release',       gse2_release_build)
 release_env.Alias('gpelib_release',     gpelib_release_build)
 release_env.Alias('distlib_release',    distlib_release_build)
 release_env.Alias('kafka_perf_producer_daemon_release',   kafka_perf_producer_daemon_release_build)
 release_env.Alias('kafka_perf_consumer_daemon_release',   kafka_perf_consumer_daemon_release_build)
+release_env.Alias('poc_gse_release', poc_gse_release_build)
+release_env.Alias('poc_gpe_release', poc_gpe_release_build)
 
 debug___env.Alias('debug',    
                     [

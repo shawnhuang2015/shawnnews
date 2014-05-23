@@ -43,6 +43,7 @@ third_party
 .externalToolBuilders/
 .settings/
 # Ignore other repos
+product.*
 src/core/topology
 src/core/gpe
 src/core/gse
@@ -51,4 +52,3 @@ src/utility
 src/realtime
 src/msg
 src/er
-project.*

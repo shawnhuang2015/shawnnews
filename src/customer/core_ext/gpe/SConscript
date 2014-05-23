@@ -1,0 +1,15 @@
+# -*- mode: python; -*-
+#  Customers gperun
+Import('env')
+
+# TODO: 
+src_files = Split("""gperun.cpp
+                     gpeconfig.cpp
+                     enginejoblistener.cpp
+                     enginejobrunner.cpp
+                     ../../../core/gse/gse2/dict/enum/RedisEnumeratorClient.cpp
+				  """)
+
+gperun_server_build = env.Program(target='poc_gpe_server', 
+						source=src_files)
+Return ("gperun_server_build")
