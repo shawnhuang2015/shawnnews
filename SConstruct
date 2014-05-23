@@ -17,8 +17,8 @@ import os, sys
 import subprocess
 import shutil
 # add the path to the test_utils library
-sys.path.append('testing/site_scons')
-from test_utils import *
+#sys.path.append('testing/site_scons')
+#from test_utils import *
 sys.path.append('.site_scons')
 from build_utils import *
             
@@ -217,14 +217,14 @@ kafka_perf_consumer_daemon_release_build = release_env.SConscript(RELEASE_DIR +
 #------------------------------------------------------
 debug___env.Default(gse2_debug___build,
                     gpelib_debug___build,
-                    distlib_debug___build,
-                    kafka_perf_producer_daemon_debug___build,
-                    kafka_perf_consumer_daemon_debug___build)
+                    distlib_debug___build)
+#                    kafka_perf_producer_daemon_debug___build,
+#                    kafka_perf_consumer_daemon_debug___build)
 release_env.Default(gse2_release_build,
                     gpelib_release_build,
-                    distlib_release_build,
-                    kafka_perf_producer_daemon_release_build,
-                    kafka_perf_consumer_daemon_release_build)
+                    distlib_release_build)
+#                    kafka_perf_producer_daemon_release_build,
+#                    kafka_perf_consumer_daemon_release_build)
 
 #---------------------------------------------------------------------
 # 3.3 Determine a specific project to build, e.g. 'scons  gse2_debug' |
@@ -245,18 +245,18 @@ debug___env.Alias('debug',
                     [
                     gse2_debug___build,
                     gpelib_debug___build,
-                    distlib_debug___build,
-                    kafka_perf_producer_daemon_debug___build,
-                    kafka_perf_consumer_daemon_debug___build
+                    distlib_debug___build
+                    #kafka_perf_producer_daemon_debug___build,
+                    #kafka_perf_consumer_daemon_debug___build
                     ]
                   )
 release_env.Alias('release',  
                     [
                     gse2_release_build,
                     gpelib_release_build,
-                    distlib_release_build,
-                    kafka_perf_producer_daemon_release_build,
-                    kafka_perf_consumer_daemon_release_build
+                    distlib_release_build
+                    #kafka_perf_producer_daemon_release_build,
+                    #kafka_perf_consumer_daemon_release_build
                     ]
                  )
 

@@ -302,10 +302,9 @@ def SetupCommonBuildEnv(common_env, verbose):
         common_env.Append(BUILD_VERSION=pkgbuildVersion)
 
     #add detailed version info (above plus date) to executable
-    cppbuildVersion= os.popen(
-        "echo `git symbolic-ref HEAD 2> /dev/null | cut -b 12-`-`git log --pretty=format:%h\ \ %ci -1`"
-        ).read()
-    cppbuildVersion = cppbuildVersion.rstrip('\n')
+    version_cmd = subprocess.Popen(['./gworkspace.sh','-c'], stdout=subprocess.PIPE)
+    cppbuildVersion = version_cmd.stdout.read()
+    cppbuildVersion = cppbuildVersion.replace("\n", ",").strip()
     cppbuildVersion ="\\\"" + cppbuildVersion + "\\\"";
     common_env.Append(CPPDEFINES={'BUILDVERSION':cppbuildVersion})
 

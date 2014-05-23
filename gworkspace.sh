@@ -29,7 +29,7 @@ CWD=$(pwd)
 #-----------------------------------------------------#
 # check "-d" to see if to build with debug binaries   #
 #-----------------------------------------------------#
-usage() { echo "${bldred}Usage: $0 -h -s -u"
+usage() { echo "${bldred}Usage: $0 -h -s -u -c"
     echo "  -h	help and show command list"
     echo "  -s	show repository info"
     echo "  -u	update or initialize the repositories"
