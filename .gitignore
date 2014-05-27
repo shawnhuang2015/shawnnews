@@ -42,8 +42,9 @@ third_party
 .project
 .externalToolBuilders/
 .settings/
-# Ignore other repos
 product.*
+*.queue
+# Ignore other repos
 src/core/topology
 src/core/gpe
 src/core/gse

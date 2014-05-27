@@ -12,6 +12,7 @@
 #define GPE_KAFKACONNECTOR_HPP_
 
 #include <gutil/gtimer.hpp>
+#include <gutil/genvvariable.hpp>
 #include <gutil/dummyqueue.hpp>
 #include <DQGroupConsumer.h>
 #include <gse2/msg/kafka/gse_kafka_writer.hpp>
@@ -49,9 +50,8 @@ class KafkaConnector {
         max_num_concurrent_request_(prefetchsize) {
     InitReader();
     dummywritequeue_ = NULL;
-#ifdef RecordQueue
-    dummywritequeue_ = new gutil::DummyWriteQueue("", getrequest_topic, "");
-#endif
+    if (gutil::GEnvVariable::RecordQueue_)
+      dummywritequeue_ = new gutil::DummyWriteQueue("", getrequest_topic, "");
   }
 
   ~KafkaConnector() {

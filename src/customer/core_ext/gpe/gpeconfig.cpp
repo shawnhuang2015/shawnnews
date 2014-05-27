@@ -29,5 +29,6 @@ int GPEConfig::queue_sleep_time_ = 0;
 std::string GPEConfig::zk_connection_ = "";
 std::string GPEConfig::kafka_connection_ = "";
 std::vector<float> GPEConfig::udfweights_;
+GPEConfig::Maps_t GPEConfig::customizedsetttings_;
 }  // namespace gperun
 
