@@ -1,19 +1,24 @@
 /******************************************************************************
  * Copyright (c) 2014, GraphSQL Inc.
  * All rights reserved.
- * Project: GraphSQL-GSE_2.0
- * loader_impl.hpp: /src/customer/core_impl/gse_impl/loader_mapper.hpp
+ * Project: GraphSQL-GSE_2.0 --> POC
+ * loader_mapper.hpp: /src/customer/core_impl/gse_impl/loader_mapper.hpp
  *
  *  Created on: May 5, 2014
- *      Author: like
+ *      Author: xxxx
  ******************************************************************************/
 
-#ifndef UDIMPL_GSE_UD_LOADER_MAPPER_HPP_
-#define UDIMPL_GSE_UD_LOADER_MAPPER_HPP_
+#ifndef SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERMAPPER_HPP_
+#define SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERMAPPER_HPP_
 
 #include <gse2/loader/gse_single_server_loader.hpp>
 
 namespace UDIMPL {
+
+/**
+ * Override below when you need to customize the graph loading.
+ * This is the mapper phase: user input line -> vertex/edge record
+ */
 class GSE_UD_Loader : public gse2::GseSingleServerLoader {
  public:
   GSE_UD_Loader(gse2::WorkerConfig &wrkConfig, char separator)
@@ -23,69 +28,35 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
   ~GSE_UD_Loader() {
   }
 
-  /**
-   *
-   * @param attr_ptr
-   * @param attr_len
-   * @param uid1_ptr
-   * @param uid1_len
-   *  - type: "INT"
-   name: "id_type"
-   nullable: false
-   fixedsize: 0    # for base data type, fixedsize doesn't matter.
-   enumerator: 1   # this is enumerator ID, from 1 to $attribute_enumerators
-   - type: "BOOL"
-   name: "isRisk"
-   nullable: false
-   fixedsize: 0
-   - type: "INT"
-   name: "numOfRisks"
-   nullable: false
-   - type: "BOOL"
-   name: "isReject"
-   nullable: false
-   - type: "INT"
-   name: "rejectCount"
-   nullable: false
-   - type: "BOOL"
-   name: "isBlack"
-   nullable: false
-   - type: "BOOL"
-   name: "isWhite"
-   nullable: false
-   - type: "BOOL"
-   name: "isKeyNode"
-   nullable: false
-   - type: "BOOL"
-   name: "chargeStatus"
-   nullable: false
-   *
-   */
 
   /**
    * This is a local function to generate vertex attributes
    * @return Nothing
    */
-  void localGenVertexAttribute() {
+  void GenVertexAttributeRecord() {
+#if 0
+// example code:
+   /* 1st -> is a enumerator
+      2nd -> is int
+      3rd -> is bool
+   */
     uint64_t val;
     size_t vatt_len;
     char *input_ptr = 0;
     size_t input_len = 0;
+    /**** first ***/
     fileReader_->NextString(input_ptr, input_len, separator_);
     uint32_t encoded_id = enumMappers_.encode( 1, // "id_type",
         std::string(input_ptr, input_len));
     vertexWriter_.write(encoded_id);  // attribute 1: id_type
-    /* 4,0,9,0,8,0,0,0,0  :  4 is converted type ID */
-    /* 1,2,3,4,5,6,7,8,9 : position */
-    for (uint32_t i = 2; i <= 9; i++) {
+    /**** 2nd ***/
       fileReader_->NextUnsignedLong(val, separator_);
-      if (i == 3 || i == 5) {
-        vertexWriter_.write(val);  // attribute 3 and 5 are integer.
-      } else {
-        vertexWriter_.write(val != 0);
-      }
-    }
-  }
+      vertexWriter_.write(val);  // int
+    /**** 3nd ***/
+      fileReader_->NextUnsignedLong(val, separator_);
+      vertexWriter_.write((val==0));  // bool
+#endif
+}
 
   /**
    * Entry point to load the vertex source
@@ -94,12 +65,10 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    */
   void LoadVertexData(std::vector<std::string> &DataSource) {
     // DataSource[0] contains the vertex source file
+#if 0
     fileReader_ = new gutil::FileLineReader(DataSource[0]);
     char * uid_ptr;
     size_t uid_len;
-    static int bufferlen = 100;
-    char attr_ptr[bufferlen];
-    size_t attr_len;
     bool is_existingVertexID = false;
     vertexWriter_.start_counter();
     while (fileReader_->MoveNextLine()) {
@@ -110,13 +79,14 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
       VERTEXID_T vid = upsertNow(uid_ptr, uid_len, 0,
                                  is_existingVertexID);
       if (!is_existingVertexID) {
-        localGenVertexAttribute();
+        GenVertexAttributeRecord();
         vertexWriter_.flush(vid);
       }
     }
     fileReader_->CloseFile();
     delete fileReader_;
     vertexWriter_.stop_counter();
+#endif
   }
 
   /**
@@ -124,6 +94,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    * @return Nothing
    */
   void GenEdgeAttributeRecord() {
+#if 0
     char * etype_ptr;
     size_t etype_len;
     /* TA,400756276684 */
@@ -135,6 +106,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     uint64_t ulong_attr;
     fileReader_->NextUnsignedLong(ulong_attr, separator_);
     edgeWriter_.write(ulong_attr);  // UDT->VAL
+#endif
   }
 
   /**
@@ -144,6 +116,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    */
   void LoadEdgeData(std::vector<std::string> &DataSource) {
     // DataSource[1] contains the edge source file
+#if 0
     fileReader_ = new gutil::FileLineReader(DataSource[1]);
     char * uid1_ptr;
     char * uid2_ptr;
@@ -182,9 +155,10 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     delete fileReader_;
 
     edgeWriter_.stop_counter();
+#endif
   }
 
 };
 
 }    // namespace UDIMPL
-#endif    /* UDIMPL_GSE_UD_LOADER_MAPPER_HPP_ */
+#endif    /* SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERMAPPER_HPP_ */
