@@ -11,7 +11,6 @@
 #include "enginejobrunner.hpp"
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
-
 void RunDegreeHistogram(int argc, char** argv) {
   std::string engineConfigFile = std::string(argv[2]);
   gperun::GPEConfig::LoadConfig(engineConfigFile);

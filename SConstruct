@@ -185,6 +185,7 @@ gse2_debug___build = debug___env.SConscript(DEBUG___DIR +
 gse2_release_build = release_env.SConscript(RELEASE_DIR +
                         '/core/gse/SConscript', {'env': release_env})
 
+
 #---------------------------------------
 # 3.1.2 Project: gpelib and other libs |
 #---------------------------------------
@@ -214,9 +215,9 @@ kafka_perf_consumer_daemon_release_build = release_env.SConscript(RELEASE_DIR +
 # 3.1.6: POC GSE BASE                                       #
 #############################################################
 ## poc_gse ##
-poc_gse_debug_build = debug___env.SConscript(DEBUG___DIR + 
+poc_gseloader_debug___build = debug___env.SConscript(DEBUG___DIR +
                 '/customer/core_ext/gse/SConscript', {'env': debug___env})
-poc_gse_release_build = release_env.SConscript(RELEASE_DIR + 
+poc_gseloader_release_build = release_env.SConscript(RELEASE_DIR +
                 '/customer/core_ext/gse/SConscript', {'env': release_env})
 
 #############################################################
@@ -250,7 +251,7 @@ debug___env.Alias('gpelib_debug',       gpelib_debug___build)
 debug___env.Alias('distlib_debug',      distlib_debug___build)
 debug___env.Alias('kafka_perf_producer_daemon_debug',      kafka_perf_producer_daemon_debug___build)
 debug___env.Alias('kafka_perf_consumer_daemon_debug',      kafka_perf_consumer_daemon_debug___build)
-debug___env.Alias('poc_gse_debug', poc_gse_debug_build)
+debug___env.Alias('poc_gseloader_debug',poc_gseloader_debug___build)
 debug___env.Alias('poc_gpe_debug', poc_gpe_debug_build)
 
 release_env.Alias('gse2_release',       gse2_release_build)
@@ -258,7 +259,7 @@ release_env.Alias('gpelib_release',     gpelib_release_build)
 release_env.Alias('distlib_release',    distlib_release_build)
 release_env.Alias('kafka_perf_producer_daemon_release',   kafka_perf_producer_daemon_release_build)
 release_env.Alias('kafka_perf_consumer_daemon_release',   kafka_perf_consumer_daemon_release_build)
-release_env.Alias('poc_gse_release', poc_gse_release_build)
+release_env.Alias('poc_gseloader_release', poc_gseloader_release_build)
 release_env.Alias('poc_gpe_release', poc_gpe_release_build)
 
 debug___env.Alias('debug',    
@@ -293,6 +294,7 @@ if 'pkg' in COMMAND_LINE_TARGETS:
     subprocess.call('rm -rf '+rebuildDir, shell=True)
 
 release_env.Install(pkgdir, [
+                            poc_gseloader_release_build,
                             gse2_release_build
                             ]
                     )
@@ -319,14 +321,14 @@ unit___debug_env.Append(LIBS=[gtestlib])
 unit_release_env.Append(LIBS=[gtestlib])
 
 # Set up the debug and release targets
-unit___debug_build = unit___debug_env.SConscript(DEBUG___DIR + 
-                '/unittests/SConscript', {'env': unit___debug_env})
-unit_release_build = unit_release_env.SConscript(RELEASE_DIR + 
-                '/unittests/SConscript', {'env': unit_release_env})
-# Set up the keywords
-unit___debug_env.Alias('unit_debug',    unit___debug_build)
-unit_release_env.Alias('unit_release',  unit_release_build)
-unit_release_env.Alias('unit',  unit_release_build)
+# unit___debug_build = unit___debug_env.SConscript(DEBUG___DIR + 
+#                 '/unittests/SConscript', {'env': unit___debug_env})
+# unit_release_build = unit_release_env.SConscript(RELEASE_DIR + 
+#                 '/unittests/SConscript', {'env': unit_release_env})
+# # Set up the keywords
+# unit___debug_env.Alias('unit_debug',    unit___debug_build)
+# unit_release_env.Alias('unit_release',  unit_release_build)
+# unit_release_env.Alias('unit',  unit_release_build)
 
 #############################################################
 # 6 : Testing framework                                     #
