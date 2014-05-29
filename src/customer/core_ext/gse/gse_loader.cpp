@@ -71,7 +71,14 @@ int main(int argc, char ** argv) {
   if (sysConfig.isValidServerWorker(worker_id)) {
     if (argc == 7) {
       /* single server loader with both vertex and edge files */
-      single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, argv[4][0]);
+      /* separator can be char or int value */
+      char separator='\t';
+      if (strlen(argv[4]) > 1) {
+        separator = (char)(atoi(argv[4]));
+      } else {
+        separator = argv[4][0];
+      }
+      single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
       std::vector<std::string> inputFiles;
       inputFiles.push_back(argv[5]);
       inputFiles.push_back(argv[6]);
