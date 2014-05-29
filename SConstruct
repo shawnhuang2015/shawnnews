@@ -228,6 +228,13 @@ poc_gpe_debug_build = debug___env.SConscript(DEBUG___DIR +
                 '/customer/core_ext/gpe/SConscript', {'env': debug___env})
 poc_gpe_release_build = release_env.SConscript(RELEASE_DIR + 
                 '/customer/core_ext/gpe/SConscript', {'env': release_env})
+                
+# Set up general udf debug (for local test only)
+gpe_poc_udf_debug_env = debug___env.Clone()
+poc_udf_cmdline_build = release_env.SConscript(RELEASE_DIR + '/customer/core_ext/gpe/SConscript_udf', {'env': release_env})
+release_env.Alias('poc_udf_cmdline',poc_udf_cmdline_build)
+gpe_udf_debug_build = gpe_poc_udf_debug_env.SConscript(DEBUG___DIR + '/customer/core_ext/gpe/SConscript_udf', {'env': gpe_poc_udf_debug_env})
+gpe_poc_udf_debug_env.Alias('gpe_udf_debug', gpe_udf_debug_build)
 
 #------------------------------------------------------
 # 3.2 Determine default project to build, e.g. 'scons'|
