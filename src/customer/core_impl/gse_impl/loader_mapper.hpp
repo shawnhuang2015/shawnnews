@@ -116,7 +116,32 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    */
   void LoadEdgeData(std::vector<std::string> &DataSource) {
     // DataSource[1] contains the edge source file
+    fileReader_ = new gutil::FileLineReader(DataSource[1]);
+    char * uid1_ptr;
+    size_t uid1_len;
+    char * uid2_ptr;
+    size_t uid2_len;
+    bool is_existingVertexID = false;
+    separator_ = '\t';
+    edgeWriter_.start_counter();
+    while (fileReader_->MoveNextLine()) {
+      /* 1,2
+       * 2,1
+       */
+      fileReader_->NextString(uid1_ptr, uid1_len, separator_);
+      fileReader_->NextString(uid2_ptr, uid2_len, separator_);
+      uid1_ptr[uid1_len] = '\0';
+      uid2_ptr[uid2_len] = '\0';
+      VERTEXID_T from_vid = upsertNow(uid1_ptr, 0, is_existingVertexID);
+      VERTEXID_T to_vid = upsertNow(uid2_ptr, 0, is_existingVertexID);
+      edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0), 0, 0);
+    }
+    fileReader_->CloseFile();
+    delete fileReader_;
+    edgeWriter_.stop_counter();
+
 #if 0
+    // DataSource[1] contains the edge source file
     fileReader_ = new gutil::FileLineReader(DataSource[1]);
     char * uid1_ptr;
     char * uid2_ptr;
