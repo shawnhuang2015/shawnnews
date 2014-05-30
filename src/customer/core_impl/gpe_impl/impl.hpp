@@ -20,6 +20,7 @@
 #include "../../core_ext/gpe/util.hpp"
 #include "../../core_ext/gpe/unionfind.hpp"
 #include "../../core_ext/gpe/global_vector.hpp"
+#include "../../core_ext/gpe/enginejobrunner.hpp"
 
 namespace UDIMPL {
 
@@ -35,13 +36,14 @@ namespace UDIMPL {
     }
 
     /// customized implementation to run query UDF
-    static bool RunQuery(gpelib4::EngineDriverService* service,
-                         gse2::IdConverter::RequestIdMaps* maps,
-                         std::vector<std::string>& request_argv,
-                         std::map<std::string,std::string>& options,
-                         std::vector<VertexLocalId_t>& idservice_vids,
-                         Json::Value& response_root,
-                         Maps_t& customizedsetttings){
+    static bool RunQuery(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                             gperun::EngineJobRunner* service,
+                             gse2::IdConverter::RequestIdMaps* maps,
+                             std::vector<std::string>& request_argv,
+                             Json::Value& jsoptions,
+                             std::vector<VertexLocalId_t>& idservice_vids,
+                             Json::Value& response_root,
+                             Maps_t& customizedsetttings){
       return false;
     }
 

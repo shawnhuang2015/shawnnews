@@ -118,16 +118,11 @@ namespace gperun {
       Json::Reader jsonReader;
       jsonReader.parse(request->requeststr_, requestRoot);
       std::vector<std::string> argv;
-      std::map<std::string,std::string> options;
       Json::Value jsArgv = requestRoot["argv"];
       for (uint32_t i = 0; i < jsArgv.size(); ++i) {
         argv.push_back(jsArgv[i].asString());
       }
       Json::Value jsoptions = requestRoot["options"];
-      std::vector<std::string> members = jsoptions.getMemberNames();
-      for (uint32_t i = 0; i < members.size(); ++i) {
-        options.insert(std::pair<std::string,std::string>(members[i], jsoptions[members[i]].asString()));
-      }
       std::vector<VertexLocalId_t> idservice_vids;
       if (argv[0] == "debug_neighbors") {
         VertexLocalId_t vid = 0;
@@ -135,7 +130,7 @@ namespace gperun {
           return 0;
         ShowOneVertexInfo(request, root, vid, idservice_vids);
       } else {
-        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(this, maps, argv, options,
+        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request, this, maps, argv,  jsoptions,
                                                       idservice_vids, root, GPEConfig::customizedsetttings_);
         if (!succeed) {
           root["message"] = "error_: unknown function error "
