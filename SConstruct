@@ -146,7 +146,8 @@ if not common_env.GetOption('clean') and not common_env.GetOption('help'):
     ('networkx',    'networkx/PKG-INFO'),
     ('yaml',        'yaml/usr/local/lib/libyaml-cpp.a'),
     ('zlib',        'zlib/libz.a'),
-    ('zookeeper_c', 'zookeeper_c/lib/libzookeeper_mt.a')
+    ('zookeeper_c', 'zookeeper_c/lib/libzookeeper_mt.a'),
+    ('zeromq',      'zeromq/lib/libzmq.a')    
     ]
     # -- make sure the elements in both lists match
     # -- the elements in the second list are the built objects. If a package has
