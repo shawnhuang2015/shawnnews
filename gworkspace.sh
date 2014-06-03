@@ -152,6 +152,24 @@ populate_repos() {
     done
 }
 
+############################################
+# show if a branch is dirty                #
+############################################
+print_git_dirty() {
+  local status=$(git status --porcelain 2> /dev/null)
+  if [[ "$status" != "" ]]; then
+    printf ${bldred}
+  fi
+}
+
+############################################
+# show tag of a branch                     #
+############################################
+print_git_tag() {
+    local tag=`git name-rev --tags --name-only $(git rev-parse HEAD)|sed 's/\^.*//'`
+    echo "${tag#*^ }"
+}
+
 #######################################################
 # Show repos                                          #
 #######################################################
@@ -161,7 +179,7 @@ show_repos() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git name-rev --tags --name-only $(git rev-parse HEAD)")
+        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; print_git_tag;")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
         cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
         cd "${CWD}"
