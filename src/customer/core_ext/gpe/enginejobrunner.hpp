@@ -46,19 +46,18 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
   /// subclass provide implementation to translate request to actual udf object
   std::string RunInstance(EngineServiceRequest* instance);
 
- private:
-  gse2::IdConverter* idconverter_;
-  gse2::PostListener* postListener_;
-
   /**
    * get enumerator mappers.
-   * @return
    */
   gse2::EnumMappers* GetEnumMappers() {
     if (postListener_ == NULL)
       return NULL;
     return postListener_->enumMappers();
   }
+
+ private:
+  gse2::IdConverter* idconverter_;
+  gse2::PostListener* postListener_;
 
   /// run one request. POC modification: Needed.
   unsigned int Run(EngineServiceRequest* request, Json::Value& root,

@@ -13,6 +13,7 @@
 #include <gapi4/graphapi.hpp>
 #include <json/json.h>
 #include "gpeconfig.hpp"
+#include "util.hpp"
 #include "../../core_impl/gpe_impl/impl.hpp"
 
 namespace gperun {
@@ -117,24 +118,19 @@ namespace gperun {
       Json::Reader jsonReader;
       jsonReader.parse(request->requeststr_, requestRoot);
       std::vector<std::string> argv;
-      std::map<std::string,std::string> options;
       Json::Value jsArgv = requestRoot["argv"];
       for (uint32_t i = 0; i < jsArgv.size(); ++i) {
         argv.push_back(jsArgv[i].asString());
       }
       Json::Value jsoptions = requestRoot["options"];
-      std::vector<std::string> members = jsoptions.getMemberNames();
-      for (uint32_t i = 0; i < members.size(); ++i) {
-        options.insert(std::pair<std::string,std::string>(members[i], jsoptions[members[i]].asString()));
-      }
       std::vector<VertexLocalId_t> idservice_vids;
       if (argv[0] == "debug_neighbors") {
         VertexLocalId_t vid = 0;
-        if (!UDIMPL::GPE_UD_Impl::UIdtoVId(topology_, maps, root, argv[1], vid))
+        if (!Util::UIdtoVId(topology_, maps, root, argv[1], vid))
           return 0;
         ShowOneVertexInfo(request, root, vid, idservice_vids);
       } else {
-        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(this, maps, argv, options,
+        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request, this, maps, argv,  jsoptions,
                                                       idservice_vids, root, GPEConfig::customizedsetttings_);
         if (!succeed) {
           root["message"] = "error_: unknown function error "
@@ -166,7 +162,7 @@ namespace gperun {
                                           std::vector<VertexLocalId_t>& idservice_vids) {
     gapi4::GraphAPI api(topology_);
     topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
-    root["source"]["vid"] = gse2::IdConverter::MarkVId(vid);
+    root["source"]["vid"] = Util::MarkVId(vid);
     idservice_vids.push_back(vid);
     v1->WriteToJson(root["source"]["vertexattr"]);
     gapi4::EdgesCollection edgeresults;
@@ -177,7 +173,7 @@ namespace gperun {
       VertexLocalId_t toid = edgeresults.GetCurrentToVId();
       topology4::EdgeAttribute* edgeattr = edgeresults
                                            .GetCurrentEdgeAttribute();
-      thisRec["to_vid"] = gse2::IdConverter::MarkVId(toid);
+      thisRec["to_vid"] = Util::MarkVId(toid);
       idservice_vids.push_back(toid);
       topology4::VertexAttribute* v2 = api.GetOneVertex(toid);
       v2->WriteToJson(thisRec["to_vertexattr"]);
