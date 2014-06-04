@@ -33,6 +33,8 @@
 graphsql_bin/
 build/
 third_party
+tmp/
+deploy_pkg/
 *.pyc
 ~
 .pydevproject
