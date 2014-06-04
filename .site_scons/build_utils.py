@@ -327,6 +327,7 @@ def SetupCommonBuildEnv(common_env, verbose):
                              #/src/third_party/redis/deps/hiredis
                              #/src/third_party/zlib
                              #/src/third_party/zookeeper_c/include/zookeeper
+                             #/src/third_party/zeromq/include
                              #/src/core
                              #/src/core/gse
                              #/src/core/gpe
@@ -351,6 +352,7 @@ def SetupCommonBuildEnv(common_env, verbose):
                         #/src/third_party/redis/deps/hiredis/libhiredis.a
                         #/src/third_party/zlib/libz.a
                         #/src/third_party/zookeeper_c/lib/libzookeeper_mt.a
+                        #/src/third_party/zeromq/lib/libzmq.a
                      """)
     common_libs =File(common_lib_files)
     common_env.Append(LIBS=[common_libs])
