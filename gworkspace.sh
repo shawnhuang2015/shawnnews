@@ -163,12 +163,43 @@ print_git_dirty() {
 }
 
 ############################################
-# show tag of a branch                     #
+# get branch name                          #
 ############################################
-print_git_tag() {
+function parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \1/'
+}
+
+############################################
+# get tag of a branch                      #
+############################################
+parse_git_tag () {
+#  git describe --tags 2> /dev/null
     local tag=`git name-rev --tags --name-only $(git rev-parse HEAD)|sed 's/\^.*//'`
     echo "${tag#*^ }"
 }
+############################################
+# get commit of a branch                   #
+############################################
+parse_git_commit() {
+  git log --pretty=format:'%h' -n 1
+}
+
+############################################
+# get branch, or tag, or commit            #
+############################################
+parse_git_branch_or_tag() {
+  local OUT="$(parse_git_branch)"
+  if [[ $OUT == *detached* ]]
+  then
+    OUT="$(parse_git_tag)";
+    if [[  ${#OUT} -le 0 ]]
+    then
+      OUT="$(parse_git_commit)"
+    fi
+  fi
+  echo $OUT
+}
+
 
 #######################################################
 # Show repos                                          #
@@ -179,7 +210,7 @@ show_repos() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; print_git_tag;")
+        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag;")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
         cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
         cd "${CWD}"
@@ -194,7 +225,7 @@ config_info() {
     for i in "${!DIRECTORY[@]}"; do
         cd "${DIRECTORY[$i]}"
         local timestr=$(git log --pretty=format:%ci -1)
-        local tag=$(git name-rev --tags --name-only $(git rev-parse HEAD))
+        local tag="$(parse_git_branch_or_tag)"  #$(git name-rev --tags --name-only $(git rev-parse HEAD))
         local formatedTag="${tag%^0}"
         printf '%-20s %-20s %s  ' ${REPO[$i]} $formatedTag $(git rev-parse HEAD)
         echo "$timestr"
