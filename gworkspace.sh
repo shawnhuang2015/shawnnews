@@ -26,18 +26,21 @@ cmd_show_repo=false
 cmd_update_repo=false
 cmd_config_info=false
 CWD=$(pwd)
+
 #-----------------------------------------------------#
 # check "-d" to see if to build with debug binaries   #
 #-----------------------------------------------------#
 usage() { echo "${bldred}Usage: $0 -h -s -u -c"
-    echo "  -h	help and show command list"
-    echo "  -s	show repository info"
-    echo "  -u	update or initialize the repositories"
-    echo "  -c	config information"
+    echo "  -h	       help and show command list"
+    echo "  -s	       show repository info"
+    echo "  -c	       config information"
+    echo "  -u         update or initialize the repositories using ssh"
+    echo "  -x  <https [username password]>"
+    echo "             update or initialize the repositories using https"
     echo "${txtrst}"
 }
 
-while getopts ":husc" opt; do
+while getopts ":hscux:" opt; do
     case $opt in
         h)
             cmd_help=true
@@ -47,6 +50,11 @@ while getopts ":husc" opt; do
             ;;
         u)
             cmd_update_repo=true
+            gitclone_cmd="git@github.com:GraphSQL/"
+            ;;
+        x)
+            cmd_update_repo=true
+            clone_use_https=$OPTARG
             ;;
         c)
             cmd_config_info=true
@@ -58,6 +66,33 @@ while getopts ":husc" opt; do
             ;;
     esac
 done
+
+shift $((OPTIND-1))
+
+if [ $cmd_update_repo ];
+then
+    if [[ "$clone_use_https" == "https" ]];
+    then
+        user_password=""
+        if [ -n "$1" ];
+        then
+            if [ -n "$2" ];
+            then
+                user_password="$1:$2@"
+            else
+                user_password="$1@"
+            fi
+        fi
+        gitclone_cmd="https://${user_password}github.com/GraphSQL/"
+    else
+        gitclone_cmd="git@github.com:GraphSQL/"
+        if [[ "$clone_use_https" == "-h" ]];
+        then
+            cmd_help=true
+            echo "$clone_use_https"
+        fi
+    fi
+fi
 
 #######################################################
 # This function will execute  cmds one by one         #
@@ -129,7 +164,7 @@ populate_dir() {
         if ! [ -d "${DIRECTORY[$i]}" ]; then
             cmdarr=("${cmdarr[@]}" "mkdir -p ${DIRECTORY[$i]}")
             if ! [ "${PUSHABLE[$i]}" == "x" ]; then
-                cmdarr=("${cmdarr[@]}" "git clone git@github.com:GraphSQL/${REPO[$i]}.git  ${DIRECTORY[$i]}")
+                cmdarr=("${cmdarr[@]}" "git clone ${gitclone_cmd}${REPO[$i]}.git  ${DIRECTORY[$i]}")
             fi
         fi
     done
@@ -173,9 +208,9 @@ function parse_git_branch() {
 # get tag of a branch                      #
 ############################################
 parse_git_tag () {
-#  git describe --tags 2> /dev/null
-    local tag=`git name-rev --tags --name-only $(git rev-parse HEAD)|sed 's/\^.*//'`
-    echo "${tag#*^ }"
+  git describe --tags 2> /dev/null
+#    local tag=`git name-rev --tags --name-only $(git rev-parse HEAD)|sed 's/\^.*//'`
+#    echo "${tag#*^ }"
 }
 ############################################
 # get commit of a branch                   #
@@ -192,7 +227,7 @@ parse_git_branch_or_tag() {
   if [[ $OUT == *detached* ]]
   then
     OUT="$(parse_git_tag)";
-    if [[  ${#OUT} -le 0 ]]
+    if [ -z "$OUT" ]
     then
       OUT="$(parse_git_commit)"
     fi
