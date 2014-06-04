@@ -25,6 +25,9 @@ cmd_help=false
 cmd_show_repo=false
 cmd_update_repo=false
 cmd_config_info=false
+MY_PATH="`dirname \"$0\"`"              # relative
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+cd ${MY_PATH}
 CWD=$(pwd)
 
 #-----------------------------------------------------#
