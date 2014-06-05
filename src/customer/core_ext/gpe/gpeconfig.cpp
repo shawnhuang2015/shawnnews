@@ -29,6 +29,9 @@ namespace gperun {
   int GPEConfig::queue_sleep_time_ = 0;
   std::string GPEConfig::zk_connection_ = "";
   std::string GPEConfig::kafka_connection_ = "";
+  std::string GPEConfig::incoming_port_ = "";
+  std::string GPEConfig::outgoing_port_to_ids_ = "";
+  std::vector<std::string> GPEConfig::rest_incoming_host_strs_;
   std::vector<float> GPEConfig::udfweights_;
   GPEConfig::Maps_t GPEConfig::customizedsetttings_;
 
@@ -128,6 +131,19 @@ namespace gperun {
         "2181");
     kafka_connection_ = gutil::yamlConnection2String(root["KAFKA"],
         "9092");
+
+ 
+    /* ------------------------------------------------------- */
+    incoming_port_ = root["HOST"]["incoming_port"].as<std::string>("");
+    outgoing_port_to_ids_ = root["HOST"]["outgoing_port_to_ids"].as<std::string>("");
+    YAML::Node rest_hosts = root["REST"]["machines"];
+
+    for (YAML::const_iterator it = rest_hosts.begin();
+          it != rest_hosts.end(); ++it) {
+      rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
+
+    }
+
     UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root, customizedsetttings_);
 
     std::cout << "hostname: " << hostname_ << "\n" << "ipaddress: "
@@ -146,7 +162,18 @@ namespace gperun {
               << response_queue_ << "\n" << "delta_queue: " << delta_queue_
               << "\n" << "queue_sleep_time: " << queue_sleep_time_ << "\n"
               << "zk_connection: " << zk_connection_ << "\n"
-              << "kafka_connection: " << kafka_connection_ << "\n";
+              << "kafka_connection: " << kafka_connection_ << "\n"
+              << " -------------------------------------------\n"
+              << " gpe ip/port \n"
+              << " -------------------------------------------\n"
+              << " gpe incoming port: " << incoming_port_ << "\n"
+              << " gpe outgoing port to ids : " << outgoing_port_to_ids_ << "\n";
+
+    for(size_t i = 0; i<rest_incoming_host_strs_.size(); ++i) {
+      std::cout << " rest " << (i+1) << " " << rest_incoming_host_strs_[i] << "\n";
+    }
+    std::cout << "\n";
+
     for(Maps_t::iterator it = customizedsetttings_.begin(); it != customizedsetttings_.end(); ++it)
       std::cout << it->first << ": " << it->second << "\n";
     std::cout << "\n";

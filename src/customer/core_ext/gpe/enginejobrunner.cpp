@@ -105,6 +105,7 @@ namespace gperun {
   unsigned int EngineJobRunner::Run(EngineServiceRequest* request,
                                     Json::Value& root,
                                     gse2::IdConverter::RequestIdMaps* maps) {
+    size_t num_iterations = 0;
     try {
       // check id map first
       if (maps == NULL) {
@@ -118,6 +119,7 @@ namespace gperun {
       Json::Reader jsonReader;
       jsonReader.parse(request->requeststr_, requestRoot);
       std::vector<std::string> argv;
+
       Json::Value jsArgv = requestRoot["argv"];
       for (uint32_t i = 0; i < jsArgv.size(); ++i) {
         argv.push_back(jsArgv[i].asString());
@@ -130,8 +132,15 @@ namespace gperun {
           return 0;
         ShowOneVertexInfo(request, root, vid, idservice_vids);
       } else {
-        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request, this, maps, argv,  jsoptions,
-                                                      idservice_vids, root, GPEConfig::customizedsetttings_);
+        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request, 
+                                                      this, 
+                                                      maps, 
+                                                      argv,  
+                                                      jsoptions,
+                                                      idservice_vids, 
+                                                      root, 
+                                                      num_iterations,
+                                                      GPEConfig::customizedsetttings_);
         if (!succeed) {
           root["message"] = "error_: unknown function error "
                             + request->requeststr_;
@@ -153,7 +162,7 @@ namespace gperun {
       root["error"] = true;
       return 0;
     }
-    return 0;
+    return num_iterations;
   }
 
   void EngineJobRunner::ShowOneVertexInfo(EngineServiceRequest* request,

@@ -45,6 +45,9 @@ struct GPEConfig {
     static std::string zk_connection_;
     static std::string kafka_connection_;
     static std::vector<float> udfweights_;
+    static std::string incoming_port_;
+    static std::string outgoing_port_to_ids_;
+    static std::vector<std::string> rest_incoming_host_strs_;
     static Maps_t customizedsetttings_;
 
     static bool CheckTimeOut(std::string requestid);

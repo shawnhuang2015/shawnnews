@@ -13,6 +13,7 @@
 #include <topology4/topologygraph.hpp>
 #include <gpelib4/enginebase/baseudf.hpp>
 #include <gpelib4/enginedriver/enginedriverservice.hpp>
+#include <gpelib4/enginedriver/enginedriverservice_zmq.hpp>
 #include <ext/idconverter.hpp>
 #include <json/json.h>
 #include "../udt.hpp"
@@ -20,9 +21,17 @@
 #include "../../core_ext/gpe/util.hpp"
 #include "../../core_ext/gpe/unionfind.hpp"
 #include "../../core_ext/gpe/global_vector.hpp"
+#include "../../core_ext/gpe/enginejobrunner_zmq.hpp"
 #include "../../core_ext/gpe/enginejobrunner.hpp"
 
+
+namespace gperun {
+  class ZMQEngineJobRunner;
+}
+
 namespace UDIMPL {
+
+
 
   class GPE_UD_Impl{
   public:
@@ -43,6 +52,20 @@ namespace UDIMPL {
                              Json::Value& jsoptions,
                              std::vector<VertexLocalId_t>& idservice_vids,
                              Json::Value& response_root,
+                             size_t &num_interations,
+                             Maps_t& customizedsetttings){
+      return false;
+    }
+
+    /// customized implementation to run query UDF
+    static bool RunQuery_ZMQ(gpelib4::ZMQEngineServiceRequest* request,
+                             gperun::ZMQEngineJobRunner* service,
+                             gpelib4::IdConverter_ZMQ::RequestIdMaps* maps,
+                             std::vector<std::string>& request_argv,
+                             Json::Value& jsoptions,
+                             std::vector<VertexLocalId_t>& idservice_vids,
+                             Json::Value& response_root,
+                             size_t &num_interations,
                              Maps_t& customizedsetttings){
       return false;
     }
