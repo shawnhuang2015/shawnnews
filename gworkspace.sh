@@ -117,7 +117,7 @@ safeRunCommand() {
 }
 
 #######################################################
-# This function will execute  cmds one by one         #
+# trim a string                                       #
 #######################################################
 trim() {
     local var=$@
@@ -328,7 +328,7 @@ update_gitignore_file()
 #######################################
 # Start from here                     #
 #######################################
-getRepoConfig "proj.config"
+getRepoConfig "config/proj.config"
 
 if [ $cmd_update_repo == true ]; then
     update_gitignore_file
