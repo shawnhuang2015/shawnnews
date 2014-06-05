@@ -1,4 +1,4 @@
-source src/er/buildenv/gbuildenv.sh  proj.config
+source src/er/buildenv/gbuildenv.sh  config/proj.config
 
 # set proj and pkg env
 export GSQL_PROJ_HOME=$(pwd)
