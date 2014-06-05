@@ -25,19 +25,25 @@ cmd_help=false
 cmd_show_repo=false
 cmd_update_repo=false
 cmd_config_info=false
+MY_PATH="`dirname \"$0\"`"              # relative
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+cd ${MY_PATH}
 CWD=$(pwd)
+
 #-----------------------------------------------------#
 # check "-d" to see if to build with debug binaries   #
 #-----------------------------------------------------#
 usage() { echo "${bldred}Usage: $0 -h -s -u -c"
-    echo "  -h	help and show command list"
-    echo "  -s	show repository info"
-    echo "  -u	update or initialize the repositories"
-    echo "  -c	config information"
+    echo "  -h	       help and show command list"
+    echo "  -s	       show repository info"
+    echo "  -c	       config information"
+    echo "  -u         update or initialize the repositories using ssh"
+    echo "  -x  <https [username password]>"
+    echo "             update or initialize the repositories using https"
     echo "${txtrst}"
 }
 
-while getopts ":husc" opt; do
+while getopts ":hscux:" opt; do
     case $opt in
         h)
             cmd_help=true
@@ -47,6 +53,11 @@ while getopts ":husc" opt; do
             ;;
         u)
             cmd_update_repo=true
+            gitclone_cmd="git@github.com:GraphSQL/"
+            ;;
+        x)
+            cmd_update_repo=true
+            clone_use_https=$OPTARG
             ;;
         c)
             cmd_config_info=true
@@ -58,6 +69,33 @@ while getopts ":husc" opt; do
             ;;
     esac
 done
+
+shift $((OPTIND-1))
+
+if [ $cmd_update_repo ];
+then
+    if [[ "$clone_use_https" == "https" ]];
+    then
+        user_password=""
+        if [ -n "$1" ];
+        then
+            if [ -n "$2" ];
+            then
+                user_password="$1:$2@"
+            else
+                user_password="$1@"
+            fi
+        fi
+        gitclone_cmd="https://${user_password}github.com/GraphSQL/"
+    else
+        gitclone_cmd="git@github.com:GraphSQL/"
+        if [[ "$clone_use_https" == "-h" ]];
+        then
+            cmd_help=true
+            echo "$clone_use_https"
+        fi
+    fi
+fi
 
 #######################################################
 # This function will execute  cmds one by one         #
@@ -79,7 +117,7 @@ safeRunCommand() {
 }
 
 #######################################################
-# This function will execute  cmds one by one         #
+# trim a string                                       #
 #######################################################
 trim() {
     local var=$@
@@ -129,7 +167,7 @@ populate_dir() {
         if ! [ -d "${DIRECTORY[$i]}" ]; then
             cmdarr=("${cmdarr[@]}" "mkdir -p ${DIRECTORY[$i]}")
             if ! [ "${PUSHABLE[$i]}" == "x" ]; then
-                cmdarr=("${cmdarr[@]}" "git clone git@github.com:GraphSQL/${REPO[$i]}.git  ${DIRECTORY[$i]}")
+                cmdarr=("${cmdarr[@]}" "git clone ${gitclone_cmd}${REPO[$i]}.git  ${DIRECTORY[$i]}")
             fi
         fi
     done
@@ -152,6 +190,55 @@ populate_repos() {
     done
 }
 
+############################################
+# show if a branch is dirty                #
+############################################
+print_git_dirty() {
+  local status=$(git status --porcelain 2> /dev/null)
+  if [[ "$status" != "" ]]; then
+    printf ${bldred}
+  fi
+}
+
+############################################
+# get branch name                          #
+############################################
+function parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \1/'
+}
+
+############################################
+# get tag of a branch                      #
+############################################
+parse_git_tag () {
+  git describe --tags 2> /dev/null
+#    local tag=`git name-rev --tags --name-only $(git rev-parse HEAD)|sed 's/\^.*//'`
+#    echo "${tag#*^ }"
+}
+############################################
+# get commit of a branch                   #
+############################################
+parse_git_commit() {
+  git log --pretty=format:'%h' -n 1
+}
+
+############################################
+# get branch, or tag, or commit            #
+############################################
+parse_git_branch_or_tag() {
+  local OUT="$(parse_git_branch)"
+  if [[ $OUT == *detached* ]]
+  then
+    OUT="$(parse_git_tag)";
+    if [ -z "$OUT" ]
+    then
+      OUT="$(parse_git_commit)"
+    fi
+  fi
+  echo $OUT
+}
+
+
 #######################################################
 # Show repos                                          #
 #######################################################
@@ -161,7 +248,7 @@ show_repos() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git name-rev --tags --name-only $(git rev-parse HEAD)")
+        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag;")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
         cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
         cd "${CWD}"
@@ -176,7 +263,7 @@ config_info() {
     for i in "${!DIRECTORY[@]}"; do
         cd "${DIRECTORY[$i]}"
         local timestr=$(git log --pretty=format:%ci -1)
-        local tag=$(git name-rev --tags --name-only $(git rev-parse HEAD))
+        local tag="$(parse_git_branch_or_tag)"  #$(git name-rev --tags --name-only $(git rev-parse HEAD))
         local formatedTag="${tag%^0}"
         printf '%-20s %-20s %s  ' ${REPO[$i]} $formatedTag $(git rev-parse HEAD)
         echo "$timestr"
@@ -241,7 +328,7 @@ update_gitignore_file()
 #######################################
 # Start from here                     #
 #######################################
-getRepoConfig "proj.config"
+getRepoConfig "config/proj.config"
 
 if [ $cmd_update_repo == true ]; then
     update_gitignore_file

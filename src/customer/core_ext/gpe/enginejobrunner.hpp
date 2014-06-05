@@ -32,6 +32,8 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
                                      NULL),
         idconverter_(idconverter),
         postListener_(postListener) {
+    globalinstance_->memserver_->SetServiceMode(true);
+    globalinstance_->memallocator_->Set_memlimitMB(1000000000);
     Topology_Prepare();
   }
 
