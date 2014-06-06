@@ -66,7 +66,7 @@ int main(int argc, char ** argv) {
   graphConfig.printout();
   uint32_t worker_id = atoi(argv[3]);
   gse2::WorkerConfig workerConfig(sysConfig, graphConfig, worker_id);
-  gse2::IdsWorker *worker;
+  gse2::IdsWorker *worker = 0;
   gse2::GseSingleServerLoader *single_load_worker;
   if (sysConfig.isValidServerWorker(worker_id)) {
     if (argc == 7) {
