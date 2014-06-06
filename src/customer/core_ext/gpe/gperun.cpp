@@ -142,7 +142,9 @@ void RunGPEService_ZMQ(char * argv_0, std::vector<std::string> &argvStrs) {
 // POC modification: Not Likely.
 int main(int argc, char** argv) {
 #ifdef BUILDVERSION
-  std::cout << "GPE Server: Version " << BUILDVERSION << std::endl;
+  std::string versStr = BUILDVERSION;
+  std::replace(versStr.begin(), versStr.end(), ',', '\n');
+  std::cout << "GPE Server: Version\n" << versStr << std::endl;
 #endif
 
 #ifndef REMOVETESTASSERT

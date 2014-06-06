@@ -260,6 +260,8 @@ show_repos() {
 # the output is concise to be included in package     #
 #######################################################
 config_info() {
+    printf '%-20s %-20s %s  ' "product" "$(parse_git_branch_or_tag)" $(git rev-parse HEAD)
+    echo "$(git log --pretty=format:%ci -1)"
     for i in "${!DIRECTORY[@]}"; do
         cd "${DIRECTORY[$i]}"
         local timestr=$(git log --pretty=format:%ci -1)

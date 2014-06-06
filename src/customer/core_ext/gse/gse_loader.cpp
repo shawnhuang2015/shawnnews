@@ -49,7 +49,9 @@ void LoadTopology4(std::string datapath) {
 
 int main(int argc, char ** argv) {
 #ifdef BUILDVERSION
-  std::cout << "GraphSQL 2.0 Service: " << MAKE_BOLD << BUILDVERSION << RESET_BOLD << std::endl;
+  std::string versStr = BUILDVERSION;
+  std::replace(versStr.begin(), versStr.end(), ',', '\n');
+  std::cout << "GraphSQL 2.0 Graph Loader: \n" << MAKE_BOLD << versStr << RESET_BOLD << std::endl;
 #endif
   Gsql_Fd_Checker gsql_fd_checker(100000);
   std::vector<std::string> opts;
