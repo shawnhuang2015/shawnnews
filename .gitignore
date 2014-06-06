@@ -15,6 +15,7 @@
 *.dmg
 *.iso
 *.rar
+*.tar.gz
 
 # Logs and databases #
 ######################
