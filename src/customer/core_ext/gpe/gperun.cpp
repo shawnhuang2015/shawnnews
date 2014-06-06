@@ -14,7 +14,7 @@
 #include "enginejobrunner_zmq.hpp"
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
-
+#include <gutil/gstring.hpp>
 
 
 void RunDegreeHistogram(int argc, char** argv) {
@@ -29,12 +29,12 @@ void RunDegreeHistogram(int argc, char** argv) {
   driver.RunDegreeHistogram(limits);
 }
 
-void RunGPEService(int argc, char** argv) {
-  std::string engineConfigFile = std::string(argv[1]);
+void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
+  std::string engineConfigFile = std::string(argVStrs[0]);
   gperun::GPEConfig::LoadConfig(engineConfigFile);
-  GSQLLogger logger(argv[0], gperun::GPEConfig::log_path_);
+  GSQLLogger logger(argV_0, gperun::GPEConfig::log_path_);
   gse2::IdConverter idconverter(
-      argv[2], argv[3], atoi(argv[4]),
+      argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),
       gperun::GPEConfig::get_request_timeoutsec_);
   gse2::PostListener postListener(&idconverter);
   gperun::EngineJobRunner *runner = new gperun::EngineJobRunner(
@@ -68,10 +68,10 @@ void RunGPEService(int argc, char** argv) {
     gpe_daemon.stopDaemon();
 }
 
-void RunGPEService_ZMQ(int argc, char** argv) {
-  std::string engineConfigFile = std::string(argv[1]);
+void RunGPEService_ZMQ(char * argv_0, std::vector<std::string> &argvStrs) {
+  std::string engineConfigFile = argvStrs[0];
   gperun::GPEConfig::LoadConfig(engineConfigFile);
-  GSQLLogger logger(argv[0], gperun::GPEConfig::log_path_);
+  GSQLLogger logger(argv_0, gperun::GPEConfig::log_path_);
   gpelib4::IdConverter_ZMQ idconverter(20 /* timeout*/);
 
   //gse2::IdConverter idconverter(
@@ -157,12 +157,13 @@ int main(int argc, char** argv) {
     RunDegreeHistogram(argc, argv);
     return 0;
   }
-  if (argc == 5) {
+  if (argc == 2) {
+    std::vector<std::string> config_info = gutil::tokenize_file(std::string(argv[1]));
     // start actual service
 #ifdef USE_ZMQ
-    RunGPEService_ZMQ(argc, argv);
+    RunGPEService_ZMQ(argv[0], config_info);
 #else
-    RunGPEService(argc, argv);
+    RunGPEService(argv[0], config_info);
 #endif
   } else {
     std::cout

@@ -98,35 +98,35 @@ namespace gperun {
   void GPEConfig::LoadConfig(std::string engineConfigFile) {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
-    hostname_ = root["HOST"]["name"].as<std::string>("");
-    ipaddress_ = root["HOST"]["ip"].as<std::string>("");
-    port_ = root["HOST"]["port"].as<std::string>("");
-    client_prefix_ = root["HOST"]["queue_client_name_prefix"]
+    hostname_ = root["INSTANCE"]["name"].as<std::string>("");
+    ipaddress_ = root["INSTANCE"]["ip"].as<std::string>("");
+    port_ = root["INSTANCE"]["port"].as<std::string>("");
+    client_prefix_ = root["INSTANCE"]["queue_client_name_prefix"]
                      .as<std::string>("");
     partitionpath_ =
-        root["HOST"]["graph_partition_snapshot"]["snapshot_path"]
+        root["INSTANCE"]["graph_partition_snapshot"]["snapshot_path"]
         .as<std::string>("");
-    maxjobs_ = root["HOST"]["num_max_running_instances"].as<size_t>(4);
-    get_request_timeoutsec_ = root["HOST"]["get_request_timeoutsec"]
+    maxjobs_ = root["INSTANCE"]["num_max_running_instances"].as<size_t>(4);
+    get_request_timeoutsec_ = root["INSTANCE"]["get_request_timeoutsec"]
                               .as<float>(10);
     prefetch_request_timeoutsec_ =
-        root["HOST"]["prefetch_request_timeoutsec"].as<float>(5);
-    prefetch_request_limit_ = root["HOST"]["prefetch_request_limit"]
+        root["INSTANCE"]["prefetch_request_timeoutsec"].as<float>(5);
+    prefetch_request_limit_ = root["INSTANCE"]["prefetch_request_limit"]
                               .as<size_t>(12);
 
     /* set up the log path */
     std::string log_root_path = glib::io::to_absolute_path(
-                                  root["HOST"]["log_dir"].as<std::string>("logs"));
+                                  root["INSTANCE"]["log_dir"].as<std::string>("logs"));
     if (*(log_root_path.rbegin()) != '/')
       log_root_path = log_root_path + "/";
     log_path_ = log_root_path + "gperun";
     get_request_queue_ =
-        root["QUEUE"]["get_request_queue"].as<std::string>("");
-    prefetch_request_queue_ = root["QUEUE"]["prefetch_request_queue"]
+        root["QUEUE"]["get_request_queue"]["name"].as<std::string>("");
+    prefetch_request_queue_ = root["QUEUE"]["prefetch_request_queue"]["name"]
                               .as<std::string>("");
-    response_queue_ = root["QUEUE"]["response_queue"].as<std::string>("");
-    delta_queue_ = root["QUEUE"]["delta_queue"].as<std::string>("");
-    queue_sleep_time_ = root["QUEUE"]["sleep_time"].as<int>(50);
+    response_queue_ = root["QUEUE"]["response_queue"]["name"].as<std::string>("");
+    delta_queue_ = root["QUEUE"]["delta_queue"]["name"].as<std::string>("");
+    queue_sleep_time_ = root["QUEUE"]["get_request_queue"]["timeout"].as<int>(50);
     zk_connection_ = gutil::yamlConnection2String(root["ZOOKEEPER"],
         "2181");
     kafka_connection_ = gutil::yamlConnection2String(root["KAFKA"],
@@ -134,8 +134,8 @@ namespace gperun {
 
  
     /* ------------------------------------------------------- */
-    incoming_port_ = root["HOST"]["incoming_port"].as<std::string>("");
-    outgoing_port_to_ids_ = root["HOST"]["outgoing_port_to_ids"].as<std::string>("");
+    incoming_port_ = root["INSTANCE"]["incoming_port"].as<std::string>("");
+    outgoing_port_to_ids_ = root["INSTANCE"]["outgoing_port_to_ids"].as<std::string>("");
     YAML::Node rest_hosts = root["REST"]["machines"];
 
     for (YAML::const_iterator it = rest_hosts.begin();

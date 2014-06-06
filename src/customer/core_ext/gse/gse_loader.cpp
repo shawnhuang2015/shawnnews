@@ -20,7 +20,7 @@
 #include "../../core_impl/gse_impl/loader_mapper.hpp"
 #include <gse2/partition/gse_single_server_repartition.hpp>
 #include <gutil/glogging.hpp>
-
+#include <gutil/gstring.hpp>
 
 
 #include <gutil/filelinereader.hpp>
@@ -55,33 +55,42 @@ int main(int argc, char ** argv) {
   std::vector<std::string> opts;
   if (!gsql_fd_checker.passed_)
     exit(-1);
-  if (argc < 7) {
-    printf("USAGE: %s <sys_configure> <graph_config> <worker_id> separator, vertex_file edge_file\n ", argv[0]);
+  if (argc < 2) {
+    printf("USAGE: %s <loading_worker_config_info>\n ", argv[0]);
     exit(1);
+    /*
+     * sys_config
+     * graph_config
+     * id
+     * separator
+     * vertex_file
+     * edge_file
+     */
   }
-  gse2::SysConfig sysConfig(argv[1]);
+  std::vector<std::string> config_info = gutil::tokenize_file(std::string(argv[1]));
+  gse2::SysConfig sysConfig(config_info[0]);
   sysConfig.printout();
   GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader");
-  gse2::GraphConfig graphConfig(argv[2]);
+  gse2::GraphConfig graphConfig(config_info[1]);
   graphConfig.printout();
-  uint32_t worker_id = atoi(argv[3]);
+  uint32_t worker_id = atoi(config_info[2].c_str());
   gse2::WorkerConfig workerConfig(sysConfig, graphConfig, worker_id);
   gse2::IdsWorker *worker = 0;
   gse2::GseSingleServerLoader *single_load_worker;
   if (sysConfig.isValidServerWorker(worker_id)) {
-    if (argc == 7) {
+    if (argc == 2) {
       /* single server loader with both vertex and edge files */
       /* separator can be char or int value */
       char separator='\t';
-      if (strlen(argv[4]) > 1) {
-        separator = (char)(atoi(argv[4]));
+      if (config_info[3].length() > 1) {
+        separator = (char)(atoi(config_info[3].c_str()));
       } else {
-        separator = argv[4][0];
+        separator = config_info[3][0];
       }
       single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
       std::vector<std::string> inputFiles;
-      inputFiles.push_back(argv[5]);
-      inputFiles.push_back(argv[6]);
+      inputFiles.push_back(config_info[4]);
+      inputFiles.push_back(config_info[5]);
       single_load_worker->LoadVertexData(inputFiles);
       single_load_worker->LoadEdgeData(inputFiles);
       single_load_worker->commitLoading();
@@ -94,12 +103,8 @@ int main(int argc, char ** argv) {
       std::cout << *(gse2::IdsServerWorker*)worker << "starts" << std::endl;
     }
   } else if ( sysConfig.isValidClientWorker(worker_id)) {
-//    worker = new gse2::IdsClientWorker(workerConfig);
-//    std::cout << *(gse2::IdsClientWorker*)worker << "starts" << std::endl;
-    opts.push_back(argv[2]);
-    for (int i=4; i< argc; i++) {
-      opts.push_back(argv[i]);
-    }
+    std::cout << "invalid parameter!" << std::endl;
+    exit(-1);
   } else {
     std::cout << " !!!! invalid worker id (" << worker_id << ")" << std::endl;
     return -1;
