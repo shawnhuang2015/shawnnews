@@ -169,9 +169,10 @@ int main(int argc, char** argv) {
 #endif
   } else {
     std::cout
-        << "Error arguments.\nUsage:executable <engineconfigfile>"
-        << " <sysconfigfile> <graphconfigfile> <workerid>\n"
-        << "Or executable DegreeHistogram <engineconfigfile> <degree number limit>\n";
+        << "Error arguments."
+        << "\nUsage:executable <gpe_config_property_file>"
+        << "\n         (which has <sysconfigfile> <graphconfigfile> <workerid>)\n"
+        << "Or      executable DegreeHistogram <engineconfigfile> <degree number limit>\n";
   }
 }
 
