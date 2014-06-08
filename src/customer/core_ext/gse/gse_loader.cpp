@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
 #ifdef BUILDVERSION
   std::string versStr = BUILDVERSION;
   std::replace(versStr.begin(), versStr.end(), ',', '\n');
-  std::cout << "GraphSQL 2.0 Graph Loader: \n" << MAKE_BOLD << versStr << RESET_BOLD << std::endl;
+  std::cout << "GraphSQL 2.0 Graph Loader: \n --- Version --- \n" << versStr << std::endl;
 #endif
   Gsql_Fd_Checker gsql_fd_checker(100000);
   std::vector<std::string> opts;

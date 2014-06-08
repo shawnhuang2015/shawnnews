@@ -25,6 +25,7 @@ cmd_help=false
 cmd_show_repo=false
 cmd_update_repo=false
 cmd_config_info=false
+cmd_show_info=false
 MY_PATH="`dirname \"$0\"`"              # relative
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 cd ${MY_PATH}
@@ -33,23 +34,27 @@ CWD=$(pwd)
 #-----------------------------------------------------#
 # check "-d" to see if to build with debug binaries   #
 #-----------------------------------------------------#
-usage() { echo "${bldred}Usage: $0 -h -s -u -c"
+usage() { echo "${bldred}Usage: $0 -h -i -s -u -c"
     echo "  -h	       help and show command list"
-    echo "  -s	       show repository info"
+    echo "  -s	       show repository status"
+    echo "  -i         show repository information"
     echo "  -c	       config information"
     echo "  -u         update or initialize the repositories using ssh"
-    echo "  -x  <https [username password]>"
+    echo "  -x  https  [username password]"
     echo "             update or initialize the repositories using https"
     echo "${txtrst}"
 }
 
-while getopts ":hscux:" opt; do
+while getopts ":hiscux:" opt; do
     case $opt in
         h)
             cmd_help=true
             ;;
         s)
             cmd_show_repo=true
+            ;;
+        i)
+            cmd_show_info=true
             ;;
         u)
             cmd_update_repo=true
@@ -105,7 +110,7 @@ safeRunCommand() {
     typeset cmnd="$*"
     typeset ret_code
     now=$(date +"%T")
-    if [ $cmd_show_repo == false ]; then
+    if [ $cmd_show_repo == false ] && [ $cmd_show_info == false ]; then
         echo "${bldred}[${now}]Running: ${bldblu}${cmnd}${txtrst}"
     fi
     eval $cmnd
@@ -201,6 +206,16 @@ print_git_dirty() {
 }
 
 ############################################
+# show if a branch need push               #
+############################################
+print_git_need_push() {
+  local status=$(git status | grep "commit\.")
+  if [[ "$status" != "" ]]; then
+    printf "    ${bldred}(${status})${txtrst}\n"
+  fi  
+}
+
+############################################
 # get branch name                          #
 ############################################
 function parse_git_branch() {
@@ -248,9 +263,24 @@ show_repos() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag;")
+        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
         cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
+        cd "${CWD}"
+    done
+}
+
+#######################################################
+# Show repos info in details                          #
+#######################################################
+show_info() {
+    for i in "${!DIRECTORY[@]}"; do
+        cd "${DIRECTORY[$i]}"
+        cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
+        cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
+        cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
+        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
+        cmdarr=("${cmdarr[@]}" "printf \"${txtrst}\"; git status; cd ${CWD}")
         cd "${CWD}"
     done
 }
@@ -340,6 +370,10 @@ fi
 
 if [ $cmd_show_repo == true ]; then
     show_repos
+fi
+
+if [ $cmd_show_info == true ]; then
+    show_info
 fi
 
 if [ $cmd_config_info == true ]; then
