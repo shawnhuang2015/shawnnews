@@ -22,16 +22,22 @@ CWD=$(pwd)
 MY_PATH="`dirname \"$0\"`"              # relative
 MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
 cd ${MY_PATH}
-# pick up the standalone pkgs (ZK, Kafka, REST) so the customer pkg can override them
+
+
+# 1. pick up the standalone pkgs (ZK, Kafka, REST) first so the customer pkg can override them
 safeRunCommand "${ER_HOME}/tools/saferun.sh $@ ${ER_HOME}/buildenv/gpkg_other.conf"
+safeRunCommand "${ER_HOME}/gitenv/add_repo_info.sh"
 safeRunCommand "${ER_HOME}/tools/saferun.sh $@ config/pkg.config"
 cd ${CWD}
 
+# 2. package to a tar ball
 tar cvfz ${GSQL_BRANCH}.tar.gz deploy_pkg
 echo "${GSQL_BRANCH}.tar.gz is ready"
+
+# 3. running post packaging cmd, if any
+${ER_HOME}/tools/post_pkg.sh
 
 END=$(date +%s)
 DIFF=$(( $END - $START ))
 echo
 echo "${bldgre}$0 finished successfully in ${DIFF} seconds."
-
