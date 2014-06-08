@@ -13,4 +13,5 @@ Quick start:
    to push in each repo. "./gworkspace.sh -i" will give more info.
 - build package
    * edit config/pkg.config if needed. Don't sh this file even it's executable.
+   * you may also edit src/customer/config files
    * ./gpkg.sh
