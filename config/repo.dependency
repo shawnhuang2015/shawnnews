@@ -1,8 +1,0 @@
-topology             master               81ffd1970a78787cb429498d098012e1481eb921  2014-06-06 16:08:28 -0500
-gpe                  master               31fe0b58d9e810a832553c6e266472945f37ce45  2014-06-06 14:30:56 -0400
-gse                  master               87386c9451eacc58ace90668111afe60de0c4e0a  2014-06-08 04:03:04 -0700
-third_party          master               8128f0417261821897750a2ce13cf71a1487cb73  2014-06-08 04:00:48 -0700
-utility              master               c6b35851cebce0af2e3e37b9b1f2adeca2e0df4c  2014-06-07 13:47:57 -0700
-realtime             master               01361befb01fe56f28f6d57d50e714cc8a7716d7  2014-06-05 10:11:16 -0700
-msg_layer            master               338698d4d501e353f1580d2856ee8aa68bad9dff  2014-06-06 16:54:32 -0700
-er                   master               d68e68cdcf00c5956fef2a6a965d4fd0b2478bdf  2014-06-08 05:05:45 -0700

@@ -209,7 +209,7 @@ print_git_dirty() {
 # show if a branch need push               #
 ############################################
 print_git_need_push() {
-  local status=$(git status | grep "commit\.")
+  local status=$(git status | grep "commit\.\|commits\.")
   if [[ "$status" != "" ]]; then
     printf "    ${bldred}(${status})${txtrst}\n"
   fi  
