@@ -148,6 +148,7 @@ if not common_env.GetOption('clean') and not common_env.GetOption('help'):
     ('zlib',        'zlib/libz.a'),
     ('zookeeper_c', 'zookeeper_c/lib/libzookeeper_mt.a'),
     ('zeromq',      'zeromq/lib/libzmq.a'),
+    ('jzmq',        'jzmq/lib/libjzmq.a'),
     ('play',        'play/play-2.2.0.zip')
     ]
     # -- make sure the elements in both lists match
