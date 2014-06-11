@@ -12,6 +12,7 @@ src_files = Split("""gperun.cpp
                      enginejobrunner.cpp
                      enginejobrunner_zmq.cpp
                      ../../../core/gse/gse2/dict/enum/RedisEnumeratorClient.cpp
+                     ../../core_impl/udt.cpp
 				  """)
 
 gperun_server_build = env.Program(target='poc_gpe_server', 
