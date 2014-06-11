@@ -89,6 +89,7 @@ int main(int argc, char ** argv) {
       } else {
         separator = config_info[3][0];
       }
+      std::cout << " Separator : \"" << separator << "\"" << std::endl;
       single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
       std::vector<std::string> inputFiles;
       inputFiles.push_back(config_info[4]);

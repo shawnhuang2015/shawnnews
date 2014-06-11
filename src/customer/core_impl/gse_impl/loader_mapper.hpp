@@ -122,7 +122,6 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     char * uid2_ptr;
     size_t uid2_len;
     bool is_existingVertexID = false;
-    separator_ = '\t';
     edgeWriter_.start_counter();
     while (fileReader_->MoveNextLine()) {
       /* 1,2
