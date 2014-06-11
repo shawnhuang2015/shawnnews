@@ -3,6 +3,8 @@
 # build the package                                   #
 #######################################################
 
+: ${GSQL_PROJ_HOME:?"Need to run \"source .gsql_setup_dev_env.source\""}
+
 # execution function
 safeRunCommand() {
     typeset cmnd="$*"
