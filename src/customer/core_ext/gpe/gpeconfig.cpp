@@ -9,7 +9,6 @@
  ******************************************************************************/
 
 #include "gpeconfig.hpp"
-#include "../../core_impl/gpe_impl/impl.hpp"
 
 namespace gperun {
   std::string GPEConfig::hostname_ = "";
@@ -95,7 +94,7 @@ namespace gperun {
     return false;
   }
 
-  void GPEConfig::LoadConfig(std::string engineConfigFile) {
+  YAML::Node GPEConfig::LoadConfig(std::string engineConfigFile) {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
     hostname_ = root["INSTANCE"]["name"].as<std::string>("");
@@ -143,9 +142,6 @@ namespace gperun {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
 
     }
-
-    UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root, customizedsetttings_);
-
     std::cout << "hostname: " << hostname_ << "\n" << "ipaddress: "
               << ipaddress_ << "\n" << "port: " << port_ << "\n"
               << "log directory: " << log_path_ << "\n"
@@ -177,6 +173,8 @@ namespace gperun {
     for(Maps_t::iterator it = customizedsetttings_.begin(); it != customizedsetttings_.end(); ++it)
       std::cout << it->first << ": " << it->second << "\n";
     std::cout << "\n";
+    return root;
   }
+
 }  // namespace gperun
 

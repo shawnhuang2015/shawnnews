@@ -31,7 +31,9 @@ void RunDegreeHistogram(int argc, char** argv) {
 
 void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
   std::string engineConfigFile = std::string(argVStrs[0]);
-  gperun::GPEConfig::LoadConfig(engineConfigFile);
+  YAML::Node root = gperun::GPEConfig::LoadConfig(engineConfigFile);
+  UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root,
+                                            gperun::GPEConfig::customizedsetttings_);
   GSQLLogger logger(argV_0, gperun::GPEConfig::log_path_);
   gse2::IdConverter idconverter(
       argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),

@@ -54,7 +54,7 @@ struct GPEConfig {
 
     static bool SetConfig(std::string key, std::string value);
 
-    static void LoadConfig(std::string engineConfigFile);
+    static YAML::Node LoadConfig(std::string engineConfigFile);
 };
 }  // namespace gperun
 
