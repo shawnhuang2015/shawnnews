@@ -155,6 +155,7 @@ namespace gperun {
                                           std::vector<VertexLocalId_t>& idservice_vids) {
     gapi4::GraphAPI api(topology_);
     topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
+    jsonwriter.WriteStartObject();
     jsonwriter.WriteName("source");
     jsonwriter.WriteStartObject();
     std::string markvid = Util::MarkVId(vid);
@@ -183,6 +184,7 @@ namespace gperun {
       jsonwriter.WriteEndObject();
     }
     jsonwriter.WriteEndArray();
+    jsonwriter.WriteEndObject();
   }
 
 }  // namespace gperun
