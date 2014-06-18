@@ -21,19 +21,19 @@ namespace gperun {
     /// standard function to convert user vertex id to internal vertex id.
     static bool UIdtoVId(topology4::TopologyGraph* topology,
                          gse2::IdConverter::RequestIdMaps* maps,
-                         Json::Value& root, std::string strid,
+                         std::string& message, bool& error, std::string strid,
                          VertexLocalId_t& vid) {
       std::tr1::unordered_map<std::string, gse2::IdConverter::vidInfo>::iterator it =
           maps->idmaps_.find(strid);
       if (it == maps->idmaps_.end()) {
-        root["message"] = "error_: incorrect vid " + strid;
-        root["error"] = true;
+        message = "error_: incorrect vid " + strid;
+        error = true;
         return false;
       }
       vid = it->second.vid_;
       if (!topology->IsValidVertexId(vid)) {
-        root["message"] = "error_: incorrect vid " + strid;
-        root["error"] = true;
+        message = "error_: incorrect vid " + strid;
+        error = true;
         return false;
       }
       return true;
