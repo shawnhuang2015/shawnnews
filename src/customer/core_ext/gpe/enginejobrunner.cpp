@@ -45,7 +45,6 @@ namespace gperun {
     gutil::JSONStringWriter jsonwriter(*instance->outputstream_);
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("results");
-    jsonwriter.WriteStartObject();
     std::ostringstream debugmsg;
     if (!GPEConfig::CheckTimeOut(instance->requestid_)) {
       instance->message_ = "error_: request timed out";
@@ -77,7 +76,6 @@ namespace gperun {
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
       }
     }
-    jsonwriter.WriteEndObject(); // end of result
     jsonwriter.WriteName("error").WriteBool(instance->error_);
     jsonwriter.WriteName("message").WriteString(instance->message_);
     std::string debugstrmsg = debugmsg.str();
