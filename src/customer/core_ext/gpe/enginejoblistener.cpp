@@ -86,8 +86,10 @@ void EngineJobListener::SetResponse(std::string& requestid,
   // POC modification: Not Likely.
   if (response.size() == 0)
     return;
+  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_enter|" << "\n";
   Lock_t lock(mutex_);
   connector_->SetResponse(requestid, response);
+  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response.length() << "\n";
 }
 
 }  // namespace gperun

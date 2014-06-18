@@ -113,6 +113,7 @@ class KafkaConnector {
         ready_queue.push_back(
             boost::tuple<std::string, std::string, std::string>(
                 msgs[i]->key, msgs[i]->value, msgs[i]->timestamp_));
+        GPROFILER(msgs[i]->key) << "GPE|kafka|GetRequestMsg|" << msgs[i]->value.length() << "\n";
         delete msgs[i];
       }
       GVLOG(Verbose_UDFLow) << "read " << ready_queue.size()

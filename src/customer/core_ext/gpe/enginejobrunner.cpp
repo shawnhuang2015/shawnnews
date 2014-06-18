@@ -132,7 +132,9 @@ namespace gperun {
           return 0;
         }
       }
+      GPROFILER(request->requestid_) << "GPE|Run|sendRequest2IDS|" << "\n";
       idconverter_->sendRequest2IDS(request->requestid_, idservice_vids);
+      GPROFILER(request->requestid_) << "GPE|Run|sendRequest2IDS|" << idservice_vids.size() << "\n";
     } catch(const boost::exception& bex) {
       request->message_ = "error_: unexpected error " +  boost::diagnostic_information(bex);
       request->error_ = true;
