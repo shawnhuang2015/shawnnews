@@ -64,7 +64,7 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
   /// run one request. POC modification: Needed.
   unsigned int Run(EngineServiceRequest* request,
                    gse2::IdConverter::RequestIdMaps* maps,
-                   gutil::JSONStringWriter& jsonwriter, bool& error, std::string& message);
+                   gutil::JSONStringWriter& jsonwriter);
 
   /// POC modification: Not Likely.
   void ShowOneVertexInfo(EngineServiceRequest* request, gutil::JSONStringWriter& jsonwriter,

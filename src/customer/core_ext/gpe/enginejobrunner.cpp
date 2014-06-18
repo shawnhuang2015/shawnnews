@@ -47,11 +47,9 @@ namespace gperun {
     jsonwriter.WriteName("results");
     jsonwriter.WriteStartObject();
     std::ostringstream debugmsg;
-    std::string message = "";
-    bool error = false;
     if (!GPEConfig::CheckTimeOut(instance->requestid_)) {
-      message = "error_: request timed out";
-      error = true;
+      instance->message_ = "error_: request timed out";
+      instance->error_ = true;
     } else {
       bool debugmode = false;
       if (boost::algorithm::ends_with(instance->requestid_, ":D"))
@@ -69,7 +67,7 @@ namespace gperun {
       }
       gse2::IdConverter::RequestIdMaps* maps = idconverter_->GetIdMaps(
                                                  instance->requestid_);
-      unsigned int iterations = Run(instance, maps, jsonwriter, error, message);
+      unsigned int iterations = Run(instance, maps, jsonwriter);
       delete maps;
       if (debugmode) {
         debugmsg << "{\nRequest end at " << gutil::GTimer::now_str() << " with "
@@ -80,8 +78,8 @@ namespace gperun {
       }
     }
     jsonwriter.WriteEndObject(); // end of result
-    jsonwriter.WriteName("error").WriteBool(error);
-    jsonwriter.WriteName("message").WriteString(message);
+    jsonwriter.WriteName("error").WriteBool(instance->error_);
+    jsonwriter.WriteName("message").WriteString(instance->message_);
     std::string debugstrmsg = debugmsg.str();
     jsonwriter.WriteName("debug").WriteString(debugstrmsg);
     jsonwriter.WriteEndObject(); // end of everything
@@ -92,14 +90,14 @@ namespace gperun {
 
   unsigned int EngineJobRunner::Run(EngineServiceRequest* request,
                                     gse2::IdConverter::RequestIdMaps* maps,
-                                    gutil::JSONStringWriter& jsonwriter, bool& error, std::string& message) {
+                                    gutil::JSONStringWriter& jsonwriter) {
     size_t num_iterations = 0;
     try {
       // check id map first
       if (maps == NULL) {
-        message = "error_: Request  " + request->requestid_
+        request->message_ = "error_: Request  " + request->requestid_
                           + " failed to retrieve id map.";
-        error = true;
+        request->error_ = true;
         return 0;
       }
       // parse request json string
@@ -116,7 +114,7 @@ namespace gperun {
       std::vector<VertexLocalId_t> idservice_vids;
       if (argv[0] == "debug_neighbors") {
         VertexLocalId_t vid = 0;
-        if (!Util::UIdtoVId(topology_, maps, message, error, argv[1], vid))
+        if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid))
           return 0;
         ShowOneVertexInfo(request, jsonwriter, vid, idservice_vids);
       } else {
@@ -130,24 +128,24 @@ namespace gperun {
                                                       num_iterations,
                                                       GPEConfig::customizedsetttings_);
         if (!succeed) {
-          message = "error_: unknown function error "
+          request->message_ = "error_: unknown function error "
                             + request->requeststr_;
-          error = true;
+          request->error_ = true;
           return 0;
         }
       }
       idconverter_->sendRequest2IDS(request->requestid_, idservice_vids);
     } catch(const boost::exception& bex) {
-      message = "error_: unexpected error " +  boost::diagnostic_information(bex);
-      error = true;
+      request->message_ = "error_: unexpected error " +  boost::diagnostic_information(bex);
+      request->error_ = true;
       return 0;
     } catch(const std::exception& ex) {
-      message= "error_: unexpected error " + std::string(ex.what());
-      error = true;
+      request->message_ = "error_: unexpected error " + std::string(ex.what());
+      request->error_ = true;
       return 0;
     } catch(...) {
-      message = "error_: unexpected error ";
-      error = true;
+      request->message_ = "error_: unexpected error ";
+      request->error_ = true;
       return 0;
     }
     return num_iterations;
