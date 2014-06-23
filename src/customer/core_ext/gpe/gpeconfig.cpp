@@ -41,9 +41,9 @@ namespace gperun {
       return true;
     uint64_t ms = gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
     uint64_t request_ms = boost::lexical_cast<uint64_t>(strs[2]);
-    std::cout << "gpe time: " << ms << "\n";
+    std::cout << " gpe time: " << ms << "\n";
     std::cout << "rest time: " << request_ms << "\n";
-    if (strs[1] == "g") {
+    if (strs[1] == "g" || strs[1] == "a" ) {
       if (ms
           > (request_ms + (uint64_t) (get_request_timeoutsec_ * 1000))) {
         std::cout << ms << "," << request_ms << ","
