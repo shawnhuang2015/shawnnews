@@ -32,6 +32,11 @@ safeRunCommand "${ER_HOME}/gitenv/add_repo_info.sh"
 safeRunCommand "${ER_HOME}/tools/saferun.sh $@ config/pkg.config"
 cd ${CWD}
 
+# if has any option, just return
+if [ "$#" -ne 0 ]; then
+    exit 0
+fi
+
 # 2. package to a tar ball
 tar cvfz ${GSQL_BRANCH}.tar.gz deploy_pkg
 echo "${GSQL_BRANCH}.tar.gz is ready"
