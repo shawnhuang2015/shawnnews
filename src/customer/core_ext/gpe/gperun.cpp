@@ -15,7 +15,7 @@
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
 #include <gutil/gstring.hpp>
-
+#include "../../core_impl/gse_impl/post_impl.hpp"
 
 void RunDegreeHistogram(int argc, char** argv) {
   std::string engineConfigFile = std::string(argv[2]);
@@ -38,7 +38,9 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
   gse2::IdConverter idconverter(
       argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),
       gperun::GPEConfig::get_request_timeoutsec_);
+  UDIMPL::UD_PostJson2Delta postProcessor(&idconverter);   
   gse2::PostListener postListener(&idconverter);
+  postListener.setPostProcessor(&postProcessor);
   gperun::EngineJobRunner *runner = new gperun::EngineJobRunner(
       engineConfigFile, gperun::GPEConfig::partitionpath_,
       gperun::GPEConfig::maxjobs_, &idconverter, &postListener);
