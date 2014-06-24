@@ -79,8 +79,7 @@ namespace gperun {
       }
     }
     if(instance->udfstatus_ != NULL) {
-      if (!instance->udfstatus_->Finished())
-        instance->udfstatus_->SetFinished();
+      instance->udfstatus_->SetFinished();
       if(instance->error_){
         instance->udfstatus_->SetError();
         instance->udfstatus_->AddMessage(instance->message_);

@@ -121,8 +121,11 @@ namespace gperun {
     if (*(log_root_path.rbegin()) != '/')
       log_root_path = log_root_path + "/";
     log_path_ = log_root_path + "gperun";
+    std::string get_request_queue_name = "get_request_queue";
+    if(udfmode_.size() > 0)
+      get_request_queue_name = udfmode_ + "_" + get_request_queue_name;
     get_request_queue_ =
-        root["QUEUE"]["get_request_queue"]["name"].as<std::string>("");
+        root["QUEUE"][get_request_queue_name]["name"].as<std::string>("");
     prefetch_request_queue_ = root["QUEUE"]["prefetch_request_queue"]["name"]
                               .as<std::string>("");
     response_queue_ = root["QUEUE"]["response_queue"]["name"].as<std::string>("");
