@@ -14,6 +14,7 @@
 #include <gpelib4/enginedriver/enginedriverservice.hpp>
 #include <post_service/post_listener.hpp>
 #include <ext/idconverter.hpp>
+#include "gpeconfig.hpp"
 
 namespace gperun {
 
@@ -28,8 +29,8 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
                   gse2::IdConverter* idconverter,
                   gse2::PostListener* postListener)
       : gpelib4::EngineDriverService(enginecfgfile, topologypth,
-                                     max_instances, true, true, true,
-                                     NULL),
+                                     max_instances,  GPEConfig::udfmode_ != "offline",
+                                     true, true, NULL),
         idconverter_(idconverter),
         postListener_(postListener) {
     globalinstance_->memserver_->SetServiceMode(true);

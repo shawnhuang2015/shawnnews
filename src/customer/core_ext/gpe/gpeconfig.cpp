@@ -11,6 +11,7 @@
 #include "gpeconfig.hpp"
 
 namespace gperun {
+  std::string GPEConfig::udfmode_ = "";
   std::string GPEConfig::hostname_ = "";
   std::string GPEConfig::ipaddress_ = "";
   std::string GPEConfig::port_ = "";
@@ -97,6 +98,7 @@ namespace gperun {
   YAML::Node GPEConfig::LoadConfig(std::string engineConfigFile) {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
+    udfmode_ = root["INSTANCE"]["udfmode"].as<std::string>("");
     hostname_ = root["INSTANCE"]["name"].as<std::string>("");
     ipaddress_ = root["INSTANCE"]["ip"].as<std::string>("");
     port_ = root["INSTANCE"]["port"].as<std::string>("");
@@ -142,7 +144,8 @@ namespace gperun {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
 
     }
-    std::cout << "hostname: " << hostname_ << "\n" << "ipaddress: "
+    std::cout << "udfmode: " << udfmode_ << "\n"
+              << "hostname: " << hostname_ << "\n" << "ipaddress: "
               << ipaddress_ << "\n" << "port: " << port_ << "\n"
               << "log directory: " << log_path_ << "\n"
               << "client_prefix: " << client_prefix_ << "\n"

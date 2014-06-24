@@ -57,6 +57,8 @@ class EngineJobListener : public gpelib4::JobListener {
   std::vector<boost::tuple<std::string, std::string, std::string> > ready_queue_;
   /// host name
   std::string hostname_;
+
+  bool HandleOffLineRequest(std::string& requestid, std::string& request);
 };
 
 }  // namespace gperun

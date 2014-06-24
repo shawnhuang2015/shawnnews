@@ -27,6 +27,7 @@ namespace gperun {
  */
 struct GPEConfig {
     typedef GSQLMap_t<std::string, std::string> Maps_t;
+    static std::string udfmode_;
     static std::string hostname_;
     static std::string ipaddress_;
     static std::string port_;

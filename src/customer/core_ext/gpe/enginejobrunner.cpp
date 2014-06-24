@@ -12,7 +12,6 @@
 #include <gutil/gsystem.hpp>
 #include <gapi4/graphapi.hpp>
 #include <json/json.h>
-#include "gpeconfig.hpp"
 #include "util.hpp"
 #include "../../core_impl/gpe_impl/impl.hpp"
 
@@ -42,6 +41,7 @@ namespace gperun {
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
     gutil::GTimer timer;
     instance->outputstream_ = new std::ostringstream();
+    instance->udfstatus_ = GetUdfStatus();
     gutil::JSONStringWriter jsonwriter(*instance->outputstream_);
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("results");
@@ -64,16 +64,26 @@ namespace gperun {
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
       }
-      gse2::IdConverter::RequestIdMaps* maps = idconverter_->GetIdMaps(
-                                                 instance->requestid_);
+      gse2::IdConverter::RequestIdMaps* maps = NULL;
+      if(instance->udfstatus_ == NULL)
+        maps = idconverter_->GetIdMaps(instance->requestid_);
       unsigned int iterations = Run(instance, maps, jsonwriter);
-      delete maps;
+      if(maps != NULL)
+        delete maps;
       if (debugmode) {
         debugmsg << "{\nRequest end at " << gutil::GTimer::now_str() << " with "
                     << iterations << " iterations in "
                     << timer.GetTotalMilliSeconds() << " ms\n";
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
+      }
+    }
+    if(instance->udfstatus_ != NULL) {
+      if (!instance->udfstatus_->Finished())
+        instance->udfstatus_->SetFinished();
+      if(instance->error_){
+        instance->udfstatus_->SetError();
+        instance->udfstatus_->AddMessage(instance->message_);
       }
     }
     jsonwriter.WriteName("error").WriteBool(instance->error_);
@@ -92,7 +102,7 @@ namespace gperun {
     size_t num_iterations = 0;
     try {
       // check id map first
-      if (maps == NULL) {
+      if (request->udfstatus_ == NULL && maps == NULL) {
         request->message_ = "error_: Request  " + request->requestid_
                           + " failed to retrieve id map.";
         request->error_ = true;
@@ -103,12 +113,17 @@ namespace gperun {
       Json::Reader jsonReader;
       jsonReader.parse(request->requeststr_, requestRoot);
       std::vector<std::string> argv;
-
       Json::Value jsArgv = requestRoot["argv"];
       for (uint32_t i = 0; i < jsArgv.size(); ++i) {
         argv.push_back(jsArgv[i].asString());
       }
       Json::Value jsoptions = requestRoot["options"];
+      if(argv.size() == 0){
+        request->message_ = "error_: Request  " + request->requestid_
+                            + " does not contain argv.";
+        request->error_ = true;
+        return 0;
+      }
       std::vector<VertexLocalId_t> idservice_vids;
       if (argv[0] == "debug_neighbors") {
         VertexLocalId_t vid = 0;
