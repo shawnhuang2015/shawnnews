@@ -81,8 +81,8 @@ class KafkaConnector {
       prefetchrequest_reader_->stop();
   }
 
-  void SetResponse(std::string& requestid, std::string& response) {
-    writer_.put(requestid, response);
+  void SetResponse(std::string& requestid, char* response, size_t response_size) {
+    writer_.put(const_cast<char *>(requestid.c_str()), response, requestid.size(), response_size);
   }
 
   void InitReader() {

@@ -40,9 +40,9 @@ namespace gperun {
 
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
     gutil::GTimer timer;
-    instance->outputstream_ = new std::ostringstream();
     instance->udfstatus_ = GetUdfStatus();
-    gutil::JSONStringWriter jsonwriter(*instance->outputstream_);
+    instance->writer_ = new gutil::JSONWriter();
+    gutil::JSONWriter& jsonwriter = *instance->writer_;
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("results");
     std::ostringstream debugmsg;
@@ -97,7 +97,7 @@ namespace gperun {
 
   unsigned int EngineJobRunner::Run(EngineServiceRequest* request,
                                     gse2::IdConverter::RequestIdMaps* maps,
-                                    gutil::JSONStringWriter& jsonwriter) {
+                                    gutil::JSONWriter& jsonwriter) {
     size_t num_iterations = 0;
     try {
       // check id map first
@@ -166,7 +166,7 @@ namespace gperun {
   }
 
   void EngineJobRunner::ShowOneVertexInfo(EngineServiceRequest* request,
-                                          gutil::JSONStringWriter& jsonwriter,
+                                          gutil::JSONWriter& jsonwriter,
                                           VertexLocalId_t vid,
                                           std::vector<VertexLocalId_t>& idservice_vids) {
     gapi4::GraphAPI api(topology_);

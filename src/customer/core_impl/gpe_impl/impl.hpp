@@ -51,7 +51,7 @@ namespace UDIMPL {
                              std::vector<std::string>& request_argv,
                              Json::Value& jsoptions,
                              std::vector<VertexLocalId_t>& idservice_vids,
-                             gutil::JSONStringWriter& response_root,
+                             gutil::JSONWriter& response_writer,
                              size_t &num_interations,
                              Maps_t& customizedsetttings){
       return false;
