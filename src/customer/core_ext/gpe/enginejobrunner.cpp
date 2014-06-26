@@ -174,8 +174,7 @@ namespace gperun {
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("source");
     jsonwriter.WriteStartObject();
-    std::string markvid = Util::MarkVId(vid);
-    jsonwriter.WriteName("vid").WriteString(markvid);
+    jsonwriter.WriteName("vid").WriteMarkVId(vid);
     idservice_vids.push_back(vid);
     jsonwriter.WriteName("vertexattr");
     v1->WriteToJson(jsonwriter);
@@ -189,8 +188,7 @@ namespace gperun {
       VertexLocalId_t toid = edgeresults.GetCurrentToVId();
       topology4::EdgeAttribute* edgeattr = edgeresults
                                            .GetCurrentEdgeAttribute();
-      markvid = Util::MarkVId(toid);
-      jsonwriter.WriteName("to_vid").WriteString(markvid);
+      jsonwriter.WriteName("to_vid").WriteMarkVId(toid);
       idservice_vids.push_back(toid);
       topology4::VertexAttribute* v2 = api.GetOneVertex(toid);
       jsonwriter.WriteName("to_vertexattr");
