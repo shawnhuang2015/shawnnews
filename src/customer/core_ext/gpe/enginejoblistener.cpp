@@ -172,7 +172,7 @@ void EngineJobListener::SetResponse(std::string& requestid, char* response, size
   GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_enter|" << "\n";
   Lock_t lock(mutex_);
   connector_->SetResponse(requestid, response, response_size);
-  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response_size << "\n";
+  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response_size << std::endl;
 }
 
 }  // namespace gperun
