@@ -150,7 +150,7 @@ class UD_PostJson2Delta : public gse2::PostJson2Delta {
     return response_root.toStyledString();
   }
 
-  std::string process(std::string requestid, std::string requestStr) {
+  std::string process(std::string requestid, std::string requestStr, uint64_t postqueue_pos) {
     Lock_t lock(mutex_);
     Json::Value vertex_list_node;
     Json::Value edge_list_node;
@@ -165,6 +165,7 @@ class UD_PostJson2Delta : public gse2::PostJson2Delta {
         }
       }
     }
+    postqueue_pos_ = postqueue_pos;
     return s5_genReturn();
   }
 

@@ -35,11 +35,12 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
   UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root,
                                             gperun::GPEConfig::customizedsetttings_);
   GSQLLogger logger(argV_0, gperun::GPEConfig::log_path_);
+  topology4::TopologyMeta topologymeta(gperun::GPEConfig::partitionpath_);
   gse2::IdConverter idconverter(
       argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),
-      gperun::GPEConfig::get_request_timeoutsec_);
-  UDIMPL::UD_PostJson2Delta postProcessor(&idconverter);   
-  gse2::PostListener postListener(&idconverter);
+      gperun::GPEConfig::get_request_timeoutsec_, topologymeta.idresq_pos_);
+  UDIMPL::UD_PostJson2Delta postProcessor(&idconverter);
+  gse2::PostListener postListener(&idconverter, topologymeta.postq_pos_);
   postListener.setPostProcessor(&postProcessor);
   gperun::EngineJobRunner *runner = new gperun::EngineJobRunner(
       engineConfigFile, gperun::GPEConfig::partitionpath_,

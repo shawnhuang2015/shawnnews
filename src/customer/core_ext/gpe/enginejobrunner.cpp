@@ -24,12 +24,17 @@ namespace gperun {
             postListener_->enumMappers()->GetEnumeratorMappings());
   }
 
-  void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr) {
-    // POC modification: Not Likely.
-    if (postListener_ == NULL)
+  void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr, bool retrievepos) {
+   if (postListener_ == NULL)
       return;
     uint64_t deltasize = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize);
+    uint64_t postq_pos = 0;
+    uint64_t idresq_pos = 0;
+    char* deltadata = postListener_->getAllDelta(deltasize, retrievepos, postq_pos, idresq_pos);
+    if(retrievepos) {
+      topology()->GetTopologyMeta()->postq_pos_ = postq_pos;
+      topology()->GetTopologyMeta()->idresq_pos_ = idresq_pos;
+    }
     if (deltadata == NULL || deltasize == 0)
       return;
     topology_->GetDeltaRecords()->ReadDeltas(

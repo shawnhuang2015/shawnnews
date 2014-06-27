@@ -44,7 +44,7 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
 
   /// request topology pull delta. Following requests will following
   /// with topology with most recent delta.
-  void Topology_PullDelta(std::stringstream* debugstr = NULL);
+  void Topology_PullDelta(std::stringstream* debugstr = NULL, bool updateversion=false);
 
   /// subclass provide implementation to translate request to actual udf object
   std::string RunInstance(EngineServiceRequest* instance);
