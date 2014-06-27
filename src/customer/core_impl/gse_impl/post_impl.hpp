@@ -150,25 +150,6 @@ class UD_PostJson2Delta : public gse2::PostJson2Delta {
     return response_root.toStyledString();
   }
 
-  std::string process(std::string requestid, std::string requestStr, uint64_t postqueue_pos) {
-    Lock_t lock(mutex_);
-    Json::Value vertex_list_node;
-    Json::Value edge_list_node;
-    if (s0_init(requestid)) {
-      if (s1_processNewSegs()) {
-        if (s2_parseJSON(requestStr, vertex_list_node, edge_list_node)) {
-          if (s3_processVertices(vertex_list_node)) {
-            if (validateNodes()) {
-              s4_processEdges(edge_list_node);
-            }
-          }
-        }
-      }
-    }
-    postqueue_pos_ = postqueue_pos;
-    return s5_genReturn();
-  }
-
  private:
   /* Once processed all vertices in nodelist, the idmap for this request
    * shouldn't contain any new node. Otherwise, we have the case of new node
