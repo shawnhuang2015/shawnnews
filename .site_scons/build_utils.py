@@ -328,6 +328,7 @@ def SetupCommonBuildEnv(common_env, verbose):
                              #/src/third_party/zlib
                              #/src/third_party/zookeeper_c/include/zookeeper
                              #/src/third_party/zeromq/include
+                             #/src/customer
                              #/src/core
                              #/src/core/gse
                              #/src/core/gpe
