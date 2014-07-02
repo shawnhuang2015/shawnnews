@@ -18,6 +18,7 @@ namespace gperun {
   std::string GPEConfig::client_prefix_ = "";
   std::string GPEConfig::partitionpath_ = "";
   size_t GPEConfig::maxjobs_ = 0;
+  size_t GPEConfig::num_post_threads_ = 0;
   float GPEConfig::get_request_timeoutsec_ = 0;
   float GPEConfig::prefetch_request_timeoutsec_ = 0;
   size_t GPEConfig::prefetch_request_limit_ = 0;
@@ -108,6 +109,9 @@ namespace gperun {
         root["INSTANCE"]["graph_partition_snapshot"]["snapshot_path"]
         .as<std::string>("");
     maxjobs_ = root["INSTANCE"]["num_max_running_instances"].as<size_t>(4);
+    num_post_threads_ = root["INSTANCE"]["num_post_threads"].as<size_t>(3);
+    GASSERT(maxjobs_ > 0, maxjobs_);
+    GASSERT(num_post_threads_ > 0, num_post_threads_);
     get_request_timeoutsec_ = root["INSTANCE"]["get_request_timeoutsec"]
                               .as<float>(10);
     prefetch_request_timeoutsec_ =
@@ -153,7 +157,8 @@ namespace gperun {
               << "log directory: " << log_path_ << "\n"
               << "client_prefix: " << client_prefix_ << "\n"
               << "partitionpath: " << partitionpath_ << "\n" << "maxjobs: "
-              << maxjobs_ << "\n" << "get_request_timeoutsec: "
+              << maxjobs_ << "\n" << "num_post_threads: "
+              << num_post_threads_<< "\n" << "get_request_timeoutsec: "
               << get_request_timeoutsec_ << "\n"
               << "prefetch_request_timeoutsec: "
               << prefetch_request_timeoutsec_ << "\n"
