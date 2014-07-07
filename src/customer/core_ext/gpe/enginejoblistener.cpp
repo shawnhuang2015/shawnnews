@@ -142,7 +142,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       bool debug = false;
       for (size_t i = 0; i < ready_queue_.size(); ++i) {
         if (boost::algorithm::ends_with(ready_queue_[i].get<1>(),
-                                        "true")) {
+                                        ":D")) {
           debug = true;
           break;
         }

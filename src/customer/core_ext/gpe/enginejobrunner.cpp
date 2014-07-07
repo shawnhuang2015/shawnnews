@@ -58,8 +58,6 @@ namespace gperun {
       bool debugmode = false;
       if (boost::algorithm::ends_with(instance->requestid_, ":D"))
         debugmode = true;
-      else if (boost::algorithm::ends_with(instance->requestid_, ":N"))
-        debugmode = false;
       if (debugmode) {
         debugmsg << this->joblistener_->GetDebugString();
         debugmsg << "Service running " << this->maxthreads_  << " instances \n";
