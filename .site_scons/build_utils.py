@@ -138,7 +138,7 @@ def build_thirdparty(onePackage, third_party_env):
     # check if shell file changes.
     newshellSize = fileSizeChange(shellSizeFile,
                                 "gsql_" + onePackage[0]+".sh")
-    if (needBuild + newshellSize > 0):
+    if (needBuild + newshellSize + newpkgSize > 0):
         needBuild = True
     if (needBuild):
         print "compiling "+onePackage[0]+" ..."
