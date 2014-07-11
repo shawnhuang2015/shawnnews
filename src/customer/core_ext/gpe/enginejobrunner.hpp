@@ -33,7 +33,7 @@ class EngineJobRunner : public gpelib4::EngineDriverService {
                                      true, true, NULL),
         idconverter_(idconverter),
         postListener_(postListener) {
-    globalinstance_->memserver_->SetServiceMode(true);
+    globalinstance_->memserver_->SetServiceMode(GPEConfig::udfmode_ != "offline");
     globalinstance_->memallocator_->Set_memlimitMB(1000000000);
     Topology_Prepare();
   }
