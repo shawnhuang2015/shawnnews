@@ -3,16 +3,20 @@ $MGNT_HOME/scripts/load_data , $MGNT_HOME/sanity_check/vert.csv $MGNT_HOME/sanit
 
 sleep 3
 
-rm -rf sanity_out.txt
+outfile=$MGNT_HOME/sanity_check/sanity_out.txt
+checkfile=$MGNT_HOME/sanity_check/sanity_check.txt
+
+rm -rf $outfile
 
 #add a valid ID to this command to get started!
-#curl -X GET 'http://localhost:9000/debug_neighbors/<VALID_ID>' >> sanity_out.txt
+#curl -X GET 'http://localhost:9000/debug_neighbors/<VALID_ID>' >> $outfile
 
-#printf "\n" >>sanity_out.txt
+#printf "\n" >>$outfile
 
-# TODO: add more curl commands here for each of your tests.  
+# TODO: add more curl commands here for each of your tests.
 
-if diff sanity_out.txt sanity_check.txt >/dev/null ; then
+
+if diff $outfile $checkfile >/dev/null ; then
     echo "Test Passed!"
 else
     echo "Test Failed."
