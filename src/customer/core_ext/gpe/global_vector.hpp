@@ -16,7 +16,7 @@
 
 using namespace gpelib4;
 
-namespace gperun {
+namespace UDIMPL {
 
 /***
      * VectorVariable: define a gloable vector variable for storing all

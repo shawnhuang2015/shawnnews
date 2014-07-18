@@ -23,6 +23,7 @@
 #include "../../core_ext/gpe/global_vector.hpp"
 #include "../../core_ext/gpe/enginejobrunner_zmq.hpp"
 #include "../../core_ext/gpe/enginejobrunner.hpp"
+#include "kneighborsubgraph.hpp"
 
 
 namespace gperun {
@@ -54,6 +55,13 @@ namespace UDIMPL {
                              gutil::JSONWriter& response_writer,
                              size_t &num_interations,
                              Maps_t& customizedsetttings){
+      if(request_argv[0] == "kneighborhood"){
+        RunUDF_KNeighborhood(request, service, maps, jsoptions, idservice_vids,response_writer,request_argv[1]);
+        return true;
+      } else if (request_argv[0] == "shortestpath"){
+        RunUDF_ShortestPath(request, service, maps, jsoptions, idservice_vids, response_writer);
+        return true;
+      }
       return false;
     }
 
@@ -68,6 +76,41 @@ namespace UDIMPL {
                              size_t &num_interations,
                              Maps_t& customizedsetttings){
       return false;
+    }
+
+    static void RunUDF_KNeighborhood(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                                  gperun::EngineJobRunner* service,
+                                  gse2::IdConverter::RequestIdMaps* maps,
+                                  Json::Value& jsoptions,
+                                  std::vector<VertexLocalId_t>& idservice_vids,
+                                  gutil::JSONWriter& writer,
+                                  std::string start_node){
+      int depth = atoi(jsoptions["depth"][0].asString().c_str());
+      bool need_edges = jsoptions["edges"][0].asBool();
+      typedef KNeighborSubgraph UDF_t;
+
+      VertexLocalId_t local_start;
+      if (!gperun::Util::UIdtoVId(service->topology(), maps,
+                                  request->message_, request->error_,
+                                  start_node,local_start)){
+        return;
+      }
+
+      UDF_t udf(depth, local_start, need_edges, &writer);
+      service->RunUDF<UDF_t>(request,&udf);
+      request->message_ = "udf complete";
+      idservice_vids = udf.getVidsToTranslate();
+
+
+    }
+
+    static void RunUDF_ShortestPath(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                                  gperun::EngineJobRunner* service,
+                                  gse2::IdConverter::RequestIdMaps* maps,
+                                  Json::Value& jsoptions,
+                                  std::vector<VertexLocalId_t>& idservice_vids,
+                                  gutil::JSONWriter& writer){
+
     }
 
     /// customized implementation to load user defined setting variables.
