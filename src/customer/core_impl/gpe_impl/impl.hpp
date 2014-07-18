@@ -98,9 +98,10 @@ namespace UDIMPL {
 
       UDF_t udf(depth, local_start, need_edges, &writer);
       service->RunUDF<UDF_t>(request,&udf);
-      request->message_ = "udf complete";
+
       idservice_vids = udf.getVidsToTranslate();
 
+      std::vector<EdgePair> edges = udf.getEdgesToReturn();
 
     }
 
