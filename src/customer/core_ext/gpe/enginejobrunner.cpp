@@ -88,8 +88,6 @@ namespace gperun {
         instance->udfstatus_->AddMessage(instance->message_);
       }
     }
-    std::string comma = ",";
-    jsonwriter.WriteJSONContent(comma);
     jsonwriter.WriteName("error").WriteBool(instance->error_);
     jsonwriter.WriteName("message").WriteString(instance->message_);
     std::string debugstrmsg = debugmsg.str();

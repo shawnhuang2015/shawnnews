@@ -95,6 +95,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    */
   void GenEdgeAttributeRecord() {
 #if 0
+    // this is the alipay example. this data is also combined in loader_combiner.hpp
     char * etype_ptr;
     size_t etype_len;
     /* TA,400756276684 */
@@ -109,12 +110,37 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
 #endif
   }
 
-  /**
-   * Entry point to load the edge source
-   * @param[in] DataSource: contains data source from command line
-   * @return Nothing
-   */
-  void LoadEdgeData(std::vector<std::string> &DataSource) {
+  void LoadWeightedIntEdges(std::vector<std::string> &DataSource){
+    // DataSource[1] contains the edge source file
+    fileReader_ = new gutil::FileLineReader(DataSource[1]);
+    char * uid1_ptr;
+    size_t uid1_len;
+    char * uid2_ptr;
+    size_t uid2_len;
+    bool is_existingVertexID = false;
+    edgeWriter_.start_counter();
+    while (fileReader_->MoveNextLine()) {
+      /* 1,2,6
+       * 2,1,5
+       */
+      fileReader_->NextString(uid1_ptr, uid1_len, separator_);
+      fileReader_->NextString(uid2_ptr, uid2_len, separator_);
+      // write the weight
+      uint64_t ulong_atttr;
+      fileReader_->NextUnsignedLong(ulong_atttr,separator_);
+      edgeWriter_.write(ulong_attr);
+      uid1_ptr[uid1_len] = '\0';
+      uid2_ptr[uid2_len] = '\0';
+      VERTEXID_T from_vid = upsertNow(uid1_ptr, 0, is_existingVertexID);
+      VERTEXID_T to_vid = upsertNow(uid2_ptr, 0, is_existingVertexID);
+      edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0), 0, 0);
+    }
+    fileReader_->CloseFile();
+    delete fileReader_;
+    edgeWriter_.stop_counter();
+  }
+
+  void LoadPlainEdges(std::vector<std::string> &DataSource){
     // DataSource[1] contains the edge source file
     fileReader_ = new gutil::FileLineReader(DataSource[1]);
     char * uid1_ptr;
@@ -138,9 +164,10 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     fileReader_->CloseFile();
     delete fileReader_;
     edgeWriter_.stop_counter();
+  }
 
-#if 0
-    // DataSource[1] contains the edge source file
+  void LoadPlainEdgesWithDefaultVertex(std::vector<std::string> &DataSource){
+      // DataSource[1] contains the edge source file
     fileReader_ = new gutil::FileLineReader(DataSource[1]);
     char * uid1_ptr;
     char * uid2_ptr;
@@ -150,6 +177,9 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     bool is_existingVertexID = false;
 
     /* In case we want to give some default value of a new vertex */
+    // MODIFICATION NEEDED HERE
+    // this writes all 0's to the vertex attribute space.
+    // TODO (adam): work out a way to explain what's best to do here.
     static int default_verextAttr_length = 10;
     char defaultV_attr[default_verextAttr_length];
     memset(defaultV_attr, 0, default_verextAttr_length);
@@ -179,7 +209,17 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     delete fileReader_;
 
     edgeWriter_.stop_counter();
-#endif
+  }
+
+  /**
+   * Entry point to load the edge source
+   * @param[in] DataSource: contains data source from command line
+   * @return Nothing
+   */
+  void LoadEdgeData(std::vector<std::string> &DataSource) {
+
+
+
   }
 
 };

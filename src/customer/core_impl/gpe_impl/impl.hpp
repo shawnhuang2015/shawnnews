@@ -58,9 +58,6 @@ namespace UDIMPL {
       if(request_argv[0] == "kneighborhood"){
         RunUDF_KNeighborhood(request, service, maps, jsoptions, idservice_vids,response_writer,request_argv[1]);
         return true;
-      } else if (request_argv[0] == "shortestpath"){
-        RunUDF_ShortestPath(request, service, maps, jsoptions, idservice_vids, response_writer);
-        return true;
       }
       return false;
     }
@@ -90,27 +87,21 @@ namespace UDIMPL {
       typedef KNeighborSubgraph UDF_t;
 
       VertexLocalId_t local_start;
+
       if (!gperun::Util::UIdtoVId(service->topology(), maps,
                                   request->message_, request->error_,
                                   start_node,local_start)){
         return;
       }
 
+      if(need_edges){
+        std::cout<<"edges confirmed"<<std::endl;
+      }
       UDF_t udf(depth, local_start, need_edges, &writer);
       service->RunUDF<UDF_t>(request,&udf);
 
       idservice_vids = udf.getVidsToTranslate();
 
-      std::vector<EdgePair> edges = udf.getEdgesToReturn();
-
-    }
-
-    static void RunUDF_ShortestPath(gpelib4::EngineDriverService::EngineServiceRequest* request,
-                                  gperun::EngineJobRunner* service,
-                                  gse2::IdConverter::RequestIdMaps* maps,
-                                  Json::Value& jsoptions,
-                                  std::vector<VertexLocalId_t>& idservice_vids,
-                                  gutil::JSONWriter& writer){
 
     }
 
