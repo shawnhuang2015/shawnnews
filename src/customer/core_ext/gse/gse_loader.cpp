@@ -92,8 +92,9 @@ int main(int argc, char ** argv) {
       std::cout << " Separator : \"" << separator << "\"" << std::endl;
       single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
       std::vector<std::string> inputFiles;
-      inputFiles.push_back(config_info[4]);
-      inputFiles.push_back(config_info[5]);
+      for (uint32_t i = 4; i < config_info.size(); i++) {
+        inputFiles.push_back(config_info[i]);
+      }
       single_load_worker->LoadVertexData(inputFiles);
       single_load_worker->LoadEdgeData(inputFiles);
       single_load_worker->commitLoading();
