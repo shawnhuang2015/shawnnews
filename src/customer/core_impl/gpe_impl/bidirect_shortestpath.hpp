@@ -1,7 +1,7 @@
 /******************************************************************************
  * Copyright (c) 2014, GraphSQL Inc.
  * All rights reserved.
- * Project:
+ * Project: Neo4J Benchmarking
  *
  * Created on: 6/4/2014
  * Author: Arne Leitert
@@ -26,6 +26,8 @@ namespace gperun {
    * Defines the type for edge weigts and distances.
    */
   typedef unsigned int WEIGHT;
+
+  static const WEIGHT MAX_WEIGHT = std::numeric_limits<WEIGHT>::max();
 
   /**
    * Represents the message and vertex value. It stores the information if
@@ -141,11 +143,22 @@ namespace gperun {
 
         return *this;
       }
+
+      /**
+       * Aggregator.
+       */
+      IntersectionInfo& operator=(const int other) {
+
+        GASSERT(other == 0, "Assigned integer is unequal 0.");
+
+        this->distance = MAX_WEIGHT;
+        this->vertexId = -1;
+
+        return *this;
+      }
   };
 
   /**************Enumerations and Constants************/
-
-  static const WEIGHT MAX_WEIGHT = std::numeric_limits<WEIGHT>::max();
 
   /**
    * Global variabels.
@@ -277,12 +290,12 @@ namespace gperun {
         WEIGHT intDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
 
         // s-Tree
-        int newSDist = srcValue.sDist + edgeWeight;
+        WEIGHT newSDist = srcValue.sDist + edgeWeight;
         if (srcValue.sPrev != tarId && tarValue.sDist > newSDist && newSDist <= intDist)
           context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
 
         // t-Tree
-        int newTDist = srcValue.tDist + edgeWeight;
+        WEIGHT newTDist = srcValue.tDist + edgeWeight;
         if (srcValue.tPrev != tarId && tarValue.tDist > newTDist && newTDist <= intDist)
           context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
 

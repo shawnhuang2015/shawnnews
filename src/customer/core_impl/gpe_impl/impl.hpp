@@ -24,6 +24,7 @@
 #include "../../core_ext/gpe/enginejobrunner_zmq.hpp"
 #include "../../core_ext/gpe/enginejobrunner.hpp"
 #include "kneighborsubgraph.hpp"
+#include "bidirect_shortestpath.hpp"
 
 
 namespace gperun {
