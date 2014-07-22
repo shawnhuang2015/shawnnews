@@ -126,8 +126,8 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
       fileReader_->NextString(uid1_ptr, uid1_len, separator_);
       fileReader_->NextString(uid2_ptr, uid2_len, separator_);
       // write the weight
-      uint64_t ulong_atttr;
-      fileReader_->NextUnsignedLong(ulong_atttr,separator_);
+      uint64_t ulong_attr;
+      fileReader_->NextUnsignedLong(ulong_attr,separator_);
       edgeWriter_.write(ulong_attr);
       uid1_ptr[uid1_len] = '\0';
       uid2_ptr[uid2_len] = '\0';
