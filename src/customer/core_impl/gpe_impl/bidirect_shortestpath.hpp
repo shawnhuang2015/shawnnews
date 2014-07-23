@@ -3,7 +3,7 @@
  * All rights reserved.
  * Project: Neo4J Benchmarking
  *
- * Created on: 6/4/2014
+ * Created on: 7/22/2014
  * Author: Arne Leitert
  * Description: This UDF implements a bidirectional single pair shortest path
  *              algorithm. The algorithm is based on the Dijkstra algorithm.
@@ -99,6 +99,7 @@ namespace gperun {
       }
   };
 
+
   /**
    * Represents the best known intersection of both search trees. It stores
    * the vertex id and the total distance of the pass throw this vertex.
@@ -132,30 +133,45 @@ namespace gperun {
       }
 
       /**
-       * Aggregator.
+       * Comparer for aggregation.
        */
-      IntersectionInfo& operator+=(const IntersectionInfo& other) {
-
-        if (other.distance < this->distance) {
-          this->distance = other.distance;
-          this->vertexId = other.vertexId;
-        }
-
-        return *this;
+      bool operator<(const IntersectionInfo& other) {
+        return this->distance < other.distance;
       }
 
-      /**
-       * Aggregator.
-       */
-      IntersectionInfo& operator=(const int other) {
+  };
 
-        GASSERT(other == 0, "Assigned integer is unequal 0.");
+  /**
+   * Class for a global variable which stores the best known intersection of both search trees. Its
+   * implementation is based on the MinVariable class (src/core/gpe/gpelib4/enginebase/variable.hpp).
+   * The purpuse is to provide a minimum-aggregator for a global IntersectionInfo variable.
+   */
+  class IntersectionInfoVariable : public BasicTypeVariableObject<IntersectionInfo> {
+   public:
+      IntersectionInfoVariable() {
+      this->value_ = IntersectionInfo();
+    }
 
-        this->distance = MAX_WEIGHT;
-        this->vertexId = -1;
+    explicit IntersectionInfoVariable(IntersectionInfo value) {
+      this->value_ = value;
+    }
 
-        return *this;
-      }
+   protected:
+    BaseVariableObject* MakeLocalCopy() const {
+      return new IntersectionInfoVariable();
+    }
+
+    void Reduce(const void* newvalue) {
+      const IntersectionInfo* value = reinterpret_cast<const IntersectionInfo*>(newvalue);
+      if ((*value) < this->value_)
+        this->value_ = (*value);
+    }
+
+    void Combine(BaseVariableObject* localcopy) {
+      IntersectionInfoVariable* obj = (IntersectionInfoVariable*) localcopy;
+      if (obj->value_ < this->value_)
+        this->value_ = obj->value_;
+    }
   };
 
   /**************Enumerations and Constants************/
@@ -235,7 +251,7 @@ namespace gperun {
       /**************Initialize Globals************/
       void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
         // Register variable for strict preferece mas of source.
-        globalvariables->Register(GV_INTERSECTION_VERTEX, new gpelib4::SumVariable<IntersectionInfo>());
+        globalvariables->Register(GV_INTERSECTION_VERTEX, new IntersectionInfoVariable());
         globalvariables->Register(GV_WEIGHT_INDEX, new gpelib4::LongStateVariable(weightIndex_));
       }
 
