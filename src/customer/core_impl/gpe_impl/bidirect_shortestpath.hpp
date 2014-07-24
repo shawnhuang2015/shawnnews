@@ -423,14 +423,6 @@ namespace UDIMPL {
         vVal += msg;
         context->Write(verId, vVal, false);
 
-        if (newSDistance) {
-          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
-        }
-
-        if (newTDistance) {
-          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, vVal.tDist);
-        }
-
         WEIGHT localIntDist = MAX_WEIGHT;
 
         // Check if sum is smaller than 'infinite'. tDist is substracted from MAX_WEIGHT to avoid overflow.
@@ -452,7 +444,16 @@ namespace UDIMPL {
         bool expandSTree = ShouldVertexEpandTree(vVal, currMinTDist, globalIntDist, true);
         bool expandTTree = ShouldVertexEpandTree(vVal, currMinSDist, globalIntDist, false);
 
-        context->SetActiveFlag(expandSTree || expandTTree);
+        bool activateVertex = expandSTree || expandTTree;
+        context->SetActiveFlag(activateVertex);
+
+        if (activateVertex && newSDistance) {
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
+        }
+
+        if (activateVertex && newTDistance) {
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, vVal.tDist);
+        }
 
       }
 
