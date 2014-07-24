@@ -213,6 +213,16 @@ namespace UDIMPL {
      */
     GV_NEXT_MIN_ACTIVE_WEIGHT_T,
 
+    /**
+     * Flag which shows if the s-tree has living branches.
+     */
+    GV_IS_S_ALIVE,
+
+    /**
+     * Flag which shows if the t-tree has living branches.
+     */
+    GV_IS_T_ALIVE,
+
   };
 
   /** BidirectionalShortestPath
@@ -280,6 +290,10 @@ namespace UDIMPL {
 
         globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_S, new gpelib4::MinVariable<WEIGHT>(0));
         globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_T, new gpelib4::MinVariable<WEIGHT>(0));
+
+        // BoolVariable has an or aggregator.
+        globalvariables->Register(GV_IS_S_ALIVE, new gpelib4::BoolVariable(true));
+        globalvariables->Register(GV_IS_T_ALIVE, new gpelib4::BoolVariable(true));
       }
 
       /**************
@@ -344,6 +358,7 @@ namespace UDIMPL {
           if (srcValue.sPrev != tarId && expandSTree && tarValue.sDist > newSDist && newSDist <= intDist) {
             context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, newSDist);
+            context->GlobalVariable_Reduce(GV_IS_S_ALIVE, true);
           }
         }
 
@@ -357,6 +372,7 @@ namespace UDIMPL {
           if (srcValue.tPrev != tarId && expandTTree && tarValue.tDist > newTDist && newTDist <= intDist) {
             context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, newTDist);
+            context->GlobalVariable_Reduce(GV_IS_T_ALIVE, true);
           }
         }
 
@@ -391,6 +407,20 @@ namespace UDIMPL {
             MAX_WEIGHT);
         reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
             MAX_WEIGHT);
+
+
+        // --- Check if both trees are alive ---
+
+        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
+        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
+
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
+
+        // If one of the trees dies, the shortest path is known.
+        if (!sIsAlive || !tIsAlive) {
+          context->Stop();
+        }
 
       }
 
@@ -449,10 +479,12 @@ namespace UDIMPL {
 
         if (activateVertex && newSDistance) {
           context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
+          context->GlobalVariable_Reduce(GV_IS_S_ALIVE, expandSTree);
         }
 
         if (activateVertex && newTDistance) {
           context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, vVal.tDist);
+          context->GlobalVariable_Reduce(GV_IS_T_ALIVE, expandTTree);
         }
 
       }
@@ -477,6 +509,19 @@ namespace UDIMPL {
             MAX_WEIGHT);
         reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
             MAX_WEIGHT);
+
+        // --- Check if both trees are alive ---
+
+        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
+        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
+
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
+
+        // If one of the trees dies, the shortest path is known.
+        if (!sIsAlive || !tIsAlive) {
+          context->Stop();
+        }
 
       }
 
