@@ -60,6 +60,11 @@ namespace UDIMPL {
         RunUDF_KNeighborhood(request, service, maps, jsoptions, idservice_vids,response_writer,request_argv[1]);
         return true;
       }
+
+      if(request_argv[0] == "shortestpath"){
+        RunUDF_ShortestPath(request,service,maps,jsoptions,idservice_vids,response_writer, request_argv[1],request_argv[2]);
+        return true;
+      }
       return false;
     }
 
@@ -74,6 +79,41 @@ namespace UDIMPL {
                              size_t &num_interations,
                              Maps_t& customizedsetttings){
       return false;
+    }
+
+    static void RunUDF_ShortestPath(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                                  gperun::EngineJobRunner* service,
+                                  gse2::IdConverter::RequestIdMaps* maps,
+                                  Json::Value& jsoptions,
+                                  std::vector<VertexLocalId_t>& idservice_vids,
+                                  gutil::JSONWriter& writer,
+                                  std::string start_node,
+                                  std::string end_node){
+      typedef BidirectionalShortestPath UDF_t;
+      bool need_edges = jsoptions["edges"][0].asBool();
+      bool index = jsoptions.get("weightindex",0).asUInt();
+  //    jsoptions["weightindex"][0].asUint();
+      VertexLocalId_t local_start,local_end;
+
+      if (!gperun::Util::UIdtoVId(service->topology(), maps,
+                                  request->message_, request->error_,
+                                  start_node,local_start)){
+        return;
+      }
+
+      if (!gperun::Util::UIdtoVId(service->topology(), maps,
+                                  request->message_, request->error_,
+                                  end_node,local_end)){
+        return;
+      }
+
+      UDF_t udf(local_start, local_end, index);
+      service->RunUDF<UDF_t>(request,&udf);
+
+      writer.WriteStartObject();
+      writer.WriteName("distance");
+      writer.WriteUnsignedInt(udf.getDistance());
+      writer.WriteEndObject();
     }
 
     static void RunUDF_KNeighborhood(gpelib4::EngineDriverService::EngineServiceRequest* request,
@@ -95,13 +135,15 @@ namespace UDIMPL {
         return;
       }
 
-      if(need_edges){
-        std::cout<<"edges confirmed"<<std::endl;
-      }
+//      if(need_edges){
+//        std::cout<<"edges confirmed"<<std::endl;
+//      }
       UDF_t udf(depth, local_start, need_edges, &writer);
       service->RunUDF<UDF_t>(request,&udf);
 
       idservice_vids = udf.getVidsToTranslate();
+
+
 
 
     }
@@ -114,7 +156,7 @@ namespace UDIMPL {
     static void registerAll() {
       // Add your UDF register func here
       // gperun::registerLinkRecommendation2Step(Registries::pureTopologyRegistry);
-      gperun::BidirectionalShortestPathRunner::(gperun::Registries<char>::pureTopologyRegistry);
+      //gperun::BidirectionalShortestPathRunner::(gperun::Registries<char>::pureTopologyRegistry);
     }
 
   };

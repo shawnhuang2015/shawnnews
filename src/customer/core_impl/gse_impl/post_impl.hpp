@@ -100,7 +100,7 @@ namespace UDIMPL {
 
       // I could use writeEdgeAttribute from the super class, but it's just one attribute
       // so why waste time on the function call?
-      deltaWriter_.write(weight);
+      //deltaWriter_.write(weight);
 
       deltaWriter_.write_watermark();
       return !error_;

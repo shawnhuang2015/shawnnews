@@ -18,7 +18,7 @@
 #include <gpelib4/enginedriver/enginedriver.hpp>
 #include "../../core_ext/gpe/registry.hpp"
 
-namespace gperun {
+namespace UDIMPL {
   /**************STRUCTS FOR VERTEX AND MESSAGE VALUES************/
   // You can store any fixed-size structure as UDF data. define them here.
 
@@ -135,7 +135,7 @@ namespace gperun {
       /**
        * Comparer for aggregation.
        */
-      bool operator<(const IntersectionInfo& other) {
+      bool operator<(const IntersectionInfo& other) const {
         return this->distance < other.distance;
       }
 
@@ -394,6 +394,13 @@ namespace gperun {
        * @param context Can be used to set active flags for vertices.
        */
       void EndRun(gpelib4::BasicContext* context) {
+        globalIntDist_ = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
+
+
+      }
+
+      WEIGHT getDistance(){
+        return globalIntDist_;
       }
 
       /**************
@@ -407,9 +414,7 @@ namespace gperun {
       ALWAYS_INLINE void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid, V_ATTR* vertexattr,
           const V_VALUE& singlevalue, gpelib4::BasicContext* context) {
 
-        WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
 
-        ostream << "globalIntDist: " << globalIntDist << "\n";
       }
 
       /**
@@ -420,40 +425,43 @@ namespace gperun {
         return "";
       }
 
+      private:
+      WEIGHT globalIntDist_;
+
   };
 
   /********************UDF Runner Registry Object *************************/
-//template <typename VID_t, typename V_ATTR_t, typename E_ATTR_t>
-  class BidirectionalShortestPathRunner: public UDFRunner {
-    public:
-      typedef BidirectionalShortestPath UDF_t;
+////template <typename VID_t, typename V_ATTR_t, typename E_ATTR_t>
+//  class BidirectionalShortestPathRunner: public UDFRunner {
+//    public:
+//      typedef BidirectionalShortestPath UDF_t;
 
-      BidirectionalShortestPathRunner() {
-        requires<VertexLocalId_t>("sourceId", "s", "The vertex id of the source vertex.", &sourceId, 0);
-        requires<VertexLocalId_t>("targetId", "t", "The vertex id of the target vertex.", &targetId, 0);
-        requires<VertexLocalId_t>("atrrIndex", "i", "The index of the edge attribute containing the edge weight.", &atrrIndex, 0);
-      }
+//      BidirectionalShortestPathRunner() {
+//        requires<VertexLocalId_t>("sourceId", "s", "The vertex id of the source vertex.", &sourceId, 0);
+//        requires<VertexLocalId_t>("targetId", "t", "The vertex id of the target vertex.", &targetId, 0);
+//        requires<VertexLocalId_t>("atrrIndex", "i", "The index of the edge attribute containing the edge weight.", &atrrIndex, 0);
+//      }
 
-      ~BidirectionalShortestPathRunner() {
-      }
+//      ~BidirectionalShortestPathRunner() {
+//      }
 
-      void createUDF() {
-        udf = new UDF_t(sourceId, targetId, atrrIndex);
-      }
+//      void createUDF() {
+//        udf = new UDF_t(sourceId, targetId, atrrIndex);
+//      }
 
-      void runUDF(std::string engineConfigFile, std::string topologyConfigFile, std::string outputFile) {
-        gpelib4::EngineDriver driver(engineConfigFile, topologyConfigFile);
-        driver.RunSingleVersion<UDF_t>((UDF_t*) udf, outputFile);
-      }
+//      void runUDF(std::string engineConfigFile, std::string topologyConfigFile, std::string outputFile) {
+//        gpelib4::EngineDriver driver(engineConfigFile, topologyConfigFile);
+//        driver.RunSingleVersion<UDF_t>((UDF_t*) udf, outputFile);
+//      }
 
-      static void registerUDF(UDFRegistry& registry) {
-        registry.add("BidirectionalShortestPath", new BidirectionalShortestPathRunner());
-      }
+//      static void registerUDF(UDFRegistry& registry) {
+//        registry.add("BidirectionalShortestPath", new BidirectionalShortestPathRunner());
+//      }
 
-    private:
-      VertexLocalId_t sourceId;
-      VertexLocalId_t targetId;
-      unsigned int atrrIndex;
+//    private:
+//      VertexLocalId_t sourceId;
+//      VertexLocalId_t targetId;
+//      unsigned int atrrIndex;
 
-  };
+//  };
 } //namespace gperun
