@@ -555,8 +555,9 @@ namespace UDIMPL {
 
       /**
        * Updates the current variable with the minimal active distance of the search trees and
-       * restes the aggregator for the next one. Method is called by BetweenMapAndReduce() and
-       * AfterIteration().
+       * restes the aggregator for the next one. If the sum is larger or equal than the best known
+       * path, stop the program, the best known path is optimal. Method is called by
+       * BetweenMapAndReduce() and AfterIteration().
        */
       void UpdateMinActiveDistance(gpelib4::MasterContext* context) {
 
@@ -571,6 +572,16 @@ namespace UDIMPL {
         reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
             MAX_WEIGHT);
 
+
+        WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
+
+        GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
+        GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
+
+        // First comparison prevents overflow if sum is to large.
+        if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
+          context->Stop();
+        }
       }
 
   };
