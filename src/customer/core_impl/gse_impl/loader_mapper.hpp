@@ -132,8 +132,14 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
       uid1_ptr[uid1_len] = '\0';
       uid2_ptr[uid2_len] = '\0';
       VERTEXID_T from_vid = upsertNow(uid1_ptr, 0, is_existingVertexID);
+      if (!is_existingVertexID) {
+        vertexWriter_.flush(from_vid, NULL, 0);
+      }
       VERTEXID_T to_vid = upsertNow(uid2_ptr, 0, is_existingVertexID);
-      edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0), 0, 0);
+      if (!is_existingVertexID) {
+        vertexWriter_.flush(from_vid, NULL, 0);
+      }
+      edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0));
     }
     fileReader_->CloseFile();
     delete fileReader_;

@@ -51,6 +51,52 @@ object EndpointDefinitions {
     context.gpe.writeAndWait(request, List(uid))
   }))
 
+  Endpoints.register(Endpoint(POST(), "updategraph", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    if (!dataPayload.keys.contains("nodeList")) {
+      Some(Json.stringify(Json.obj("error" -> true, "message" -> "You must pass a node list!")))
+    } else {
+
+    // probably a cleaner way to do this, but this works.
+      val vertexSeq: Seq[String] = if (!dataPayload.keys.contains("nodeList")) List() else {
+        val rawList = (dataPayload \ "nodeList").as[JsArray].value.map((x: JsValue) => {
+          val vertexId = (x \ "id").as[String]
+          vertexId
+        })
+        rawList
+      }
+
+      val edgeSeq: Seq[Edge] = if (!dataPayload.keys.contains("edgeList")) List() else {
+        val rawList = (dataPayload \ "edgeList").as[JsArray].value.map((x: JsValue) => {
+          val fromId = (x \ "startNode").as[String]
+          val toId = (x \ "endNode").as[String]
+          val xObj = x.as[JsObject]
+          var attributes = Map[String,Any]()
+
+          Edge(fromId, toId, attributes)
+        })
+        rawList
+      }
+
+      val vertexIdSet: Set[String] = vertexSeq.toSet
+      val containsAll: Boolean = edgeSeq.forall((e: Edge) => vertexIdSet.contains(e.fromId) && vertexIdSet.contains(e.toId))
+
+      if (containsAll) {
+        // odds are vertexSeq has no duplicates.  But to be safe, since we just made that set up
+        // above, we'll convert that back to a list and send it across.
+        val request = PassthroughGseRequest(Json.stringify(dataPayload),vertexIdSet.toList)
+        val response = context.gse.passthrough_writeAndWait(request)
+        response
+      } else {
+        Some(Json.stringify(Json.obj("error" -> true, "message" -> "Not all of the edges had corresponding vertices in the node list.")))
+      }
+    }
+  }))
+
+  Endpoints.register(Endpoint(GET(), "debug_neighbors", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("debug_neighbors", uid), Map())
+    context.gpe.writeAndWait(request, List(uid))
+  }))
+
   // Helper function that forces the JVM to initialize this object.
   // Must be left untouched. It is required by the RestServer object.
   def warmUp() = { }
