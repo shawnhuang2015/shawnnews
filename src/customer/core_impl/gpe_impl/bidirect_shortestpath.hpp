@@ -394,33 +394,8 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
-
-        // Updates the current variable and restes the aggregator for the next one.
-
-        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
-
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
-
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(
-            MAX_WEIGHT);
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
-            MAX_WEIGHT);
-
-
-        // --- Check if both trees are alive ---
-
-        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
-        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
-
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
-
-        // If one of the trees dies, the shortest path is known.
-        if (!sIsAlive || !tIsAlive) {
-          context->Stop();
-        }
+        UpdateMinActiveDistance(context);
+        CheckIfTreesAreAlive(context);
 
       }
 
@@ -496,33 +471,8 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
-
-        // Updates the current variable and restes the aggregator for the next one.
-
-        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
-
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
-
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(
-            MAX_WEIGHT);
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
-            MAX_WEIGHT);
-
-        // --- Check if both trees are alive ---
-
-        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
-        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
-
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
-
-        // If one of the trees dies, the shortest path is known.
-        if (!sIsAlive || !tIsAlive) {
-          context->Stop();
-        }
-
+        UpdateMinActiveDistance(context);
+        CheckIfTreesAreAlive(context);
       }
 
       /**
@@ -581,6 +531,45 @@ namespace UDIMPL {
         WEIGHT bestBackDist = std::min(currMinActiveBackDist, backDist);
 
         return forwardDist + bestBackDist < bestKnownInterDist;
+
+      }
+
+      /**
+       * Checks if both trees are still alive. If not, the program stops. Method is called by
+       * BetweenMapAndReduce() and AfterIteration().
+       */
+      void CheckIfTreesAreAlive(gpelib4::MasterContext* context) {
+
+        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
+        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
+
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
+        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
+
+        // If one of the trees dies, the shortest path is known.
+        if (!sIsAlive || !tIsAlive) {
+          context->Stop();
+        }
+
+      }
+
+      /**
+       * Updates the current variable with the minimal active distance of the search trees and
+       * restes the aggregator for the next one. Method is called by BetweenMapAndReduce() and
+       * AfterIteration().
+       */
+      void UpdateMinActiveDistance(gpelib4::MasterContext* context) {
+
+        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
+        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
+
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
+
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(
+            MAX_WEIGHT);
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
+            MAX_WEIGHT);
 
       }
 
