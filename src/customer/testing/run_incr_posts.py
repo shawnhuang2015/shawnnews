@@ -95,8 +95,9 @@ def test_main():
   with open(options.file_name) as f:
       payload = get_n_edges_payload(f,batch)
       while payload["edgelist"]:
-        post_graph_update(host,port,payload)
+        result = post_graph_update(host,port,payload)
         print payload
+        print result.text
         payload = get_n_edges_payload(f,batch)
         
           
