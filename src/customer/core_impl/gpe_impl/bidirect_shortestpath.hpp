@@ -135,7 +135,7 @@ namespace gperun {
       /**
        * Comparer for aggregation.
        */
-      bool operator<(const IntersectionInfo& other) {
+      bool operator<(const IntersectionInfo& other) const {
         return this->distance < other.distance;
       }
 
@@ -190,6 +190,30 @@ namespace gperun {
      * The index of the edge attribute containing the edge weight.
      */
     GV_WEIGHT_INDEX,
+
+    /**
+     * The minimal distance of active vertices of the s-tree.
+     * The distance has been calculated in the last map or reduce phase.
+     */
+    GV_CURRENT_MIN_ACTIVE_WEIGHT_S,
+
+    /**
+     * The minimal distance of active vertices of the s-tree.
+     * Variable to correctly aggregate the distance for the next map or reduce phase.
+     */
+    GV_NEXT_MIN_ACTIVE_WEIGHT_S,
+
+    /**
+     * The minimal distance of active vertices of the t-tree.
+     * The distance has been calculated in the last map or reduce phase.
+     */
+    GV_CURRENT_MIN_ACTIVE_WEIGHT_T,
+
+    /**
+     * The minimal distance of active vertices of the t-tree.
+     * Variable to correctly aggregate the distance for the next map or reduce phase.
+     */
+    GV_NEXT_MIN_ACTIVE_WEIGHT_T,
 
   };
 
@@ -253,6 +277,13 @@ namespace gperun {
         // Register variable for strict preferece mas of source.
         globalvariables->Register(GV_INTERSECTION_VERTEX, new IntersectionInfoVariable());
         globalvariables->Register(GV_WEIGHT_INDEX, new gpelib4::LongStateVariable(weightIndex_));
+
+        // Start values are 0, because the distance from s and t to itself is 0.
+        globalvariables->Register(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, new gpelib4::StateVariable<WEIGHT>(0));
+        globalvariables->Register(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, new gpelib4::StateVariable<WEIGHT>(0));
+
+        globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_S, new gpelib4::MinVariable<WEIGHT>(0));
+        globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_T, new gpelib4::MinVariable<WEIGHT>(0));
       }
 
       /**************
@@ -307,13 +338,17 @@ namespace gperun {
 
         // s-Tree
         WEIGHT newSDist = srcValue.sDist + edgeWeight;
-        if (srcValue.sPrev != tarId && tarValue.sDist > newSDist && newSDist <= intDist)
+        if (srcValue.sPrev != tarId && tarValue.sDist > newSDist && newSDist <= intDist) {
           context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, newSDist);
+        }
 
         // t-Tree
         WEIGHT newTDist = srcValue.tDist + edgeWeight;
-        if (srcValue.tPrev != tarId && tarValue.tDist > newTDist && newTDist <= intDist)
+        if (srcValue.tPrev != tarId && tarValue.tDist > newTDist && newTDist <= intDist) {
           context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, newTDist);
+        }
 
       }
 
@@ -333,6 +368,18 @@ namespace gperun {
        * @param context Can be used to set active flags for vertices.
        */
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
+
+        // Updates the current variable and restes the aggregator for the next one.
+
+        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
+        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
+
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
+
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(MAX_WEIGHT);
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(MAX_WEIGHT);
+
       }
 
       /**************
@@ -356,12 +403,25 @@ namespace gperun {
 
         // Update vertex value.
         V_VALUE vVal = verValue;
+
+        // Determine which distance will be updated.
+        bool newSDistance = vVal.sDist > msg.sDist;
+        bool newTDistance = vVal.tDist > msg.tDist;
+
         vVal += msg;
         context->Write(verId, vVal, false);
 
+        if (newSDistance) {
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
+        }
+
+        if (newTDistance) {
+          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, vVal.tDist);
+        }
+
         WEIGHT localIntDist = MAX_WEIGHT;
 
-        // Check if sum is smaller than 'infinite'.
+        // Check if sum is smaller than 'infinite'. tDist is substracted from MAX_WEIGHT to avoid overflow.
         if (vVal.sDist < MAX_WEIGHT - vVal.tDist) {
           localIntDist = vVal.sDist + vVal.tDist;
         }
@@ -373,6 +433,9 @@ namespace gperun {
           context->GlobalVariable_Reduce<IntersectionInfo>(GV_INTERSECTION_VERTEX, IntersectionInfo(verId, localIntDist));
         }
 
+        // Since EdgeMap only send a message to a vertex if its distance decreases, Reduce is also
+        // only called if the distance decreases. Therefore, we can activate the vertex for the
+        // next iteration without additional checks.
         context->SetActiveFlag(verId);
 
       }
@@ -384,6 +447,18 @@ namespace gperun {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
+
+        // Updates the current variable and restes the aggregator for the next one.
+
+        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
+        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
+
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
+        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
+
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(MAX_WEIGHT);
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(MAX_WEIGHT);
+
       }
 
       /**
