@@ -394,7 +394,7 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
-        UpdateMinActiveDistance(context);
+        UpdateMinActiveDistance(context, false);
         CheckIfTreesAreAlive(context);
 
       }
@@ -471,7 +471,7 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
-        UpdateMinActiveDistance(context);
+        UpdateMinActiveDistance(context, true);
         CheckIfTreesAreAlive(context);
       }
 
@@ -559,7 +559,7 @@ namespace UDIMPL {
        * path, stop the program, the best known path is optimal. Method is called by
        * BetweenMapAndReduce() and AfterIteration().
        */
-      void UpdateMinActiveDistance(gpelib4::MasterContext* context) {
+      void UpdateMinActiveDistance(gpelib4::MasterContext* context, bool afterReduce) {
 
         WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
         WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
@@ -572,15 +572,16 @@ namespace UDIMPL {
         reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
             MAX_WEIGHT);
 
+        if (afterReduce) {
+          WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
 
-        WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
+          GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
+          GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
 
-        GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
-        GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
-
-        // First comparison prevents overflow if sum is to large.
-        if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
-          context->Stop();
+          // First comparison prevents overflow if sum is to large.
+          if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
+            context->Stop();
+          }
         }
       }
 
