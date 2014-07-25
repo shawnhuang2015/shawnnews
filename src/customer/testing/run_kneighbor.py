@@ -40,8 +40,8 @@ def test_main():
   parser.add_option("-d", 
       dest="depth", 
       type="int",
-      default=3,
-      help="the max depth allowed, randomly selected between 1 and the value given default= 3")
+      default=1,
+      help="the max depth allowed, randomly selected between 1 and the value given default= 1")
   parser.add_option("-e", 
       dest="edges", 
       type="string",
