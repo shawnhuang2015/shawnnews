@@ -97,10 +97,11 @@ namespace UDIMPL {
                               (uint8_t) topology4::DeltaAction_Insert);
       deltaWriter_.write(fromVid);
       deltaWriter_.write(toVid);
-
+      // 0 is hard-coding edge type ID.
+      deltaWriter_.write((uint32_t) 0);
       // I could use writeEdgeAttribute from the super class, but it's just one attribute
       // so why waste time on the function call?
-      //deltaWriter_.write(weight);
+      deltaWriter_.write(weight);
 
       deltaWriter_.write_watermark();
       return !error_;
@@ -128,8 +129,6 @@ namespace UDIMPL {
         }
         deltaWriter_.write_flag(
               (uint8_t) topology4::DeltaRecord_Vertex,
-              newVertex ?
-                (uint8_t) topology4::DeltaAction_Insert :
                 (uint8_t) topology4::DeltaAction_Update);
         deltaWriter_.write(itr->second.vid_);
         // no attributes in this situation.
