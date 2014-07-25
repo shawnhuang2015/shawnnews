@@ -137,7 +137,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
       }
       VERTEXID_T to_vid = upsertNow(uid2_ptr, 0, is_existingVertexID);
       if (!is_existingVertexID) {
-        vertexWriter_.flush(from_vid, NULL, 0);
+        vertexWriter_.flush(to_vid, NULL, 0);
       }
       edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0));
     }

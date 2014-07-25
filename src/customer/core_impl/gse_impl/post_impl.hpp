@@ -101,6 +101,7 @@ namespace UDIMPL {
       deltaWriter_.write((uint32_t) 0);
       // I could use writeEdgeAttribute from the super class, but it's just one attribute
       // so why waste time on the function call?
+      deltaWriter_.write((uint8_t) topology4::DeltaAttributeOperator_Overwrite);
       deltaWriter_.write(weight);
 
       deltaWriter_.write_watermark();

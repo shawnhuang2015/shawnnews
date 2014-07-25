@@ -7,15 +7,17 @@ import random
 
 def get_kneighborhood(host, port, vid, depth,edges):
   url = "http://%s:%s/kneighborhood/%s" % (host, port,vid)
+  #url+="%3Fdepth=1"
   payload = {"depth":depth, "edges":edges}
   head = {'content-type':'application/json'}
-  req  = requests.post(url,params=payload)
+  req  = requests.get(url,params=payload)
+  #req  = requests.get(url)
   print req.url
   return req
 
 def get_random_id(n):
-  return str(random.randint(100,n))
-    
+  return str(random.randint(12,n))
+#  return "12"
 
 def test_main():
   # Define the command line options.
@@ -40,8 +42,8 @@ def test_main():
   parser.add_option("-d", 
       dest="depth", 
       type="int",
-      default=3,
-      help="the max depth allowed, randomly selected between 1 and the value given default= 3")
+      default=1,
+      help="the max depth allowed, randomly selected between 1 and the value given default= 1")
   parser.add_option("-e", 
       dest="edges", 
       type="string",
@@ -64,7 +66,7 @@ def test_main():
 
   start = clock()
   for i in xrange(batch):
-    vid = get_random_id(40000000)
+    vid = get_random_id(1000)
     result = get_kneighborhood(host, port, vid, depth,edges)
     print result.text
     print result.elapsed        

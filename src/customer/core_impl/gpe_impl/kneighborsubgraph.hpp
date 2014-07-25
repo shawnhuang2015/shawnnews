@@ -113,7 +113,8 @@ struct EdgePair{
       std::cout<<"initializing "<<start_node;
       valuecontext->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,
                                                         start_node);
-      valuecontext->SetActiveFlag(start_node);
+      valuecontext->WriteAll(0,false);
+      valuecontext->Write(start_node,1,true);
     }
 
     /**
@@ -160,7 +161,7 @@ struct EdgePair{
                                 E_ATTR* edgeattr,
                                 gpelib4::SingleValueMapContext<MESSAGE>* context) {
       // Activate any neighbors that haven't been active before.
-      if (!targetvertexvalue) {
+      if (targetvertexvalue != 1) {
         context->SetActiveFlag(targetvid);
       }
 
@@ -197,7 +198,7 @@ struct EdgePair{
 
       // if we are just activated, then we need to be active in edge map so that we can
       // store edges and activate neighbors.
-      if (!singlevalue) {
+      if (singlevalue == 0) {
         context->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,
                                                         vid);
         context->SetActiveFlag(vid);
