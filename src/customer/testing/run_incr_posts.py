@@ -1,6 +1,7 @@
 import json
 import requests
 import urllib
+from time import clock
 from optparse import OptionParser
 
 
@@ -14,7 +15,7 @@ def post_graph_update(host, port, payload):
 def get_n_edges_payload(f,n):
   c = 0
   payload = {}
-  payload["edgelist"] = []
+  payload["edgeList"] = []
   nodelist = set()
 
   # print "!" + line
@@ -31,24 +32,24 @@ def get_n_edges_payload(f,n):
     edge = line.strip().split(',')
     nodelist.add(edge[0])
     nodelist.add(edge[1])
-    payload["edgelist"].append({"startNode":edge[0], "endNode":edge[1], "weight":int(edge[2])})
+    payload["edgeList"].append({"startNode":edge[0], "endNode":edge[1], "weight":int(edge[2])})
     c+=1
     print line
     
 
-  payload["nodelist"] = [{"id":x} for x in nodelist]
+  payload["nodeList"] = [{"id":x} for x in nodelist]
   return payload
 
-def make_edges_payload(edges):
-  payload = {}
-  nodelist= set()
-  payload["edgelist"] = []
-  for edge in edges: 
-    nodelist.add(edge[0])
-    payload["edgelist"].append({"startNode":edge[0], "endNode":edge[1], "weight":int(edge[2])})
+# def make_edges_payload(edges):
+#   payload = {}
+#   nodelist= set()
+#   payload["edgelist"] = []
+#   for edge in edges: 
+#     nodelist.add(edge[0])
+#     payload["edgelist"].append({"startNode":edge[0], "endNode":edge[1], "weight":int(edge[2])})
 
-  payload["nodelist"] = [{"id":x} for x in nodelist]
-  return payload
+#   payload["nodelist"] = [{"id":x} for x in nodelist]
+#   return payload
   
     
 
@@ -92,14 +93,19 @@ def test_main():
   batch = options.batch_size
   #vid = aputil.random_user_id()
   print options.file_name
+  start = clock()
   with open(options.file_name) as f:
       payload = get_n_edges_payload(f,batch)
-      while payload["edgelist"]:
+      while payload["edgeList"]:
         result = post_graph_update(host,port,payload)
         print payload
         print result.text
+        print result.elapsed
         payload = get_n_edges_payload(f,batch)
         
+  end = clock()
+
+  print "Elapsed time for batch size of " + str(batch) + ": " + str(end - start)
           
 # Enter main when executed.
 if __name__ == "__main__":
