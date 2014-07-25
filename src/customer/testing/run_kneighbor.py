@@ -6,9 +6,10 @@ from optparse import OptionParser
 import random
 
 def get_kneighborhood(host, port, vid, depth,edges):
-  url = "http://%s:%s/kneighborhood/%s\%3Fdepth\%3D%s\%26edges\%3D%s" % (host, port,vid,depth,edges)
+  url = "http://%s:%s/kneighborhood/%s" % (host, port,vid)
+  payload = {"depth":depth, "edges":edges}
   head = {'content-type':'application/json'}
-  req  = requests.post(url, data=json.dumps(payload), headers=head)
+  req  = requests.post(url,params=payload)
   print req.url
   return req
 
@@ -60,11 +61,12 @@ def test_main():
   depth = options.depth
   edges = options.edges
   #vid = aputil.random_user_id()
-  print options.file_name
+
   start = clock()
   for i in xrange(batch):
     vid = get_random_id(40000000)
-    result = get_kneighborhood(host, port, vid, depth,edges):
+    result = get_kneighborhood(host, port, vid, depth,edges)
+    print result.text
     print result.elapsed        
   end = clock()
 
