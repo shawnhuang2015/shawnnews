@@ -12,12 +12,16 @@ def get_kneighborhood(host, port, vid, depth,edges):
   head = {'content-type':'application/json'}
   req  = requests.get(url,params=payload)
   #req  = requests.get(url)
-  print req.url
+#  print req.url
   return req
 
-def get_random_id(n):
-  return str(random.randint(12,n))
+def get_next_id(f):
+#  return str(random.randint(12,f))
 #  return "12"
+  with open(f) as data: 
+    for line in data: 
+      yield line.strip()
+
 
 def test_main():
   # Define the command line options.
@@ -65,15 +69,16 @@ def test_main():
   #vid = aputil.random_user_id()
 
   start = clock()
-  for i in xrange(batch):
-    vid = get_random_id(1000)
+  for vid in get_next_id("id_sample.txt"):
     result = get_kneighborhood(host, port, vid, depth,edges)
-    print result.text
-    print result.elapsed        
+ #   print result.text
+ #   print result.elapsed        
   end = clock()
 
   print "Elapsed time for batch size of " + str(batch) + ": " + str(end - start)
           
 # Enter main when executed.
-if __name__ == "__main__":
-    test_main()
+if __name__ == '__main__':
+  test_main()
+#    import timeit
+#    print(timeit.timeit("test_main()", setup="from __main__ import test_main"))
