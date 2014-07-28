@@ -2,17 +2,18 @@ import json
 import requests
 import urllib
 from time import clock
+from time import time
 from optparse import OptionParser
 import random
 
 def get_kneighborhood(host, port, vid, depth,edges):
   url = "http://%s:%s/kneighborhood/%s" % (host, port,vid)
   #url+="%3Fdepth=1"
-  payload = {"depth":depth, "edges":edges}
+  payload = {"depth":depth}
   head = {'content-type':'application/json'}
   req  = requests.get(url,params=payload)
   #req  = requests.get(url)
-#  print req.url
+  print req.url
   return req
 
 def get_next_id(f):
@@ -67,16 +68,35 @@ def test_main():
   depth = options.depth
   edges = options.edges
   #vid = aputil.random_user_id()
-
+  times = []
+  lengths = []
   start = clock()
+  start_t = time()
+  n = 0
   for vid in get_next_id("id_sample.txt"):
     result = get_kneighborhood(host, port, vid, depth,edges)
- #   print result.text
+    times.append(result.elapsed.total_seconds())
+    n+=1
+    print "text length: " + str(len(result.text))
+    lengths.append(len(result.text))
+#   print result.text
  #   print result.elapsed        
   end = clock()
+  end_t = time()
 
-  print "Elapsed time for batch size of " + str(batch) + ": " + str(end - start)
-          
+  
+  
+  print "clock() Elapsed time for " + str(n) + " queries: " + str(end - start)
+  print "time() Elapsed time: " + str(end_t - start_t)
+  print "min elapsed query: " + str(min(times))
+  print "max elapsed query: " + str(max(times))
+  print "total by elapsed time: " + str(sum(times))
+  print "average elapsed time per query: "+ str(sum(times)/len(times))
+  print "min result length: " + str(min(lengths))
+  print "max result length: " + str(max(lengths))
+  print "average result length per query: "+ str(sum(lengths)/len(lengths))
+
+
 # Enter main when executed.
 if __name__ == '__main__':
   test_main()

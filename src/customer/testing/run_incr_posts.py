@@ -2,6 +2,7 @@ import json
 import requests
 import urllib
 from time import clock
+from time import time
 from optparse import OptionParser
 
 
@@ -9,7 +10,7 @@ def post_graph_update(host, port, payload):
   url = "http://%s:%s/updategraph" % (host, port)
   head = {'content-type':'application/json'}
   req  = requests.post(url, data=json.dumps(payload), headers=head)
-  print req.url
+ # print req.url
   return req
 
 def get_n_edges_payload(f,n):
@@ -34,7 +35,7 @@ def get_n_edges_payload(f,n):
     nodelist.add(edge[1])
     payload["edgeList"].append({"startNode":edge[0], "endNode":edge[1], "weight":int(edge[2])})
     c+=1
-    print line
+    #print line
     
 
   payload["nodeList"] = [{"id":x} for x in nodelist]
@@ -92,21 +93,32 @@ def test_main():
   port = options.port
   batch = options.batch_size
   #vid = aputil.random_user_id()
-  print options.file_name
+  times = []
+  n_edges = 0
+  #print options.file_name
   start = clock()
+  start_t = time()
   with open(options.file_name) as f:
       payload = get_n_edges_payload(f,batch)
       while payload["edgeList"]:
+        n_edges += len(payload["edgeList"])
         result = post_graph_update(host,port,payload)
-        print payload
-        print result.text
-        print result.elapsed
+        #print payload
+        #print result.text
+        times.append(result.elapsed.total_seconds())
         payload = get_n_edges_payload(f,batch)
         
   end = clock()
+  end_t = time()
+  print "processed " + str(n_edges) + "total edges"
+  print "clock() Elapsed time for batch size of " + str(batch) + ": " + str(end - start)
+  print "time() Elapsed time: " + str(end_t - start_t)
+  print "min elapsed query: " + str(min(times))
+  print "max elapsed query: " + str(max(times))
+  print "total by elapsed time: " + str(sum(times))
+  print "average elapsed time per query: "+ str(sum(times)/len(times))
+  print "average elapsed time per edge: " + str(sum(times)/n_edges)
 
-  print "Elapsed time for batch size of " + str(batch) + ": " + str(end - start)
-          
 # Enter main when executed.
 if __name__ == "__main__":
     test_main()
