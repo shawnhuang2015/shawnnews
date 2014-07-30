@@ -223,6 +223,16 @@ namespace UDIMPL {
      */
     GV_IS_T_ALIVE,
 
+    /**
+     * Just for testing. Counts the number of EdgeMap calls
+     */
+    GV_MapCount,        // ToDo: Remove after testing.
+
+    /**
+     * Just for testing. Counts the number of Reduce calls.
+     */
+    GV_ReduceCount,        // ToDo: Remove after testing.
+
   };
 
   /** BidirectionalShortestPath
@@ -280,6 +290,7 @@ namespace UDIMPL {
 
       /**************Initialize Globals************/
       void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
+
         // Register variable for strict preferece mas of source.
         globalvariables->Register(GV_INTERSECTION_VERTEX, new IntersectionInfoVariable());
         globalvariables->Register(GV_WEIGHT_INDEX, new gpelib4::LongStateVariable(weightIndex_));
@@ -294,6 +305,11 @@ namespace UDIMPL {
         // BoolVariable has an or aggregator.
         globalvariables->Register(GV_IS_S_ALIVE, new gpelib4::BoolVariable(true));
         globalvariables->Register(GV_IS_T_ALIVE, new gpelib4::BoolVariable(true));
+
+        // ToDo: Remove after testing.
+        globalvariables->Register(GV_MapCount, new gpelib4::LongSumVariable((int64_t)0));
+        globalvariables->Register(GV_ReduceCount, new gpelib4::LongSumVariable((int64_t)0));
+
       }
 
       /**************
@@ -307,6 +323,7 @@ namespace UDIMPL {
         context->WriteAll(V_VALUE(), false);
         context->Write(sourceId_, V_VALUE(-1, 0, -1, MAX_WEIGHT));
         context->Write(targetId_, V_VALUE(-1, MAX_WEIGHT, -1, 0));
+        context->SetAllActiveFlag(false);
         context->SetActiveFlag(sourceId_);
         context->SetActiveFlag(targetId_);
       }
@@ -340,6 +357,9 @@ namespace UDIMPL {
       ALWAYS_INLINE void EdgeMap(const VertexLocalId_t& srcId, V_ATTR* srcAttr, const V_VALUE& srcValue,
           const VertexLocalId_t& tarId, V_ATTR* tarAttr, const V_VALUE& tarValue, E_ATTR* edgeAttr,
           gpelib4::SingleValueMapContext<MESSAGE>* context) {
+
+        // ToDo: Remove after testing.
+        context->GlobalVariable_Reduce(GV_MapCount, (int64_t)1);
 
         unsigned long int weightIndex = context->GlobalVariable_GetValue<unsigned long int>(GV_WEIGHT_INDEX);
         WEIGHT edgeWeight = edgeAttr->GetUInt32(weightIndex, 0);
@@ -418,6 +438,9 @@ namespace UDIMPL {
       ALWAYS_INLINE void Reduce(const VertexLocalId_t& verId, V_ATTR* verAttr, const V_VALUE& verValue,
           const MESSAGE& msg, gpelib4::SingleValueContext<V_VALUE>* context) {
 
+        // ToDo: Remove after testing.
+        context->GlobalVariable_Reduce(GV_ReduceCount, (int64_t)1);
+
         // Update vertex value.
         V_VALUE vVal = verValue;
 
@@ -450,7 +473,10 @@ namespace UDIMPL {
         bool expandTTree = ShouldVertexEpandTree(vVal, currMinSDist, globalIntDist, false);
 
         bool activateVertex = expandSTree || expandTTree;
-        context->SetActiveFlag(activateVertex);
+
+        if (activateVertex) {
+          context->SetActiveFlag(verId);
+        }
 
         if (activateVertex && newSDistance) {
           context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
@@ -471,8 +497,10 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
-        UpdateMinActiveDistance(context, true);
         CheckIfTreesAreAlive(context);
+        if (!context->IsStopped()) {
+          UpdateMinActiveDistance(context, true);
+        }
       }
 
       /**
@@ -484,7 +512,6 @@ namespace UDIMPL {
        */
       void EndRun(gpelib4::BasicContext* context) {
         globalIntDist_ = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
-
       }
 
       WEIGHT getDistance() {
@@ -548,6 +575,8 @@ namespace UDIMPL {
 
         // If one of the trees dies, the shortest path is known.
         if (!sIsAlive || !tIsAlive) {
+          // ToDo: Remove after testing.
+          cout << "\n STOP One tree died.\n";
           context->Stop();
         }
 
@@ -564,8 +593,10 @@ namespace UDIMPL {
         WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
         WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
 
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, nextMinSDist);
-        context->GlobalVariable_Reduce(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, nextMinTDist);
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_CURRENT_MIN_ACTIVE_WEIGHT_S))->Set(
+            nextMinSDist);
+        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_CURRENT_MIN_ACTIVE_WEIGHT_T))->Set(
+            nextMinTDist);
 
         reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(
             MAX_WEIGHT);
@@ -575,11 +606,22 @@ namespace UDIMPL {
         if (afterReduce) {
           WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
 
+          // ToDo: Remove after testing.
+          cout << "best intersection: " << globalIntDist << "\n";
+          cout << "     nextMinSDist: " << nextMinSDist << "\n";
+          cout << "     nextMinTDist: " << nextMinTDist << "\n";
+          int64_t mapCount = context->GlobalVariable_GetValue<int64_t>(GV_MapCount);
+          int64_t redCount = context->GlobalVariable_GetValue<int64_t>(GV_ReduceCount);
+          cout << "        Map Calls: " << mapCount << "\n";
+          cout << "     Reduce Calls: " << redCount << "\n";
+
           GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
           GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
 
           // First comparison prevents overflow if sum is to large.
           if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
+            // ToDo: Remove after testing.
+            cout << "\n STOP nextMinSDist + nextMinTDist >= globalIntDist.\n";
             context->Stop();
           }
         }
@@ -589,29 +631,29 @@ namespace UDIMPL {
 
 /********************UDF Runner Registry Object *************************/
 ////template <typename VID_t, typename V_ATTR_t, typename E_ATTR_t>
-//  class BidirectionalShortestPathRunner: public UDFRunner {
-//    public:
-//      typedef BidirectionalShortestPath UDF_t;
-//      BidirectionalShortestPathRunner() {
-//        requires<VertexLocalId_t>("sourceId", "s", "The vertex id of the source vertex.", &sourceId, 0);
-//        requires<VertexLocalId_t>("targetId", "t", "The vertex id of the target vertex.", &targetId, 0);
-//        requires<VertexLocalId_t>("atrrIndex", "i", "The index of the edge attribute containing the edge weight.", &atrrIndex, 0);
-//      }
-//      ~BidirectionalShortestPathRunner() {
-//      }
-//      void createUDF() {
-//        udf = new UDF_t(sourceId, targetId, atrrIndex);
-//      }
-//      void runUDF(std::string engineConfigFile, std::string topologyConfigFile, std::string outputFile) {
-//        gpelib4::EngineDriver driver(engineConfigFile, topologyConfigFile);
-//        driver.RunSingleVersion<UDF_t>((UDF_t*) udf, outputFile);
-//      }
-//      static void registerUDF(UDFRegistry& registry) {
-//        registry.add("BidirectionalShortestPath", new BidirectionalShortestPathRunner());
-//      }
-//    private:
-//      VertexLocalId_t sourceId;
-//      VertexLocalId_t targetId;
-//      unsigned int atrrIndex;
-//  };
+  class BidirectionalShortestPathRunner: public gperun::UDFRunner {
+    public:
+      typedef BidirectionalShortestPath UDF_t;
+      BidirectionalShortestPathRunner() {
+        requires<VertexLocalId_t>("sourceId", "s", "The vertex id of the source vertex.", &sourceId, 0);
+        requires<VertexLocalId_t>("targetId", "t", "The vertex id of the target vertex.", &targetId, 0);
+        requires<VertexLocalId_t>("atrrIndex", "i", "The index of the edge attribute containing the edge weight.", &atrrIndex, 0);
+      }
+      ~BidirectionalShortestPathRunner() {
+      }
+      void createUDF() {
+        udf = new UDF_t(sourceId, targetId, atrrIndex);
+      }
+      void runUDF(std::string engineConfigFile, std::string topologyConfigFile, std::string outputFile) {
+        gpelib4::EngineDriver driver(engineConfigFile, topologyConfigFile);
+        driver.RunSingleVersion<UDF_t>((UDF_t*) udf, outputFile);
+      }
+      static void registerUDF(gperun::UDFRegistry& registry) {
+        registry.add("BidirectionalShortestPath", new BidirectionalShortestPathRunner());
+      }
+    private:
+      VertexLocalId_t sourceId;
+      VertexLocalId_t targetId;
+      unsigned int atrrIndex;
+  };
 }//namespace gperun

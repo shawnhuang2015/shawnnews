@@ -156,7 +156,7 @@ namespace UDIMPL {
     static void registerAll() {
       // Add your UDF register func here
       // gperun::registerLinkRecommendation2Step(Registries::pureTopologyRegistry);
-      //gperun::BidirectionalShortestPathRunner::(gperun::Registries<char>::pureTopologyRegistry);
+      UDIMPL::BidirectionalShortestPathRunner::registerUDF(gperun::Registries<char>::pureTopologyRegistry);
     }
 
   };
