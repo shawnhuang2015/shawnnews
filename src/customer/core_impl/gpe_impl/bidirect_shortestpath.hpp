@@ -58,6 +58,8 @@ namespace UDIMPL {
        */
       WEIGHT tDist;
 
+      bool flag;
+
       /**
        * Default constructor.
        */
@@ -67,6 +69,8 @@ namespace UDIMPL {
 
         tPrev = -1;
         tDist = MAX_WEIGHT;
+
+        flag = true;
       }
 
       /**
@@ -78,12 +82,36 @@ namespace UDIMPL {
 
         this->tPrev = tPrev;
         this->tDist = tDist;
+        flag = false;
+      }
+
+      SearchTreeInfo(VertexLocalId_t sPrev, WEIGHT sDist, VertexLocalId_t tPrev, WEIGHT tDist, bool flag) {
+        this->sPrev = sPrev;
+        this->sDist = sDist;
+
+        this->tPrev = tPrev;
+        this->tDist = tDist;
+
+        this->flag = flag;
       }
 
       /**
        * Aggregator for messages.
        */
       SearchTreeInfo& operator+=(const SearchTreeInfo& other) {
+
+        if (this->flag && !other.flag) {
+          this->sDist = other.sDist;
+          this->sPrev = other.sPrev;
+          this->tDist = other.tDist;
+          this->tPrev = other.tPrev;
+          this->flag = other.flag;
+          return *this;
+        }
+
+        if (!this->flag && other.flag) {
+          return *this;
+        }
 
         // s-Tree
         if (other.sDist < this->sDist) {
@@ -399,6 +427,10 @@ namespace UDIMPL {
 
         // s-Tree
         if (srcValue.sDist < MAX_WEIGHT) {
+          if (!tarValue.flag && tarValue.sDist > currMinSDist) {
+            context->Write(srcId, MESSAGE(-1, edgeWeight, -1, MAX_WEIGHT, true));
+          }
+
           //Vertex has been dicovered by s-tree
           WEIGHT newSDist = srcValue.sDist + edgeWeight;
 
@@ -414,6 +446,10 @@ namespace UDIMPL {
 
         // t-Tree
         if (srcValue.tDist < MAX_WEIGHT) {
+          if (!tarValue.flag && tarValue.tDist > currMinSDist) {
+            context->Write(srcId, MESSAGE(-1, MAX_WEIGHT, -1, edgeWeight, true));
+          }
+
           //Vertex has been dicovered by t-tree
           WEIGHT newTDist = srcValue.tDist + edgeWeight;
 
@@ -580,6 +616,22 @@ namespace UDIMPL {
           return;
         }
 
+
+        WEIGHT currMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_S);
+        WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
+
+        if (msg.flag) {
+          if (msg.sDist < MAX_WEIGHT && currMinSDist >= vVal.sDist - msg.sDist) {
+            vVal.flag = true;
+          }
+          if (msg.tDist < MAX_WEIGHT && currMinTDist >= vVal.tDist - msg.tDist) {
+            vVal.flag = true;
+          }
+          context->Write(verId, vVal, false);
+          return;
+        }
+
+
         // Determine which distance will be updated.
         bool newSDistance = vVal.sDist > msg.sDist;
         bool newTDistance = vVal.tDist > msg.tDist;
@@ -602,9 +654,6 @@ namespace UDIMPL {
           context->GlobalVariable_Reduce<IntersectionInfo>(GV_INTERSECTION_VERTEX,
               IntersectionInfo(verId, localIntDist));
         }
-
-        WEIGHT currMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
 
         bool expandSTree = ShouldVertexEpandTree(vVal, currMinTDist, globalIntDist, true);
         bool expandTTree = ShouldVertexEpandTree(vVal, currMinSDist, globalIntDist, false);
