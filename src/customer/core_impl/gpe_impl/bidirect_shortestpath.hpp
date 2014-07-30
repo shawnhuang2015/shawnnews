@@ -16,7 +16,9 @@
 #include <gpelib4/enginebase/baseudf.hpp>
 #include <gpelib4/enginebase/context.hpp>
 #include <gpelib4/enginedriver/enginedriver.hpp>
+
 #include "../../core_ext/gpe/registry.hpp"
+#include "global_num_map.hpp"
 
 namespace UDIMPL {
   /**************STRUCTS FOR VERTEX AND MESSAGE VALUES************/
@@ -25,6 +27,7 @@ namespace UDIMPL {
    * Defines the type for edge weigts and distances.
    */
   typedef unsigned int WEIGHT;
+  typedef GlobalNumericMap<VertexLocalId_t,VertexLocalId_t> GMAP;
 
   static const WEIGHT MAX_WEIGHT = std::numeric_limits<WEIGHT>::max();
 
@@ -231,6 +234,13 @@ namespace UDIMPL {
     GV_FINAL_SEARCH_ITERATION,
 
     /**
+     * Hashmap which contains the edges of the found shortest path. Each edge is represented as
+     * key-value pair. Additionally, the pairs (-1,s) and (t,-1) are stored to determin the start
+     * and the end of the path.
+     */
+    GV_PATH_MAP,
+
+    /**
      * Just for testing. Counts the number of EdgeMap calls
      */
     GV_MapCount,        // ToDo: Remove after testing.
@@ -313,6 +323,11 @@ namespace UDIMPL {
         globalvariables->Register(GV_IS_S_ALIVE, new gpelib4::BoolVariable(true));
         globalvariables->Register(GV_IS_T_ALIVE, new gpelib4::BoolVariable(true));
 
+        GMAP* glMap = new GMAP();
+        (*glMap)[-1] = sourceId_;
+        (*glMap)[targetId_] = -1;
+
+        globalvariables->Register(GV_PATH_MAP, glMap);
         globalvariables->Register(GV_FINAL_SEARCH_ITERATION, new gpelib4::StateVariable<size_t>(std::numeric_limits<size_t>::max()));
 
         // ToDo: Remove after testing.
@@ -452,9 +467,10 @@ namespace UDIMPL {
           // The message contains an indicator to detect if the s or t path is reconstructed.
           context->Write(verValue.sPrev, MESSAGE(verId, 0, -1, 0));
 
-          // ToDo: Store edge in global memory.
+          // Store edge in global memory.
           // edge: verValue.sPrev -> verId
           cout << "** Edge (s): " << verValue.sPrev << " -> " << verId << "\n";
+          (*((GMAP*)context->GetGlobalVariable(GV_PATH_MAP)))[verValue.sPrev] = verId;
         }
 
         if (verValue.tPrev != (VertexLocalId_t)-1) {
@@ -462,9 +478,10 @@ namespace UDIMPL {
           // Send empty message to activate previous vertex for reduce.
           context->Write(verValue.tPrev, MESSAGE(-1, 0, verId, 0));
 
-          // ToDo: Store edge in global memory.
+          // Store edge in global memory.
           // edge: verId -> verValue.tPrev
           cout << "** Edge (t): " << verId << " -> " << verValue.tPrev << "\n";
+          (*((GMAP*)context->GetGlobalVariable(GV_PATH_MAP)))[verId] = verValue.tPrev;
         }
 
       }
@@ -664,6 +681,17 @@ namespace UDIMPL {
        */
       void EndRun(gpelib4::BasicContext* context) {
         globalIntDist_ = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
+        GMAP glMap = context->GlobalVariable_GetValue<GMAP>(GV_PATH_MAP);
+
+        VertexLocalId_t vId = glMap[-1];
+
+        cout << "\n\033[32mPath:";
+        do {
+          cout << " " << vId;
+          vId = glMap[vId];
+        } while (vId != (VertexLocalId_t)-1);
+
+        cout << "\033[0m\n";
       }
 
       WEIGHT getDistance() {
@@ -801,4 +829,4 @@ namespace UDIMPL {
       VertexLocalId_t targetId;
       unsigned int atrrIndex;
   };
-}//namespace gperun
+}//namespace UDIMPL
