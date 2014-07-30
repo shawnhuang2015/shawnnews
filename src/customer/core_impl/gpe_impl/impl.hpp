@@ -25,6 +25,7 @@
 #include "../../core_ext/gpe/enginejobrunner.hpp"
 #include "kneighborsubgraph.hpp"
 #include "bidirect_shortestpath.hpp"
+#include "bidirect_bfs.hpp"
 
 
 namespace gperun {
@@ -157,6 +158,7 @@ namespace UDIMPL {
       // Add your UDF register func here
       // gperun::registerLinkRecommendation2Step(Registries::pureTopologyRegistry);
       UDIMPL::BidirectionalShortestPathRunner::registerUDF(gperun::Registries<char>::pureTopologyRegistry);
+      UDIMPL::BidirectionalBFSRunner::registerUDF(gperun::Registries<char>::pureTopologyRegistry);
     }
 
   };

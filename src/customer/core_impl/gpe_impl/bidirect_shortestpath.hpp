@@ -224,6 +224,13 @@ namespace UDIMPL {
     GV_IS_T_ALIVE,
 
     /**
+     * Stores the number of the iteration which stopped the search. This allows to determine if
+     * the search phase is over aand if an EdgeMap call is supposed to find the shortest path or
+     * to explore the graph.
+     */
+    GV_FINAL_SEARCH_ITERATION,
+
+    /**
      * Just for testing. Counts the number of EdgeMap calls
      */
     GV_MapCount,        // ToDo: Remove after testing.
@@ -267,7 +274,7 @@ namespace UDIMPL {
       static const gpelib4::UDFDefineInitializeFlag InitializeMode_ = gpelib4::Mode_Initialize_Globally;
       static const gpelib4::UDFDefineFlag AggregateReduceMode_ = gpelib4::Mode_Defined;
       static const gpelib4::UDFDefineFlag CombineReduceMode_ = gpelib4::Mode_NotDefined;
-      static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_NotDefined;
+      static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_Defined;
       static const int PrintMode_ = gpelib4::Mode_Print_NotDefined;
 
       // These typedefs are required by the engine.
@@ -305,6 +312,8 @@ namespace UDIMPL {
         // BoolVariable has an or aggregator.
         globalvariables->Register(GV_IS_S_ALIVE, new gpelib4::BoolVariable(true));
         globalvariables->Register(GV_IS_T_ALIVE, new gpelib4::BoolVariable(true));
+
+        globalvariables->Register(GV_FINAL_SEARCH_ITERATION, new gpelib4::StateVariable<size_t>(std::numeric_limits<size_t>::max()));
 
         // ToDo: Remove after testing.
         globalvariables->Register(GV_MapCount, new gpelib4::LongSumVariable((int64_t)0));
@@ -376,6 +385,7 @@ namespace UDIMPL {
           bool expandSTree = ShouldVertexEpandTree(srcValue, currMinTDist, intDist, true);
 
           if (srcValue.sPrev != tarId && expandSTree && tarValue.sDist > newSDist && newSDist <= intDist) {
+            MESSAGE msg = MESSAGE(srcId, newSDist, -1, MAX_WEIGHT);
             context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, newSDist);
             context->GlobalVariable_Reduce(GV_IS_S_ALIVE, true);
@@ -390,6 +400,7 @@ namespace UDIMPL {
           bool expandTTree = ShouldVertexEpandTree(srcValue, currMinSDist, intDist, false);
 
           if (srcValue.tPrev != tarId && expandTTree && tarValue.tDist > newTDist && newTDist <= intDist) {
+            MESSAGE msg = MESSAGE(-1, MAX_WEIGHT, srcId, newTDist);
             context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, newTDist);
             context->GlobalVariable_Reduce(GV_IS_T_ALIVE, true);
@@ -405,6 +416,59 @@ namespace UDIMPL {
        *
        *
        ************/
+      ALWAYS_INLINE void VertexMap(const VertexLocalId_t& verId, V_ATTR* verAttr, const V_VALUE& verValue, gpelib4::SingleValueMapContext<MESSAGE>* context) {
+
+        size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
+        size_t currIteration = context->Iteration();
+
+
+        if (currIteration <= finalIteration) {
+          // This should not happen.
+          return;
+        }
+
+        cout << " Vertex Map - vId: " << verId << " finalIteration: " << finalIteration  << " currIteration: " << currIteration << "\n";
+
+        if (currIteration - 1 == finalIteration) {
+
+          //ToDo: potential error if search was already stopped after map.
+
+          // After last iteration the search was stopped. Hoever, there can still be some active branches.
+          // Therefore, ignore all vertices except the intersecting vertex.
+
+          VertexLocalId_t intVerId = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).vertexId;
+
+          if (verId != intVerId) {
+            return;
+          }
+
+        }
+
+        // Vertex is a vertex on the path.
+
+        if (verValue.sPrev != (VertexLocalId_t)-1) {
+
+          // Send message to activate previous vertex for reduce.
+          // The message contains an indicator to detect if the s or t path is reconstructed.
+          context->Write(verValue.sPrev, MESSAGE(verId, 0, -1, 0));
+
+          // ToDo: Store edge in global memory.
+          // edge: verValue.sPrev -> verId
+          cout << "** Edge (s): " << verValue.sPrev << " -> " << verId << "\n";
+        }
+
+        if (verValue.tPrev != (VertexLocalId_t)-1) {
+
+          // Send empty message to activate previous vertex for reduce.
+          context->Write(verValue.tPrev, MESSAGE(-1, 0, verId, 0));
+
+          // ToDo: Store edge in global memory.
+          // edge: verId -> verValue.tPrev
+          cout << "** Edge (t): " << verId << " -> " << verValue.tPrev << "\n";
+        }
+
+      }
+
 
       /**
        * BetweenMapAndReduce is called between the map and reduce phases
@@ -414,8 +478,33 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
-        UpdateMinActiveDistance(context, false);
+        size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
+        size_t currIteration = context->Iteration();
+
+        if (finalIteration <= currIteration) {
+          // Nothing to do.
+          return;
+        }
+
         CheckIfTreesAreAlive(context);
+        UpdateMinActiveDistance(context, false);
+
+//        if (!continueSearch) {
+//
+//          IntersectionInfo intInfo = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX);
+//
+//          if (intInfo.distance == MAX_WEIGHT) {
+//            // Grpah is disconnected.
+//            context->Stop();
+//            return;
+//          }
+//
+//          cout << "Activating vertex Map (betweenMapAndReduce) -- Intersection: " << intInfo.vertexId << "\n";
+//
+//          reinterpret_cast<gpelib4::StateVariable<size_t>*>(context->GetGlobalVariable(GV_FINAL_SEARCH_ITERATION))->Set(context->Iteration());
+//          context->set_UDFMapRun(gpelib4::UDFMapRun_VertexMap);
+//          context->SetActiveFlag(intInfo.vertexId);
+//        }
 
       }
 
@@ -441,8 +530,33 @@ namespace UDIMPL {
         // ToDo: Remove after testing.
         context->GlobalVariable_Reduce(GV_ReduceCount, (int64_t)1);
 
-        // Update vertex value.
+        // local copy
         V_VALUE vVal = verValue;
+
+        // Test if graph is still searching
+        size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
+        size_t currIteration = context->Iteration();
+
+        if (currIteration > finalIteration) {
+
+          cout << "Reduce - " << verId << " (" << msg.sPrev << "," << msg.tPrev << ")\n";
+
+          // Vertex is vertex on the path.
+
+          // Remove other pointer. This way the next map will only explore in one direction.
+          if (msg.sPrev != (VertexLocalId_t)-1) {
+            vVal.tPrev = -1;
+          }
+
+          if (msg.tPrev != (VertexLocalId_t)-1) {
+            vVal.sPrev = -1;
+          }
+
+          context->Write(verId, vVal);
+          context->SetActiveFlag(verId);
+
+          return;
+        }
 
         // Determine which distance will be updated.
         bool newSDistance = vVal.sDist > msg.sDist;
@@ -450,6 +564,7 @@ namespace UDIMPL {
 
         vVal += msg;
         context->Write(verId, vVal, false);
+
 
         WEIGHT localIntDist = MAX_WEIGHT;
 
@@ -497,10 +612,47 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
-        CheckIfTreesAreAlive(context);
-        if (!context->IsStopped()) {
-          UpdateMinActiveDistance(context, true);
+        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
+        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
+
+        IntersectionInfo intInfo = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX);
+
+        // ToDo: Remove after testing.
+        cout << "best intersection: " << intInfo.distance << "\n";
+        cout << "     nextMinSDist: " << nextMinSDist << "\n";
+        cout << "     nextMinTDist: " << nextMinTDist << "\n";
+        int64_t mapCount = context->GlobalVariable_GetValue<int64_t>(GV_MapCount);
+        int64_t redCount = context->GlobalVariable_GetValue<int64_t>(GV_ReduceCount);
+        cout << "        Map Calls: " << mapCount << "\n";
+        cout << "     Reduce Calls: " << redCount << "\n";
+
+
+        size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
+        size_t currIteration = context->Iteration();
+
+        if (finalIteration <= currIteration) {
+          // Nothing to do.
+          return;
         }
+
+        bool continueSearch = CheckIfTreesAreAlive(context) && UpdateMinActiveDistance(context, true);
+
+        if (!continueSearch) {
+
+          if (intInfo.distance == MAX_WEIGHT) {
+            // Grpah is disconnected.
+            context->Stop();
+            return;
+          }
+
+          cout << "Activating vertex Map (AfterIteration)\n";
+
+          reinterpret_cast<gpelib4::StateVariable<size_t>*>(context->GetGlobalVariable(GV_FINAL_SEARCH_ITERATION))->Set(context->Iteration());
+          context->set_UDFMapRun(gpelib4::UDFMapRun_VertexMap);
+          context->SetAllActiveFlag(false);
+          context->SetActiveFlag(intInfo.vertexId);
+        }
+
       }
 
       /**
@@ -553,8 +705,6 @@ namespace UDIMPL {
         WEIGHT backDist = isSTree ? verValue.tDist : verValue.sDist;
 
         // Lower bound for the distance in the back-tree.
-        // ToDo: Implement the case that v is in (ii) of back-tree,
-        //       i.e. backDist > currMinActiveBackDist but we know that it is optimal.
         WEIGHT bestBackDist = std::min(currMinActiveBackDist, backDist);
 
         return forwardDist + bestBackDist < bestKnownInterDist;
@@ -565,7 +715,7 @@ namespace UDIMPL {
        * Checks if both trees are still alive. If not, the program stops. Method is called by
        * BetweenMapAndReduce() and AfterIteration().
        */
-      void CheckIfTreesAreAlive(gpelib4::MasterContext* context) {
+      bool CheckIfTreesAreAlive(gpelib4::MasterContext* context) {
 
         bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
         bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
@@ -577,8 +727,10 @@ namespace UDIMPL {
         if (!sIsAlive || !tIsAlive) {
           // ToDo: Remove after testing.
           cout << "\n STOP One tree died.\n";
-          context->Stop();
+          return false;
         }
+
+        return true;
 
       }
 
@@ -588,7 +740,7 @@ namespace UDIMPL {
        * path, stop the program, the best known path is optimal. Method is called by
        * BetweenMapAndReduce() and AfterIteration().
        */
-      void UpdateMinActiveDistance(gpelib4::MasterContext* context, bool afterReduce) {
+      bool UpdateMinActiveDistance(gpelib4::MasterContext* context, bool afterReduce) {
 
         WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
         WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
@@ -606,15 +758,6 @@ namespace UDIMPL {
         if (afterReduce) {
           WEIGHT globalIntDist = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
 
-          // ToDo: Remove after testing.
-          cout << "best intersection: " << globalIntDist << "\n";
-          cout << "     nextMinSDist: " << nextMinSDist << "\n";
-          cout << "     nextMinTDist: " << nextMinTDist << "\n";
-          int64_t mapCount = context->GlobalVariable_GetValue<int64_t>(GV_MapCount);
-          int64_t redCount = context->GlobalVariable_GetValue<int64_t>(GV_ReduceCount);
-          cout << "        Map Calls: " << mapCount << "\n";
-          cout << "     Reduce Calls: " << redCount << "\n";
-
           GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
           GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
 
@@ -622,9 +765,11 @@ namespace UDIMPL {
           if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
             // ToDo: Remove after testing.
             cout << "\n STOP nextMinSDist + nextMinTDist >= globalIntDist.\n";
-            context->Stop();
+            return false;
           }
         }
+
+        return true;
       }
 
   };
