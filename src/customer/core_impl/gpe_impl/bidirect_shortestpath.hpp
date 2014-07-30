@@ -277,6 +277,11 @@ namespace UDIMPL {
        */
       unsigned long int weightIndex_;
 
+      /**
+       * The id of the source vertex. Only used to initialise the UDF
+       */
+      vector<VertexLocalId_t> foundPath_;
+
     public:
       // UDF Settings: Computation Modes
       static const gpelib4::EngineProcessingMode EngineMode = gpelib4::EngineProcessMode_ActiveVertices;
@@ -681,6 +686,8 @@ namespace UDIMPL {
        */
       void EndRun(gpelib4::BasicContext* context) {
         globalIntDist_ = context->GlobalVariable_GetValue<IntersectionInfo>(GV_INTERSECTION_VERTEX).distance;
+
+        foundPath_ = vector<VertexLocalId_t>();
         GMAP glMap = context->GlobalVariable_GetValue<GMAP>(GV_PATH_MAP);
 
         VertexLocalId_t vId = glMap[-1];
@@ -688,6 +695,7 @@ namespace UDIMPL {
         cout << "\n\033[32mPath:";
         do {
           cout << " " << vId;
+          foundPath_.push_back(vId);
           vId = glMap[vId];
         } while (vId != (VertexLocalId_t)-1);
 
@@ -696,6 +704,10 @@ namespace UDIMPL {
 
       WEIGHT getDistance() {
         return globalIntDist_;
+      }
+
+      vector<VertexLocalId_t> getPath() {
+        return foundPath_;
       }
 
       /**************
