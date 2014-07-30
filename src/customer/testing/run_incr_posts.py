@@ -103,8 +103,13 @@ def test_main():
       while payload["edgeList"]:
         n_edges += len(payload["edgeList"])
         result = post_graph_update(host,port,payload)
+        print result.status_code
+        print result.request.headers
+        # if result.json()[error] == "true":
+        #   print "one of the requests failed\n\n" + result.text
+        #   exit()
         #print payload
-        #print result.text
+        print result.text
         times.append(result.elapsed.total_seconds())
         payload = get_n_edges_payload(f,batch)
         

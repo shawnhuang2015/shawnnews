@@ -12,5 +12,5 @@ for line in f:
 
 g = open("id_sample.txt","w")
 
-for vid in random.sample(ids,1000):
+for vid in random.sample(ids,100000):
     g.write(vid + "\n")
