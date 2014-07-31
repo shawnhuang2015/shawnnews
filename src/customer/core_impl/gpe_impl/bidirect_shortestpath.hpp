@@ -82,7 +82,7 @@ namespace UDIMPL {
 
         this->tPrev = tPrev;
         this->tDist = tDist;
-        flag = false;
+        this->flag = false;
       }
 
       SearchTreeInfo(VertexLocalId_t sPrev, WEIGHT sDist, VertexLocalId_t tPrev, WEIGHT tDist, bool flag) {
@@ -123,6 +123,31 @@ namespace UDIMPL {
         if (other.tDist < this->tDist) {
           this->tDist = other.tDist;
           this->tPrev = other.tPrev;
+        }
+
+        return *this;
+      }
+
+      /**
+       * Reducer for vertices.
+       */
+      SearchTreeInfo& operator*=(const SearchTreeInfo& msg) {
+
+        if (msg.flag) {
+          // Should not happen. Ignore message.
+          return *this;
+        }
+
+        // s-Tree
+        if (msg.sDist < this->sDist) {
+          this->sDist = msg.sDist;
+          this->sPrev = msg.sPrev;
+        }
+
+        // t-Tree
+        if (msg.tDist < this->tDist) {
+          this->tDist = msg.tDist;
+          this->tPrev = msg.tPrev;
         }
 
         return *this;
@@ -377,12 +402,13 @@ namespace UDIMPL {
        *
        ************/
       ALWAYS_INLINE void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
-        context->WriteAll(V_VALUE(), false);
+        context->WriteAll(V_VALUE(-1, MAX_WEIGHT, -1, MAX_WEIGHT), false);
         context->Write(sourceId_, V_VALUE(-1, 0, -1, MAX_WEIGHT));
         context->Write(targetId_, V_VALUE(-1, MAX_WEIGHT, -1, 0));
         context->SetAllActiveFlag(false);
         context->SetActiveFlag(sourceId_);
         context->SetActiveFlag(targetId_);
+        cout <<"\033[31m+\033[0m";
       }
 
       /**
@@ -425,9 +451,11 @@ namespace UDIMPL {
         WEIGHT currMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_S);
         WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
 
+        GASSERT(!srcValue.flag,"EdgeMap of a flagged vertex.");
+
         // s-Tree
         if (srcValue.sDist < MAX_WEIGHT) {
-          if (!tarValue.flag && tarValue.sDist > currMinSDist) {
+          if ((!tarValue.flag) && (tarValue.sDist > currMinSDist)) {
             context->Write(srcId, MESSAGE(-1, edgeWeight, -1, MAX_WEIGHT, true));
           }
 
@@ -437,7 +465,6 @@ namespace UDIMPL {
           bool expandSTree = ShouldVertexEpandTree(srcValue, currMinTDist, intDist, true);
 
           if (srcValue.sPrev != tarId && expandSTree && tarValue.sDist > newSDist && newSDist <= intDist) {
-            MESSAGE msg = MESSAGE(srcId, newSDist, -1, MAX_WEIGHT);
             context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, newSDist);
             context->GlobalVariable_Reduce(GV_IS_S_ALIVE, true);
@@ -446,7 +473,7 @@ namespace UDIMPL {
 
         // t-Tree
         if (srcValue.tDist < MAX_WEIGHT) {
-          if (!tarValue.flag && tarValue.tDist > currMinSDist) {
+          if ((!tarValue.flag) && (tarValue.tDist > currMinTDist)) {
             context->Write(srcId, MESSAGE(-1, MAX_WEIGHT, -1, edgeWeight, true));
           }
 
@@ -456,7 +483,6 @@ namespace UDIMPL {
           bool expandTTree = ShouldVertexEpandTree(srcValue, currMinSDist, intDist, false);
 
           if (srcValue.tPrev != tarId && expandTTree && tarValue.tDist > newTDist && newTDist <= intDist) {
-            MESSAGE msg = MESSAGE(-1, MAX_WEIGHT, srcId, newTDist);
             context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
             context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, newTDist);
             context->GlobalVariable_Reduce(GV_IS_T_ALIVE, true);
@@ -482,8 +508,6 @@ namespace UDIMPL {
           // This should not happen.
           return;
         }
-
-        cout << " Vertex Map - vId: " << verId << " finalIteration: " << finalIteration  << " currIteration: " << currIteration << "\n";
 
         if (currIteration - 1 == finalIteration) {
 
@@ -588,6 +612,7 @@ namespace UDIMPL {
         // ToDo: Remove after testing.
         context->GlobalVariable_Reduce(GV_ReduceCount, (int64_t)1);
 
+
         // local copy
         V_VALUE vVal = verValue;
 
@@ -621,10 +646,10 @@ namespace UDIMPL {
         WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
 
         if (msg.flag) {
-          if (msg.sDist < MAX_WEIGHT && currMinSDist >= vVal.sDist - msg.sDist) {
+          if (msg.sDist < MAX_WEIGHT && /*currMinSDist < vVal.sDist &&*/ (vVal.sDist < msg.sDist || currMinSDist >= vVal.sDist - msg.sDist)) {
             vVal.flag = true;
           }
-          if (msg.tDist < MAX_WEIGHT && currMinTDist >= vVal.tDist - msg.tDist) {
+          if (msg.tDist < MAX_WEIGHT && /*currMinTDist < vVal.tDist &&*/ (vVal.tDist < msg.tDist || currMinTDist >= vVal.tDist - msg.tDist)) {
             vVal.flag = true;
           }
           context->Write(verId, vVal, false);
@@ -636,7 +661,7 @@ namespace UDIMPL {
         bool newSDistance = vVal.sDist > msg.sDist;
         bool newTDistance = vVal.tDist > msg.tDist;
 
-        vVal += msg;
+        vVal *= msg;
         context->Write(verId, vVal, false);
 
 
@@ -740,12 +765,15 @@ namespace UDIMPL {
         GMAP glMap = context->GlobalVariable_GetValue<GMAP>(GV_PATH_MAP);
 
         VertexLocalId_t vId = glMap[-1];
+        int i = 0;
 
         cout << "\n\033[32mPath:";
         do {
           cout << " " << vId;
           foundPath_.push_back(vId);
           vId = glMap[vId];
+          GASSERT(i < 10, "VertexId has not changed");
+          i++;
         } while (vId != (VertexLocalId_t)-1);
 
         cout << "\033[0m\n";
@@ -789,6 +817,11 @@ namespace UDIMPL {
        */
       bool ShouldVertexEpandTree(const V_VALUE& verValue, WEIGHT currMinActiveBackDist, WEIGHT bestKnownInterDist,
           bool isSTree) {
+
+        if (verValue.flag) {
+          cout <<"\033[31m+\033[0m";
+          return false;
+        }
 
         WEIGHT forwardDist = isSTree ? verValue.sDist : verValue.tDist;
         WEIGHT backDist = isSTree ? verValue.tDist : verValue.sDist;
