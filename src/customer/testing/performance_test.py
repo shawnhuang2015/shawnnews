@@ -119,7 +119,7 @@ def execute_one_test(step):
         #content = json.load(data)
 #        print content
         results = content["results"]
-        impacted_vertex_num = len(results["vertices"])
+        impacted_vertex_num = int(results["neighborhood_size"])
         total_engine_time = (req.elapsed.total_seconds()*1000)#results["engine_process_time"]
         # print engine_process_time_str
         # # get engine detailed iteration running time

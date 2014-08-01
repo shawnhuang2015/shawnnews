@@ -275,33 +275,37 @@ struct EdgePair{
      */
     void EndRun(gpelib4::BasicContext* context) {
       vids_ = context->GlobalVariable_GetValue<std::vector<VertexLocalId_t> >(GV_VERTLIST);
-      edges_ = context->GlobalVariable_GetValue<std::vector<EdgePair> >(GV_EDGELIST);
+//      edges_ = context->GlobalVariable_GetValue<std::vector<EdgePair> >(GV_EDGELIST);
+//      writer_->WriteStartObject();
+//      writer_->WriteName("vertices");
+//      writer_->WriteStartArray();
+//      for(std::vector<VertexLocalId_t>::iterator it = vids_.begin();
+//          it != vids_.end();
+//          ++it){
+//        writer_->WriteMarkVId(*it);
+//      }
+//      writer_->WriteEndArray();
+
+//      writer_->WriteName("Edges");
+//      writer_->WriteStartArray();
+
+//      for(std::vector<EdgePair>::iterator it = edges_.begin();
+//          it != edges_.end();
+//          ++it){
+//        writer_->WriteStartObject();
+//        writer_->WriteName("src");
+//        writer_->WriteMarkVId(it->src);
+//        writer_->WriteName("tgt");
+//        writer_->WriteMarkVId(it->tgt);
+//        writer_->WriteEndObject();
+//      }
+
+
+//      writer_->WriteEndArray();
+//      writer_->WriteEndObject();
+
       writer_->WriteStartObject();
-      writer_->WriteName("vertices");
-      writer_->WriteStartArray();
-      for(std::vector<VertexLocalId_t>::iterator it = vids_.begin();
-          it != vids_.end();
-          ++it){
-        writer_->WriteMarkVId(*it);
-      }
-      writer_->WriteEndArray();
-
-      writer_->WriteName("Edges");
-      writer_->WriteStartArray();
-
-      for(std::vector<EdgePair>::iterator it = edges_.begin();
-          it != edges_.end();
-          ++it){
-        writer_->WriteStartObject();
-        writer_->WriteName("src");
-        writer_->WriteMarkVId(it->src);
-        writer_->WriteName("tgt");
-        writer_->WriteMarkVId(it->tgt);
-        writer_->WriteEndObject();
-      }
-
-
-      writer_->WriteEndArray();
+      writer_->WriteName("neighborhood_size").WriteUnsignedInt(vids_.size());
       writer_->WriteEndObject();
     }
 
