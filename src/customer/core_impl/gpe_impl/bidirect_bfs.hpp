@@ -24,19 +24,15 @@
 namespace UDIMPL {
   /**************STRUCTS FOR VERTEX AND MESSAGE VALUES************/
   // You can store any fixed-size structure as UDF data. define them here.
-  /**
-   * Defines the type for edge weigts and distances.
-   */
-  typedef unsigned int WEIGHT;
 
-  static const WEIGHT MAX_WEIGHT = std::numeric_limits<WEIGHT>::max();
+  static const uint64_t MAX_LENGTH = std::numeric_limits<uint64_t>::max();
 
   /**
    * Represents the message and vertex value. It stores the information if
    * a vertext was dicoverd by a search tree, what is parent in the tree is,
    * and the distance to the root (source or target vertex).
    */
-  struct SearchTreeInfo {
+  struct BFSTreeInfo {
 
       /**
        * The parent vertex in the s-tree.
@@ -49,51 +45,33 @@ namespace UDIMPL {
       VertexLocalId_t tPrev;
 
       /**
-       * The distance to s.
-       */
-      WEIGHT sDist;
-
-      /**
-       * The distance to t.
-       */
-      WEIGHT tDist;
-
-      /**
        * Default constructor.
        */
-      SearchTreeInfo() {
+      BFSTreeInfo() {
         sPrev = -1;
-        sDist = MAX_WEIGHT;
-
         tPrev = -1;
-        tDist = MAX_WEIGHT;
       }
 
       /**
-       * Creates a new SearchTreeInfo.
+       * Creates a new BFSTreeInfo.
        */
-      SearchTreeInfo(VertexLocalId_t sPrev, WEIGHT sDist, VertexLocalId_t tPrev, WEIGHT tDist) {
+      BFSTreeInfo(VertexLocalId_t sPrev, VertexLocalId_t tPrev) {
         this->sPrev = sPrev;
-        this->sDist = sDist;
-
         this->tPrev = tPrev;
-        this->tDist = tDist;
       }
 
       /**
        * Aggregator for messages.
        */
-      SearchTreeInfo& operator+=(const SearchTreeInfo& other) {
+      BFSTreeInfo& operator+=(const BFSTreeInfo& other) {
 
         // s-Tree
-        if (other.sDist < this->sDist) {
-          this->sDist = other.sDist;
+        if (this->sPrev == (VertexLocalId_t)-1) {
           this->sPrev = other.sPrev;
         }
 
         // t-Tree
-        if (other.tDist < this->tDist) {
-          this->tDist = other.tDist;
+        if (this->tPrev == (VertexLocalId_t)-1) {
           this->tPrev = other.tPrev;
         }
 
@@ -104,13 +82,13 @@ namespace UDIMPL {
 
   /**************Enumerations and Constants************/
 
-  /** BidirectionalShortestPath
+  /** BidirectionalBFS
    *
    * Calculates a shortest path from a source vertex s to a target vertex t.
    * The search is made bidirectional.
    *
    */
-  class BidirectionalShortestPath: public gpelib4::BaseUDF {
+  class BidirectionalBFS: public gpelib4::BaseUDF {
     public:
       // UDF Settings: Computation Modes
       static const gpelib4::EngineProcessingMode EngineMode = gpelib4::EngineProcessMode_ActiveVertices;
@@ -124,11 +102,11 @@ namespace UDIMPL {
       // These typedefs are required by the engine.
       typedef topology4::VertexAttribute V_ATTR;
       typedef topology4::EdgeAttribute_Writable E_ATTR;
-      typedef SearchTreeInfo V_VALUE;
-      typedef SearchTreeInfo MESSAGE;
+      typedef BFSTreeInfo V_VALUE;
+      typedef BFSTreeInfo MESSAGE;
 
       /**************Class Constructor************/
-      BidirectionalShortestPath(VertexLocalId_t sourceId, VertexLocalId_t targetId, unsigned long int weightIndex) :
+      BidirectionalBFS(VertexLocalId_t sourceId, VertexLocalId_t targetId, size_t weightIndex) :
           gpelib4::BaseUDF(EngineMode, std::numeric_limits<size_t>::max()) {
         sourceId_ = sourceId;
         targetId_ = targetId;
@@ -136,7 +114,7 @@ namespace UDIMPL {
       }
 
       /**************Class Destructor************/
-      ~BidirectionalShortestPath() {
+      ~BidirectionalBFS() {
       }
 
       /**************Initialize Globals************/
@@ -154,19 +132,7 @@ namespace UDIMPL {
         globalvariables->Register(GV_FINAL_SEARCH_ITERATION, new gpelib4::StateVariable<size_t>(std::numeric_limits<size_t>::max()));
 
         // Register variable for strict preferece mas of source.
-        globalvariables->Register(GV_INTERSECTION_VERTEX, new WeightIntInfoVariable());
-        globalvariables->Register(GV_WEIGHT_INDEX, new gpelib4::StateVariable<size_t>(weightIndex_));
-
-        // Start values are 0, because the distance from s and t to itself is 0.
-        globalvariables->Register(GV_CURRENT_MIN_ACTIVE_WEIGHT_S, new gpelib4::StateVariable<WEIGHT>(0));
-        globalvariables->Register(GV_CURRENT_MIN_ACTIVE_WEIGHT_T, new gpelib4::StateVariable<WEIGHT>(0));
-
-        globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_S, new gpelib4::MinVariable<WEIGHT>(0));
-        globalvariables->Register(GV_NEXT_MIN_ACTIVE_WEIGHT_T, new gpelib4::MinVariable<WEIGHT>(0));
-
-        // BoolVariable has an or aggregator.
-        globalvariables->Register(GV_IS_S_ALIVE, new gpelib4::BoolVariable(true));
-        globalvariables->Register(GV_IS_T_ALIVE, new gpelib4::BoolVariable(true));
+        globalvariables->Register(GV_INTERSECTION_VERTEX, new BFSIntInfoVariable());
 
       }
 
@@ -178,9 +144,9 @@ namespace UDIMPL {
        *
        ************/
       ALWAYS_INLINE void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
-        context->WriteAll(V_VALUE(-1, MAX_WEIGHT, -1, MAX_WEIGHT), false);
-        context->Write(sourceId_, V_VALUE(-1, 0, -1, MAX_WEIGHT));
-        context->Write(targetId_, V_VALUE(-1, MAX_WEIGHT, -1, 0));
+        context->WriteAll(V_VALUE(-1, -1), false);
+        context->Write(sourceId_, V_VALUE(sourceId_, -1));
+        context->Write(targetId_, V_VALUE(-1, targetId_));
         context->SetAllActiveFlag(false);
         context->SetActiveFlag(sourceId_);
         context->SetActiveFlag(targetId_);
@@ -219,39 +185,14 @@ namespace UDIMPL {
         // ToDo: Remove after testing.
         context->GlobalVariable_Reduce(GV_MAP_COUNT, (int64_t)1);
 
-        size_t weightIndex = context->GlobalVariable_GetValue<size_t>(GV_WEIGHT_INDEX);
-        WEIGHT edgeWeight = edgeAttr->GetUInt32(weightIndex, 0);
-
-        WEIGHT intDist = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX).distance;
-        WEIGHT currMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
-
         // s-Tree
-        if (srcValue.sDist < MAX_WEIGHT) {
-          //Vertex has been dicovered by s-tree
-          WEIGHT newSDist = srcValue.sDist + edgeWeight;
-
-          bool expandSTree = ShouldVertexEpandTree(srcValue, currMinTDist, intDist, true);
-
-          if (srcValue.sPrev != tarId && expandSTree && tarValue.sDist > newSDist && newSDist <= intDist) {
-            context->Write(tarId, MESSAGE(srcId, newSDist, -1, MAX_WEIGHT));
-            context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, newSDist);
-            context->GlobalVariable_Reduce(GV_IS_S_ALIVE, true);
-          }
+        if (srcValue.sPrev != (VertexLocalId_t)-1 && tarValue.sPrev == (VertexLocalId_t)-1) {
+          context->Write(tarId, MESSAGE(srcId, -1));
         }
 
         // t-Tree
-        if (srcValue.tDist < MAX_WEIGHT) {
-          //Vertex has been dicovered by t-tree
-          WEIGHT newTDist = srcValue.tDist + edgeWeight;
-
-          bool expandTTree = ShouldVertexEpandTree(srcValue, currMinSDist, intDist, false);
-
-          if (srcValue.tPrev != tarId && expandTTree && tarValue.tDist > newTDist && newTDist <= intDist) {
-            context->Write(tarId, MESSAGE(-1, MAX_WEIGHT, srcId, newTDist));
-            context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, newTDist);
-            context->GlobalVariable_Reduce(GV_IS_T_ALIVE, true);
-          }
+        if (srcValue.tPrev != (VertexLocalId_t)-1 && tarValue.tPrev == (VertexLocalId_t)-1) {
+          context->Write(tarId, MESSAGE(-1, srcId));
         }
 
       }
@@ -279,7 +220,7 @@ namespace UDIMPL {
           // After last iteration the search was stopped. Hoever, there can still be some active branches.
           // Therefore, ignore all vertices except the intersecting vertex.
 
-          VertexLocalId_t intVerId = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX).vertexId;
+          VertexLocalId_t intVerId = context->GlobalVariable_GetValue<BFSIntInfo>(GV_INTERSECTION_VERTEX).vertexId;
 
           if (verId != intVerId) {
             return;
@@ -289,21 +230,21 @@ namespace UDIMPL {
 
         // Vertex is a vertex on the path.
 
-        if (verValue.sPrev != (VertexLocalId_t)-1) {
+        if (verValue.sPrev != verId && verValue.sPrev != (VertexLocalId_t)-1) {
 
           // Send message to activate previous vertex for reduce.
           // The message contains an indicator to detect if the s or t path is reconstructed.
-          context->Write(verValue.sPrev, MESSAGE(verId, 0, -1, 0));
+          context->Write(verValue.sPrev, MESSAGE(verId, -1));
 
           // Store edge in global memory.
           // edge: verValue.sPrev -> verId
           (*((GMAP*)context->GetGlobalVariable(GV_PATH_MAP)))[verValue.sPrev] = verId;
         }
 
-        if (verValue.tPrev != (VertexLocalId_t)-1) {
+        if (verValue.tPrev != verId && verValue.tPrev != (VertexLocalId_t)-1) {
 
           // Send empty message to activate previous vertex for reduce.
-          context->Write(verValue.tPrev, MESSAGE(-1, 0, verId, 0));
+          context->Write(verValue.tPrev, MESSAGE(-1, verId));
 
           // Store edge in global memory.
           // edge: verId -> verValue.tPrev
@@ -321,17 +262,6 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
-        size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
-        size_t currIteration = context->Iteration();
-
-        if (finalIteration <= currIteration) {
-          // Nothing to do.
-          return;
-        }
-
-        CheckIfTreesAreAlive(context);
-        UpdateMinActiveDistance(context, false);
-
       }
 
       /**************
@@ -382,49 +312,24 @@ namespace UDIMPL {
           return;
         }
 
-        WEIGHT currMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT currMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_CURRENT_MIN_ACTIVE_WEIGHT_T);
-
-        // Determine which distance will be updated.
-        bool newSDistance = vVal.sDist > msg.sDist;
-        bool newTDistance = vVal.tDist > msg.tDist;
-
         vVal += msg;
-        context->Write(verId, vVal, false);
+        context->Write(verId, vVal);
+        context->SetActiveFlag(verId);
 
+        // Check if an intersection was found.
+        if (vVal.sPrev != (VertexLocalId_t)-1 && vVal.tPrev != (VertexLocalId_t)-1) {
+          // Yes, intersection found.
 
-        WEIGHT localIntDist = MAX_WEIGHT;
+          uint64_t length = context->Iteration() * 2;
 
-        // Check if sum is smaller than 'infinite'. tDist is substracted from MAX_WEIGHT to avoid overflow.
-        if (vVal.sDist < MAX_WEIGHT - vVal.tDist) {
-          localIntDist = vVal.sDist + vVal.tDist;
-        }
+          // If vertext was already part of one of the BFS-trees, then the intersection is on an
+          // edge. Thus, the length of the path is odd.
+          if (verValue.sPrev != (VertexLocalId_t)-1 || verValue.tPrev != (VertexLocalId_t)-1 ) {
+            length--;
+          }
 
-        WEIGHT globalIntDist = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX).distance;
-
-        if (localIntDist < globalIntDist) {
-          globalIntDist = localIntDist;
-          context->GlobalVariable_Reduce<WeightIntInfo>(GV_INTERSECTION_VERTEX,
-              WeightIntInfo(verId, localIntDist));
-        }
-
-        bool expandSTree = ShouldVertexEpandTree(vVal, currMinTDist, globalIntDist, true);
-        bool expandTTree = ShouldVertexEpandTree(vVal, currMinSDist, globalIntDist, false);
-
-        bool activateVertex = expandSTree || expandTTree;
-
-        if (activateVertex) {
-          context->SetActiveFlag(verId);
-        }
-
-        if (activateVertex && newSDistance) {
-          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_S, vVal.sDist);
-          context->GlobalVariable_Reduce(GV_IS_S_ALIVE, expandSTree);
-        }
-
-        if (activateVertex && newTDistance) {
-          context->GlobalVariable_Reduce(GV_NEXT_MIN_ACTIVE_WEIGHT_T, vVal.tDist);
-          context->GlobalVariable_Reduce(GV_IS_T_ALIVE, expandTTree);
+          context->GlobalVariable_Reduce<BFSIntInfo>(GV_INTERSECTION_VERTEX,
+                        BFSIntInfo(verId, length));
         }
 
       }
@@ -436,11 +341,6 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void AfterIteration(gpelib4::MasterContext* context) {
-        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
-
-        WeightIntInfo intInfo = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX);
-
 
         size_t finalIteration = context->GlobalVariable_GetValue<size_t>(GV_FINAL_SEARCH_ITERATION);
         size_t currIteration = context->Iteration();
@@ -450,16 +350,9 @@ namespace UDIMPL {
           return;
         }
 
-        bool continueSearch = CheckIfTreesAreAlive(context) && UpdateMinActiveDistance(context, true);
-
-        if (!continueSearch) {
-
-          if (intInfo.distance == MAX_WEIGHT) {
-            // Grpah is disconnected.
-            context->Stop();
-            return;
-          }
-
+        // Check for intersection. If found, end search.
+        BFSIntInfo intInfo = context->GlobalVariable_GetValue<BFSIntInfo>(GV_INTERSECTION_VERTEX);
+        if (intInfo.distance < MAX_LENGTH) {
           reinterpret_cast<gpelib4::StateVariable<size_t>*>(context->GetGlobalVariable(GV_FINAL_SEARCH_ITERATION))->Set(context->Iteration());
           context->set_UDFMapRun(gpelib4::UDFMapRun_VertexMap);
           context->SetAllActiveFlag(false);
@@ -476,28 +369,24 @@ namespace UDIMPL {
        * @param context Can be used to set active flags for vertices.
        */
       void EndRun(gpelib4::BasicContext* context) {
-        WEIGHT minSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT minTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
-
-        WeightIntInfo intInfo = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX);
+        BFSIntInfo intInfo = context->GlobalVariable_GetValue<BFSIntInfo>(GV_INTERSECTION_VERTEX);
 
         globalIntDist_ = intInfo.distance;
         foundPath_ = vector<VertexLocalId_t>();
 
-        if (globalIntDist_ == MAX_WEIGHT) {
+        if (globalIntDist_ == MAX_LENGTH) {
           // Graph is diconnected.
           return;
         }
 
         // ToDo: Remove after testing.
         cout << "best intersection: " << globalIntDist_ << "\n";
-        cout << "     nextMinSDist: " << minSDist << "\n";
-        cout << "     nextMinTDist: " << minTDist << "\n";
         int64_t mapCount = context->GlobalVariable_GetValue<int64_t>(GV_MAP_COUNT);
         int64_t redCount = context->GlobalVariable_GetValue<int64_t>(GV_REDUCE_COUNT);
         cout << "        Map Calls: " << mapCount << "\n";
         cout << "     Reduce Calls: " << redCount << "\n";
 
+        foundPath_ = vector<VertexLocalId_t>();
         GMAP glMap = context->GlobalVariable_GetValue<GMAP>(GV_PATH_MAP);
 
         VertexLocalId_t vId = glMap[-1];
@@ -512,7 +401,7 @@ namespace UDIMPL {
         cout << "\033[0m\n";
       }
 
-      WEIGHT getDistance() {
+      uint64_t getDistance() {
         return globalIntDist_;
       }
 
@@ -543,8 +432,8 @@ namespace UDIMPL {
     private:
       // define constants here, make sure to initialize them in the constructor
 
-      typedef IntersectionInfo<WEIGHT> WeightIntInfo;
-      typedef IntersectionInfoVariable<WEIGHT> WeightIntInfoVariable;
+      typedef IntersectionInfo<uint64_t> BFSIntInfo;
+      typedef IntersectionInfoVariable<uint64_t> BFSIntInfoVariable;
 
       /**
        * The id of the source vertex. Only used to initialise the UDF
@@ -566,99 +455,21 @@ namespace UDIMPL {
        */
       vector<VertexLocalId_t> foundPath_;
 
-      WEIGHT globalIntDist_;
-
-      /**
-       * Determins if exploring the tree from the given vertex can lead to a shorter path than the
-       * best currently known.
-       */
-      bool ShouldVertexEpandTree(const V_VALUE& verValue, WEIGHT currMinActiveBackDist, WEIGHT bestKnownInterDist,
-          bool isSTree) {
-
-        WEIGHT forwardDist = isSTree ? verValue.sDist : verValue.tDist;
-        WEIGHT backDist = isSTree ? verValue.tDist : verValue.sDist;
-
-        // Lower bound for the distance in the back-tree.
-        WEIGHT bestBackDist = std::min(currMinActiveBackDist, backDist);
-
-        return forwardDist + bestBackDist < bestKnownInterDist;
-
-      }
-
-      /**
-       * Checks if both trees are still alive. If not, the program stops. Method is called by
-       * BetweenMapAndReduce() and AfterIteration().
-       */
-      bool CheckIfTreesAreAlive(gpelib4::MasterContext* context) {
-
-        bool sIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_S_ALIVE);
-        bool tIsAlive = context->GlobalVariable_GetValue<bool>(GV_IS_T_ALIVE);
-
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_S_ALIVE))->Set(false);
-        reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_IS_T_ALIVE))->Set(false);
-
-        // If one of the trees dies, the shortest path is known.
-        if (!sIsAlive || !tIsAlive) {
-          // ToDo: Remove after testing.
-          cout << "\033[34mSTOP One tree died.\033[0m\n";
-          return false;
-        }
-
-        return true;
-
-      }
-
-      /**
-       * Updates the current variable with the minimal active distance of the search trees and
-       * restes the aggregator for the next one. If the sum is larger or equal than the best known
-       * path, stop the program, the best known path is optimal. Method is called by
-       * BetweenMapAndReduce() and AfterIteration().
-       */
-      bool UpdateMinActiveDistance(gpelib4::MasterContext* context, bool afterReduce) {
-
-        WEIGHT nextMinSDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_S);
-        WEIGHT nextMinTDist = context->GlobalVariable_GetValue<WEIGHT>(GV_NEXT_MIN_ACTIVE_WEIGHT_T);
-
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_CURRENT_MIN_ACTIVE_WEIGHT_S))->Set(
-            nextMinSDist);
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_CURRENT_MIN_ACTIVE_WEIGHT_T))->Set(
-            nextMinTDist);
-
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_S))->Set(
-            MAX_WEIGHT);
-        reinterpret_cast<gpelib4::MinVariable<WEIGHT>*>(context->GetGlobalVariable(GV_NEXT_MIN_ACTIVE_WEIGHT_T))->Set(
-            MAX_WEIGHT);
-
-        if (afterReduce) {
-          WEIGHT globalIntDist = context->GlobalVariable_GetValue<WeightIntInfo>(GV_INTERSECTION_VERTEX).distance;
-
-          GASSERT(nextMinSDist < MAX_WEIGHT, "The minimal active distance of s is 'infinit'.");
-          GASSERT(nextMinTDist < MAX_WEIGHT, "The minimal active distance of t is 'infinit'.");
-
-          // First comparison prevents overflow if sum is to large.
-          if (nextMinSDist >= MAX_WEIGHT - nextMinTDist || nextMinSDist + nextMinTDist >= globalIntDist) {
-            // ToDo: Remove after testing.
-            cout << "\033[34mSTOP nextMinSDist + nextMinTDist >= globalIntDist.\033[0m\n";
-            return false;
-          }
-        }
-
-        return true;
-      }
+      uint64_t globalIntDist_;
 
   };
 
 /********************UDF Runner Registry Object *************************/
 ////template <typename VID_t, typename V_ATTR_t, typename E_ATTR_t>
-  class BidirectionalShortestPathRunner: public gperun::UDFRunner {
+  class BidirectionalBFSRunner: public gperun::UDFRunner {
     public:
-      typedef BidirectionalShortestPath UDF_t;
-      BidirectionalShortestPathRunner() {
+      typedef BidirectionalBFS UDF_t;
+      BidirectionalBFSRunner() {
         requires<VertexLocalId_t>("sourceId", "s", "The vertex id of the source vertex.", &sourceId, 0);
         requires<VertexLocalId_t>("targetId", "t", "The vertex id of the target vertex.", &targetId, 0);
         requires<VertexLocalId_t>("atrrIndex", "i", "The index of the edge attribute containing the edge weight.", &atrrIndex, 0);
       }
-      ~BidirectionalShortestPathRunner() {
+      ~BidirectionalBFSRunner() {
       }
       void createUDF() {
         udf = new UDF_t(sourceId, targetId, atrrIndex);
@@ -668,7 +479,7 @@ namespace UDIMPL {
         driver.RunSingleVersion<UDF_t>((UDF_t*) udf, outputFile);
       }
       static void registerUDF(gperun::UDFRegistry& registry) {
-        registry.add("BidirectionalShortestPath", new BidirectionalShortestPathRunner());
+        registry.add("BidirectionalBFS", new BidirectionalBFSRunner());
       }
     private:
       VertexLocalId_t sourceId;

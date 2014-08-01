@@ -24,6 +24,8 @@
 #include "../../core_ext/gpe/enginejobrunner_zmq.hpp"
 #include "../../core_ext/gpe/enginejobrunner.hpp"
 #include "kneighborsubgraph.hpp"
+
+#include "global_definitions.hpp"
 #include "bidirect_shortestpath.hpp"
 #include "bidirect_bfs.hpp"
 
