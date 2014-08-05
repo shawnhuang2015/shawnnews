@@ -39,8 +39,17 @@ namespace gperun {
       return true;
     }
 
+    /**
+     * @brief MarkVId: obsolete. Using JSONWriter to WriteMarkVId
+     * @param id
+     * @return
+     */
     static std::string MarkVId(VertexLocalId_t id) {
-      return gse2::IdConverter::MarkVId(id);
+      stringstream ss;
+      ss.put(static_cast<char>(30));
+      ss << id;
+      ss.put(static_cast<char>(31));
+      return ss.str();
     }
 
   };

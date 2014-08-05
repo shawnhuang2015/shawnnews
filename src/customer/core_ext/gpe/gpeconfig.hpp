@@ -34,6 +34,7 @@ struct GPEConfig {
     static std::string client_prefix_;
     static std::string partitionpath_;
     static size_t maxjobs_;
+    static size_t num_post_threads_;
     static std::string log_path_;
     static std::string get_request_queue_;
     static std::string prefetch_request_queue_;

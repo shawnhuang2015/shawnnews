@@ -24,12 +24,17 @@ namespace gperun {
             postListener_->enumMappers()->GetEnumeratorMappings());
   }
 
-  void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr) {
-    // POC modification: Not Likely.
-    if (postListener_ == NULL)
+  void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr, bool retrievepos) {
+   if (postListener_ == NULL)
       return;
     uint64_t deltasize = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize);
+    uint64_t postq_pos = 0;
+    uint64_t idresq_pos = 0;
+    char* deltadata = postListener_->getAllDelta(deltasize, retrievepos, postq_pos, idresq_pos);
+    if(retrievepos) {
+      topology()->GetTopologyMeta()->postq_pos_ = postq_pos;
+      topology()->GetTopologyMeta()->idresq_pos_ = idresq_pos;
+    }
     if (deltadata == NULL || deltasize == 0)
       return;
     topology_->GetDeltaRecords()->ReadDeltas(
@@ -40,9 +45,9 @@ namespace gperun {
 
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
     gutil::GTimer timer;
-    instance->outputstream_ = new std::ostringstream();
     instance->udfstatus_ = GetUdfStatus();
-    gutil::JSONStringWriter jsonwriter(*instance->outputstream_);
+    instance->writer_ = new gutil::JSONWriter();
+    gutil::JSONWriter& jsonwriter = *instance->writer_;
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("results");
     std::ostringstream debugmsg;
@@ -53,8 +58,6 @@ namespace gperun {
       bool debugmode = false;
       if (boost::algorithm::ends_with(instance->requestid_, ":D"))
         debugmode = true;
-      else if (boost::algorithm::ends_with(instance->requestid_, ":N"))
-        debugmode = false;
       if (debugmode) {
         debugmsg << this->joblistener_->GetDebugString();
         debugmsg << "Service running " << this->maxthreads_  << " instances \n";
@@ -79,8 +82,7 @@ namespace gperun {
       }
     }
     if(instance->udfstatus_ != NULL) {
-      if (!instance->udfstatus_->Finished())
-        instance->udfstatus_->SetFinished();
+      instance->udfstatus_->SetFinished();
       if(instance->error_){
         instance->udfstatus_->SetError();
         instance->udfstatus_->AddMessage(instance->message_);
@@ -98,7 +100,7 @@ namespace gperun {
 
   unsigned int EngineJobRunner::Run(EngineServiceRequest* request,
                                     gse2::IdConverter::RequestIdMaps* maps,
-                                    gutil::JSONStringWriter& jsonwriter) {
+                                    gutil::JSONWriter& jsonwriter) {
     size_t num_iterations = 0;
     try {
       // check id map first
@@ -167,7 +169,7 @@ namespace gperun {
   }
 
   void EngineJobRunner::ShowOneVertexInfo(EngineServiceRequest* request,
-                                          gutil::JSONStringWriter& jsonwriter,
+                                          gutil::JSONWriter& jsonwriter,
                                           VertexLocalId_t vid,
                                           std::vector<VertexLocalId_t>& idservice_vids) {
     gapi4::GraphAPI api(topology_);
@@ -175,8 +177,7 @@ namespace gperun {
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("source");
     jsonwriter.WriteStartObject();
-    std::string markvid = Util::MarkVId(vid);
-    jsonwriter.WriteName("vid").WriteString(markvid);
+    jsonwriter.WriteName("vid").WriteMarkVId(vid);
     idservice_vids.push_back(vid);
     jsonwriter.WriteName("vertexattr");
     v1->WriteToJson(jsonwriter);
@@ -190,8 +191,7 @@ namespace gperun {
       VertexLocalId_t toid = edgeresults.GetCurrentToVId();
       topology4::EdgeAttribute* edgeattr = edgeresults
                                            .GetCurrentEdgeAttribute();
-      markvid = Util::MarkVId(toid);
-      jsonwriter.WriteName("to_vid").WriteString(markvid);
+      jsonwriter.WriteName("to_vid").WriteMarkVId(toid);
       idservice_vids.push_back(toid);
       topology4::VertexAttribute* v2 = api.GetOneVertex(toid);
       jsonwriter.WriteName("to_vertexattr");

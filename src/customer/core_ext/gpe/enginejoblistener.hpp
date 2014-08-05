@@ -44,7 +44,7 @@ class EngineJobListener : public gpelib4::JobListener {
 
   void ReadRequest(std::string& requestid, std::string& request);
 
-  void SetResponse(std::string& requestid, std::string& response);
+  void SetResponse(std::string& requestid, char* response, size_t response_size);
 
  private:
   /// Lock just for buffer_

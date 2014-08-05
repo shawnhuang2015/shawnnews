@@ -24,8 +24,7 @@ namespace gperun {
     bool ok = false;
     bool error = false;
     std::string msg;
-    std::ostringstream os;
-    gutil::JSONStringWriter jsonwriter(os);
+    gutil::JSONWriter jsonwriter;
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("results");
     if(jsArgv[0].asString() == "offline"){
@@ -52,8 +51,7 @@ namespace gperun {
     jsonwriter.WriteName("error").WriteBool(error);
     jsonwriter.WriteName("message").WriteString(msg);
     jsonwriter.WriteEndObject();
-    std::string response = os.str();
-    SetResponse(requestid, response);
+    SetResponse(requestid, jsonwriter.GetBuffer(), jsonwriter.GetSize());
     return ok;
   }
 
@@ -144,7 +142,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       bool debug = false;
       for (size_t i = 0; i < ready_queue_.size(); ++i) {
         if (boost::algorithm::ends_with(ready_queue_[i].get<1>(),
-                                        "true")) {
+                                        ":D")) {
           debug = true;
           break;
         }
@@ -167,15 +165,14 @@ void EngineJobListener::ReadRequest(std::string& requestid,
   }
 }
 
-void EngineJobListener::SetResponse(std::string& requestid,
-                                    std::string& response) {
+void EngineJobListener::SetResponse(std::string& requestid, char* response, size_t response_size) {
   // POC modification: Not Likely.
-  if (response.size() == 0)
+  if (response_size == 0)
     return;
   GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_enter|" << "\n";
   Lock_t lock(mutex_);
-  connector_->SetResponse(requestid, response);
-  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response.length() << "\n";
+  connector_->SetResponse(requestid, response, response_size);
+  GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response_size << std::endl;
 }
 
 }  // namespace gperun
