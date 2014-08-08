@@ -25,26 +25,12 @@ namespace gperun {
   }
 
   void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr, bool retrievepos) {
-   if (postListener_ == NULL)
-      return;
-    uint64_t deltasize = 0;
-    uint64_t postq_pos = 0;
-    uint64_t idresq_pos = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize, retrievepos, postq_pos, idresq_pos);
-    if(retrievepos) {
-      topology()->GetTopologyMeta()->postq_pos_ = postq_pos;
-      topology()->GetTopologyMeta()->idresq_pos_ = idresq_pos;
-    }
-    if (deltadata == NULL || deltasize == 0)
-      return;
-    topology_->GetDeltaRecords()->ReadDeltas(
-          reinterpret_cast<uint8_t*>(deltadata), deltasize);
-    delete[] deltadata;
-    topology_->HandleNewDelta();
   }
 
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
     gutil::GTimer timer;
+    instance->querystate_.tid_ = gutil::GTimer::GetTotalMicroSecondsSinceEpoch();
+    topology_->GetCurrentSegementMeta(instance->querystate_.query_segments_meta_);
     instance->udfstatus_ = GetUdfStatus();
     instance->writer_ = new gutil::JSONWriter();
     gutil::JSONWriter& jsonwriter = *instance->writer_;
@@ -129,7 +115,7 @@ namespace gperun {
       std::vector<VertexLocalId_t> idservice_vids;
       if (argv[0] == "debug_neighbors") {
         VertexLocalId_t vid = 0;
-        if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid))
+        if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid, request->querystate_))
           return 0;
         ShowOneVertexInfo(request, jsonwriter, vid, idservice_vids);
       } else {
@@ -172,7 +158,7 @@ namespace gperun {
                                           gutil::JSONWriter& jsonwriter,
                                           VertexLocalId_t vid,
                                           std::vector<VertexLocalId_t>& idservice_vids) {
-    gapi4::GraphAPI api(topology_);
+    gapi4::GraphAPI api(topology_, &request->querystate_);
     topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
     jsonwriter.WriteStartObject();
     jsonwriter.WriteName("source");
@@ -202,6 +188,23 @@ namespace gperun {
     }
     jsonwriter.WriteEndArray();
     jsonwriter.WriteEndObject();
+  }
+
+  void EngineJobRunner::PullDeltaThread() {
+    if (postListener_ == NULL)
+      return;
+    while (isrunning_) {
+      uint64_t deltasize = 0;
+      uint64_t postq_pos = 0;
+      uint64_t idresq_pos = 0;
+      char* deltadata = postListener_->getAllDelta(deltasize, false, postq_pos, idresq_pos);
+      if (deltadata == NULL || deltasize == 0){
+        usleep(1000);
+        continue;
+      }
+      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
+      delete[] deltadata;
+    }
   }
 
 }  // namespace gperun

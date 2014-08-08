@@ -40,6 +40,8 @@ namespace gperun {
         gpelib4::UDFStatus* newudfstatus = new gpelib4::UDFStatus("offline_req");
         newudfstatus->WriteToJSON(jsonwriter);
         this->jobrunner()->SetUdfStatus(newudfstatus);
+        if(deltarebuilder_ != NULL)
+          deltarebuilder_->StopRebuildThread();
       } else {
         error = true;
         msg = "last request has not finished yet.";
@@ -58,33 +60,20 @@ namespace gperun {
 void EngineJobListener::ReadRequest(std::string& requestid,
                                     std::string& request) {
   // POC modification: Not Likely.
+  std::vector<boost::tuple<std::string, std::string, std::string> > read_queue;
   while (true) {
     if(GPEConfig::udfmode_ == "offline"){
-      if (daemon_->quit_ && connector_->ReaderIsNull()) {
-        // quite and no more requests. tell listener to stop
+      if (daemon_->quit_) {
+        connector_->StopReader();
+        connector_->DeleteReader();
         requestid = "";
         request = "";
         return;
       }
-      if (daemon_->rebuild_ && connector_->ReaderIsNull()) {
-        // start rebuild
-        jobrunner()->Topology_RebuildForDelta();
-        jobrunner()->Topology_WarmUp(true);
-        connector_->InitReader();
-        daemon_->DoneRebuild();
-      } else if (daemon_->quit_ || daemon_->rebuild_) {
-        // receive command. stop reader and finish queue requests in reader first.
-        connector_->StopReader();
-        connector_->ReadFromKafka(ready_queue_);  // read all msg.
-        connector_->DeleteReader();
-      } else {
-        connector_->ReadFromKafka(ready_queue_, 1);
-      }
+      if(deltarebuilder_ != NULL && !deltarebuilder_->RebuildThreadRunning() && jobrunner()->GetExecutingAndQueuedJobCount() == 0)
+       deltarebuilder_->StartRebuildThread();
+      connector_->ReadFromKafka(ready_queue_, 1);
       if(ready_queue_.size() == 0) {
-        gpelib4::UDFStatus* udfstatus = this->jobrunner()->GetUdfStatus();
-        if(udfstatus == NULL || udfstatus->Finished()){
-          jobrunner()->Topology_PullDelta(NULL);
-        }
         usleep(1000);
       } else {
         GASSERT(ready_queue_.size() == 1, ready_queue_.size());
@@ -110,38 +99,28 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       GVLOG(Verbose_UDFHigh) << "running " << requestid << ", " << request;
       return;
     }
-    // wait until service not doing anything
-    while (jobrunner()->GetExecutingAndQueuedJobCount() > 0) {
-      usleep(1000);  // sleep one ms.
-    }
+    read_queue.clear();
     if (daemon_->quit_ && connector_->ReaderIsNull()) {
       // quite and no more requests. tell listener to stop
       requestid = "";
       request = "";
       return;
     }
-    if (daemon_->rebuild_ && connector_->ReaderIsNull()) {
-      // start rebuild
-      jobrunner()->Topology_RebuildForDelta();
-      jobrunner()->Topology_WarmUp(true);
-      connector_->InitReader();
-      daemon_->DoneRebuild();
-    } else if (daemon_->quit_ || daemon_->rebuild_) {
+    if (daemon_->quit_ || daemon_->rebuild_) {
       // receive command. stop reader and finish queue requests in reader first.
       connector_->StopReader();
-      connector_->ReadFromKafka(ready_queue_);  // read all msg.
+      connector_->ReadFromKafka(read_queue);  // read all msg.
       connector_->DeleteReader();
     } else {
-      connector_->ReadFromKafka(ready_queue_);
+      connector_->ReadFromKafka(read_queue);
     }
-    if (ready_queue_.size() == 0) {
-      jobrunner()->Topology_PullDelta(NULL);
+    if (read_queue.size() == 0) {
       usleep(1000);
     } else {
       debugstr_.str("");
       bool debug = false;
-      for (size_t i = 0; i < ready_queue_.size(); ++i) {
-        if (boost::algorithm::ends_with(ready_queue_[i].get<1>(),
+      for (size_t i = 0; i < read_queue.size(); ++i) {
+        if (boost::algorithm::ends_with(read_queue[i].get<1>(),
                                         ":D")) {
           debug = true;
           break;
@@ -150,16 +129,17 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       if (debug) {
         debugstr_ << "Host name: " << hostname_ << "\n";
         debugstr_ << "{\n";
-        for (size_t i = 0; i < ready_queue_.size(); ++i)
-          debugstr_ << "Receieve (" << ready_queue_[i].get<0>() << ","
-              << ready_queue_[i].get<1>() << ") on "
-              << ready_queue_[i].get<2>() << "\n";
+        for (size_t i = 0; i < read_queue.size(); ++i)
+          debugstr_ << "Receieve (" << read_queue[i].get<0>() << ","
+              << read_queue[i].get<1>() << ") on "
+              << read_queue[i].get<2>() << "\n";
         debugstr_ << "}\n";
         debugstr_ << "Start process above requests at "
                   << gutil::GTimer::now_str() << "\n";
       }
       // retreive will be from back.
-      std::reverse(ready_queue_.begin(), ready_queue_.end());
+      std::reverse(read_queue.begin(), read_queue.end());
+      ready_queue_.insert(ready_queue_.begin(), read_queue.begin(), read_queue.end());
       jobrunner()->Topology_PullDelta(debug ? &debugstr_ : NULL);
     }
   }

@@ -12,6 +12,7 @@
 #define GPE_ENGINEJOBLISTENER_HPP_
 
 #include <gutil/gsystem.hpp>
+#include <topology4/deltarebuilder.hpp>
 #include <gpelib4/enginebase/servicebase.hpp>
 #include <cstdlib>
 #include <iostream>
@@ -33,10 +34,13 @@ class EngineJobListener : public gpelib4::JobListener {
   typedef boost::mutex::scoped_lock Lock_t;
 
   EngineJobListener(GPEDaemon* daemon, KafkaConnector* connector,
-                    std::string hostname)
+                    std::string hostname, topology4::DeltaRebuilder* deltarebuilder = NULL)
       : connector_(connector),
         daemon_(daemon),
-        hostname_(hostname) {
+        hostname_(hostname),
+        deltarebuilder_(deltarebuilder){
+    if(deltarebuilder_ != NULL)
+     deltarebuilder_->StartRebuildThread();
   }
 
   ~EngineJobListener() {
@@ -57,6 +61,7 @@ class EngineJobListener : public gpelib4::JobListener {
   std::vector<boost::tuple<std::string, std::string, std::string> > ready_queue_;
   /// host name
   std::string hostname_;
+  topology4::DeltaRebuilder* deltarebuilder_;
 
   bool HandleOffLineRequest(std::string& requestid, std::string& request);
 };
