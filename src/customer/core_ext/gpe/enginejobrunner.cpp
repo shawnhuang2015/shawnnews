@@ -24,7 +24,18 @@ namespace gperun {
             postListener_->enumMappers()->GetEnumeratorMappings());
   }
 
-  void EngineJobRunner::Topology_PullDelta(std::stringstream* debugstr, bool retrievepos) {
+  void EngineJobRunner::Topology_PullDelta() {
+    // do first time (make up) delta pull
+    uint64_t deltasize = 0;
+    uint64_t postq_pos = 0;
+    uint64_t idresq_pos = 0;
+    char* deltadata = postListener_->getAllDelta(deltasize, false, postq_pos, idresq_pos);
+    if (deltadata != NULL){
+      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
+      delete[] deltadata;
+    }
+    // start pull delta thread
+    pulldeltathread_ = new boost::thread(boost::bind(&EngineJobRunner::PullDeltaThread, this));
   }
 
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
@@ -48,7 +59,7 @@ namespace gperun {
         debugmsg << this->joblistener_->GetDebugString();
         debugmsg << "Service running " << this->maxthreads_  << " instances \n";
         debugmsg << "Topology: " << topology_->GetTopologyMeta()->vertexcount_ << " nodes, "
-                    << topology_->GetTopologyMeta()->edgecount_ << " edges\n";
+                 << topology_->GetTopologyMeta()->edgecount_ << " edges\n";
         debugmsg << "{\nRequest start run at " << gutil::GTimer::now_str() <<"\n";
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
@@ -61,8 +72,8 @@ namespace gperun {
         delete maps;
       if (debugmode) {
         debugmsg << "{\nRequest end at " << gutil::GTimer::now_str() << " with "
-                    << iterations << " iterations in "
-                    << timer.GetTotalMilliSeconds() << " ms\n";
+                 << iterations << " iterations in "
+                 << timer.GetTotalMilliSeconds() << " ms\n";
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
       }
@@ -92,7 +103,7 @@ namespace gperun {
       // check id map first
       if (request->udfstatus_ == NULL && maps == NULL) {
         request->message_ = "error_: Request  " + request->requestid_
-                          + " failed to retrieve id map.";
+                            + " failed to retrieve id map.";
         request->error_ = true;
         return 0;
       }
@@ -130,7 +141,7 @@ namespace gperun {
                                                       GPEConfig::customizedsetttings_);
         if (!succeed) {
           request->message_ = "error_: unknown function error "
-                            + request->requeststr_;
+                              + request->requeststr_;
           request->error_ = true;
           return 0;
         }
@@ -198,12 +209,12 @@ namespace gperun {
       uint64_t postq_pos = 0;
       uint64_t idresq_pos = 0;
       char* deltadata = postListener_->getAllDelta(deltasize, false, postq_pos, idresq_pos);
-      if (deltadata == NULL || deltasize == 0){
-        usleep(1000);
-        continue;
+      if (deltadata != NULL){
+        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
+        delete[] deltadata;
       }
-      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
-      delete[] deltadata;
+      else
+        usleep(1000);
     }
   }
 

@@ -35,6 +35,7 @@ namespace gperun {
   std::vector<std::string> GPEConfig::rest_incoming_host_strs_;
   std::vector<float> GPEConfig::udfweights_;
   GPEConfig::Maps_t GPEConfig::customizedsetttings_;
+  static topology4::RebuildSetting GPEConfig::rebuildsetting_;
 
   bool GPEConfig::CheckTimeOut(std::string requestid) {
     std::vector<std::string> strs;
@@ -149,8 +150,10 @@ namespace gperun {
     for (YAML::const_iterator it = rest_hosts.begin();
           it != rest_hosts.end(); ++it) {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
-
     }
+    rebuildsetting_.sleep_no_job_ = root["INSTANCE"]["rebuild_nojob_sleepsec"].as<unsigned int>(60);
+    rebuildsetting_.sleep_between_jobs_ = root["INSTANCE"]["rebuild_betweenjob_sleepsec"].as<unsigned int>(60);
+    rebuildsetting_.sleep_switch_topology_ptr_ = root["INSTANCE"]["rebuild_switch_sleepsec"].as<unsigned int>(60);
     std::cout << "udfmode: " << udfmode_ << "\n"
               << "hostname: " << hostname_ << "\n" << "ipaddress: "
               << ipaddress_ << "\n" << "port: " << port_ << "\n"
@@ -175,15 +178,14 @@ namespace gperun {
               << " -------------------------------------------\n"
               << " gpe incoming port: " << incoming_port_ << "\n"
               << " gpe outgoing port to ids : " << outgoing_port_to_ids_ << "\n";
-
     for(size_t i = 0; i<rest_incoming_host_strs_.size(); ++i) {
       std::cout << " rest " << (i+1) << " " << rest_incoming_host_strs_[i] << "\n";
     }
     std::cout << "\n";
-
     for(Maps_t::iterator it = customizedsetttings_.begin(); it != customizedsetttings_.end(); ++it)
       std::cout << it->first << ": " << it->second << "\n";
     std::cout << "\n";
+    std::cout << rebuildsetting_;
     return root;
   }
 

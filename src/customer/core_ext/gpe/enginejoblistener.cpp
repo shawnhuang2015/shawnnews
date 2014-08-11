@@ -140,7 +140,6 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       // retreive will be from back.
       std::reverse(read_queue.begin(), read_queue.end());
       ready_queue_.insert(ready_queue_.begin(), read_queue.begin(), read_queue.end());
-      jobrunner()->Topology_PullDelta(debug ? &debugstr_ : NULL);
     }
   }
 }

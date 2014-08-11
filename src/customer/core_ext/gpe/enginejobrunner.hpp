@@ -22,7 +22,7 @@ namespace gperun {
  * Engine job runner.
  * POC modification: Needed.
  */
-  class EngineJobRunner : public gpelib4::EngineDriverService, public topology4::MPIIDImpl {
+  class EngineJobRunner : public gpelib4::EngineDriverService {
   public:
     EngineJobRunner(std::string enginecfgfile, std::string topologypth,
                     unsigned int max_instances,
@@ -35,15 +35,14 @@ namespace gperun {
         postListener_(postListener) {
       globalinstance_->memserver_->SetServiceMode(GPEConfig::udfmode_ != "offline");
       globalinstance_->memallocator_->Set_memlimitMB(1000000000);
-      pulldeltathread_ = new boost::thread(
-          boost::bind(&EngineJobRunner::PullDeltaThread, this));
+      pulldeltathread_ = NULL;
       Topology_Prepare();
     }
 
     ~EngineJobRunner(){
-        pulldeltathread_->join();
-        delete pulldeltathread_;
-        pulldeltathread_ = NULL;
+      pulldeltathread_->join();
+      delete pulldeltathread_;
+      pulldeltathread_ = NULL;
     }
 
     /// prepare topology: like set merge function for attribute.
@@ -52,7 +51,7 @@ namespace gperun {
 
     /// request topology pull delta. Following requests will following
     /// with topology with most recent delta.
-    void Topology_PullDelta(std::stringstream* debugstr = NULL, bool updateversion=false);
+    void Topology_PullDelta();
 
     /// subclass provide implementation to translate request to actual udf object
     std::string RunInstance(EngineServiceRequest* instance);

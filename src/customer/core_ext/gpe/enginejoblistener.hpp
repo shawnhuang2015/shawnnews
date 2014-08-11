@@ -34,7 +34,7 @@ class EngineJobListener : public gpelib4::JobListener {
   typedef boost::mutex::scoped_lock Lock_t;
 
   EngineJobListener(GPEDaemon* daemon, KafkaConnector* connector,
-                    std::string hostname, topology4::DeltaRebuilder* deltarebuilder = NULL)
+                    std::string hostname, topology4::DeltaRebuilder* deltarebuilder)
       : connector_(connector),
         daemon_(daemon),
         hostname_(hostname),
