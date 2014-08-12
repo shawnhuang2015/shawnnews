@@ -18,6 +18,7 @@
 #include <gse2/ids/impl/ids_server_worker.hpp>
 #include "../../core_impl/gse_impl/loader_combiner.hpp"
 #include "../../core_impl/gse_impl/loader_mapper.hpp"
+#include "../../core_impl/gse_impl/loader_mapper_mt.hpp"
 #include <gse2/partition/gse_single_server_repartition.hpp>
 #include <gutil/glogging.hpp>
 #include <gutil/gstring.hpp>
@@ -37,7 +38,7 @@ std::string outputpath_ = "/tmp/gpe";
 
 
 void LoadTopology4(std::string datapath) {
-  gmmnt::GlobalInstances instance("/Users/like/eclipse/workspace/2.0/gdbms/ids_test/gpe.conf");
+  gmmnt::GlobalInstances instance("/data/rc4/config/gpe/gpe1.conf");
   topology4::TopologyGraph topology(&instance, datapath);
   topology4::TopologyPrinter topologyprinter(&instance, &topology);
   topologyprinter.PrintMeta();
@@ -46,6 +47,18 @@ void LoadTopology4(std::string datapath) {
       topology4::EdgeBlockReaderSetting(true, true, true));
 }
 
+void gse_loading_help(std::string config_file) {
+  std::cout << "Please check " << config_file << std::endl;
+  std::cout << "The expected input in gse_loader1.propery: \n"
+     << "gse_loader1.config\n"
+     << "graph_config\n"
+     << "server_id (1)\n"
+     << "separator (, 09, ...)\n"
+     << "[MT]  (MT: parallel edge loading using multiple threads)\n"
+     << "vertex_file or vertex_dir\n"
+     << "edge_file or edge_dir\n" << std::endl;
+  exit(-1);
+}
 
 int main(int argc, char ** argv) {
 #ifdef BUILDVERSION
@@ -63,10 +76,12 @@ int main(int argc, char ** argv) {
     /*
      * sys_config
      * graph_config
-     * id
-     * separator
-     * vertex_file
-     * edge_file
+     * server_id (1)
+     * separator (, 09, ...)
+     * [MT]  (MT: parallel edge loading using multiple threads)
+     * vertex_file or vertex_dir
+     * edge_file or edge_dir
+     * ...
      */
   }
   std::vector<std::string> config_info = gutil::tokenize_file(std::string(argv[1]));
@@ -78,27 +93,45 @@ int main(int argc, char ** argv) {
   uint32_t worker_id = atoi(config_info[2].c_str());
   gse2::WorkerConfig workerConfig(sysConfig, graphConfig, worker_id);
   gse2::IdsWorker *worker = 0;
-  gse2::GseSingleServerLoader *single_load_worker;
   if (sysConfig.isValidServerWorker(worker_id)) {
     if (argc == 2) {
       /* single server loader with both vertex and edge files */
       /* separator can be char or int value */
       char separator='\t';
+      if (config_info.size() < 6)
+        gse_loading_help(std::string(argv[1]));
+
       if (config_info[3].length() > 1) {
         separator = (char)(atoi(config_info[3].c_str()));
       } else {
         separator = config_info[3][0];
       }
       std::cout << " Separator : \"" << separator << "\"" << std::endl;
-      single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
-      std::vector<std::string> inputFiles;
-      for (uint32_t i = 4; i < config_info.size(); i++) {
-        inputFiles.push_back(config_info[i]);
+      if (config_info[4] == "MT") {
+        gse2::GseSingleServerLoaderMT *single_load_worker_mt;
+        single_load_worker_mt = new UDIMPL::GSE_UD_Loader_MT(workerConfig,
+                                                          atoi(config_info[5].c_str()),
+                                                          separator);
+        std::vector<std::string> inputFiles;
+        for (uint32_t i = 6; i < config_info.size(); i++) {
+          inputFiles.push_back(config_info[i]);
+        }
+        single_load_worker_mt->LoadVertexData(inputFiles);
+        single_load_worker_mt->LoadEdgeData(inputFiles);
+        single_load_worker_mt->commitLoading();
+        single_load_worker_mt->singleSrvPartition();
+      } else {
+        gse2::GseSingleServerLoader *single_load_worker;
+        single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
+        std::vector<std::string> inputFiles;
+        for (uint32_t i = 4; i < config_info.size(); i++) {
+          inputFiles.push_back(config_info[i]);
+        }
+        single_load_worker->LoadVertexData(inputFiles);
+        single_load_worker->LoadEdgeData(inputFiles);
+        single_load_worker->commitLoading();
+        single_load_worker->singleSrvPartition();
       }
-      single_load_worker->LoadVertexData(inputFiles);
-      single_load_worker->LoadEdgeData(inputFiles);
-      single_load_worker->commitLoading();
-      single_load_worker->singleSrvPartition();
       /* below will printout the whole graph */
       // LoadTopology4("/data/rc4/gstore/0/part");
       exit(0);
