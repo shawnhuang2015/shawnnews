@@ -61,6 +61,7 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
       gperun::GPEConfig::prefetch_request_queue_,
       gperun::GPEConfig::response_queue_, gperun::GPEConfig::maxjobs_);
   topology4::DeltaRebuilder* rebuilder = new topology4::DeltaRebuilder(runner->globalinstance(), runner->topology(), runner);
+  rebuilder->rebuildsetting_ = gperun::GPEConfig::rebuildsetting_;
   gperun::EngineJobListener* listener = new gperun::EngineJobListener(
       &gpe_daemon, connector, gperun::GPEConfig::hostname_, rebuilder);
   runner->StartDispatch(listener);

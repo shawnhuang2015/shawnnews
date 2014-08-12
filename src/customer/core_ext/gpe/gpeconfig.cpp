@@ -35,7 +35,7 @@ namespace gperun {
   std::vector<std::string> GPEConfig::rest_incoming_host_strs_;
   std::vector<float> GPEConfig::udfweights_;
   GPEConfig::Maps_t GPEConfig::customizedsetttings_;
-  static topology4::RebuildSetting GPEConfig::rebuildsetting_;
+  topology4::RebuildSetting GPEConfig::rebuildsetting_;
 
   bool GPEConfig::CheckTimeOut(std::string requestid) {
     std::vector<std::string> strs;
