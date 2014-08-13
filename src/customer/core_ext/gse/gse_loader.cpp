@@ -16,9 +16,9 @@
 #include <gse2/config/sys_config.hpp>
 #include <gse2/ids/impl/ids_client_worker.hpp>
 #include <gse2/ids/impl/ids_server_worker.hpp>
-#include "../../core_impl/gse_impl/loader_combiner.hpp"
-#include "../../core_impl/gse_impl/loader_mapper.hpp"
-#include "../../core_impl/gse_impl/loader_mapper_mt.hpp"
+#include <core_impl/gse_impl/loader_combiner.hpp>
+#include <core_impl/gse_impl/loader_mapper.hpp>
+#include <core_impl/gse_impl/loader_mapper_mt.hpp>
 #include <gse2/partition/gse_single_server_repartition.hpp>
 #include <gutil/glogging.hpp>
 #include <gutil/gstring.hpp>
@@ -55,6 +55,7 @@ void gse_loading_help(std::string config_file) {
      << "server_id (1)\n"
      << "separator (, 09, ...)\n"
      << "[MT]  (MT: parallel edge loading using multiple threads)\n"
+     << "[10]  (if above is MT: number of parallel threads)\n"
      << "vertex_file or vertex_dir\n"
      << "edge_file or edge_dir\n" << std::endl;
   exit(-1);
