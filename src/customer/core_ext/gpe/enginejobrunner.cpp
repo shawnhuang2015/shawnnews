@@ -88,6 +88,11 @@ namespace gperun {
         instance->udfstatus_->AddMessage(instance->message_);
       }
     }
+    if(instance->error_){
+      // if error. Write start object and end object for "results".
+      jsonwriter.WriteStartObject();
+      jsonwriter.WriteEndObject();
+    }
     jsonwriter.WriteName("error").WriteBool(instance->error_);
     jsonwriter.WriteName("message").WriteString(instance->message_);
     std::string debugstrmsg = debugmsg.str();
