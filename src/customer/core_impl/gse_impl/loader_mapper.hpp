@@ -33,29 +33,43 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    * This is a local function to generate vertex attributes
    * @return Nothing
    */
-  void GenVertexAttributeRecord() {
-#if 0
-// example code:
-   /* 1st -> is a enumerator
-      2nd -> is int
-      3rd -> is bool
-   */
+  void GenVertexAttributeRecord(uint32_t vtype) {
+/* example data: uid,vtype,att1,att2
+    v0_1,0,
+    v1_1,1,11,0
+    v1_2,1,12,0
+    v1_3,1,13,0
+    v1_4,1,14,0
+    v3_1,3,31,0
+    v3_2,3,32,0
+    v3_3,3,33,0
+    v2_1,2,21abc21,1
+    v2_2,2,22xyz22,1
+    v2_3,2,23zzz23,0
+    v0_2,0
+*/
     uint64_t val;
     size_t vatt_len;
     char *input_ptr = 0;
     size_t input_len = 0;
-    /**** first ***/
-    fileReader_->NextString(input_ptr, input_len, separator_);
-    uint32_t encoded_id = enumMappers_.encode( 1, // "id_type",
-        std::string(input_ptr, input_len));
-    vertexWriter_.write(encoded_id);  // attribute 1: id_type
-    /**** 2nd ***/
-      fileReader_->NextUnsignedLong(val, separator_);
-      vertexWriter_.write(val);  // int
-    /**** 3nd ***/
-      fileReader_->NextUnsignedLong(val, separator_);
-      vertexWriter_.write((val==0));  // bool
-#endif
+    switch (vtype) {
+      case 0:
+        break;
+      case 1:
+      case 3:
+        break;
+        fileReader_->NextUnsignedLong(val, separator_);
+        vertexWriter_.write(val);  // int
+        fileReader_->NextUnsignedLong(val, separator_);
+        vertexWriter_.write((val==0));  // bool
+      case 2:
+        fileReader_->NextString(input_ptr, input_len, separator_);
+        vertexWriter_.write(input_ptr, input_len);  // string
+        fileReader_->NextUnsignedLong(val, separator_);
+        vertexWriter_.write((val==0));  // bool
+      default:
+        break;
+    }
 }
 
   /**
@@ -64,29 +78,25 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    * @return Nothing
    */
   void LoadVertexData(std::vector<std::string> &DataSource) {
-    // DataSource[0] contains the vertex source file
-#if 0
     fileReader_ = new gutil::FileLineReader(DataSource[0]);
     char * uid_ptr;
     size_t uid_len;
+    uint64_t vtype;
     bool is_existingVertexID = false;
     vertexWriter_.start_counter();
     while (fileReader_->MoveNextLine()) {
-      /* 0#UserID,0,9,0,8,0,0,0,0
-       * note UserID above will be an integer for vertex typeID
-       */
       fileReader_->NextString(uid_ptr, uid_len, separator_);
-      VERTEXID_T vid = upsertNow(uid_ptr, uid_len, 0,
+      fileReader_->NextUnsignedLong(vtype, separator_);
+      VERTEXID_T vid = upsertNow(uid_ptr, uid_len, vtype,
                                  is_existingVertexID);
       if (!is_existingVertexID) {
-        GenVertexAttributeRecord();
+        GenVertexAttributeRecord(vtype);
         vertexWriter_.flush(vid);
       }
     }
     fileReader_->CloseFile();
     delete fileReader_;
     vertexWriter_.stop_counter();
-#endif
   }
 
   /**
