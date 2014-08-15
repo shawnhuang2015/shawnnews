@@ -57,16 +57,16 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
         break;
       case 1:
       case 3:
-        break;
         fileReader_->NextUnsignedLong(val, separator_);
         vertexWriter_.write(val);  // int
         fileReader_->NextUnsignedLong(val, separator_);
         vertexWriter_.write((val==0));  // bool
+        break;
       case 2:
         fileReader_->NextString(input_ptr, input_len, separator_);
         vertexWriter_.write(input_ptr, input_len);  // string
         fileReader_->NextUnsignedLong(val, separator_);
-        vertexWriter_.write((val==0));  // bool
+        vertexWriter_.write(val);  // int
       default:
         break;
     }

@@ -134,7 +134,7 @@ int main(int argc, char ** argv) {
         single_load_worker->singleSrvPartition();
       }
       /* below will printout the whole graph */
-      // LoadTopology4("/data/rc4/gstore/0/part");
+      LoadTopology4("/data/rc4/gstore/0/part");
       exit(0);
     } else {
       worker = new gse2::IdsServerWorker(workerConfig);

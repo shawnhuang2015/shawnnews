@@ -1,5 +1,5 @@
 SegSizeInBits: 20   # partition segment size in bit, default is 2^20 or 1 million
-GraphName: "LiveJournal" 
+GraphName: "mvme" 
 GraphID: 0          # when give 0, GSE will automatically assign the next ID to this graph
 AttributeEnumerators: 2  # total number of enumerators used by vertex and edge attributes
 VertexTypes:
@@ -21,12 +21,12 @@ VertexTypes:
   - id: 2
     typename: "vtype2"
     attributes:
-      - type: "INT"
+      - type: "STRING"
         name: "v2_a1"
         nullable: false
         fixedsize: 0    # for base data type, fixedsize doesn't matter.
         enumerator: 1   # this is enumerator ID, from 1 to $attribute_enumerators
-      - type: "STRING"
+      - type: "INT"
         name: "v2_a2"
         nullable: false
         fixedsize: 0
