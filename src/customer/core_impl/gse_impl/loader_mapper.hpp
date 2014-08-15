@@ -60,7 +60,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
         fileReader_->NextUnsignedLong(val, separator_);
         vertexWriter_.write(val);  // int
         fileReader_->NextUnsignedLong(val, separator_);
-        vertexWriter_.write((val==0));  // bool
+        vertexWriter_.write((val!=0));  // bool
         break;
       case 2:
         fileReader_->NextString(input_ptr, input_len, separator_);
@@ -131,6 +131,9 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     size_t uid1_len;
     char * uid2_ptr;
     size_t uid2_len;
+    uint64_t vtype1;
+    uint64_t vtype2;
+
     bool is_existingVertexID = false;
     edgeWriter_.start_counter();
     while (fileReader_->MoveNextLine()) {
@@ -138,11 +141,13 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
        * 2,1
        */
       fileReader_->NextString(uid1_ptr, uid1_len, separator_);
+      fileReader_->NextUnsignedLong(vtype1, separator_);
       fileReader_->NextString(uid2_ptr, uid2_len, separator_);
+      fileReader_->NextUnsignedLong(vtype2, separator_);
       uid1_ptr[uid1_len] = '\0';
       uid2_ptr[uid2_len] = '\0';
-      VERTEXID_T from_vid = upsertNow(uid1_ptr, 0, is_existingVertexID);
-      VERTEXID_T to_vid = upsertNow(uid2_ptr, 0, is_existingVertexID);
+      VERTEXID_T from_vid = upsertNow(uid1_ptr, vtype1, is_existingVertexID);
+      VERTEXID_T to_vid = upsertNow(uid2_ptr, vtype2, is_existingVertexID);
       edgeWriter_.flush(0, from_vid, to_vid, isDirectedEdge(0), 0, 0);
     }
     fileReader_->CloseFile();
