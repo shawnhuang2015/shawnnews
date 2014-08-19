@@ -112,6 +112,31 @@ class GSE_UD_LoaderCombiner {
     return degree;
 #endif
   }
+
+  /**
+   * Combine and write all edges of a vertex
+   * @param[in] srcid
+   * @param[in] outgoingedges_vec
+   * @param[in] edgefile
+   * @return number of edges of this vertex
+   */
+  size_t WriteEdgeRecords2EdgeTypedlist(
+      VertexLocalId_t srcid,
+      std::vector<gse2::PartitionEdgeInfo> &outgoingedges_vec,
+      gutil::GCharBuffer &gedgebuffer_) {
+    /* this is the combiner with edge attributes for a specific edge type */
+    VertexLocalId_t oldid = 0;
+    size_t degree_in_this_etype = 0;
+    for (uint32_t j = 0; j < outgoingedges_vec.size(); j++) {
+      if (outgoingedges_vec[j].nid_ != oldid || j == 0) {
+        // first record of a different toID
+        degree_in_this_etype++;
+        gedgebuffer_.writeCompressed(outgoingedges_vec[j].nid_ - oldid);
+        oldid = outgoingedges_vec[j].nid_;
+      }
+    }
+    return degree_in_this_etype;
+  }
 }
 ;
 
