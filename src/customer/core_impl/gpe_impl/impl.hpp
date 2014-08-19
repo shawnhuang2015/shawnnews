@@ -25,9 +25,9 @@
 #include "../../core_ext/gpe/enginejobrunner.hpp"
 #include "kneighborsubgraph.hpp"
 
-#include "global_definitions.hpp"
-#include "bidirect_shortestpath.hpp"
-#include "bidirect_bfs.hpp"
+#include "../udf_impl/global_definitions.hpp"
+#include "../udf_impl/bidirect_shortestpath.hpp"
+#include "../udf_impl/bidirect_bfs.hpp"
 
 
 namespace gperun {

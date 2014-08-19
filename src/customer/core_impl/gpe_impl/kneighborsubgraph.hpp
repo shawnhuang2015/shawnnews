@@ -277,6 +277,7 @@ struct EdgePair{
       vids_ = context->GlobalVariable_GetValue<std::vector<VertexLocalId_t> >(GV_VERTLIST);
       edges_ = context->GlobalVariable_GetValue<std::vector<EdgePair> >(GV_EDGELIST);
       writer_->WriteStartObject();
+      writer_->WriteName("neighborhood_size").WriteUnsignedInt(vids_.size());
       writer_->WriteName("vertices");
       writer_->WriteStartArray();
       for(std::vector<VertexLocalId_t>::iterator it = vids_.begin();
@@ -305,7 +306,7 @@ struct EdgePair{
       writer_->WriteEndObject();
 
 //      writer_->WriteStartObject();
-//      writer_->WriteName("neighborhood_size").WriteUnsignedInt(vids_.size());
+//
 //      writer_->WriteEndObject();
     }
 
