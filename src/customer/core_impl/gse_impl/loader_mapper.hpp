@@ -223,7 +223,7 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
    * @return Nothing
    */
   void LoadEdgeData(std::vector<std::string> &DataSource) {
-    LoadWeightedIntEdges(DataSource);
+    LoadPlainEdges(DataSource);
   }
 
 };
