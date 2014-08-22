@@ -12,7 +12,7 @@ package com.graphsql.endpoints
   *
   * 3.  Additional endpoint extensions that may be strings or VAR() types.
   *     For example for the endpoint:  https://SERVERNAME/ *endpoint1* /uid/full,
-  *     you would have the arguments "endpoint1",VAR(), "full"
+  *     you would have the arguments "endpoint1",VAR("uid"), "full"
   *
   * 4.  A function whose arguments are:  ( X1: String, X2: String, ... , queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {}
   *    --- X1, X2, etc refer to the VAR() types you passed in the earlier arguments to the endpoint.
@@ -34,8 +34,6 @@ import com.graphsql.graph._
 import com.graphsql.util._
 import play.api.libs.json._
 
-
-
 object EndpointDefinitions {
   //////////////////////////
   // HELPER FUNCTIONS     //
@@ -51,6 +49,17 @@ object EndpointDefinitions {
     context.gpe.writeAndWait(request, List(uid))
   }))
 
+
+  /*
+   * This endpoint is re-usable because it assumes that you are following a fixed format for graph update:
+   * {"nodeList":[{"id":"id1","att1":v1,...}, {"id":"id2","a1":v2,...},...],
+   * "edgeList":[{"startNode":"id1","endNode":"id2","a1":v1,...},...] }
+   *
+   * Any vertex appearing in the edgeList must have a corresponding entry in the nodeList.
+   *
+   * You do not have to give a full attribute specification for a vertex/edge.  You can give just id's,
+   * or a partial spec.
+   */
   Endpoints.register(Endpoint(POST(), "updategraph", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
     if (!dataPayload.keys.contains("nodeList")) {
       Some(Json.stringify(Json.obj("error" -> true, "message" -> "You must pass a node list!")))
