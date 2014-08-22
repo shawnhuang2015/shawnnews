@@ -31,7 +31,7 @@ struct EdgePair{
   VertexLocalId_t src;
   VertexLocalId_t tgt;
 
-  EdgePair(unsigned int s=0, unsigned int t=0): src(f), tgt(s) {}
+  EdgePair(unsigned int s=0, unsigned int t=0): src(s), tgt(t) {}
 
   friend std::ostream& operator<<(std::ostream& os, const EdgePair& obj){
     os<<obj.src<<" "<<obj.tgt;
@@ -43,6 +43,10 @@ struct EdgePair{
     is>>obj.src;
     is>>obj.tgt;
     return is;
+  }
+
+  friend bool operator==(const EdgePair& left, const EdgePair& right){
+    return left.src == right.src && left.tgt == right.tgt;
   }
 };
 
