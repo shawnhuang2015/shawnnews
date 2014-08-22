@@ -33,9 +33,6 @@ namespace gperun {
 }
 
 namespace UDIMPL {
-
-
-
   class GPE_UD_Impl{
   public:
     typedef GSQLMap_t<std::string, std::string> Maps_t;
@@ -88,8 +85,12 @@ namespace UDIMPL {
                                   std::vector<VertexLocalId_t>& idservice_vids,
                                   gutil::JSONWriter& writer,
                                   std::string start_node){
-      int depth = atoi(jsoptions["depth"][0].asString().c_str());
-      bool need_edges = jsoptions["edges"][0].asBool();
+      /// How many steps to take from the start node.
+      int depth = jsoptions.isMember("depth") ? atoi(jsoptions["depth"][0].asString().c_str()) : 1;
+      /// do you want to collect and return edges?
+      bool need_edges = jsoptions.isMember("edges") ? jsoptions["edges"][0] == "true" : false;
+      /// do you want to collect and return vertices?
+      bool need_verts = jsoptions.isMember("vertices") ? jsoptions["vertices"][0] == "true" : false;
       typedef KNeighborSubgraph UDF_t;
 
       VertexLocalId_t local_start;
@@ -100,17 +101,12 @@ namespace UDIMPL {
         return;
       }
 
-//      if(need_edges){
-//        std::cout<<"edges confirmed"<<std::endl;
-//      }
-      UDF_t udf(depth, local_start, need_edges, &writer);
+      UDF_t udf(depth, local_start, need_verts, need_edges, &writer);
       service->RunUDF<UDF_t>(request,&udf);
 
-      idservice_vids = udf.getVidsToTranslate();
-
-
-
-
+      if(need_edges || need_verts){
+        idservice_vids = udf.getVidsToTranslate();
+      }
     }
 
     /// customized implementation to load user defined setting variables.

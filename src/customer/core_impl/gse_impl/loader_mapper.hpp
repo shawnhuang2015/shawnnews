@@ -185,7 +185,6 @@ class GSE_UD_Loader : public gse2::GseSingleServerLoader {
     /* In case we want to give some default value of a new vertex */
     // MODIFICATION NEEDED HERE
     // this writes all 0's to the vertex attribute space.
-    // TODO (adam): work out a way to explain what's best to do here.
     static int default_verextAttr_length = 10;
     char defaultV_attr[default_verextAttr_length];
     memset(defaultV_attr, 0, default_verextAttr_length);

@@ -40,8 +40,6 @@ class GSE_UD_LoaderCombiner {
         // first record of a different toID
         degree++;
         edgefile.writeCompressed(outgoingedges_vec[j].nid_ - oldid);
-        // this writes the attributes out to the partition.
-        edgefile.write(outgoingedges_vec[j].prop_ptr_, outgoingedges_vec[j].prop_length_);
         oldid = outgoingedges_vec[j].nid_;
       }
     }
