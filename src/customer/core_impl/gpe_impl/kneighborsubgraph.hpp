@@ -212,9 +212,10 @@ public:
 
     // if we are just activated, then we need to be active in edge map so that we can
     // store edges and activate neighbors.
-    if (singlevalue == 0 && context->GlobalVariable_GetValue<bool>(GV_NEED_VERTS)) {
-      context->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,
-                                                      vid);
+    if (singlevalue == 0 &&
+        (context->GlobalVariable_GetValue<bool>(GV_NEED_VERTS) ||
+         context->GlobalVariable_GetValue<bool>(GV_NEED_EDGES))) {
+      context->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,vid);
     }
   }
 
