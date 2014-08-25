@@ -104,10 +104,11 @@ public:
 
   ~KNeighborSubgraph() { }
 
-  enum {GV_STARTNODE, GV_NEED_VERTS, GV_NEED_EDGES, GV_EDGELIST, GV_VERTLIST};
+  enum {GV_STARTNODE, GV_VERT_COUNT, GV_NEED_VERTS, GV_NEED_EDGES, GV_EDGELIST, GV_VERTLIST};
 
   void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
     globalvariables->Register(GV_STARTNODE, new gpelib4::BroadcastVariable<VertexLocalId_t>(start_node_));
+    globalvariables->Register(GV_VERT_COUNT,new gpelib4::UnsignedIntSumVariable());
     globalvariables->Register(GV_NEED_VERTS, new gpelib4::BroadcastVariable<bool>(need_verts_));
     globalvariables->Register(GV_NEED_EDGES, new gpelib4::BroadcastVariable<bool>(need_edges_));
     globalvariables->Register(GV_EDGELIST,
@@ -128,6 +129,7 @@ public:
     std::cout<<"initializing "<<start_node;
     valuecontext->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,
                                                          start_node);
+    valuecontext->GlobalVariable_Reduce<u_int32_t>(GV_VERT_COUNT,1);
     valuecontext->WriteAll(0,false);
     valuecontext->Write(start_node,1,true);
   }
@@ -177,11 +179,9 @@ public:
     // Store our own edges.
     if(context->GlobalVariable_GetValue<bool>(GV_NEED_EDGES)){
       if(srcvid < targetvid){
-        context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST,
-                                               EdgePair(srcvid,targetvid));
+        context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid,targetvid));
       }else{
-        context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST,
-                                               EdgePair(targetvid,srcvid));
+        context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(targetvid,srcvid));
       }
     }
   }
@@ -205,17 +205,17 @@ public:
                              const V_VALUE& singlevalue,
                              const MESSAGE& accumulator,
                              gpelib4::SingleValueContext<V_VALUE>* context) {
-
-
     //bool check = true;
     context->Write(vid,1);
 
     // if we are just activated, then we need to be active in edge map so that we can
-    // store edges and activate neighbors.
-    if (singlevalue == 0 &&
-        (context->GlobalVariable_GetValue<bool>(GV_NEED_VERTS) ||
-         context->GlobalVariable_GetValue<bool>(GV_NEED_EDGES))) {
-      context->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,vid);
+    // count and (optionally) store the vertices
+    if (singlevalue == 0 ){
+      context->GlobalVariable_Reduce<u_int32_t>(GV_VERT_COUNT,1);
+      if((context->GlobalVariable_GetValue<bool>(GV_NEED_VERTS) ||
+          context->GlobalVariable_GetValue<bool>(GV_NEED_EDGES))) {
+        context->GlobalVariable_Reduce<VertexLocalId_t>(GV_VERTLIST,vid);
+      }
     }
   }
 
@@ -262,8 +262,9 @@ public:
   void EndRun(gpelib4::BasicContext* context) {
     vids_ = context->GlobalVariable_GetValue<std::vector<VertexLocalId_t> >(GV_VERTLIST);
     edges_ = context->GlobalVariable_GetValue<boost::unordered_set<EdgePair,EdgePairHash> >(GV_EDGELIST);
+    vert_count_ = context->GlobalVariable_GetValue<u_int32_t>(GV_VERT_COUNT);
     writer_->WriteStartObject();
-    writer_->WriteName("neighborhood_size").WriteUnsignedInt(vids_.size());
+    writer_->WriteName("neighborhood_size").WriteUnsignedInt(vert_count_);
     if(context->GlobalVariable_GetValue<bool>(GV_NEED_VERTS)){
       writer_->WriteName("vertices");
       writer_->WriteStartArray();
@@ -327,6 +328,8 @@ private:
   std::vector<VertexLocalId_t> vids_;
   // list of found edges.
   boost::unordered_set<EdgePair,EdgePairHash> edges_;
+  // count of vertices found.
+  u_int32_t vert_count_;
 };
 }  // namepsace UDIMPL
 
