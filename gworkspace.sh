@@ -35,13 +35,13 @@ CWD=$(pwd)
 # check "-d" to see if to build with debug binaries   #
 #-----------------------------------------------------#
 usage() { echo "${bldred}Usage: $0 -h -i -s -u -c"
-    echo "  -h	       help and show command list"
-    echo "  -s	       show repository status"
-    echo "  -i         show repository information"
-    echo "  -c	       config information"
-    echo "  -u         update or initialize the repositories using ssh"
+    echo "  -h       help and show command list"
+    echo "  -s       show repository status"
+    echo "  -i       show repository information"
+    echo "  -c       config information"
+    echo "  -u       update or initialize the repositories using ssh"
     echo "  -x  https  [username password]"
-    echo "             update or initialize the repositories using https"
+    echo "           update or initialize the repositories using https"
     echo "${txtrst}"
 }
 
