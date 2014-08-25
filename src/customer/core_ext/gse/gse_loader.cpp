@@ -96,6 +96,9 @@ int main(int argc, char ** argv) {
   gse2::IdsWorker *worker = 0;
   if (sysConfig.isValidServerWorker(worker_id)) {
     if (argc == 2) {
+      // init dumpGraph flag to false
+      bool dumpGraph = false; 
+
       /* single server loader with both vertex and edge files */
       /* separator can be char or int value */
       char separator='\t';
@@ -126,15 +129,25 @@ int main(int argc, char ** argv) {
         single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 4; i < config_info.size(); i++) {
-          inputFiles.push_back(config_info[i]);
+          if (config_info[i] == "DUMP") {
+            dumpGraph = true;
+          } else {
+            inputFiles.push_back(config_info[i]);
+          }
         }
+
+        std::cout << " DUMP GRaph: " << std::boolalpha << dumpGraph << std::endl;
         single_load_worker->LoadVertexData(inputFiles);
         single_load_worker->LoadEdgeData(inputFiles);
         single_load_worker->commitLoading();
         single_load_worker->singleSrvPartition();
       }
-      /* below will printout the whole graph */
-      // LoadTopology4("/data/rc4/gstore/0/part");
+      /* below will printout the whole graph if DUMP is appear after 4th line 
+       * in property file
+       */
+      if (dumpGraph) {
+        LoadTopology4("/data/rc4/gstore/0/part");
+      }
       exit(0);
     } else {
       worker = new gse2::IdsServerWorker(workerConfig);
