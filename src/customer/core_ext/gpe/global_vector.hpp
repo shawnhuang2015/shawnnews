@@ -40,15 +40,15 @@ class VectorVariable : public BaseVariableObject {
 
   void Combine(BaseVariableObject *other) {
     VectorVariable<ELEMENT_t> *otherVector = (VectorVariable<ELEMENT_t> *)other;
-    if (localResults.size() >= maxSize_) {
+    if (localResults_.size() >= maxSize_) {
       // It should be == but we use >= for safety.
       return;
-    } else if (localResults.size() + otherVector->localResults.size() <= maxSize_) {
+    } else if (localResults_.size() + otherVector->localResults_.size() <= maxSize_) {
       localResults_.insert(localResults_.end(),
           otherVector->localResults_.begin(), otherVector->localResults_.end());
     } else {
       // We know that otherVector->localResults.size() >= maxSize_ - localResults.size() > 0 
-      uint32_t numToInsert = maxSize_ - localResults.size();
+      uint32_t numToInsert = maxSize_ - localResults_.size();
       localResults_.insert(localResults_.end(), otherVector->localResults_.begin(),
           otherVector->localResults_.begin() + numToInsert);
     }
