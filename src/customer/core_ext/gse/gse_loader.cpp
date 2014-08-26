@@ -57,7 +57,8 @@ void gse_loading_help(std::string config_file) {
      << "[MT]  (MT: parallel edge loading using multiple threads)\n"
      << "[10]  (if above is MT: number of parallel threads)\n"
      << "vertex_file or vertex_dir\n"
-     << "edge_file or edge_dir\n" << std::endl;
+     << "edge_file or edge_dir\n"
+     << "DUMP (put this keyword enables loaded topology displayed on screen)\n" << std::endl;
   exit(-1);
 }
 
@@ -97,7 +98,7 @@ int main(int argc, char ** argv) {
   if (sysConfig.isValidServerWorker(worker_id)) {
     if (argc == 2) {
       // init dumpGraph flag to false
-      bool dumpGraph = false; 
+      bool dumpGraph = false;
 
       /* single server loader with both vertex and edge files */
       /* separator can be char or int value */
@@ -118,8 +119,14 @@ int main(int argc, char ** argv) {
                                                           separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 6; i < config_info.size(); i++) {
-          inputFiles.push_back(config_info[i]);
+          // check if dump is enabled
+          if (config_info[i] == "DUMP") {
+            dumpGraph = true;
+          } else {
+            inputFiles.push_back(config_info[i]);
+          }
         }
+        std::cout << " DUMP Graph: " << std::boolalpha << dumpGraph << std::endl;
         single_load_worker_mt->LoadVertexData(inputFiles);
         single_load_worker_mt->LoadEdgeData(inputFiles);
         single_load_worker_mt->commitLoading();
@@ -129,6 +136,7 @@ int main(int argc, char ** argv) {
         single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 4; i < config_info.size(); i++) {
+          // check if dump is enabled
           if (config_info[i] == "DUMP") {
             dumpGraph = true;
           } else {
@@ -136,7 +144,7 @@ int main(int argc, char ** argv) {
           }
         }
 
-        std::cout << " DUMP GRaph: " << std::boolalpha << dumpGraph << std::endl;
+        std::cout << " DUMP Graph: " << std::boolalpha << dumpGraph << std::endl;
         single_load_worker->LoadVertexData(inputFiles);
         single_load_worker->LoadEdgeData(inputFiles);
         single_load_worker->commitLoading();
