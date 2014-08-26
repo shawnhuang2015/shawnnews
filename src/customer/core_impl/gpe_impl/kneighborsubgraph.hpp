@@ -95,12 +95,16 @@ public:
                     VertexLocalId_t start_node,
                     bool need_verts,
                     bool need_edges,
-                    gutil::JSONWriter* jsonwriter) :
-    gpelib4::BaseUDF(ProcessingMode_, depth),
-    start_node_(start_node),
-    need_verts_(need_verts),
-    need_edges_(need_edges),
-    writer_(jsonwriter)  {   }
+                    gutil::JSONWriter* jsonwriter,
+                    uint32_t max_vertices = std::numeric_limits<uint32_t>::max())
+      : gpelib4::BaseUDF(ProcessingMode_, depth),
+        start_node_(start_node),
+        need_verts_(need_verts),
+        need_edges_(need_edges),
+        max_vertices_(max_vertices),
+        writer_(jsonwriter) {
+    // Nothing to do here.
+  }
 
   ~KNeighborSubgraph() { }
 
@@ -114,7 +118,7 @@ public:
     globalvariables->Register(GV_EDGELIST,
                               new SetVariable< EdgePair,EdgePairHash >());
     globalvariables->Register(GV_VERTLIST,
-                              new VectorVariable< VertexLocalId_t >());
+                              new VectorVariable< VertexLocalId_t >(max_vertices_));
   }
 
 
@@ -322,6 +326,8 @@ private:
   bool need_verts_;
   // do you need to collect + print edge info?
   bool need_edges_;
+  // maximum number of vertices to store
+  uint32_t max_vertices_;
   // this writer is a pointer back to the Service's writer object.
   gutil::JSONWriter* writer_;
   // list of found vertices.

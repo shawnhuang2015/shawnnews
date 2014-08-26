@@ -24,10 +24,11 @@ namespace UDIMPL {
      */
 template <typename ELEMENT_t>
 class VectorVariable : public BaseVariableObject {
-public:
-  VectorVariable() {}
+ public:
+  VectorVariable(): maxSize_(std::numeric_limits<uint32_t>::max()) { }
+  VectorVariable(uint32_t maxSize): maxSize_(maxSize) { }
 
-  ~VectorVariable() {}
+  ~VectorVariable() { }
 
   VectorVariable(std::vector<ELEMENT_t> copy){
     localResults_ = std::vector<ELEMENT_t>(copy);
@@ -39,12 +40,24 @@ public:
 
   void Combine(BaseVariableObject *other) {
     VectorVariable<ELEMENT_t> *otherVector = (VectorVariable<ELEMENT_t> *)other;
-    localResults_.insert(localResults_.end(), \
-                         otherVector->localResults_.begin(), otherVector->localResults_.end());
+    if (localResults_.size() >= maxSize_) {
+      // It should be == but we use >= for safety.
+      return;
+    } else if (localResults_.size() + otherVector->localResults_.size() <= maxSize_) {
+      localResults_.insert(localResults_.end(),
+          otherVector->localResults_.begin(), otherVector->localResults_.end());
+    } else {
+      // We know that otherVector->localResults.size() >= maxSize_ - localResults.size() > 0 
+      uint32_t numToInsert = maxSize_ - localResults_.size();
+      localResults_.insert(localResults_.end(), otherVector->localResults_.begin(),
+          otherVector->localResults_.begin() + numToInsert);
+    }
   }
 
   void add(ELEMENT_t result) {
-    localResults_.push_back(result);
+    if (localResults_.size() < maxSize_) {
+      localResults_.push_back(result);
+    }
   }
 
   void Reduce(const void *newValue) {
@@ -73,8 +86,9 @@ public:
   }
 
 
-private:
+ private:
   std::vector<ELEMENT_t> localResults_;
+  uint32_t maxSize_;
 };
 }
 
