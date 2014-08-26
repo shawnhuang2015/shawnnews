@@ -11,16 +11,40 @@
 #ifndef SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERCOMBINER_HPP_
 #define SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERCOMBINER_HPP_
 
-#include <gse2/partition/partitiondatafeeder.hpp>
-#include "../udt.hpp"
+#include <gse2/partition/gse_loader_combiner_base.hpp>
+#include <core_impl/udt.hpp>
+
 namespace UDIMPL {
 
 /**
- * Override below when you need to customize the graph loading.
- * This is the combiner phase:  vertex/edge records --> graph vertex/edge
+ * This is the combiner phase:  vertex/edge records --> graph vertex/edge.
+ *
+ * gse_loader_combiner_base provides the general implementation of vertex
+ * and edge record combiners. If you don't need to combine the records, then
+ * no need to override either of them.
+ *
  */
-class GSE_UD_LoaderCombiner {
- public:
+class GSE_UD_LoaderCombiner : public gse2::GSE_LoaderCombiner_Base {
+public:
+#if 0
+  /**
+   * Combine multiple vertex attribute records of a vertex.
+   * Note: WriteVertexRecords2OneVertex will be invoked whenever
+   *  a typed vertex has attributes. It a typed vertex doesn't define
+   *  any attribute, GSE will skip calling this function.
+   *
+   * @param[in] vtype: the vertex type
+   * @param[in] vid: the vertex ID
+   * @param[in] vectex_vec: vector of attributes of vid
+   * @param[in] vertexfile: vertex file writer (CompactWriter)
+   */
+  void WriteVertexRecords2OneVertex(
+      VTYPEID_T vtype, VertexLocalId_t vid,
+      std::vector<gse2::PartitionVertexInfo> &vectex_vec,
+      gutil::CompactWriter &vertexfile) {
+    // write your own code
+  }
+
   /**
    * Combine and write all edges of a vertex
    * @param[in] srcid
@@ -32,111 +56,25 @@ class GSE_UD_LoaderCombiner {
       VertexLocalId_t srcid,
       std::vector<gse2::PartitionEdgeInfo> &outgoingedges_vec,
       gutil::CompactWriter &edgefile) {
-    /* this is the combiner w/o any edge attribute */
-    VertexLocalId_t oldid = 0;
-    size_t degree = 0;
-    for (uint32_t j = 0; j < outgoingedges_vec.size(); j++) {
-      if (outgoingedges_vec[j].nid_ != oldid || j == 0) {
-        // first record of a different toID
-        degree++;
-        edgefile.writeCompressed(outgoingedges_vec[j].nid_ - oldid);
-        oldid = outgoingedges_vec[j].nid_;
-      }
-    }
-    return degree;
-#if 0
-    /* this is a complicated example from Alipay */
-    typedef std::map<uint32_t, std::vector<uint32_t> > UDT_PAIR_Map_t;
-    typedef UDT_PAIR_Map_t::iterator UDT_PAIR_Map_itr_t;
-
-    UDT_PAIR_Map_t inputRecordsInOneEdge;
-    for (uint32_t j = 0; j < outgoingedges_vec.size(); j++) {
-      if (outgoingedges_vec[j].nid_ != oldid || j == 0) {
-        // first record of a different toID
-        degree++;
-        edgefile.writeCompressed(outgoingedges_vec[j].nid_ - oldid);
-        oldid = outgoingedges_vec[j].nid_;
-        inputRecordsInOneEdge.clear();
-      }
-      /* accumulate attributes of the edge */
-      if (outgoingedges_vec[j].prop_ptr_ != NULL
-          && outgoingedges_vec[j].prop_length_ > 0) {
-        uint8_t *ptr = (uint8_t*) outgoingedges_vec[j].prop_ptr_;
-        uint32_t udt_key = gutil::CompactWriter::readCompressed(ptr);
-        uint32_t udt_val = gutil::CompactWriter::readCompressed(ptr);
-        GASSERT(
-            ptr
-            == (uint8_t*) outgoingedges_vec[j].prop_ptr_
-            + outgoingedges_vec[j].prop_length_,
-            "Invalid edge input record: srcid " << srcid << " toid "
-            << oldid);
-        inputRecordsInOneEdge[udt_key].push_back(udt_val);
-      }
-      UDIMPL::OccurInfo_t occurInfo;
-      /* Combine all input records of an edge and write out */
-      if (j == outgoingedges_vec.size() - 1
-          || outgoingedges_vec[j + 1].nid_ != oldid) {
-        // last record of this edge
-        if (inputRecordsInOneEdge.size() > 0) {
-          // attr 1: UDT_PAIR_LIST: numberPairs, <K1V1>, <K2V2>, ...
-          edgefile.writeCompressed(inputRecordsInOneEdge.size());
-          occurInfo.firstLinktime = std::numeric_limits < uint32_t
-          > ::max();
-          occurInfo.lastLinktime = std::numeric_limits < uint32_t
-          > ::min();
-          occurInfo.linkCount = 0;
-          occurInfo.direction = 0;
-          occurInfo.isPayment = false;
-          for (UDT_PAIR_Map_itr_t itr = inputRecordsInOneEdge.begin();
-              itr != inputRecordsInOneEdge.end(); ++itr) {
-            // each UDT type
-            for (uint32_t i = 0; i < itr->second.size(); ++i) {
-              if (occurInfo.firstLinktime > itr->second[i])
-              occurInfo.firstLinktime = itr->second[i];
-              if (occurInfo.lastLinktime < itr->second[i])
-              occurInfo.lastLinktime = itr->second[i];
-            }
-            occurInfo.linkCount = itr->second.size();
-            edgefile.writeCompressed(itr->first);  // Ki
-            edgefile.write((char *) &occurInfo, sizeof(occurInfo));
-          }
-          // attr 2: intensity REAL -- 4 bytes
-          float intensity = 0;
-          edgefile.write((char *) &intensity, sizeof(intensity));
-          // attr 3: isBridge bool -- 1 byte
-          const char isBridge = '\1';
-          edgefile.write((char *) &isBridge, sizeof(isBridge));
-        }
-      }
-    }
-    return degree;
-#endif
+    // write your own code
+    return 123; // degree
   }
 
   /**
-   * Combine and write all edges of a vertex
+   * Combine and write all edges of a vertex for a specific edge type
    * @param[in] srcid
    * @param[in] outgoingedges_vec
-   * @param[in] edgefile
-   * @return number of edges of this vertex
+   * @param[in] gedgebuffer_
+   * @return number of edges of this vertex of a given edge type
    */
   size_t WriteEdgeRecords2EdgeTypedlist(
       VertexLocalId_t srcid,
       std::vector<gse2::PartitionEdgeInfo> &outgoingedges_vec,
       gutil::GCharBuffer &gedgebuffer_) {
-    /* this is the combiner with edge attributes for a specific edge type */
-    VertexLocalId_t oldid = 0;
-    size_t degree_in_this_etype = 0;
-    for (uint32_t j = 0; j < outgoingedges_vec.size(); j++) {
-      if (outgoingedges_vec[j].nid_ != oldid || j == 0) {
-        // first record of a different toID
-        degree_in_this_etype++;
-        gedgebuffer_.writeCompressed(outgoingedges_vec[j].nid_ - oldid);
-        oldid = outgoingedges_vec[j].nid_;
-      }
-    }
-    return degree_in_this_etype;
+    // write your own code
+    return 456;
   }
+#endif
 }
 ;
 

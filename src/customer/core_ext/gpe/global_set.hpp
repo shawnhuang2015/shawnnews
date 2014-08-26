@@ -5,46 +5,46 @@
  * Created on: 04-08-2014
  * Author: Eric Chu
  *
- * An easy to use gloabl vector implementation
+ * An easy to use gloabl Set implementation
  ******************************************************************************
  */
 
-#ifndef GPERUN_COMMON_GLOBAL_VECTOR_HPP_
-#define GPERUN_COMMON_GLOBAL_VECTOR_HPP_
+#ifndef GPERUN_COMMON_GLOBAL_SET_HPP_
+#define GPERUN_COMMON_GLOBAL_SET_HPP_
 
 #include <gpelib4/enginebase/variable.hpp>
+#include <boost/unordered_set.hpp>
 
 using namespace gpelib4;
 
 namespace UDIMPL {
 
 /***
-     * VectorVariable: define a gloable vector variable for storing all
+     * SetVariable: define a gloable Set variable for storing all
      * the result records
      */
-template <typename ELEMENT_t>
-class VectorVariable : public BaseVariableObject {
+template <typename ELEMENT_t, typename hasher = boost::hash<ELEMENT_t> >
+class SetVariable : public BaseVariableObject {
 public:
-  VectorVariable() {}
+  SetVariable() {}
 
-  ~VectorVariable() {}
+  ~SetVariable() {}
 
-  VectorVariable(std::vector<ELEMENT_t> copy){
-    localResults_ = std::vector<ELEMENT_t>(copy);
+  SetVariable(boost::unordered_set<ELEMENT_t,hasher> copy){
+    localResults_ = boost::unordered_set<ELEMENT_t,hasher>(copy);
   }
 
   BaseVariableObject* MakeLocalCopy() const {
-    return new VectorVariable<ELEMENT_t>();
+    return new SetVariable<ELEMENT_t,hasher>();
   }
 
   void Combine(BaseVariableObject *other) {
-    VectorVariable<ELEMENT_t> *otherVector = (VectorVariable<ELEMENT_t> *)other;
-    localResults_.insert(localResults_.end(), \
-                         otherVector->localResults_.begin(), otherVector->localResults_.end());
+    SetVariable<ELEMENT_t,hasher> *otherSet = (SetVariable<ELEMENT_t,hasher> *)other;
+    localResults_.insert(otherSet->localResults_.begin(), otherSet->localResults_.end());
   }
 
   void add(ELEMENT_t result) {
-    localResults_.push_back(result);
+    localResults_.insert(result);
   }
 
   void Reduce(const void *newValue) {
@@ -55,7 +55,7 @@ public:
     return &localResults_;
   }
 
-  std::vector<ELEMENT_t>& getResults() {
+  boost::unordered_set<ELEMENT_t,hasher>& getResults() {
     return localResults_;
   }
 
@@ -69,12 +69,12 @@ public:
   /// de-serialization method
   void LoadFrom(std::istream& istream) {
     std::istream_iterator<ELEMENT_t> in_it(istream);
-    localResults_ = std::vector<ELEMENT_t>(in_it, istream_iterator<ELEMENT_t>());
+    localResults_ = boost::unordered_set<ELEMENT_t,hasher>(in_it, istream_iterator<ELEMENT_t>());
   }
 
 
 private:
-  std::vector<ELEMENT_t> localResults_;
+  boost::unordered_set<ELEMENT_t,hasher> localResults_;
 };
 }
 

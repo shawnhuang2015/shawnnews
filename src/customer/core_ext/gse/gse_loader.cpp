@@ -38,7 +38,7 @@ std::string outputpath_ = "/tmp/gpe";
 
 
 void LoadTopology4(std::string datapath) {
-  gmmnt::GlobalInstances instance("/data/rc4/config/gpe/gpe1.conf");
+  gmmnt::GlobalInstances instance("enginecfg.xml");
   topology4::TopologyGraph topology(&instance, datapath);
   topology4::TopologyPrinter topologyprinter(&instance, &topology);
   topologyprinter.PrintMeta();

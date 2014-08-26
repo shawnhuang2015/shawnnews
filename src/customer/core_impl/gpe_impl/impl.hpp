@@ -23,6 +23,9 @@
 #include "../../core_ext/gpe/global_vector.hpp"
 #include "../../core_ext/gpe/enginejobrunner_zmq.hpp"
 #include "../../core_ext/gpe/enginejobrunner.hpp"
+#include "kneighborsubgraph.hpp"
+
+
 
 
 namespace gperun {
@@ -30,9 +33,6 @@ namespace gperun {
 }
 
 namespace UDIMPL {
-
-
-
   class GPE_UD_Impl{
   public:
     typedef GSQLMap_t<std::string, std::string> Maps_t;
@@ -54,6 +54,12 @@ namespace UDIMPL {
                              gutil::JSONWriter& response_writer,
                              size_t &num_interations,
                              Maps_t& customizedsetttings){
+      if(request_argv[0] == "kneighborhood"){
+        RunUDF_KNeighborhood(request, service, maps, jsoptions, idservice_vids,response_writer,request_argv[1]);
+        return true;
+      }
+
+
       return false;
     }
 
@@ -70,6 +76,39 @@ namespace UDIMPL {
       return false;
     }
 
+
+
+    static void RunUDF_KNeighborhood(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                                  gperun::EngineJobRunner* service,
+                                  gse2::IdConverter::RequestIdMaps* maps,
+                                  Json::Value& jsoptions,
+                                  std::vector<VertexLocalId_t>& idservice_vids,
+                                  gutil::JSONWriter& writer,
+                                  std::string start_node){
+      /// How many steps to take from the start node.
+      int depth = jsoptions.isMember("depth") ? atoi(jsoptions["depth"][0].asString().c_str()) : 1;
+      /// do you want to collect and return edges?
+      bool need_edges = jsoptions.isMember("edges") ? jsoptions["edges"][0] == "true" : false;
+      /// do you want to collect and return vertices?
+      bool need_verts = jsoptions.isMember("vertices") ? jsoptions["vertices"][0] == "true" : false;
+      typedef KNeighborSubgraph UDF_t;
+
+      VertexLocalId_t local_start;
+
+      if (!gperun::Util::UIdtoVId(service->topology(), maps,
+                                  request->message_, request->error_,
+                                  start_node,local_start)){
+        return;
+      }
+
+      UDF_t udf(depth, local_start, need_verts, need_edges, &writer);
+      service->RunUDF<UDF_t>(request,&udf);
+
+      if(need_edges || need_verts){
+        idservice_vids = udf.getVidsToTranslate();
+      }
+    }
+
     /// customized implementation to load user defined setting variables.
     static void LoadCustimzedSetting(YAML::Node& root, Maps_t& customizedsetttings){
     }
@@ -77,8 +116,6 @@ namespace UDIMPL {
     /// customized implementation to register UDF
     static void registerAll() {
       // Add your UDF register func here
-      // gperun::registerLinkRecommendation2Step(Registries::pureTopologyRegistry);
-      // gperun::registerQueryGraph(Registries::pureTopologyRegistry);
     }
 
   };

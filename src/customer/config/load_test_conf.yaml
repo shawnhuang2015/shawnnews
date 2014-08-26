@@ -1,0 +1,16 @@
+GRAPHS:
+    current_graph: 0
+    graphlist:
+    -   id: 0
+        name: alicpn
+    nextid: 1
+    storage: /home/vagrant/gstore
+
+INSTANCE:
+    executable: gse_loader
+    ids_id: 1
+REDIS:
+    lock_expire_time: 100000
+    machines:
+    -   ip: 127.0.0.1
+        port: 6379
