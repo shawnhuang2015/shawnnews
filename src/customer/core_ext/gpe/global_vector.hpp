@@ -24,10 +24,11 @@ namespace UDIMPL {
      */
 template <typename ELEMENT_t>
 class VectorVariable : public BaseVariableObject {
-public:
-  VectorVariable() {}
+ public:
+  VectorVariable(): maxSize_(std::numeric_limits<uint32_t>::max()) { }
+  VectorVariable(uint32_t maxSize): maxSize_(maxSize) { }
 
-  ~VectorVariable() {}
+  ~VectorVariable() { }
 
   VectorVariable(std::vector<ELEMENT_t> copy){
     localResults_ = std::vector<ELEMENT_t>(copy);
@@ -44,7 +45,9 @@ public:
   }
 
   void add(ELEMENT_t result) {
-    localResults_.push_back(result);
+    if (localResults_.size() < maxSize_) {
+      localResults_.push_back(result);
+    }
   }
 
   void Reduce(const void *newValue) {
@@ -73,8 +76,9 @@ public:
   }
 
 
-private:
+ private:
   std::vector<ELEMENT_t> localResults_;
+  uint32_t maxSize_;
 };
 }
 

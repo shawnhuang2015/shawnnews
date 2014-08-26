@@ -91,6 +91,10 @@ namespace UDIMPL {
       bool need_edges = jsoptions.isMember("edges") ? jsoptions["edges"][0] == "true" : false;
       /// do you want to collect and return vertices?
       bool need_verts = jsoptions.isMember("vertices") ? jsoptions["vertices"][0] == "true" : false;
+      // Maximum number of vertices to store?
+      uint32_t max_vertices = jsoptions.isMember("vertex_limit") ?
+          atoi(jsoptions["vertex_limit"][0].asString().c_str()) :
+          std::numeric_limits<uint32_t>::max();
       typedef KNeighborSubgraph UDF_t;
 
       VertexLocalId_t local_start;
@@ -101,7 +105,7 @@ namespace UDIMPL {
         return;
       }
 
-      UDF_t udf(depth, local_start, need_verts, need_edges, &writer);
+      UDF_t udf(depth, local_start, need_verts, need_edges, &writer, max_vertices);
       service->RunUDF<UDF_t>(request,&udf);
 
       if(need_edges || need_verts){
