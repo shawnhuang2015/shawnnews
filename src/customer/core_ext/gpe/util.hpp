@@ -22,7 +22,7 @@ namespace gperun {
     static bool UIdtoVId(topology4::TopologyGraph* topology,
                          gse2::IdConverter::RequestIdMaps* maps,
                          std::string& message, bool& error, std::string strid,
-                         VertexLocalId_t& vid) {
+                         VertexLocalId_t& vid, topology4::QueryState& querystate) {
       std::tr1::unordered_map<std::string, gse2::IdConverter::vidInfo>::iterator it =
           maps->idmaps_.find(strid);
       if (it == maps->idmaps_.end()) {
@@ -31,7 +31,7 @@ namespace gperun {
         return false;
       }
       vid = it->second.vid_;
-      if (!topology->IsValidVertexId(vid)) {
+      if (!topology->IsValidVertexId(vid, querystate)) {
         message = "error_: incorrect vid " + strid;
         error = true;
         return false;
