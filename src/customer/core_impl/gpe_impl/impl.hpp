@@ -101,7 +101,7 @@ namespace UDIMPL {
 
       if (!gperun::Util::UIdtoVId(service->topology(), maps,
                                   request->message_, request->error_,
-                                  start_node,local_start)){
+                                  start_node,local_start, request->querystate_)){
         return;
       }
 
