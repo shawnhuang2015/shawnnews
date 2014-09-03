@@ -50,15 +50,15 @@ void LoadTopology4(std::string datapath) {
 void gse_loading_help(std::string config_file) {
   std::cout << "Please check " << config_file << std::endl;
   std::cout << "The expected input in gse_loader1.propery: \n"
-     << "gse_loader1.config\n"
-     << "graph_config\n"
-     << "server_id (1)\n"
-     << "separator (, 09, ...)\n"
-     << "[MT]  (MT: parallel edge loading using multiple threads)\n"
-     << "[10]  (if above is MT: number of parallel threads)\n"
-     << "vertex_file or vertex_dir\n"
-     << "edge_file or edge_dir\n"
-     << "DUMP (put this keyword enables loaded topology displayed on screen)\n" << std::endl;
+    << "gse_loader1.config\n"
+    << "graph_config\n"
+    << "server_id (1)\n"
+    << "separator (, 09, ...)\n"
+    << "[MT]  (MT: parallel edge loading using multiple threads)\n"
+    << "[10]  (if above is MT: number of parallel threads)\n"
+    << "vertex_file or vertex_dir\n"
+    << "edge_file or edge_dir\n"
+    << "DUMP (put this keyword enables loaded topology displayed on screen)\n" << std::endl;
   exit(-1);
 }
 
@@ -115,8 +115,8 @@ int main(int argc, char ** argv) {
       if (config_info[4] == "MT") {
         gse2::GseSingleServerLoaderMT *single_load_worker_mt;
         single_load_worker_mt = new UDIMPL::GSE_UD_Loader_MT(workerConfig,
-                                                          atoi(config_info[5].c_str()),
-                                                          separator);
+            atoi(config_info[5].c_str()),
+            separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 6; i < config_info.size(); i++) {
           // check if dump is enabled
@@ -154,7 +154,7 @@ int main(int argc, char ** argv) {
        * in property file
        */
       if (dumpGraph) {
-        LoadTopology4("/data/rc4/gstore/0/part");
+        LoadTopology4(workerConfig.partitionRootDir_);
       }
       exit(0);
     } else {
