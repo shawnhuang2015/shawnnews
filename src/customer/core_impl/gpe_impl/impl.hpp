@@ -114,7 +114,7 @@ namespace UDIMPL {
     }
 
     /// customized implementation to load user defined setting variables.
-    static void LoadCustimzedSetting(YAML::Node& root, Maps_t& customizedsetttings){
+    static void LoadCustomizedSettings(YAML::Node& root, Maps_t& customizedsetttings){
     }
 
     /// customized implementation to register UDF
