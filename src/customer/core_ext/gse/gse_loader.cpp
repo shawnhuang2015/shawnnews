@@ -19,6 +19,7 @@
 #include <core_impl/gse_impl/loader_combiner.hpp>
 #include <core_impl/gse_impl/loader_mapper.hpp>
 #include <core_impl/gse_impl/loader_mapper_mt.hpp>
+#include <core_impl/gse_impl/loader_mapper_distributed.hpp>
 #include <gse2/partition/gse_single_server_repartition.hpp>
 #include <gutil/glogging.hpp>
 #include <gutil/gstring.hpp>
@@ -50,16 +51,27 @@ void LoadTopology4(std::string datapath) {
 void gse_loading_help(std::string config_file) {
   std::cout << "Please check " << config_file << std::endl;
   std::cout << "The expected input in gse_loader1.propery: \n"
-     << "gse_loader1.config\n"
-     << "graph_config\n"
-     << "server_id (1)\n"
-     << "separator (, 09, ...)\n"
-     << "[MT]  (MT: parallel edge loading using multiple threads)\n"
-     << "[10]  (if above is MT: number of parallel threads)\n"
-     << "vertex_file or vertex_dir\n"
-     << "edge_file or edge_dir\n"
-     << "DUMP (put this keyword enables loaded topology displayed on screen)\n" << std::endl;
+    << "gse_loader1.config\n"
+    << "graph_config\n"
+    << "server_id (1)\n"
+    << "separator (, 09, ...)\n"
+    << "[MT]  (MT: parallel edge loading using multiple threads)\n"
+    << "[10]  (if above is MT: number of parallel threads)\n"
+    << "vertex_file or vertex_dir\n"
+    << "edge_file or edge_dir\n"
+    << "DUMP (put this keyword enables loaded topology displayed on screen)\n" << std::endl;
   exit(-1);
+}
+
+static char __getSeparator(std::string separatorStr) {
+  char separator='\t';
+  if (separatorStr.length() > 1) {
+    separator = (char)(atoi(separatorStr.c_str()));
+  } else {
+    separator = separatorStr[0];
+  }
+  std::cout << " Separator : \"" << separator << "\"" << std::endl;
+  return separator;
 }
 
 int main(int argc, char ** argv) {
@@ -99,24 +111,15 @@ int main(int argc, char ** argv) {
     if (argc == 2) {
       // init dumpGraph flag to false
       bool dumpGraph = false;
-
       /* single server loader with both vertex and edge files */
       /* separator can be char or int value */
-      char separator='\t';
       if (config_info.size() < 6)
         gse_loading_help(std::string(argv[1]));
-
-      if (config_info[3].length() > 1) {
-        separator = (char)(atoi(config_info[3].c_str()));
-      } else {
-        separator = config_info[3][0];
-      }
-      std::cout << " Separator : \"" << separator << "\"" << std::endl;
+      char separator = __getSeparator(config_info[3]);
       if (config_info[4] == "MT") {
-        gse2::GseSingleServerLoaderMT *single_load_worker_mt;
-        single_load_worker_mt = new UDIMPL::GSE_UD_Loader_MT(workerConfig,
-                                                          atoi(config_info[5].c_str()),
-                                                          separator);
+        UDIMPL::GSE_UD_Loader_MT single_load_worker_mt(workerConfig,
+                                                       atoi(config_info[5].c_str()),
+                                                       separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 6; i < config_info.size(); i++) {
           // check if dump is enabled
@@ -127,13 +130,12 @@ int main(int argc, char ** argv) {
           }
         }
         std::cout << " DUMP Graph: " << std::boolalpha << dumpGraph << std::endl;
-        single_load_worker_mt->LoadVertexData(inputFiles);
-        single_load_worker_mt->LoadEdgeData(inputFiles);
-        single_load_worker_mt->commitLoading();
-        single_load_worker_mt->singleSrvPartition();
+        single_load_worker_mt.LoadVertexData(inputFiles);
+        single_load_worker_mt.LoadEdgeData(inputFiles);
+        single_load_worker_mt.commitLoading();
+        single_load_worker_mt.singleSrvPartition();
       } else {
-        gse2::GseSingleServerLoader *single_load_worker;
-        single_load_worker = new UDIMPL::GSE_UD_Loader(workerConfig, separator);
+        UDIMPL::GSE_UD_Loader single_load_worker(workerConfig, separator);
         std::vector<std::string> inputFiles;
         for (uint32_t i = 4; i < config_info.size(); i++) {
           // check if dump is enabled
@@ -145,35 +147,46 @@ int main(int argc, char ** argv) {
         }
 
         std::cout << " DUMP Graph: " << std::boolalpha << dumpGraph << std::endl;
-        single_load_worker->LoadVertexData(inputFiles);
-        single_load_worker->LoadEdgeData(inputFiles);
-        single_load_worker->commitLoading();
-        single_load_worker->singleSrvPartition();
+        single_load_worker.LoadVertexData(inputFiles);
+        single_load_worker.LoadEdgeData(inputFiles);
+        single_load_worker.commitLoading();
+        single_load_worker.singleSrvPartition();
       }
       /* below will printout the whole graph if DUMP is appear after 4th line 
        * in property file
        */
       if (dumpGraph) {
-        LoadTopology4("/data/rc4/gstore/0/part");
+        LoadTopology4(workerConfig.partitionRootDir_);
       }
       exit(0);
     } else {
-      worker = new gse2::IdsServerWorker(workerConfig);
-      std::cout << *(gse2::IdsServerWorker*)worker << "starts" << std::endl;
+      std::cout << " !!!! invalid input" << std::endl;
+      return -1;
     }
   } else if ( sysConfig.isValidClientWorker(worker_id)) {
-    std::cout << "invalid parameter!" << std::endl;
-    exit(-1);
+    bool dumpGraph = false;
+    /* single server loader with both vertex and edge files */
+    /* separator can be char or int value */
+    if (config_info.size() < 6)
+      gse_loading_help(std::string(argv[1]));
+    char separator = __getSeparator(config_info[3]);
+    UDIMPL::GSE_UD_Loader_Dist parallel_load_worker(workerConfig,
+                                                    separator);
+    std::vector<std::string> inputFiles;
+    for (uint32_t i = 4; i < config_info.size(); i++) {
+      // check if dump is enabled
+      if (config_info[i] == "DUMP") {
+        dumpGraph = true;
+      } else {
+        inputFiles.push_back(config_info[i]);
+      }
+    }
+    std::cout << " DUMP Graph: " << std::boolalpha << dumpGraph << std::endl;
+    parallel_load_worker.run(inputFiles);
   } else {
     std::cout << " !!!! invalid worker id (" << worker_id << ")" << std::endl;
     return -1;
   }
-
-
-  worker->startup();
-  worker->run(opts);
-  worker->shutdown();
-  delete worker;
   return 0;
 }
 

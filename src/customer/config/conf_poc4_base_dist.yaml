@@ -1,0 +1,224 @@
+# Some Global stuff
+REMOTE_USER: TO_REPLACE
+#SSH_KEY: /home/ubuntu/.ssh/gsql_aws_360.pem
+PASSWD: TO_REPLACE
+GLOG_DIR: /data/rc4/logs
+# the directory that GPE, GSE binaries and configuration
+# files, scripts are put
+DEPLOY_DIR: /data/rc4/
+
+# for redis servers
+REDIS:
+    machines:
+        - ip: 127.0.0.1
+          port: 6379   
+    lock_expire_time: 100000 # any redis lock expires in 100 seconds.       
+
+ZOOKEEPER:
+    machines:
+        - ip: 127.0.0.1
+          port: 19999          
+    # where we install zookeeper
+    home: /data/zk
+    pkg_name: zookeeper-3.4.5.tar.gz
+    cfg_template: zoo.cfg.template
+    log_cfg_template: zk_log4j.properties.template
+    init_script_template: zk_init.sh.template
+    log_level: default #  OFF, INFO
+
+KAFKA:
+    machines:
+        - ip: 127.0.0.1
+          port: 19092          
+          jmx_port: 30002
+    home: /data/kafka
+    # where we install kafka  
+    pkg_name: kafka_2.8.0-0.8.0-beta1.tar.gz
+    num_replicas: 1
+    cfg_template: kafka_server.properties.template
+    log_cfg_template: kafka_log4j.properties.template
+    init_script_template: kafka_init.sh.template
+    log_level: "OFF" # default, INFO
+
+REST:
+    machines:
+        # we will also have a redis server
+        # that is running on the same machine
+        # which holds the following ip address.
+        # However, we don't bind redis at this
+        # ip address currently for performance
+        # concern. Instead, we just bind redis
+        # to localhost (127.0.0.1)
+        - ip: 127.0.0.1
+          port: 9000
+    # the unit is millisecond
+    request_time_out: 10
+    log_cfg_template: rest_log4j.properties.template
+    log_level: default #  OFF, INFO
+    suppress_logs: false # true
+
+GRAPHS:
+  storage: /data/rc4/gstore
+  nextid: 1
+  graphlist:
+    - id: 0
+      name: DefaultGraph
+  current_graph:  0 # the graph ID we are working on
+
+GSE_CLIENT_WORKERS:
+    # A set of client workers interact with IDs server. This set of workers are
+    # dynamically allocate up to a limit.
+    startid: 1000 # start ID. Should be larger than size of SERVERWORKERS.
+    limit: 10 # maximum number of concurrent client workers  
+
+# for GSE servers
+GSE_SERVER_WORKERS:
+    # A set of workers that complete all ID services such as query, manipulate, backup/restore IDs. This set of
+    # of workers are static, that is, pre-defined by the # of machines.
+    machines: # List of logical machines, each holding one ID service.
+        - ids_id: 1
+          ip: 127.0.0.1
+        - ids_id: 2
+          ip: 127.0.0.1
+        - ids_id: 3
+          ip: 127.0.0.1
+    prefix: ids_  # ID service name prefix. An id service will be named as $prefix_$machineid_$graphid
+    executable: ids_worker
+    config_dependence: 
+        - section: ZOOKEEPER
+        - section: GRAPHS
+        - section: KAFKA
+        - section: QUEUE
+        - section: GSE_CLIENT_WORKERS
+        - section: GSE_SERVER_WORKERS
+        - section: REDIS
+        - section: GLOG_DIR
+
+GSE_LOADER:
+    machines:
+        - ip: 127.0.0.1
+          port: 16000
+          ids_id: 1
+    executable: gse_loader
+    num_partition_threads: 4 # default is 2
+    config_dependence: 
+        - section: ZOOKEEPER
+        - section: GRAPHS
+        - section: KAFKA
+        - section: QUEUE
+        - section: GSE_CLIENT_WORKERS
+        - section: GSE_SERVER_WORKERS
+        - section: REDIS
+        - section: GLOG_DIR
+
+
+# for GPE servers
+GPE:
+    machines:
+        - ip: 127.0.0.1
+          port: 7001
+          ids_id: 1
+          name: GPE_Server_1
+    queue_client_name_prefix: gpe
+    num_max_running_instances: 6
+    num_post_threads: 3
+    get_request_timeoutsec: 10
+    prefetch_request_timeoutsec: 5
+    prefetch_request_limit: 12 
+    cache_store_path: /data/rc4/tmp/cache_store
+    graph_partition_snapshot:
+        snapshot_path: /data/rc4/gstore/0/part/
+        # unit is second
+    # currently we assume all the GPE machines use the
+    # same machine config
+    machine_config:
+        # The unit is MB. By default, the current available free memory
+        # is used.
+        memory_limit: 32768
+        num_memory_server_threads: 2
+        disks:
+            - path: /data/rc4/tmp/gdisks
+              # its not used right now
+              type: SSD
+              num_save_threads: 1
+              num_load_threads: 1
+              compress_method: None            
+    engine_setting:
+        num_running_threads: 0
+        bucket_split_perpartition: 1
+    executable: poc_gpe_server
+    config_dependence: 
+        - section: ZOOKEEPER
+        - section: KAFKA
+        - section: QUEUE
+        - section: GRAPHS
+        - section: REDIS
+        - section: GLOG_DIR
+
+# for Queue (now we use Kafka as the queue service)
+QUEUE:
+    ids_queue_set:
+        name: dummy
+        timeout: 10
+        partition_num: 1
+        ids_control_queue: ids_controlQ   # this is the controller to start/stop the ID service for a specific graph and specifc vertex type.
+                                  # It is also used for IDS meta data, e.g., how many IDS in the system. which is up, etc.
+        ids_server_queues: ids_serverQ_   # ipc for an IDS service worker to receive any kind of request, one per IDS worker.
+        ids_client_queues: ids_clientQ_   # ipc for get or return data between IDS and client.
+    id_request_queue:  # ipc for ID service
+        name: id_requestQ
+        timeout: 10
+        partition_num: 1
+    id_response_queue_gpe: # ipc for ID service
+        name: id_responseQ_GPE
+        timeout: 10
+        partition_num: 1
+    id_response_queue_rest: # ipc for ID service
+        name: id_responseQ_REST
+        timeout: 10
+        partition_num: 1
+    # the queue that stores HTTP GET requests. The GET requests
+    # will be sent to GPE nodes.
+    get_request_queue:
+        name: requestQ
+        # the timeout that controls how long we will keep the data in queue
+        timeout: 10
+        partition_num: 6
+    # the queue that stores HTTP POST requests. The POST requests
+    # will be sent to GSE nodes.
+    post_request_queue:
+        name: postQ
+        timeout: 10
+        partition_num: 1
+    # the queue that stores response produced by GPE nodes.
+    response_queue:
+        name: responseQ
+        timeout: 10
+        partition_num: 1
+    # the queue that stores delta. GSE nodes are the producer of 
+    # this queue and GPE nodes are the consumers.
+    delta_queue:
+        name: deltaQ
+        timeout: 10
+        partition_num: 1
+    # the queue that stores prefetch requests. REST are the producer of 
+    # this queue and GPE nodes are the consumers.
+    prefetch_request_queue: 
+        name: prefetchrequestQ  
+        # the timeout that controls how long we will keep the data in queue
+        timeout: 10
+        partition_num: 6 
+
+
+HA:
+    virtual_ipaddress: 192.168.0.1
+    machines:
+        - ip: 192.168.0.2
+          port: 9000
+          eth_id: eth0
+          priority: 100
+        - ip: 192.168.0.3
+          port: 9000
+          eth_id: eth0
+          priority: 99
+
