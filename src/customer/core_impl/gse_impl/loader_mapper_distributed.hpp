@@ -76,8 +76,6 @@ class GSE_UD_Loader_Dist : public gse2::GseParallelLoader {
        * note UserID above will be an integer for vertex typeID
        */
       fileReader_->NextString(uid_ptr, uid_len, separator_);
-      VERTEXID_T vid = upsertNow(uid_ptr, uid_len, 0,
-                                 is_existingVertexID);
       GenVertexAttributeRecord();
       vertexWriter_.flush(0, uid_ptr, uid_len);
     }
