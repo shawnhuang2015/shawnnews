@@ -101,7 +101,7 @@ namespace UDIMPL {
 
       if (!gperun::Util::UIdtoVId(service->topology(), maps,
                                   request->message_, request->error_,
-                                  start_node,local_start)){
+                                  start_node,local_start, request->querystate_)){
         return;
       }
 
@@ -114,7 +114,7 @@ namespace UDIMPL {
     }
 
     /// customized implementation to load user defined setting variables.
-    static void LoadCustimzedSetting(YAML::Node& root, Maps_t& customizedsetttings){
+    static void LoadCustomizedSettings(YAML::Node& root, Maps_t& customizedsetttings){
     }
 
     /// customized implementation to register UDF

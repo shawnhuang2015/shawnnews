@@ -18,6 +18,7 @@
 #include <yaml-cpp/yaml.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <topology4/metafiles.hpp>
 
 namespace gperun {
 
@@ -51,6 +52,7 @@ struct GPEConfig {
     static std::string outgoing_port_to_ids_;
     static std::vector<std::string> rest_incoming_host_strs_;
     static Maps_t customizedsetttings_;
+    static topology4::RebuildSetting rebuildsetting_;
 
     static bool CheckTimeOut(std::string requestid);
 

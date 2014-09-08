@@ -32,7 +32,7 @@ void RunDegreeHistogram(int argc, char** argv) {
 void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
   std::string engineConfigFile = std::string(argVStrs[0]);
   YAML::Node root = gperun::GPEConfig::LoadConfig(engineConfigFile);
-  UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root,
+  UDIMPL::GPE_UD_Impl::LoadCustomizedSettings(root,
                                             gperun::GPEConfig::customizedsetttings_);
   GSQLLogger logger(argV_0, gperun::GPEConfig::log_path_);
   topology4::TopologyMeta topologymeta(gperun::GPEConfig::partitionpath_);
@@ -60,14 +60,17 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
       gperun::GPEConfig::get_request_queue_,
       gperun::GPEConfig::prefetch_request_queue_,
       gperun::GPEConfig::response_queue_, gperun::GPEConfig::maxjobs_);
+  topology4::DeltaRebuilder* rebuilder = new topology4::DeltaRebuilder(runner->globalinstance(), runner->topology(), runner);
+  rebuilder->rebuildsetting_ = gperun::GPEConfig::rebuildsetting_;
   gperun::EngineJobListener* listener = new gperun::EngineJobListener(
-      &gpe_daemon, connector, gperun::GPEConfig::hostname_);
+      &gpe_daemon, connector, gperun::GPEConfig::hostname_, rebuilder);
   runner->StartDispatch(listener);
   listener->StartListen(runner);
   listener->Join();
   runner->Join();
   delete connector;
   delete listener;
+  delete rebuilder;
   delete runner;
   if (!gpe_daemon.quit_)
     gpe_daemon.stopDaemon();
