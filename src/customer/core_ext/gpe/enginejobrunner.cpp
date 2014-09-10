@@ -26,12 +26,11 @@ namespace gperun {
 
   void EngineJobRunner::Topology_PullDelta() {
     // do first time (make up) delta pull
+    topology4::TransactionId_t transid = 0;
     uint64_t deltasize = 0;
-    uint64_t postq_pos = 0;
-    uint64_t idresq_pos = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize, false, postq_pos, idresq_pos);
+    char* deltadata = postListener_->getAllDelta(deltasize, transid);
     if (deltadata != NULL){
-      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
+      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize, transid);
       delete[] deltadata;
     }
     // start pull delta thread
@@ -210,12 +209,11 @@ namespace gperun {
     if (postListener_ == NULL)
       return;
     while (isrunning_) {
+      topology4::TransactionId_t transid = 0;
       uint64_t deltasize = 0;
-      uint64_t postq_pos = 0;
-      uint64_t idresq_pos = 0;
-      char* deltadata = postListener_->getAllDelta(deltasize, false, postq_pos, idresq_pos);
+      char* deltadata = postListener_->getAllDelta(deltasize, transid);
       if (deltadata != NULL){
-        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize);
+        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize, transid);
         delete[] deltadata;
       }
       else

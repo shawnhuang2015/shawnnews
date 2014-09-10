@@ -65,6 +65,14 @@ namespace gperun {
       return postListener_->enumMappers();
     }
 
+    size_t GetPostQueueSafeOffset(){
+      return postListener_->GetPostQueueSafeOffset();
+    }
+
+    size_t GetIdResponseQueueSafeOffset(){
+      return postListener_->GetIdResponseQueueSafeOffset();
+    }
+
   private:
     gse2::IdConverter* idconverter_;
     gse2::PostListener* postListener_;
