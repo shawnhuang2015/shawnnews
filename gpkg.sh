@@ -41,6 +41,12 @@ fi
 tar cvfz ${GSQL_BRANCH}.tar.gz deploy_pkg
 echo "${GSQL_BRANCH}.tar.gz is ready"
 
+# 2.5 copy tar ball to mgnt_cli
+cp ${GSQL_BRANCH}.tar.gz mgnt_cli/pkgs
+
+tar cvfz ${GSQL_BRANCH}_mgntcli.tar.gz mgnt_cli
+echo "${GSQL_BRANCH}_mgntcli.tar.gz is ready"
+
 # 3. running post packaging cmd, if any
 ${ER_HOME}/tools/post_pkg.sh
 
