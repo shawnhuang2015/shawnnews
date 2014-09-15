@@ -2,8 +2,18 @@
 #######################################################
 # build the package                                   #
 #######################################################
+gsql_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
 
+# make sure ENV has setup
 : ${GSQL_PROJ_HOME:?"Need to run \"source .gsql_setup_dev_env.source\""}
+
+# also make sure the ENV are valid -- that, check if branch changed
+if [ $(gsql_git_branch) != "$GSQL_BRANCH" ]; then
+    echo "Seems you have switched branch. Please rerun \"source .gsql_setup_dev_env.source\""
+    exit 0
+fi
 
 # execution function
 safeRunCommand() {
