@@ -15,7 +15,7 @@
 #include <gutil/genvvariable.hpp>
 #include <gutil/dummyqueue.hpp>
 #include <DQGroupConsumer.h>
-#include <gse2/msg/kafka/gse_kafka_writer.hpp>
+#include <gnet/msg/kafka/gse_kafka_writer.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
@@ -31,7 +31,7 @@ class KafkaConnector {
  public:
 #ifndef ComponentTest
   typedef gdist::DQGroupConsumer QueueReader_t;
-  typedef gse2::KafkaMsgWriter QueueWriter_t;
+  typedef gnet::KafkaMsgWriter QueueWriter_t;
 #else
   typedef gutil::DummyReadQueue QueueReader_t;
   typedef gutil::DummyWriteQueue QueueWriter_t;
