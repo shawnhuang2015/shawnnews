@@ -106,7 +106,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       request = "";
       return;
     }
-    if (daemon_->quit_ || daemon_->rebuild_) {
+    if (daemon_->quit_) {
       // receive command. stop reader and finish queue requests in reader first.
       connector_->StopReader();
       connector_->ReadFromKafka(read_queue);  // read all msg.
