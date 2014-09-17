@@ -15,7 +15,7 @@
 #include <gutil/genvvariable.hpp>
 #include <gutil/dummyqueue.hpp>
 #include <DQGroupConsumer.h>
-#include <gnet/msg/kafka/gse_kafka_writer.hpp>
+#include <gnet/kafka/kafka_msg_writer.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
