@@ -27,9 +27,11 @@ namespace gperun {
   void EngineJobRunner::Topology_PullDelta() {
     // do first time (make up) delta pull
     uint64_t deltasize = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_);
+    char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_,
+                                                 current_postqueue_pos_, current_idresponsequeue_pos_);
     if (deltadata != NULL){
-      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize, current_post_tid_);
+      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize,
+                                               current_postqueue_pos_, current_idresponsequeue_pos_);
       delete[] deltadata;
     }
     // start pull delta thread
@@ -39,6 +41,11 @@ namespace gperun {
   std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
     gutil::GTimer timer;
     instance->querystate_.tid_ = gutil::GTimer::GetTotalMicroSecondsSinceEpoch();
+#ifdef ENABLETRANSACTION
+    instance->querystate_.tid_ = gutil::extract_transactionid(instance->requestid_);
+#else
+    instance->querystate_.tid_ = current_post_tid_;
+#endif
     topology_->GetCurrentSegementMeta(instance->querystate_.query_segments_meta_);
     instance->udfstatus_ = GetUdfStatus();
     instance->writer_ = new gutil::JSONWriter();
@@ -209,9 +216,11 @@ namespace gperun {
       return;
     while (isrunning_) {
       uint64_t deltasize = 0;
-      char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_);
+      char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_,
+                                                   current_postqueue_pos_, current_idresponsequeue_pos_);
       if (deltadata != NULL){
-        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize, current_post_tid_);
+        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize,
+                                                 current_postqueue_pos_, current_idresponsequeue_pos_);
         delete[] deltadata;
       }
       else
@@ -220,4 +229,3 @@ namespace gperun {
   }
 
 }  // namespace gperun
-

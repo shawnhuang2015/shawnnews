@@ -65,12 +65,9 @@ namespace gperun {
       return postListener_->enumMappers();
     }
 
-    size_t GetPostQueueSafeOffset(){
-      return postListener_->GetPostQueueSafeOffset();
-    }
-
-    size_t GetIdResponseQueueSafeOffset(){
-      return postListener_->GetIdResponseQueueSafeOffset();
+    void PrintStatus(std::string tag, std::ostream& stream){
+      stream << tag;
+      idconverter_->ReportCaching(stream);
     }
 
   private:
