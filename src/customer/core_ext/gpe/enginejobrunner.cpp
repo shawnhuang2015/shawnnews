@@ -187,7 +187,12 @@ namespace gperun {
     jsonwriter.WriteName("vid").WriteMarkVId(vid);
     idservice_vids.push_back(vid);
     jsonwriter.WriteName("vertexattr");
-    v1->WriteToJson(jsonwriter);
+    if(v1 != NULL)
+      v1->WriteToJson(jsonwriter);
+    else{
+      jsonwriter.WriteStartObject();
+      jsonwriter.WriteEndObject();
+    }
     jsonwriter.WriteEndObject(); // source
     gapi4::EdgesCollection edgeresults;
     api.GetOneVertexEdges(vid, NULL, edgeresults);
@@ -202,7 +207,12 @@ namespace gperun {
       idservice_vids.push_back(toid);
       topology4::VertexAttribute* v2 = api.GetOneVertex(toid);
       jsonwriter.WriteName("to_vertexattr");
-      v2->WriteToJson(jsonwriter);
+      if(v2 != NULL)
+        v2->WriteToJson(jsonwriter);
+      else{
+        jsonwriter.WriteStartObject();
+        jsonwriter.WriteEndObject();
+      }
       jsonwriter.WriteName("edgeattr");
       edgeattr->WriteToJson(jsonwriter);
       jsonwriter.WriteEndObject();
