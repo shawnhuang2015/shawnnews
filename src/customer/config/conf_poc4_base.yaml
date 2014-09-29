@@ -23,7 +23,7 @@ ZOOKEEPER:
     pkg_name: zookeeper-3.4.5.tar.gz
     cfg_template: zoo.cfg.template
     log_cfg_template: zk_log4j.properties.template
-    init_script_template: zk_init.sh.template
+    init_script_template: zk_init.py.template
     log_level: default #  OFF, INFO
 
 KAFKA:
@@ -33,7 +33,7 @@ KAFKA:
           jmx_port: 30002
     home: /data/kafka
     # where we install kafka  
-    pkg_name: kafka_2.8.0-0.8.0-beta1.tar.gz
+    pkg_name: kafka_2.8.0-0.8.0.tar.gz
     num_replicas: 1
     cfg_template: kafka_server.properties.template
     log_cfg_template: kafka_log4j.properties.template
