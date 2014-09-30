@@ -11,6 +11,7 @@
 #include "gpeconfig.hpp"
 
 namespace gperun {
+  bool GPEConfig::enabledelta_ = true;
   std::string GPEConfig::udfmode_ = "";
   std::string GPEConfig::hostname_ = "";
   std::string GPEConfig::ipaddress_ = "";
@@ -101,6 +102,7 @@ namespace gperun {
   YAML::Node GPEConfig::LoadConfig(std::string engineConfigFile) {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
+    enabledelta_ = root["INSTANCE"]["enabledelta"].as<int>(1) != 0;
     udfmode_ = root["INSTANCE"]["udfmode"].as<std::string>("");
     hostname_ = root["INSTANCE"]["name"].as<std::string>("");
     ipaddress_ = root["INSTANCE"]["ip"].as<std::string>("");

@@ -22,12 +22,15 @@
 
 namespace gperun {
 
-/**
- * GPE server configuration.
- * POC modification: Likely since POC may need additional configurations
- */
-struct GPEConfig {
+  /**
+   * GPE server configuration.
+   * POC modification: Likely since POC may need additional configurations
+   */
+  struct GPEConfig {
     typedef GSQLMap_t<std::string, std::string> Maps_t;
+    /// enable delta or not. By default, it is true.
+    static bool enabledelta_;
+    /// udf mode of current process. Right now support "offline" and default "normal"
     static std::string udfmode_;
     static std::string hostname_;
     static std::string ipaddress_;
@@ -59,7 +62,7 @@ struct GPEConfig {
     static bool SetConfig(std::string key, std::string value);
 
     static YAML::Node LoadConfig(std::string engineConfigFile);
-};
+  };
 }  // namespace gperun
 
 #endif /* GPE_GPECONFIG_HPP_ */

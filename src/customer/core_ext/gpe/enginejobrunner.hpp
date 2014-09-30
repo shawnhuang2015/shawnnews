@@ -40,9 +40,11 @@ namespace gperun {
     }
 
     ~EngineJobRunner(){
-      pulldeltathread_->join();
-      delete pulldeltathread_;
-      pulldeltathread_ = NULL;
+      if(pulldeltathread_ != NULL){
+        pulldeltathread_->join();
+        delete pulldeltathread_;
+        pulldeltathread_ = NULL;
+      }
     }
 
     /// prepare topology: like set merge function for attribute.

@@ -25,6 +25,8 @@ namespace gperun {
   }
 
   void EngineJobRunner::Topology_PullDelta() {
+    if(postListener_ == NULL)
+      return;
     // do first time (make up) delta pull
     uint64_t deltasize = 0;
     char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_,
