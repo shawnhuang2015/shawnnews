@@ -360,7 +360,7 @@ def SetupCommonBuildEnv(common_env, verbose):
 
     # On Linux, we need to link to pthread and rt
     if not common_env['PYSYSPLATFORM'] == 'darwin':
-        common_env.Append(LIBS = ['pthread','rt'])
+        common_env.Append(LIBS = ['pthread','rt', 'dl'])
 
     # add customer cppflags and link flags
     common_env.Append(CCFLAGS=GetOption('gcppflags'))
