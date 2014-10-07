@@ -112,6 +112,12 @@ class KafkaConnector {
   void ReadFromKafka(
       std::vector<boost::tuple<std::string, std::string, std::string> >& ready_queue,
       int maxmsgsize = std::numeric_limits<int>::max()) {
+#ifdef ComponentTest
+  if(getrequest_reader_ != NULL && getrequest_reader_->IsFinished()){
+    sleep(1);
+    daemon_->handleCommand("quit");
+  }
+#endif
     GASSERT(ready_queue.size() == 0, ready_queue.size());
     if (!getrequest_reader_->isEmpty()) {
       gutil::GTimer timer;
