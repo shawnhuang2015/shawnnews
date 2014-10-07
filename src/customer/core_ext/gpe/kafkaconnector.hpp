@@ -50,7 +50,7 @@ class KafkaConnector {
         prefetchrequest_topic_(prefetchrequest_topic),
         max_num_concurrent_request_(prefetchsize) {
     InitReader();
-    for (int i=0; i<rest_num; i++) {
+    for (int i=1; i<=rest_num; i++) {
       std::string rest_topic = writetopic + boost::lexical_cast<std::string>(i);
       std::string client_name = name + boost::lexical_cast<std::string>(i);
       writers_.push_back(new QueueWriter_t(connection, rest_topic, client_name));
