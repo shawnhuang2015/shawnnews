@@ -28,6 +28,7 @@ namespace gperun {
   std::string GPEConfig::prefetch_request_queue_ = "";
   std::string GPEConfig::response_queue_ = "";
   std::string GPEConfig::delta_queue_ = "";
+  int GPEConfig::rest_num_ = 0;
   int GPEConfig::queue_sleep_time_ = 0;
   std::string GPEConfig::zk_connection_ = "";
   std::string GPEConfig::kafka_connection_ = "";
@@ -137,6 +138,7 @@ namespace gperun {
     prefetch_request_queue_ = root["QUEUE"]["prefetch_request_queue"]["name"]
                               .as<std::string>("");
     response_queue_ = root["QUEUE"]["response_queue"]["name"].as<std::string>("");
+    rest_num_ = root["QUEUE"]["response_queue"]["rest_num"].as<int>(1);
     delta_queue_ = root["QUEUE"]["delta_queue"]["name"].as<std::string>("");
     queue_sleep_time_ = root["QUEUE"]["get_request_queue"]["timeout"].as<int>(50);
     zk_connection_ = gutil::yamlConnection2String(root["ZOOKEEPER"],
@@ -173,6 +175,7 @@ namespace gperun {
               << "\n" << "prefetch_request_queue: "
               << prefetch_request_queue_ << "\n" << "response_queue: "
               << response_queue_ << "\n" << "delta_queue: " << delta_queue_
+              << "\n" << "rest_num: " << rest_num_ << "\n"
               << "\n" << "queue_sleep_time: " << queue_sleep_time_ << "\n"
               << "zk_connection: " << zk_connection_ << "\n"
               << "kafka_connection: " << kafka_connection_ << "\n"

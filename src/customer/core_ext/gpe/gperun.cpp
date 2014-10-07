@@ -62,7 +62,9 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
                                         + gperun::GPEConfig::hostname_,
                                         gperun::GPEConfig::get_request_queue_,
                                         gperun::GPEConfig::prefetch_request_queue_,
-                                        gperun::GPEConfig::response_queue_, gperun::GPEConfig::maxjobs_);
+                                        gperun::GPEConfig::response_queue_,
+                                        gperun::GPEConfig::maxjobs_,
+                                        gperun::GPEConfig::rest_num_);
   topology4::DeltaRebuilder* rebuilder = NULL;
   if(gperun::GPEConfig::enabledelta_){
     rebuilder = new topology4::DeltaRebuilder(runner->globalinstance(), runner->topology(), runner);

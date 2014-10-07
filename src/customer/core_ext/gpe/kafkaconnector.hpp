@@ -14,6 +14,7 @@
 #include <gutil/gtimer.hpp>
 #include <gutil/genvvariable.hpp>
 #include <gutil/dummyqueue.hpp>
+#include <gutil/gstring.hpp>
 #include <DQGroupConsumer.h>
 #include <gnet/kafka/kafka_msg_writer.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -40,15 +41,20 @@ class KafkaConnector {
   KafkaConnector(GPEDaemon* daemon, std::string connection,
                  std::string name, std::string getrequest_topic,
                  std::string prefetchrequest_topic, std::string writetopic,
-                 int prefetchsize)
+                 int prefetchsize,
+                 int rest_num)
       : connection_(connection),
-        writer_(connection, writetopic, name),
         daemon_(daemon),
         name_(name),
         getrequest_topic_(getrequest_topic),
         prefetchrequest_topic_(prefetchrequest_topic),
         max_num_concurrent_request_(prefetchsize) {
     InitReader();
+    for (int i=0; i<rest_num; i++) {
+      std::string rest_topic = writetopic + boost::lexical_cast<std::string>(i);
+      std::string client_name = name + boost::lexical_cast<std::string>(i);
+      writers_.push_back(new QueueWriter_t(connection, rest_topic, client_name));
+    }
     dummywritequeue_ = NULL;
     if (gutil::GEnvVariable::RecordQueue_)
       dummywritequeue_ = new gutil::DummyWriteQueue("", getrequest_topic, "");
@@ -56,6 +62,9 @@ class KafkaConnector {
 
   ~KafkaConnector() {
     DeleteReader();
+    for (uint32_t i=0; i< writers_.size(); i++) {
+       delete writers_[i];
+    }
     if (dummywritequeue_ != NULL)
       delete dummywritequeue_;
   }
@@ -82,7 +91,8 @@ class KafkaConnector {
   }
 
   void SetResponse(std::string& requestid, char* response, size_t response_size) {
-    writer_.put(const_cast<char *>(requestid.c_str()), response, requestid.size(), response_size);
+    uint32_t rest_id = gutil::extract_restid(requestid);
+    writers_[rest_id-1]->put(const_cast<char *>(requestid.c_str()), response, requestid.size(), response_size);
   }
 
   void InitReader() {
@@ -141,7 +151,7 @@ class KafkaConnector {
   QueueReader_t* getrequest_reader_;
   QueueReader_t* prefetchrequest_reader_;
   std::string connection_;
-  QueueWriter_t writer_;
+  std::vector<QueueWriter_t *> writers_;
   GPEDaemon* daemon_;
   std::string name_;
   std::string getrequest_topic_;

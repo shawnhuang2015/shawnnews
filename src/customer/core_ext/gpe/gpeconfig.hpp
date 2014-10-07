@@ -44,6 +44,7 @@ namespace gperun {
     static std::string prefetch_request_queue_;
     static std::string response_queue_;
     static std::string delta_queue_;
+    static int rest_num_;
     static int queue_sleep_time_;
     static float get_request_timeoutsec_;
     static float prefetch_request_timeoutsec_;
