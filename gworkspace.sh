@@ -185,10 +185,10 @@ populate_repos() {
     for i in "${!DIRECTORY[@]}"; do
         if ! [ "${PUSHABLE[$i]}" == "x" ]; then
             if [ "${VERSION[$i]}" == "latest" ]; then
-                cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; cd ${CWD}")
+                cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git fetch; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; cd ${CWD}")
             else
                 if ! [ "${VERSION[$i]}" == "*" ]; then
-                    cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; git checkout ${VERSION[$i]} -q; cd ${CWD}")
+                    cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git fetch; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; git checkout ${VERSION[$i]} -q; cd ${CWD}")
                 fi
             fi
         fi
