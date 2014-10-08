@@ -51,6 +51,10 @@ fi
 tar cvfz ${GSQL_BRANCH}.tar.gz deploy_pkg
 echo "${GSQL_BRANCH}.tar.gz is ready"
 
+# 2.1: clean up mgnt_cli so that the resulting zip won't be massive
+rm -rf mgnt_cli/pkgs/*
+rm -rf mgnt_cli/workspace/*
+
 # 2.5 copy tar ball to mgnt_cli
 cp ${GSQL_BRANCH}.tar.gz mgnt_cli/pkgs
 
