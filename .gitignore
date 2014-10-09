@@ -56,3 +56,7 @@ src/utility
 src/realtime
 src/msg
 src/er
+
+# ER generated files #
+######################
+.mgnt_cli/
