@@ -18,15 +18,19 @@
 #include <yaml-cpp/yaml.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <topology4/metafiles.hpp>
 
 namespace gperun {
 
-/**
- * GPE server configuration.
- * POC modification: Likely since POC may need additional configurations
- */
-struct GPEConfig {
+  /**
+   * GPE server configuration.
+   * POC modification: Likely since POC may need additional configurations
+   */
+  struct GPEConfig {
     typedef GSQLMap_t<std::string, std::string> Maps_t;
+    /// enable delta or not. By default, it is true.
+    static bool enabledelta_;
+    /// udf mode of current process. Right now support "offline" and default "normal"
     static std::string udfmode_;
     static std::string hostname_;
     static std::string ipaddress_;
@@ -40,6 +44,7 @@ struct GPEConfig {
     static std::string prefetch_request_queue_;
     static std::string response_queue_;
     static std::string delta_queue_;
+    static int rest_num_;
     static int queue_sleep_time_;
     static float get_request_timeoutsec_;
     static float prefetch_request_timeoutsec_;
@@ -51,13 +56,14 @@ struct GPEConfig {
     static std::string outgoing_port_to_ids_;
     static std::vector<std::string> rest_incoming_host_strs_;
     static Maps_t customizedsetttings_;
+    static topology4::RebuildSetting rebuildsetting_;
 
     static bool CheckTimeOut(std::string requestid);
 
     static bool SetConfig(std::string key, std::string value);
 
     static YAML::Node LoadConfig(std::string engineConfigFile);
-};
+  };
 }  // namespace gperun
 
 #endif /* GPE_GPECONFIG_HPP_ */

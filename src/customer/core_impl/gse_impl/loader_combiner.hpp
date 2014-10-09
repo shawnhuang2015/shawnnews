@@ -52,15 +52,31 @@ public:
    * @param[in] edgefile
    * @return number of edges of this vertex
    */
-  virtual size_t WriteEdgeRecords2Edgelist(
+  size_t WriteEdgeRecords2Edgelist(
       VertexLocalId_t srcid,
       std::vector<gse2::PartitionEdgeInfo> &outgoingedges_vec,
       gutil::CompactWriter &edgefile) {
     // write your own code
     return 123; // degree
   }
+
+  /**
+   * Combine and write all edges of a vertex for a specific edge type
+   * @param[in] srcid
+   * @param[in] outgoingedges_vec
+   * @param[in] gedgebuffer_
+   * @return number of edges of this vertex of a given edge type
+   */
+  size_t WriteEdgeRecords2EdgeTypedlist(
+      VertexLocalId_t srcid,
+      std::vector<gse2::PartitionEdgeInfo> &outgoingedges_vec,
+      gutil::GCharBuffer &gedgebuffer_) {
+    // write your own code
+    return 456;
+  }
 #endif
-};
+}
+;
 
 }    // namespace UDIMPL
 #endif    /* SRC_CUSTOMER_COREIMPL_GSEIMPL_LOADERCOMBINER_HPP_ */

@@ -44,6 +44,24 @@ VertexTypes:
         fixedsize: 0
 EdgeTypes:
   - id: 0               # no type, put 0 here.
-    typename: "etype_dummy"
+    typename: "etype_0"
+    isdirected: false   # per this type
+    attributes:
+  - id: 1
+    typename: "etype_1"
+    isdirected: false   # per this type
+    attributes:
+      - type: "INT"
+        name: "e1_a1"
+        nullable: false
+      - type: "STRING"
+        name: "e1_a2"
+        nullable: false
+  - id: 2
+    typename: "etype2"
     isdirected: true   # per this type
     attributes:
+      - type: "STRING"
+        name: "e2_a1"
+        nullable: false
+

@@ -32,43 +32,57 @@ void RunDegreeHistogram(int argc, char** argv) {
 void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
   std::string engineConfigFile = std::string(argVStrs[0]);
   YAML::Node root = gperun::GPEConfig::LoadConfig(engineConfigFile);
-  UDIMPL::GPE_UD_Impl::LoadCustimzedSetting(root,
-                                            gperun::GPEConfig::customizedsetttings_);
+  UDIMPL::GPE_UD_Impl::LoadCustomizedSettings(root,
+                                              gperun::GPEConfig::customizedsetttings_);
   GSQLLogger logger(argV_0, gperun::GPEConfig::log_path_);
   topology4::TopologyMeta topologymeta(gperun::GPEConfig::partitionpath_);
   gse2::IdConverter idconverter(
-      argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),
+        argVStrs[0], argVStrs[1], atoi(argVStrs[2].c_str()),
       gperun::GPEConfig::get_request_timeoutsec_, topologymeta.idresq_pos_);
   UDIMPL::UD_PostJson2Delta postProcessor(&idconverter);
-  gse2::PostListener postListener(&idconverter, topologymeta.postq_pos_, gperun::GPEConfig::num_post_threads_);
-  postListener.setPostProcessor(&postProcessor);
+  gse2::PostListener* postListener = NULL;
+  if(gperun::GPEConfig::enabledelta_){
+    postListener = new gse2::PostListener(&idconverter, topologymeta.postq_pos_, gperun::GPEConfig::num_post_threads_);
+    postListener->setPostProcessor(&postProcessor);
+  }
   gperun::EngineJobRunner *runner = new gperun::EngineJobRunner(
-      engineConfigFile, gperun::GPEConfig::partitionpath_,
-      gperun::GPEConfig::maxjobs_, &idconverter, &postListener);
+                                      engineConfigFile, gperun::GPEConfig::partitionpath_,
+                                      gperun::GPEConfig::maxjobs_, &idconverter, postListener);
   runner->Topology_WarmUp(true);
   runner->Topology_PullDelta();
   gperun::GPEDaemon gpe_daemon(
-      gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_,
-      "/gdbms");
+        gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_,
+        "/gdbms");
   gpe_daemon.connect(gperun::GPEConfig::zk_connection_, 30000);
   gpe_daemon.StartGPEDaemon();
   gperun::KafkaConnector* connector = new gperun::KafkaConnector(
-      &gpe_daemon,
-      gperun::GPEConfig::kafka_connection_,
-      gperun::GPEConfig::client_prefix_ + ":"
-          + gperun::GPEConfig::hostname_,
-      gperun::GPEConfig::get_request_queue_,
-      gperun::GPEConfig::prefetch_request_queue_,
-      gperun::GPEConfig::response_queue_, gperun::GPEConfig::maxjobs_);
+                                        &gpe_daemon,
+                                        gperun::GPEConfig::kafka_connection_,
+                                        gperun::GPEConfig::client_prefix_ + ":"
+                                        + gperun::GPEConfig::hostname_,
+                                        gperun::GPEConfig::get_request_queue_,
+                                        gperun::GPEConfig::prefetch_request_queue_,
+                                        gperun::GPEConfig::response_queue_,
+                                        gperun::GPEConfig::maxjobs_,
+                                        gperun::GPEConfig::rest_num_);
+  topology4::DeltaRebuilder* rebuilder = NULL;
+  if(gperun::GPEConfig::enabledelta_){
+    rebuilder = new topology4::DeltaRebuilder(runner->globalinstance(), runner->topology(), runner);
+    rebuilder->rebuildsetting_ = gperun::GPEConfig::rebuildsetting_;
+  }
   gperun::EngineJobListener* listener = new gperun::EngineJobListener(
-      &gpe_daemon, connector, gperun::GPEConfig::hostname_);
+                                          &gpe_daemon, connector, gperun::GPEConfig::hostname_, rebuilder);
   runner->StartDispatch(listener);
   listener->StartListen(runner);
   listener->Join();
   runner->Join();
   delete connector;
   delete listener;
+  if(rebuilder != NULL)
+    delete rebuilder;
   delete runner;
+  if(postListener != NULL)
+    delete postListener;
   if (!gpe_daemon.quit_)
     gpe_daemon.stopDaemon();
 }
@@ -86,8 +100,8 @@ void RunGPEService_ZMQ(char * argv_0, std::vector<std::string> &argvStrs) {
   //gse2::PostListener postListener(&idconverter);
 
   gperun::ZMQEngineJobRunner *runner = new gperun::ZMQEngineJobRunner(
-                    engineConfigFile, gperun::GPEConfig::partitionpath_,
-                    gperun::GPEConfig::maxjobs_);
+                                         engineConfigFile, gperun::GPEConfig::partitionpath_,
+                                         gperun::GPEConfig::maxjobs_);
 
   runner->Topology_WarmUp(true);
   runner->setIDConverter(&idconverter);
@@ -158,7 +172,7 @@ int main(int argc, char** argv) {
 #endif
 
   // install failure handler
-  google::InstallFailureSignalHandler();  
+  google::InstallFailureSignalHandler();
 
   if (argc > 3 && std::strcmp(argv[1], "DegreeHistogram") == 0) {
     RunDegreeHistogram(argc, argv);

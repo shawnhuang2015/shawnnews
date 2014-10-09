@@ -11,6 +11,7 @@
 #include "gpeconfig.hpp"
 
 namespace gperun {
+  bool GPEConfig::enabledelta_ = true;
   std::string GPEConfig::udfmode_ = "";
   std::string GPEConfig::hostname_ = "";
   std::string GPEConfig::ipaddress_ = "";
@@ -27,6 +28,7 @@ namespace gperun {
   std::string GPEConfig::prefetch_request_queue_ = "";
   std::string GPEConfig::response_queue_ = "";
   std::string GPEConfig::delta_queue_ = "";
+  int GPEConfig::rest_num_ = 0;
   int GPEConfig::queue_sleep_time_ = 0;
   std::string GPEConfig::zk_connection_ = "";
   std::string GPEConfig::kafka_connection_ = "";
@@ -35,6 +37,7 @@ namespace gperun {
   std::vector<std::string> GPEConfig::rest_incoming_host_strs_;
   std::vector<float> GPEConfig::udfweights_;
   GPEConfig::Maps_t GPEConfig::customizedsetttings_;
+  topology4::RebuildSetting GPEConfig::rebuildsetting_;
 
   bool GPEConfig::CheckTimeOut(std::string requestid) {
     std::vector<std::string> strs;
@@ -100,6 +103,7 @@ namespace gperun {
   YAML::Node GPEConfig::LoadConfig(std::string engineConfigFile) {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
+    enabledelta_ = root["INSTANCE"]["enabledelta"].as<int>(1) != 0;
     udfmode_ = root["INSTANCE"]["udfmode"].as<std::string>("");
     hostname_ = root["INSTANCE"]["name"].as<std::string>("");
     ipaddress_ = root["INSTANCE"]["ip"].as<std::string>("");
@@ -134,6 +138,7 @@ namespace gperun {
     prefetch_request_queue_ = root["QUEUE"]["prefetch_request_queue"]["name"]
                               .as<std::string>("");
     response_queue_ = root["QUEUE"]["response_queue"]["name"].as<std::string>("");
+    rest_num_ = root["QUEUE"]["response_queue"]["rest_num"].as<int>(1);
     delta_queue_ = root["QUEUE"]["delta_queue"]["name"].as<std::string>("");
     queue_sleep_time_ = root["QUEUE"]["get_request_queue"]["timeout"].as<int>(50);
     zk_connection_ = gutil::yamlConnection2String(root["ZOOKEEPER"],
@@ -150,8 +155,10 @@ namespace gperun {
     for (YAML::const_iterator it = rest_hosts.begin();
           it != rest_hosts.end(); ++it) {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
-
     }
+    rebuildsetting_.sleep_no_job_ = root["INSTANCE"]["rebuild_nojob_sleepsec"].as<unsigned int>(60);
+    rebuildsetting_.sleep_between_jobs_ = root["INSTANCE"]["rebuild_betweenjob_sleepsec"].as<unsigned int>(60);
+    rebuildsetting_.sleep_switch_topology_ptr_ = root["INSTANCE"]["rebuild_switch_sleepsec"].as<unsigned int>(60);
     std::cout << "udfmode: " << udfmode_ << "\n"
               << "hostname: " << hostname_ << "\n" << "ipaddress: "
               << ipaddress_ << "\n" << "port: " << port_ << "\n"
@@ -168,6 +175,7 @@ namespace gperun {
               << "\n" << "prefetch_request_queue: "
               << prefetch_request_queue_ << "\n" << "response_queue: "
               << response_queue_ << "\n" << "delta_queue: " << delta_queue_
+              << "\n" << "rest_num: " << rest_num_ << "\n"
               << "\n" << "queue_sleep_time: " << queue_sleep_time_ << "\n"
               << "zk_connection: " << zk_connection_ << "\n"
               << "kafka_connection: " << kafka_connection_ << "\n"
@@ -176,15 +184,14 @@ namespace gperun {
               << " -------------------------------------------\n"
               << " gpe incoming port: " << incoming_port_ << "\n"
               << " gpe outgoing port to ids : " << outgoing_port_to_ids_ << "\n";
-
     for(size_t i = 0; i<rest_incoming_host_strs_.size(); ++i) {
       std::cout << " rest " << (i+1) << " " << rest_incoming_host_strs_[i] << "\n";
     }
     std::cout << "\n";
-
     for(Maps_t::iterator it = customizedsetttings_.begin(); it != customizedsetttings_.end(); ++it)
       std::cout << it->first << ": " << it->second << "\n";
     std::cout << "\n";
+    std::cout << rebuildsetting_;
     return root;
   }
 
