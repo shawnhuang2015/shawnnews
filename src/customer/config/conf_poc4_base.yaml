@@ -11,13 +11,13 @@ DEPLOY_DIR: /data/rc4/
 REDIS:
     machines:
         - ip: 127.0.0.1
-          port: 6379   
-    lock_expire_time: 100000 # any redis lock expires in 100 seconds.       
+          port: 6379
+    lock_expire_time: 100000 # any redis lock expires in 100 seconds.
 
 ZOOKEEPER:
     machines:
         - ip: 127.0.0.1
-          port: 19999          
+          port: 19999
     # where we install zookeeper
     home: /data/zk
     pkg_name: zookeeper-3.4.5.tar.gz
@@ -29,10 +29,10 @@ ZOOKEEPER:
 KAFKA:
     machines:
         - ip: 127.0.0.1
-          port: 19092          
+          port: 19092
           jmx_port: 30002
     home: /data/kafka
-    # where we install kafka  
+    # where we install kafka
     pkg_name: kafka_2.8.0-0.8.0.tar.gz
     num_replicas: 1
     cfg_template: kafka_server.properties.template
@@ -62,14 +62,14 @@ GRAPHS:
   nextid: 1
   graphlist:
     - id: 0
-      name: DefaultGraph
+      name: mvme
   current_graph:  0 # the graph ID we are working on
 
 GSE_CLIENT_WORKERS:
     # A set of client workers interact with IDs server. This set of workers are
     # dynamically allocate up to a limit.
     startid: 1000 # start ID. Should be larger than size of SERVERWORKERS.
-    limit: 10 # maximum number of concurrent client workers  
+    limit: 10 # maximum number of concurrent client workers
 
 # for GSE servers
 GSE_SERVER_WORKERS:
@@ -80,7 +80,7 @@ GSE_SERVER_WORKERS:
           ip: 127.0.0.1
     prefix: ids_  # ID service name prefix. An id service will be named as $prefix_$machineid_$graphid
     executable: ids_worker
-    config_dependence: 
+    config_dependence:
         - section: ZOOKEEPER
         - section: GRAPHS
         - section: KAFKA
@@ -97,7 +97,7 @@ GSE_LOADER:
           ids_id: 1
     executable: gse_loader
     num_partition_threads: 4 # default is 2
-    config_dependence: 
+    config_dependence:
         - section: ZOOKEEPER
         - section: GRAPHS
         - section: KAFKA
@@ -120,7 +120,7 @@ GPE:
     num_post_threads: 3
     get_request_timeoutsec: 10
     prefetch_request_timeoutsec: 5
-    prefetch_request_limit: 12 
+    prefetch_request_limit: 12
     cache_store_path: /data/rc4/tmp/cache_store
     graph_partition_snapshot:
         snapshot_path: /data/rc4/gstore/0/part/
@@ -138,12 +138,12 @@ GPE:
               type: SSD
               num_save_threads: 1
               num_load_threads: 1
-              compress_method: None            
+              compress_method: None
     engine_setting:
         num_running_threads: 0
         bucket_split_perpartition: 1
     executable: poc_gpe_server
-    config_dependence: 
+    config_dependence:
         - section: ZOOKEEPER
         - section: KAFKA
         - section: QUEUE
@@ -191,19 +191,19 @@ QUEUE:
         name: responseQ
         timeout: 10
         partition_num: 1
-    # the queue that stores delta. GSE nodes are the producer of 
+    # the queue that stores delta. GSE nodes are the producer of
     # this queue and GPE nodes are the consumers.
     delta_queue:
         name: deltaQ
         timeout: 10
         partition_num: 1
-    # the queue that stores prefetch requests. REST are the producer of 
+    # the queue that stores prefetch requests. REST are the producer of
     # this queue and GPE nodes are the consumers.
-    prefetch_request_queue: 
-        name: prefetchrequestQ  
+    prefetch_request_queue:
+        name: prefetchrequestQ
         # the timeout that controls how long we will keep the data in queue
         timeout: 10
-        partition_num: 6 
+        partition_num: 6
 
 
 HA:

@@ -48,6 +48,10 @@ deploy_pkg/
 product.*
 *.queue
 # Ignore other repos
+
+# ER generated files #
+######################
+.mgnt_cli/
 src/core/topology
 src/core/gpe
 src/core/gse
@@ -56,7 +60,3 @@ src/utility
 src/realtime
 src/msg
 src/er
-
-# ER generated files #
-######################
-.mgnt_cli/
