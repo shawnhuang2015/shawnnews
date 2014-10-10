@@ -87,6 +87,12 @@ namespace gperun {
     void ShowOneVertexInfo(EngineServiceRequest* request, gutil::JSONWriter& jsonwriter,
                            VertexLocalId_t vid, std::vector<VertexLocalId_t>& idservice_vids);
 
+    void RunStandardAPI(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                             gse2::IdConverter::RequestIdMaps* maps,
+                             Json::Value& jsoptions,
+                             std::vector<VertexLocalId_t>& idservice_vids,
+                             gutil::JSONWriter& response_writer);
+
     void PullDeltaThread();
   };
 }  // namespace gperun

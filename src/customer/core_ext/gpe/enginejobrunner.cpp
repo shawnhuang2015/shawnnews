@@ -141,6 +141,8 @@ namespace gperun {
         if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid, request->querystate_))
           return 0;
         ShowOneVertexInfo(request, jsonwriter, vid, idservice_vids);
+      } else if (argv[0] == "sapi") {
+        RunStandardAPI(request, maps, jsoptions, idservice_vids, jsonwriter);
       } else {
         bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request,
                                                       this,
@@ -175,6 +177,125 @@ namespace gperun {
       return 0;
     }
     return num_iterations;
+  }
+
+  void EngineJobRunner::RunStandardAPI(gpelib4::EngineDriverService::EngineServiceRequest* request,
+                                       gse2::IdConverter::RequestIdMaps* maps,
+                                       Json::Value& jsoptions,
+                                       std::vector<VertexLocalId_t>& idservice_vids,
+                                       gutil::JSONWriter& response_writer){
+    GPROFILER(request->requestid_) << request->requeststr_ << "\n";
+    std::string func = jsoptions["func"].asString();
+    if(func == "vattr"){
+      std::string vidstr = jsoptions["id"].asString();
+      VertexLocalId_t vid = 0;
+      if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
+        return;
+      gapi4::GraphAPI api(topology_, &request->querystate_);
+      topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
+      response_writer.WriteStartObject();
+      if(v1 != NULL){
+        response_writer.WriteName("degree").WriteUnsignedInt(v1->outgoing_degree());
+        response_writer.WriteName("attr");
+        v1->WriteToJson(response_writer);
+      }
+      response_writer.WriteEndObject();
+    } else if(func == "edges"){
+      std::string vidstr = jsoptions["id"].asString();
+      bool writedgeeattr = jsoptions["edgeattr"].asBool();
+      bool writetgtvattr = jsoptions["tgtvattr"].asBool();
+      size_t limit = jsoptions["limit"].isNull() ? std::numeric_limits<size_t>::max() : jsoptions["limit"].asUInt();
+      VertexLocalId_t vid = 0;
+      if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
+        return;
+      gapi4::GraphAPI api(topology_, &request->querystate_);
+      gapi4::EdgesCollection edgeresults;
+      api.GetOneVertexEdges(vid, NULL, edgeresults);
+      response_writer.WriteStartObject();
+      response_writer.WriteName("edges");
+      response_writer.WriteStartArray();
+      uint32_t count = 0;
+      while (edgeresults.NextEdge()) {
+        response_writer.WriteStartObject();
+        VertexLocalId_t toid = edgeresults.GetCurrentToVId();
+        response_writer.WriteName("to_vid").WriteMarkVId(toid);
+        topology4::EdgeAttribute* edgeattr = edgeresults
+                                             .GetCurrentEdgeAttribute();
+        idservice_vids.push_back(toid);
+        if(writetgtvattr){
+          topology4::VertexAttribute* v1 = api.GetOneVertex(toid);
+          if(v1 != NULL){
+            response_writer.WriteName("to_degree").WriteUnsignedInt(v1->outgoing_degree());
+            response_writer.WriteName("to_attr");
+            v1->WriteToJson(response_writer);
+          }
+        }
+        if(writedgeeattr){
+          response_writer.WriteName("edgeattr");
+          edgeattr->WriteToJson(response_writer);
+        }
+        response_writer.WriteEndObject();
+        if(++count == limit)
+          break;
+      }
+      response_writer.WriteEndArray();
+      response_writer.WriteEndObject();
+    } else if(func == "randomids"){
+      bool writeattr = jsoptions["attr"].asBool();
+      uint32_t count = jsoptions["count"].isNull() ? 10 : jsoptions["id"].asUInt();
+      uint32_t vtype = jsoptions["vtype"].isNull() ? 0 : jsoptions["vtype"].asUInt();
+      DegreeType_t mindegree = jsoptions["mindegree"].isNull() ? 0 : jsoptions["mindegree"].asUInt();
+      DegreeType_t maxdegree = jsoptions["maxdegree"].isNull() ? std::numeric_limits<DegreeType_t>::max() : jsoptions["maxdegree"].asUInt();
+      response_writer.WriteStartObject();
+      response_writer.WriteName("ids");
+      response_writer.WriteStartArray();
+      gapi4::GraphAPI api(topology_, &request->querystate_);
+      gapi4::VerticesFilter_ByOneType filter(vtype);
+      gapi4::VerticesCollection vertexresults;
+      api.GetAllVertices(&filter, vertexresults);
+      uint32_t matched = 0;
+      while(vertexresults.NextVertex()){
+        topology4::VertexAttribute* vattr = vertexresults.GetCurrentVertexAttribute();
+        DegreeType_t degree = vattr->outgoing_degree();
+        if(degree >= mindegree && degree <= maxdegree){
+          VertexLocalId_t id = vertexresults.GetCurrentVId();
+          response_writer.WriteStartObject();
+          response_writer.WriteName("vid").WriteMarkVId(id);
+          response_writer.WriteName("degree").WriteUnsignedInt(vattr->outgoing_degree());
+          if(writeattr){
+            response_writer.WriteName("attr");
+            vattr->WriteToJson(response_writer);
+          }
+          idservice_vids.push_back(id);
+          response_writer.WriteEndObject();
+          if(++matched == count)
+            break;
+        }
+      }
+      response_writer.WriteEndArray();
+      response_writer.WriteEndObject();
+    }  else if(func == "degreehistogram"){
+      std::vector<std::string> strs;
+      std::string degreelist = jsoptions["degreelist"].asString();
+      boost::split(strs, degreelist, boost::is_any_of(","));
+      std::vector<size_t> limits;
+      for (size_t i = 0; i < strs.size(); ++i)
+        limits.push_back(boost::lexical_cast<size_t>(strs[i]));
+      typedef gpelib4::DegreeHistogram UDF_t;
+      UDF_t udf(limits);
+      gpelib4::SingleMachineAdaptor<UDF_t> adaptor(&udf, globalinstance_, topology_, false, &request->querystate_);
+      gpelib4::Master master(&adaptor, "");
+      gpelib4::Worker worker(&adaptor);
+      std::string result = master.RunUDF();
+      response_writer.WriteStartObject();
+      response_writer.WriteName("degreehistogram").WriteString(result);
+      response_writer.WriteEndObject();
+    } else {
+      response_writer.WriteStartObject();
+      response_writer.WriteEndObject();
+      request->message_ = "error_: incorrect function " + func;
+      request->error_ = true;
+    }
   }
 
   void EngineJobRunner::ShowOneVertexInfo(EngineServiceRequest* request,
