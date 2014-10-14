@@ -44,12 +44,7 @@ namespace gperun {
      * @param id
      * @return
      */
-    static std::string MarkVId(VertexLocalId_t id) {
-      stringstream ss;
-      ss.put(static_cast<char>(30));
-      ss << id;
-      ss.put(static_cast<char>(31));
-      return ss.str();
+    static std::string MarkVId(VertexLocalId_t id) __attribute__ ((deprecated)) {
     }
 
   };

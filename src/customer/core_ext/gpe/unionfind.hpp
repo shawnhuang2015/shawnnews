@@ -12,6 +12,7 @@
 
 #include <list>
 #include <utility>
+#include <iostream>
 
 namespace gperun{
 /**
@@ -55,7 +56,7 @@ namespace gperun{
       //this will prevent buffer overflows...
       if(u > N || v > N || u <0 || v <0){
 
-        cerr<<"ERROR in ADD: either u or v is not a valid vertex: ("<<u<<","<<v<<")"<<endl;
+        std::cerr<<"ERROR in ADD: either u or v is not a valid vertex: ("<<u<<","<<v<<")"<<std::endl;
         return;
       }
 
@@ -107,7 +108,7 @@ namespace gperun{
       //this will prevent buffer overflows...
       if(u > N  || u <0 ){
 
-        cerr<<"ERROR in findParent: u is not a valid vertex: "<<u<<endl;
+        std::cerr<<"ERROR in findParent: u is not a valid vertex: "<<u<<std::endl;
 
         return -1;
       }
@@ -137,7 +138,7 @@ namespace gperun{
       //this will prevent buffer overflows...
       if(u > N || v > N || u <0 || v <0){
 
-        cerr<<"ERROR in isSameGroup: either u or v is not a valid vertex: ("<<u<<","<<v<<")"<<endl;
+        std::cerr<<"ERROR in isSameGroup: either u or v is not a valid vertex: ("<<u<<","<<v<<")"<<std::endl;
         return false;
       }
       return findParent(u) == findParent(v);
@@ -149,7 +150,7 @@ namespace gperun{
       //this will prevent buffer overflows...
       if(u > N  || u <0 ){
 
-        cerr<<"ERROR in sizeGroup: u is not a valid vertex: "<<u<<endl;
+        std::cerr<<"ERROR in sizeGroup: u is not a valid vertex: "<<u<<std::endl;
         //0 is at least a valid index that does not exist.
         return 0;
       }

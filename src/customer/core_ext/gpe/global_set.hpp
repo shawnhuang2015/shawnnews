@@ -26,12 +26,14 @@ namespace UDIMPL {
 template <typename ELEMENT_t, typename hasher = boost::hash<ELEMENT_t> >
 class SetVariable : public BaseVariableObject {
 public:
+  typedef boost::unordered_set<ELEMENT_t, hasher> Set_t;
+
   SetVariable() {}
 
   ~SetVariable() {}
 
-  SetVariable(boost::unordered_set<ELEMENT_t,hasher> copy){
-    localResults_ = boost::unordered_set<ELEMENT_t,hasher>(copy);
+  SetVariable(Set_t& copy){
+    localResults_ = Set_t(copy);
   }
 
   BaseVariableObject* MakeLocalCopy() const {
@@ -55,7 +57,7 @@ public:
     return &localResults_;
   }
 
-  boost::unordered_set<ELEMENT_t,hasher>& getResults() {
+  Set_t& getResults() {
     return localResults_;
   }
 
@@ -63,18 +65,17 @@ public:
   void WriteTo(std::ostream& ostream) {
     std::ostream_iterator<ELEMENT_t> out_it(ostream," ");
     std::copy(localResults_.begin(), localResults_.end(), out_it);
-
   }
 
   /// de-serialization method
   void LoadFrom(std::istream& istream) {
     std::istream_iterator<ELEMENT_t> in_it(istream);
-    localResults_ = boost::unordered_set<ELEMENT_t,hasher>(in_it, istream_iterator<ELEMENT_t>());
+    localResults_ = boost::unordered_set<ELEMENT_t,hasher>(in_it, std::istream_iterator<ELEMENT_t>());
   }
 
 
 private:
-  boost::unordered_set<ELEMENT_t,hasher> localResults_;
+  Set_t localResults_;
 };
 }
 

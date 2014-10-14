@@ -13,6 +13,8 @@
 #define GPERUN_COMMON_GLOBAL_VECTOR_HPP_
 
 #include <gpelib4/enginebase/variable.hpp>
+#include <iterator>
+#include <iostream>
 
 using namespace gpelib4;
 
@@ -35,7 +37,7 @@ class VectorVariable : public BaseVariableObject {
   }
 
   BaseVariableObject* MakeLocalCopy() const {
-    return new VectorVariable<ELEMENT_t>();
+    return new VectorVariable<ELEMENT_t>(maxSize_);
   }
 
   void Combine(BaseVariableObject *other) {
@@ -82,7 +84,7 @@ class VectorVariable : public BaseVariableObject {
   /// de-serialization method
   void LoadFrom(std::istream& istream) {
     std::istream_iterator<ELEMENT_t> in_it(istream);
-    localResults_ = std::vector<ELEMENT_t>(in_it, istream_iterator<ELEMENT_t>());
+    localResults_ = std::vector<ELEMENT_t>(in_it, std::istream_iterator<ELEMENT_t>());
   }
 
 

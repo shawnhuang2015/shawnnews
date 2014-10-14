@@ -48,14 +48,14 @@ namespace UDIMPL {
   class HeapVariable : public BaseVariableObject {
    public:
     HeapVariable(): comparator_(), contents_(),
-        maxSize_(numeric_limits<uint32_t>::max()) { }
+        maxSize_(std::numeric_limits<uint32_t>::max()), finalsorted_(false) { }
     HeapVariable(uint32_t maxSize): comparator_(),
-        contents_(), maxSize_(maxSize) { }
+        contents_(), maxSize_(maxSize), finalsorted_(false) { }
 
     ~HeapVariable() { }
 
     BaseVariableObject* MakeLocalCopy() const {
-      return new HeapVariable<ELEMENT_t>();
+      return new HeapVariable<ELEMENT_t>(maxSize_);
     }
 
     void Combine(BaseVariableObject* other) {
@@ -96,8 +96,15 @@ namespace UDIMPL {
      * destroys the heap by putting it into a normal sorted order.
      */
     std::vector<ELEMENT_t>& getFinalResults() {
-      std::sort_heap(contents_.begin(), contents_.end(), comparator_);
+      if(!finalsorted_){
+        std::sort_heap(contents_.begin(), contents_.end(), comparator_);
+        finalsorted_ = true;
+      }
       return contents_;
+    }
+
+    size_t size() {
+      return contents_.size();
     }
 
     void* GetValuePtr() {
@@ -113,12 +120,13 @@ namespace UDIMPL {
     // de-serialization method
     void Loadfrom(std::istream& istream) {
       std::istream_iterator<ELEMENT_t> in_iter(istream);
-      contents_ = std::vector<ELEMENT_t>(in_iter, istream_iterator<ELEMENT_t>());
+      contents_ = std::vector<ELEMENT_t>(in_iter, std::istream_iterator<ELEMENT_t>());
     }
 
     COMPARATOR_t comparator_;
     std::vector<ELEMENT_t> contents_;
     uint32_t maxSize_;
+    bool finalsorted_;
   };
 
 }

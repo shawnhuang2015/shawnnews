@@ -331,14 +331,14 @@ unit___debug_env.Append(LIBS=[gtestlib])
 unit_release_env.Append(LIBS=[gtestlib])
 
 # Set up the debug and release targets
-# unit___debug_build = unit___debug_env.SConscript(DEBUG___DIR + 
-#                 '/unittests/SConscript', {'env': unit___debug_env})
-# unit_release_build = unit_release_env.SConscript(RELEASE_DIR + 
-#                 '/unittests/SConscript', {'env': unit_release_env})
-# # Set up the keywords
-# unit___debug_env.Alias('unit_debug',    unit___debug_build)
-# unit_release_env.Alias('unit_release',  unit_release_build)
-# unit_release_env.Alias('unit',  unit_release_build)
+unit___debug_build = unit___debug_env.SConscript(DEBUG___DIR + 
+                 '/customer/unittest/SConscript', {'env': unit___debug_env})
+unit_release_build = unit_release_env.SConscript(RELEASE_DIR + 
+                 '/customer/unittest/SConscript', {'env': unit_release_env})
+# Set up the keywords
+unit___debug_env.Alias('unit_debug',    unit___debug_build)
+unit_release_env.Alias('unit_release',  unit_release_build)
+unit_release_env.Alias('unit',  unit_release_build)
 
 #############################################################
 # 6 : Testing framework                                     #
