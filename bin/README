@@ -1,0 +1,9 @@
+To run the shell, make sure run.sh is executable (chmod 777).
+Then,  type ./run.sh
+
+or, you can do
+
+java -jar gsql.jar config
+
+In config file, we put where we store the catalog and online help file.
+We also store the segment size.
