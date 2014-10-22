@@ -191,11 +191,10 @@ namespace gperun {
     std::string func = dataRoot["function"].asString();
     if(func == "vattr"){
       std::string vidstr = "";
-      Json::Value idfield = dataRoot["translate_typed_ids"][0];
-      if(idfield.isString())
-        vidstr = idfield.asString();
+      if(!dataRoot["translate_ids"].isNull())
+        vidstr = dataRoot["translate_ids"][0].asString();
       else
-        vidstr = boost::lexical_cast<std::string>(idfield["type"].asInt()) + "_" +  idfield["id"].asString();
+        vidstr = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
       VertexLocalId_t vid = 0;
       if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
         return;
@@ -210,11 +209,10 @@ namespace gperun {
       response_writer.WriteEndObject();
     } else if(func == "edges"){
       std::string vidstr = "";
-      Json::Value idfield = dataRoot["translate_typed_ids"][0];
-      if(idfield.isString())
-        vidstr = idfield.asString();
+      if(!dataRoot["translate_ids"].isNull())
+        vidstr = dataRoot["translate_ids"][0].asString();
       else
-        vidstr = boost::lexical_cast<std::string>(idfield["type"].asInt()) + "_" +  idfield["id"].asString();
+        vidstr = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
       bool writedgeeattr = dataRoot["edgeattr"].asBool();
       bool writetgtvattr = dataRoot["tgtvattr"].asBool();
       size_t limit = dataRoot["limit"].isNull() ? std::numeric_limits<size_t>::max() : dataRoot["limit"].asUInt();
