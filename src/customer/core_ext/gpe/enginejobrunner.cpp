@@ -141,7 +141,7 @@ namespace gperun {
         if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid, request->querystate_))
           return 0;
         ShowOneVertexInfo(request, jsonwriter, vid, idservice_vids);
-      } else if (argv[0] == "sapi") {
+      } else if (argv[0] == "builtins") {
         RunStandardAPI(request, maps, jsoptions, idservice_vids, jsonwriter);
       } else {
         bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request,
@@ -185,9 +185,17 @@ namespace gperun {
                                        std::vector<VertexLocalId_t>& idservice_vids,
                                        gutil::JSONWriter& response_writer){
     GPROFILER(request->requestid_) << request->requeststr_ << "\n";
-    std::string func = jsoptions["func"].asString();
+    Json::Value dataRoot;
+    Json::Reader jsonReader;
+    jsonReader.parse(jsoptions["payload"][0].asString(), dataRoot);
+    std::string func = dataRoot["function"].asString();
     if(func == "vattr"){
-      std::string vidstr = jsoptions["id"].asString();
+      std::string vidstr = "";
+      Json::Value idfield = dataRoot["translate_typed_ids"][0];
+      if(idfield.isString())
+        vidstr = idfield.asString();
+      else
+        vidstr = boost::lexical_cast<std::string>(idfield["type"].asInt()) + "_" +  idfield["id"].asString();
       VertexLocalId_t vid = 0;
       if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
         return;
@@ -201,10 +209,15 @@ namespace gperun {
       }
       response_writer.WriteEndObject();
     } else if(func == "edges"){
-      std::string vidstr = jsoptions["id"].asString();
-      bool writedgeeattr = jsoptions["edgeattr"].asBool();
-      bool writetgtvattr = jsoptions["tgtvattr"].asBool();
-      size_t limit = jsoptions["limit"].isNull() ? std::numeric_limits<size_t>::max() : jsoptions["limit"].asUInt();
+      std::string vidstr = "";
+      Json::Value idfield = dataRoot["translate_typed_ids"][0];
+      if(idfield.isString())
+        vidstr = idfield.asString();
+      else
+        vidstr = boost::lexical_cast<std::string>(idfield["type"].asInt()) + "_" +  idfield["id"].asString();
+      bool writedgeeattr = dataRoot["edgeattr"].asBool();
+      bool writetgtvattr = dataRoot["tgtvattr"].asBool();
+      size_t limit = dataRoot["limit"].isNull() ? std::numeric_limits<size_t>::max() : dataRoot["limit"].asUInt();
       VertexLocalId_t vid = 0;
       if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
         return;
@@ -241,11 +254,11 @@ namespace gperun {
       response_writer.WriteEndArray();
       response_writer.WriteEndObject();
     } else if(func == "randomids"){
-      bool writeattr = jsoptions["attr"].asBool();
-      uint32_t count = jsoptions["count"].isNull() ? 10 : jsoptions["id"].asUInt();
-      uint32_t vtype = jsoptions["vtype"].isNull() ? 0 : jsoptions["vtype"].asUInt();
-      DegreeType_t mindegree = jsoptions["mindegree"].isNull() ? 0 : jsoptions["mindegree"].asUInt();
-      DegreeType_t maxdegree = jsoptions["maxdegree"].isNull() ? std::numeric_limits<DegreeType_t>::max() : jsoptions["maxdegree"].asUInt();
+      bool writeattr = dataRoot["attr"].asBool();
+      uint32_t count = dataRoot["count"].isNull() ? 10 : dataRoot["count"].asUInt();
+      uint32_t vtype = dataRoot["vtype"].isNull() ? 0 : dataRoot["vtype"].asUInt();
+      DegreeType_t mindegree = dataRoot["mindegree"].isNull() ? 0 : dataRoot["mindegree"].asUInt();
+      DegreeType_t maxdegree = dataRoot["maxdegree"].isNull() ? std::numeric_limits<DegreeType_t>::max() : dataRoot["maxdegree"].asUInt();
       response_writer.WriteStartObject();
       response_writer.WriteName("ids");
       response_writer.WriteStartArray();
@@ -276,7 +289,7 @@ namespace gperun {
       response_writer.WriteEndObject();
     }  else if(func == "degreehistogram"){
       std::vector<std::string> strs;
-      std::string degreelist = jsoptions["degreelist"].asString();
+      std::string degreelist = dataRoot["degreelist"].asString();
       boost::split(strs, degreelist, boost::is_any_of(","));
       std::vector<size_t> limits;
       for (size_t i = 0; i < strs.size(); ++i)

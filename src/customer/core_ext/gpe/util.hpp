@@ -45,6 +45,7 @@ namespace gperun {
      * @return
      */
     static std::string MarkVId(VertexLocalId_t id) __attribute__ ((deprecated)) {
+      return "";
     }
 
   };
