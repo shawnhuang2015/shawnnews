@@ -59,9 +59,7 @@ namespace gperun {
       instance->message_ = "error_: request timed out";
       instance->error_ = true;
     } else {
-      bool debugmode = false;
-      if (boost::algorithm::ends_with(instance->requestid_, ":D"))
-        debugmode = true;
+      bool debugmode = gutil::extract_rest_request_debugflag(instance->requestid_);
       if (debugmode) {
         debugmsg << this->joblistener_->GetDebugString();
         debugmsg << "Service running " << this->maxthreads_  << " instances \n";
@@ -72,9 +70,16 @@ namespace gperun {
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
       }
       gse2::IdConverter::RequestIdMaps* maps = NULL;
-      if(instance->udfstatus_ == NULL)
+      if(gutil::extract_rest_request_idrequestflag(instance->requestid_)){
         maps = idconverter_->GetIdMaps(instance->requestid_);
-      unsigned int iterations = Run(instance, maps, jsonwriter);
+        if (maps == NULL) {
+          instance->message_ = "error_: Request  " + instance->requestid_ + " failed to retrieve id map.";
+          instance->error_ = true;
+        }
+      }
+      unsigned int iterations = 0;
+      if(!instance->error_)
+        Run(instance, maps, jsonwriter);
       if(maps != NULL)
         delete maps;
       if (debugmode) {
@@ -112,13 +117,6 @@ namespace gperun {
                                     gutil::JSONWriter& jsonwriter) {
     size_t num_iterations = 0;
     try {
-      // check id map first
-      if (request->udfstatus_ == NULL && maps == NULL) {
-        request->message_ = "error_: Request  " + request->requestid_
-                            + " failed to retrieve id map.";
-        request->error_ = true;
-        return 0;
-      }
       // parse request json string
       Json::Value requestRoot;
       Json::Reader jsonReader;
@@ -302,8 +300,6 @@ namespace gperun {
       response_writer.WriteName("degreehistogram").WriteString(result);
       response_writer.WriteEndObject();
     } else {
-      response_writer.WriteStartObject();
-      response_writer.WriteEndObject();
       request->message_ = "error_: incorrect function " + func;
       request->error_ = true;
     }
