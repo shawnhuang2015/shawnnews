@@ -2,7 +2,7 @@ GRAPHS:
     current_graph: 0
     graphlist:
     -   id: 0
-        name: alicpn
+        name: mvme
     nextid: 1
     storage: /home/vagrant/gstore
 
