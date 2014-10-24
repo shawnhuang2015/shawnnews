@@ -1,11 +1,12 @@
 drop graph OLAP
-drop edge AllDate_YYYY,YYYY_Quarter,Quarter_Month,Month_AppLog,AllChannel_Ch1, Ch1_Ch2,Ch2_ChannelLog,YYYY_ChannelLog,AllApps_OS,OS_URL,URL_AppLog,AllIPs_IPLevel2,IPLevel2_IPLevel3,IPLevel3_AppLog,IPLevel3_ChannelLog
 
+drop edge AllDate_YYYY,YYYY_Quarter,Quarter_Month,Month_AppLog,AllChannel_Ch1, Ch1_Ch2,Ch2_ChannelLog,YYYY_ChannelLog,AllApps_OS,OS_URL,URL_AppLog,AllIPs_IPLevel2,IPLevel2_IPLevel3,IPLevel3_AppLog,IPLevel3_ChannelLog
+drop vertex AppLog, ChannelLog, AllDate, YYYY, Quarter, Month, AllChannel, Ch1, Ch2, AllApps, OS, URL, AllIPs, IPLevel2, IPLevel3 
 
 create vertex AppLog (primary_id appID string, name string, ip string, downloadDate uint32)
 create vertex ChannelLog (primary_id cookieID string, ip string, channel string compress, firstDownloadDate uint32)
 create vertex AllDate (primary_id seed string, yearStart uint32, yearEnd uint32)
-create vertex YYYY (primary_id yyyy string)
+create vertex YYYY (primary_id year string)
 create vertex Quarter (primary_id yyyyq uint32, yyyy uint32, quarterth string compress)
 create vertex Month (primary_id yyyymm uint32, yyyy uint32, mm string compress)
 create directed (AllDate -> YYYY) edge AllDate_YYYY 
@@ -22,7 +23,7 @@ create directed (Ch1 -> Ch2) edge Ch1_Ch2
 create directed (Ch2 -> ChannelLog) edge Ch2_ChannelLog 
 
 
-create directed (YYY -> ChannelLog) edge YYYY_ChannelLog 
+create directed (YYYY -> ChannelLog) edge YYYY_ChannelLog 
 
 
 create vertex AllApps(primary_id seed string)
@@ -49,5 +50,5 @@ create directed (IPLevel3 -> ChannelLog ) edge  IPLevel3_ChannelLog
 
 create graph OLAP (AppLog, AllDate, YYYY, Quarter, Month, AllIPs, IPLevel2, IPLevel3, AllIPs_IPLevel2, IPLevel2_IPLevel3, IPLevel3_AppLog, IPLevel3_ChannelLog, AllDate_YYYY ,YYYY_Quarter, Quarter_Month,Month_AppLog,AllChannel, Ch1, Ch2, AllChannel_Ch1, ChannelLog, Ch1_Ch2, Ch2_ChannelLog, AllApps, OS, URL, AllApps_OS, OS_URL, URL_AppLog)
 
-
+# create yaml and pdf visualization
 export schema olap

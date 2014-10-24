@@ -5,67 +5,67 @@ EdgeTypes:
   FromVertexTypeName: alldate
   IsDirected: false
   ToVertexTypeName: yyyy
-- EdgeId: 0
+- EdgeId: 1
   EdgeName: yyyy_quarter
   FromVertexTypeName: yyyy
   IsDirected: false
   ToVertexTypeName: quarter
-- EdgeId: 0
+- EdgeId: 2
   EdgeName: quarter_month
   FromVertexTypeName: quarter
   IsDirected: false
   ToVertexTypeName: month
-- EdgeId: 0
+- EdgeId: 3
   EdgeName: month_applog
   FromVertexTypeName: month
   IsDirected: false
   ToVertexTypeName: applog
-- EdgeId: 0
+- EdgeId: 4
   EdgeName: allchannel_ch1
   FromVertexTypeName: allchannel
   IsDirected: false
   ToVertexTypeName: ch1
-- EdgeId: 0
+- EdgeId: 5
   EdgeName: ch1_ch2
   FromVertexTypeName: ch1
   IsDirected: false
   ToVertexTypeName: ch2
-- EdgeId: 0
+- EdgeId: 6
   EdgeName: ch2_channellog
   FromVertexTypeName: ch2
   IsDirected: false
   ToVertexTypeName: channellog
-- EdgeId: 0
+- EdgeId: 7
   EdgeName: allapps_os
   FromVertexTypeName: allapps
   IsDirected: false
   ToVertexTypeName: os
-- EdgeId: 0
+- EdgeId: 8
   EdgeName: os_url
   FromVertexTypeName: os
   IsDirected: false
   ToVertexTypeName: url
-- EdgeId: 0
+- EdgeId: 9
   EdgeName: url_applog
   FromVertexTypeName: url
   IsDirected: false
   ToVertexTypeName: applog
-- EdgeId: 0
+- EdgeId: 10
   EdgeName: allips_iplevel2
   FromVertexTypeName: allips
   IsDirected: false
   ToVertexTypeName: iplevel2
-- EdgeId: 0
+- EdgeId: 11
   EdgeName: iplevel2_iplevel3
   FromVertexTypeName: iplevel2
   IsDirected: false
   ToVertexTypeName: iplevel3
-- EdgeId: 0
+- EdgeId: 12
   EdgeName: iplevel3_applog
   FromVertexTypeName: iplevel3
   IsDirected: false
   ToVertexTypeName: applog
-- EdgeId: 0
+- EdgeId: 13
   EdgeName: iplevel3_channellog
   FromVertexTypeName: iplevel3
   IsDirected: false
@@ -88,6 +88,8 @@ VertexTypes:
   VertexId: 0
   VertexName: applog
 - Attributes: 
+  - AttributeName: ip
+    AttributeType: STRING
   - AttributeName: channel
     AttributeType: UINT32
     Enumerator: 1
@@ -109,32 +111,32 @@ VertexTypes:
   VertexId: 2
   VertexName: alldate
 - PrimaryId: 
-    AttributeName: yyyy
+    AttributeName: year
     AttributeType: STRING
   VertexId: 3
   VertexName: yyyy
 - Attributes: 
   - AttributeName: yyyy
     AttributeType: UINT32
-  - AttributeName: mm
+  - AttributeName: quarterth
     AttributeType: UINT32
     Enumerator: 2
   PrimaryId: 
-    AttributeName: yyyymm
+    AttributeName: yyyyq
     AttributeType: UINT32
   VertexId: 4
-  VertexName: month
+  VertexName: quarter
 - Attributes: 
   - AttributeName: yyyy
     AttributeType: UINT32
-  - AttributeName: quarterth
+  - AttributeName: mm
     AttributeType: UINT32
     Enumerator: 3
   PrimaryId: 
-    AttributeName: yyyyq
+    AttributeName: yyyymm
     AttributeType: UINT32
   VertexId: 5
-  VertexName: quarter
+  VertexName: month
 - PrimaryId: 
     AttributeName: seed
     AttributeType: STRING
