@@ -1,0 +1,182 @@
+AttributeEnumerators: 3
+EdgeTypes: 
+- EdgeId: 0
+  EdgeName: alldate_yyyy
+  FromVertexTypeName: alldate
+  IsDirected: false
+  ToVertexTypeName: yyyy
+- EdgeId: 0
+  EdgeName: yyyy_quarter
+  FromVertexTypeName: yyyy
+  IsDirected: false
+  ToVertexTypeName: quarter
+- EdgeId: 0
+  EdgeName: quarter_month
+  FromVertexTypeName: quarter
+  IsDirected: false
+  ToVertexTypeName: month
+- EdgeId: 0
+  EdgeName: month_applog
+  FromVertexTypeName: month
+  IsDirected: false
+  ToVertexTypeName: applog
+- EdgeId: 0
+  EdgeName: ch1_ch2
+  FromVertexTypeName: ch1
+  IsDirected: false
+  ToVertexTypeName: ch2
+- EdgeId: 0
+  EdgeName: ch2_channellog
+  FromVertexTypeName: ch2
+  IsDirected: false
+  ToVertexTypeName: channellog
+- EdgeId: 0
+  EdgeName: allchannel_ch1
+  FromVertexTypeName: allchannel
+  IsDirected: false
+  ToVertexTypeName: ch1
+- EdgeId: 0
+  EdgeName: allapps_os
+  FromVertexTypeName: allapps
+  IsDirected: false
+  ToVertexTypeName: os
+- EdgeId: 0
+  EdgeName: os_url
+  FromVertexTypeName: os
+  IsDirected: false
+  ToVertexTypeName: url
+- EdgeId: 0
+  EdgeName: url_applog
+  FromVertexTypeName: url
+  IsDirected: false
+  ToVertexTypeName: applog
+- EdgeId: 0
+  EdgeName: allips_iplevel2
+  FromVertexTypeName: allips
+  IsDirected: false
+  ToVertexTypeName: iplevel2
+- EdgeId: 0
+  EdgeName: iplevel2_iplevel3
+  FromVertexTypeName: iplevel2
+  IsDirected: false
+  ToVertexTypeName: iplevel3
+- EdgeId: 0
+  EdgeName: iplevel3_applog
+  FromVertexTypeName: iplevel3
+  IsDirected: false
+  ToVertexTypeName: applog
+- EdgeId: 0
+  EdgeName: iplevel3_channellog
+  FromVertexTypeName: iplevel3
+  IsDirected: false
+  ToVertexTypeName: channellog
+GraphConfigVersion: 1
+GraphId: 0
+GraphName: olap
+SegSizeInBits: 20
+VertexTypes: 
+- Attributes: 
+  - AttributeName: name
+    AttributeType: STRING
+  - AttributeName: ip
+    AttributeType: STRING
+  - AttributeName: downloadDate
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: appID
+    AttributeType: STRING
+  VertexId: 0
+  VertexName: applog
+- Attributes: 
+  - AttributeName: channel
+    AttributeType: UINT32
+    Enumerator: 1
+  - AttributeName: firstDownloadDate
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: cookieID
+    AttributeType: STRING
+  VertexId: 1
+  VertexName: channellog
+- Attributes: 
+  - AttributeName: yearStart
+    AttributeType: UINT32
+  - AttributeName: yearEnd
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 2
+  VertexName: alldate
+- PrimaryId: 
+    AttributeName: yyyy
+    AttributeType: STRING
+  VertexId: 3
+  VertexName: yyyy
+- Attributes: 
+  - AttributeName: yyyy
+    AttributeType: UINT32
+  - AttributeName: mm
+    AttributeType: UINT32
+    Enumerator: 2
+  PrimaryId: 
+    AttributeName: yyyymm
+    AttributeType: UINT32
+  VertexId: 4
+  VertexName: month
+- Attributes: 
+  - AttributeName: yyyy
+    AttributeType: UINT32
+  - AttributeName: quarterth
+    AttributeType: UINT32
+    Enumerator: 3
+  PrimaryId: 
+    AttributeName: yyyyq
+    AttributeType: UINT32
+  VertexId: 5
+  VertexName: quarter
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 6
+  VertexName: allchannel
+- PrimaryId: 
+    AttributeName: cid
+    AttributeType: STRING
+  VertexId: 7
+  VertexName: ch1
+- PrimaryId: 
+    AttributeName: ccid
+    AttributeType: STRING
+  VertexId: 8
+  VertexName: ch2
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 9
+  VertexName: allapps
+- PrimaryId: 
+    AttributeName: name
+    AttributeType: STRING
+  VertexId: 10
+  VertexName: os
+- PrimaryId: 
+    AttributeName: link
+    AttributeType: STRING
+  VertexId: 11
+  VertexName: url
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 12
+  VertexName: allips
+- PrimaryId: 
+    AttributeName: region
+    AttributeType: STRING
+  VertexId: 13
+  VertexName: iplevel2
+- PrimaryId: 
+    AttributeName: address
+    AttributeType: STRING
+  VertexId: 14
+  VertexName: iplevel3
