@@ -21,6 +21,11 @@ EdgeTypes:
   IsDirected: false
   ToVertexTypeName: applog
 - EdgeId: 0
+  EdgeName: allchannel_ch1
+  FromVertexTypeName: allchannel
+  IsDirected: false
+  ToVertexTypeName: ch1
+- EdgeId: 0
   EdgeName: ch1_ch2
   FromVertexTypeName: ch1
   IsDirected: false
@@ -30,11 +35,6 @@ EdgeTypes:
   FromVertexTypeName: ch2
   IsDirected: false
   ToVertexTypeName: channellog
-- EdgeId: 0
-  EdgeName: allchannel_ch1
-  FromVertexTypeName: allchannel
-  IsDirected: false
-  ToVertexTypeName: ch1
 - EdgeId: 0
   EdgeName: allapps_os
   FromVertexTypeName: allapps
