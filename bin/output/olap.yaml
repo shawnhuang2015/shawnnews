@@ -3,72 +3,77 @@ EdgeTypes:
 - EdgeId: 0
   EdgeName: alldate_yyyy
   FromVertexTypeName: alldate
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: yyyy
 - EdgeId: 1
   EdgeName: yyyy_quarter
   FromVertexTypeName: yyyy
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: quarter
 - EdgeId: 2
   EdgeName: quarter_month
   FromVertexTypeName: quarter
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: month
 - EdgeId: 3
   EdgeName: month_applog
   FromVertexTypeName: month
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: applog
 - EdgeId: 4
   EdgeName: allchannel_ch1
   FromVertexTypeName: allchannel
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: ch1
 - EdgeId: 5
   EdgeName: ch1_ch2
   FromVertexTypeName: ch1
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: ch2
 - EdgeId: 6
   EdgeName: ch2_channellog
   FromVertexTypeName: ch2
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: channellog
 - EdgeId: 7
+  EdgeName: yyyy_channellog
+  FromVertexTypeName: yyyy
+  IsDirected: true
+  ToVertexTypeName: channellog
+- EdgeId: 8
   EdgeName: allapps_os
   FromVertexTypeName: allapps
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: os
-- EdgeId: 8
+- EdgeId: 9
   EdgeName: os_url
   FromVertexTypeName: os
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: url
-- EdgeId: 9
+- EdgeId: 10
   EdgeName: url_applog
   FromVertexTypeName: url
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: applog
-- EdgeId: 10
+- EdgeId: 11
   EdgeName: allips_iplevel2
   FromVertexTypeName: allips
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: iplevel2
-- EdgeId: 11
+- EdgeId: 12
   EdgeName: iplevel2_iplevel3
   FromVertexTypeName: iplevel2
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: iplevel3
-- EdgeId: 12
+- EdgeId: 13
   EdgeName: iplevel3_applog
   FromVertexTypeName: iplevel3
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: applog
-- EdgeId: 13
+- EdgeId: 14
   EdgeName: iplevel3_channellog
   FromVertexTypeName: iplevel3
-  IsDirected: false
+  IsDirected: true
   ToVertexTypeName: channellog
 GraphConfigVersion: 1
 GraphId: 0

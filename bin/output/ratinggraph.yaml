@@ -1,0 +1,41 @@
+AttributeEnumerators: 1
+EdgeTypes: 
+- Attributes: 
+  - AttributeName: ratings
+    AttributeType: REAL
+  EdgeId: 0
+  EdgeName: rating
+  FromVertexTypeName: person
+  IsDirected: true
+  ToVertexTypeName: movie
+GraphConfigVersion: 1
+GraphId: 0
+GraphName: ratinggraph
+SegSizeInBits: 20
+VertexTypes: 
+- Attributes: 
+  - AttributeName: name
+    AttributeType: STRING
+  - AttributeName: state
+    AttributeType: UINT32
+    Enumerator: 1
+  PrimaryId: 
+    AttributeName: ssn
+    AttributeType: STRING
+  VertexId: 0
+  VertexName: person
+- Attributes: 
+  - AttributeName: year
+    AttributeType: UINT32
+  - AttributeName: period
+    AttributeType: UINT32_UDT_KV_LIST
+    FixedSize: 2
+    ValueType: uint8,uint8
+  PrimaryId: 
+    AttributeName: title
+    AttributeType: STRING
+  SecondaryIds: 
+  - AttributeName: subtitle
+    AttributeType: STRING
+  VertexId: 1
+  VertexName: movie

@@ -48,7 +48,7 @@ create directed (IPLevel3 -> ChannelLog ) edge  IPLevel3_ChannelLog
 
 
 
-create graph OLAP (AppLog, AllDate, YYYY, Quarter, Month, AllIPs, IPLevel2, IPLevel3, AllIPs_IPLevel2, IPLevel2_IPLevel3, IPLevel3_AppLog, IPLevel3_ChannelLog, AllDate_YYYY ,YYYY_Quarter, Quarter_Month,Month_AppLog,AllChannel, Ch1, Ch2, AllChannel_Ch1, ChannelLog, Ch1_Ch2, Ch2_ChannelLog, AllApps, OS, URL, AllApps_OS, OS_URL, URL_AppLog)
+create graph OLAP (AppLog, AllDate, YYYY, Quarter, Month, AllIPs, IPLevel2, IPLevel3, AllIPs_IPLevel2, IPLevel2_IPLevel3, IPLevel3_AppLog, IPLevel3_ChannelLog, AllDate_YYYY ,YYYY_Quarter, Quarter_Month, YYYY_ChannelLog,Month_AppLog,AllChannel, Ch1, Ch2, AllChannel_Ch1, ChannelLog, Ch1_Ch2, Ch2_ChannelLog, AllApps, OS, URL, AllApps_OS, OS_URL, URL_AppLog)
 
 # create yaml and pdf visualization
 export schema olap
