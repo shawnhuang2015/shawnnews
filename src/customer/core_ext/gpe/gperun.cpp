@@ -49,6 +49,9 @@ void RunGPEService(char *argV_0, std::vector<std::string> &argVStrs) {
                                       engineConfigFile, gperun::GPEConfig::partitionpath_,
                                       gperun::GPEConfig::maxjobs_, &idconverter, postListener);
   runner->Topology_WarmUp(true);
+  if(runner->topology()->GetDeltaRecords() != NULL){
+    runner->topology()->GetDeltaRecords()->SetSetting(gperun::GPEConfig::accuratedegree_);
+  }
   runner->Topology_PullDelta();
   gperun::GPEDaemon gpe_daemon(
         gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_,
@@ -173,7 +176,6 @@ int main(int argc, char** argv) {
 
   // install failure handler
   google::InstallFailureSignalHandler();
-
   if (argc > 3 && std::strcmp(argv[1], "DegreeHistogram") == 0) {
     RunDegreeHistogram(argc, argv);
     return 0;

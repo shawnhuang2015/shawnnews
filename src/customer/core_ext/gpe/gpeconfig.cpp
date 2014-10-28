@@ -12,6 +12,7 @@
 
 namespace gperun {
   bool GPEConfig::enabledelta_ = true;
+  bool GPEConfig::accuratedegree_ = false;
   std::string GPEConfig::udfmode_ = "";
   std::string GPEConfig::hostname_ = "";
   std::string GPEConfig::ipaddress_ = "";
@@ -104,6 +105,7 @@ namespace gperun {
     udfweights_.resize(1, 1.0f);
     YAML::Node root = YAML::LoadFile(engineConfigFile.c_str());
     enabledelta_ = root["INSTANCE"]["enabledelta"].as<int>(1) != 0;
+    accuratedegree_ = root["INSTANCE"]["accuratedegree"].as<int>(0) != 0;
     udfmode_ = root["INSTANCE"]["udfmode"].as<std::string>("");
     hostname_ = root["INSTANCE"]["name"].as<std::string>("");
     ipaddress_ = root["INSTANCE"]["ip"].as<std::string>("");
@@ -146,20 +148,22 @@ namespace gperun {
     kafka_connection_ = gutil::yamlConnection2String(root["KAFKA"],
         "9092");
 
- 
+
     /* ------------------------------------------------------- */
     incoming_port_ = root["INSTANCE"]["incoming_port"].as<std::string>("");
     outgoing_port_to_ids_ = root["INSTANCE"]["outgoing_port_to_ids"].as<std::string>("");
     YAML::Node rest_hosts = root["REST"]["machines"];
 
     for (YAML::const_iterator it = rest_hosts.begin();
-          it != rest_hosts.end(); ++it) {
+         it != rest_hosts.end(); ++it) {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
     }
     rebuildsetting_.sleep_no_job_ = root["INSTANCE"]["rebuild_nojob_sleepsec"].as<unsigned int>(60);
     rebuildsetting_.sleep_between_jobs_ = root["INSTANCE"]["rebuild_betweenjob_sleepsec"].as<unsigned int>(60);
     rebuildsetting_.sleep_switch_topology_ptr_ = root["INSTANCE"]["rebuild_switch_sleepsec"].as<unsigned int>(60);
-    std::cout << "udfmode: " << udfmode_ << "\n"
+    std::cout << "enabledelta: " << enabledelta_ << "\n"
+              << "accuratedegree: " << accuratedegree_ << "\n"
+              << "udfmode: " << udfmode_ << "\n"
               << "hostname: " << hostname_ << "\n" << "ipaddress: "
               << ipaddress_ << "\n" << "port: " << port_ << "\n"
               << "log directory: " << log_path_ << "\n"
