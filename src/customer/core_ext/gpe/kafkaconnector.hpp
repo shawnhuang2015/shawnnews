@@ -123,7 +123,6 @@ namespace gperun {
         int maxmsgsize = std::numeric_limits<int>::max()) {
 #ifdef ComponentTest
       if(getrequest_reader_ != NULL && getrequest_reader_->IsFinished()){
-        sleep(1);
         daemon_->handleCommand("quit");
       }
 #endif
