@@ -30,6 +30,9 @@ namespace gperun {
     typedef GSQLMap_t<std::string, std::string> Maps_t;
     /// enable delta or not. By default, it is true.
     static bool enabledelta_;
+    /// If it is true, post process will check edge post and delete action whether the edge has already existed or not, and accurately calculate vertex outgoing degree.
+    /// By default, it is false.
+    static bool accuratedegree_;
     /// udf mode of current process. Right now support "offline" and default "normal"
     static std::string udfmode_;
     static std::string hostname_;
