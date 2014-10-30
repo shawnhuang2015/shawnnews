@@ -55,7 +55,7 @@ namespace UDIMPL {
     ~HeapVariable() { }
 
     BaseVariableObject* MakeLocalCopy() const {
-      return new HeapVariable<ELEMENT_t>(maxSize_);
+      return new HeapVariable<ELEMENT_t, COMPARATOR_t>(maxSize_);
     }
 
     void Combine(BaseVariableObject* other) {
