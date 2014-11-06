@@ -1,0 +1,32 @@
+AttributeEnumerators: 1
+EdgeTypes: 
+- Attributes: 
+  - AttributeName: role
+    AttributeType: STRING
+  EdgeId: 0
+  EdgeName: roles
+  FromVertexTypeName: node
+  IsDirected: true
+  ToVertexTypeName: node
+GraphConfigVersion: 1
+GraphId: 0
+GraphName: neo4j
+SegSizeInBits: 20
+VertexTypes: 
+- Attributes: 
+  - AttributeName: name
+    AttributeType: STRING
+  - AttributeName: title
+    AttributeType: STRING
+  - AttributeName: country
+    AttributeType: UINT32
+    Enumerator: 1
+  - AttributeName: year
+    AttributeType: UINT32
+  - AttributeName: is_person
+    AttributeType: BOOL
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: STRING
+  VertexId: 0
+  VertexName: node

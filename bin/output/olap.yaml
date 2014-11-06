@@ -1,0 +1,189 @@
+AttributeEnumerators: 3
+EdgeTypes: 
+- EdgeId: 0
+  EdgeName: alldate_yyyy
+  FromVertexTypeName: alldate
+  IsDirected: true
+  ToVertexTypeName: yyyy
+- EdgeId: 1
+  EdgeName: yyyy_quarter
+  FromVertexTypeName: yyyy
+  IsDirected: true
+  ToVertexTypeName: quarter
+- EdgeId: 2
+  EdgeName: quarter_month
+  FromVertexTypeName: quarter
+  IsDirected: true
+  ToVertexTypeName: month
+- EdgeId: 3
+  EdgeName: month_applog
+  FromVertexTypeName: month
+  IsDirected: true
+  ToVertexTypeName: applog
+- EdgeId: 4
+  EdgeName: allchannel_ch1
+  FromVertexTypeName: allchannel
+  IsDirected: true
+  ToVertexTypeName: ch1
+- EdgeId: 5
+  EdgeName: ch1_ch2
+  FromVertexTypeName: ch1
+  IsDirected: true
+  ToVertexTypeName: ch2
+- EdgeId: 6
+  EdgeName: ch2_channellog
+  FromVertexTypeName: ch2
+  IsDirected: true
+  ToVertexTypeName: channellog
+- EdgeId: 7
+  EdgeName: yyyy_channellog
+  FromVertexTypeName: yyyy
+  IsDirected: true
+  ToVertexTypeName: channellog
+- EdgeId: 8
+  EdgeName: allapps_os
+  FromVertexTypeName: allapps
+  IsDirected: true
+  ToVertexTypeName: os
+- EdgeId: 9
+  EdgeName: os_url
+  FromVertexTypeName: os
+  IsDirected: true
+  ToVertexTypeName: url
+- EdgeId: 10
+  EdgeName: url_applog
+  FromVertexTypeName: url
+  IsDirected: true
+  ToVertexTypeName: applog
+- EdgeId: 11
+  EdgeName: allips_iplevel2
+  FromVertexTypeName: allips
+  IsDirected: true
+  ToVertexTypeName: iplevel2
+- EdgeId: 12
+  EdgeName: iplevel2_iplevel3
+  FromVertexTypeName: iplevel2
+  IsDirected: true
+  ToVertexTypeName: iplevel3
+- EdgeId: 13
+  EdgeName: iplevel3_applog
+  FromVertexTypeName: iplevel3
+  IsDirected: true
+  ToVertexTypeName: applog
+- EdgeId: 14
+  EdgeName: iplevel3_channellog
+  FromVertexTypeName: iplevel3
+  IsDirected: true
+  ToVertexTypeName: channellog
+GraphConfigVersion: 1
+GraphId: 0
+GraphName: olap
+SegSizeInBits: 20
+VertexTypes: 
+- Attributes: 
+  - AttributeName: name
+    AttributeType: STRING
+  - AttributeName: ip
+    AttributeType: STRING
+  - AttributeName: downloadDate
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: appID
+    AttributeType: STRING
+  VertexId: 0
+  VertexName: applog
+- Attributes: 
+  - AttributeName: ip
+    AttributeType: STRING
+  - AttributeName: channel
+    AttributeType: UINT32
+    Enumerator: 1
+  - AttributeName: firstDownloadDate
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: cookieID
+    AttributeType: STRING
+  VertexId: 1
+  VertexName: channellog
+- Attributes: 
+  - AttributeName: yearStart
+    AttributeType: UINT32
+  - AttributeName: yearEnd
+    AttributeType: UINT32
+  PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 2
+  VertexName: alldate
+- PrimaryId: 
+    AttributeName: year
+    AttributeType: STRING
+  VertexId: 3
+  VertexName: yyyy
+- Attributes: 
+  - AttributeName: yyyy
+    AttributeType: UINT32
+  - AttributeName: quarterth
+    AttributeType: UINT32
+    Enumerator: 2
+  PrimaryId: 
+    AttributeName: yyyyq
+    AttributeType: UINT32
+  VertexId: 4
+  VertexName: quarter
+- Attributes: 
+  - AttributeName: yyyy
+    AttributeType: UINT32
+  - AttributeName: mm
+    AttributeType: UINT32
+    Enumerator: 3
+  PrimaryId: 
+    AttributeName: yyyymm
+    AttributeType: UINT32
+  VertexId: 5
+  VertexName: month
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 6
+  VertexName: allchannel
+- PrimaryId: 
+    AttributeName: cid
+    AttributeType: STRING
+  VertexId: 7
+  VertexName: ch1
+- PrimaryId: 
+    AttributeName: ccid
+    AttributeType: STRING
+  VertexId: 8
+  VertexName: ch2
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 9
+  VertexName: allapps
+- PrimaryId: 
+    AttributeName: name
+    AttributeType: STRING
+  VertexId: 10
+  VertexName: os
+- PrimaryId: 
+    AttributeName: link
+    AttributeType: STRING
+  VertexId: 11
+  VertexName: url
+- PrimaryId: 
+    AttributeName: seed
+    AttributeType: STRING
+  VertexId: 12
+  VertexName: allips
+- PrimaryId: 
+    AttributeName: region
+    AttributeType: STRING
+  VertexId: 13
+  VertexName: iplevel2
+- PrimaryId: 
+    AttributeName: address
+    AttributeType: STRING
+  VertexId: 14
+  VertexName: iplevel3
