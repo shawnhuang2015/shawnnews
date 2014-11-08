@@ -223,6 +223,14 @@ poc_gseloader_debug___build = debug___env.SConscript(DEBUG___DIR +
 poc_gseloader_release_build = release_env.SConscript(RELEASE_DIR +
                 '/customer/core_ext/gse/SConscript', {'env': release_env})
 
+## poc_gse_canonnical ##
+poc_gse_canonnical_loader_debug___build = debug___env.SConscript(DEBUG___DIR +
+                '/customer/core_ext/gse/SConscript_Canonnical_Loader', {'env': debug___env})
+poc_gse_canonnical_loader_release_build = release_env.SConscript(RELEASE_DIR +
+                '/customer/core_ext/gse/SConscript_Canonnical_Loader', {'env': release_env})
+
+
+
 #############################################################
 # 3.1.7: POC GPE BASE                                       #
 #############################################################
@@ -262,6 +270,7 @@ debug___env.Alias('distlib_debug',      distlib_debug___build)
 debug___env.Alias('kafka_perf_producer_daemon_debug',      kafka_perf_producer_daemon_debug___build)
 debug___env.Alias('kafka_perf_consumer_daemon_debug',      kafka_perf_consumer_daemon_debug___build)
 debug___env.Alias('poc_gseloader_debug',poc_gseloader_debug___build)
+debug___env.Alias('poc_gse_canonnical_loader_debug',poc_gse_canonnical_loader_debug___build)
 debug___env.Alias('poc_gpe_debug', poc_gpe_debug_build)
 
 release_env.Alias('gse2_release',       gse2_release_build)
@@ -270,6 +279,7 @@ release_env.Alias('distlib_release',    distlib_release_build)
 release_env.Alias('kafka_perf_producer_daemon_release',   kafka_perf_producer_daemon_release_build)
 release_env.Alias('kafka_perf_consumer_daemon_release',   kafka_perf_consumer_daemon_release_build)
 release_env.Alias('poc_gseloader_release', poc_gseloader_release_build)
+release_env.Alias('poc_gse_canonnical_loader_release', poc_gse_canonnical_loader_release_build)
 release_env.Alias('poc_gpe_release', poc_gpe_release_build)
 
 debug___env.Alias('debug',    
@@ -305,6 +315,7 @@ if 'pkg' in COMMAND_LINE_TARGETS:
 
 release_env.Install(pkgdir, [
                             poc_gseloader_release_build,
+                            poc_gse_canonnical_loader_release_build,
                             gse2_release_build
                             ]
                     )

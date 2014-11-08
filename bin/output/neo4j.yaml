@@ -5,17 +5,27 @@ EdgeTypes:
     AttributeType: STRING
   EdgeId: 0
   EdgeName: roles
-  FromVertexTypeName: node
+  FromVertexTypeName: person
   IsDirected: true
-  ToVertexTypeName: node
+  ToVertexTypeName: movie
 GraphConfigVersion: 1
 GraphId: 0
 GraphName: neo4j
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
+  - AttributeName: id
+    AttributeType: UINT32
   - AttributeName: name
     AttributeType: STRING
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT32
+  VertexId: 0
+  VertexName: person
+- Attributes: 
+  - AttributeName: id
+    AttributeType: UINT32
   - AttributeName: title
     AttributeType: STRING
   - AttributeName: country
@@ -23,10 +33,8 @@ VertexTypes:
     Enumerator: 1
   - AttributeName: year
     AttributeType: UINT32
-  - AttributeName: is_person
-    AttributeType: BOOL
   PrimaryId: 
     AttributeName: id
-    AttributeType: STRING
-  VertexId: 0
-  VertexName: node
+    AttributeType: UINT32
+  VertexId: 1
+  VertexName: movie
