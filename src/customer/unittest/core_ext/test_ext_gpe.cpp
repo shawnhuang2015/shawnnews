@@ -118,12 +118,19 @@ TEST(Ext_GPE, GlobalHeap) {
   heapvariable.resize_heap(newMaxSize);
   // 1.a increasing size should leave variable unchnaged.
   ASSERT_EQ(heapvariable.size(), maxsize);
+  // original heap should be filled with [0..maxsize-1]
+  // we should be able to add maxsize, maxsize+1 to verify we can go past the old capacity by 2
+  heapvariable.Reduce(maxsize);
+  heapvariable.Reduce(maxsize+1);
+  ASSERT_EQ(heapvariable.size(),maxsize+2);
+
 
   // 1.b decreasing size should truncate the heap.
   newMaxSize = 1<<9;
   heapvariable.resize_heap(newMaxSize);
   ASSERT_EQ(heapvariable.size(),newMaxSize);
 
+  // are the results sorted at the end?
   std::cout << heapvariable.getFinalResults().size() << "\n";
   std::vector<int>& intvec = heapvariable.getFinalResults();
   for(int i = 0; i < intvec.size(); ++i){
