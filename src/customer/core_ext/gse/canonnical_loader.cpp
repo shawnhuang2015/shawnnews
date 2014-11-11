@@ -20,6 +20,7 @@
 #include <core_impl/gse_impl/loader_mapper_mt.hpp> 
 #include <core_impl/gse_impl/loader_mapper_distributed.hpp> 
 #include <gse2/partition/gse_single_server_repartition.hpp> 
+#include <gse2/loader/canonnical_loader_mapper.hpp> 
 #include <gutil/glogging.hpp> 
 #include <gutil/gstring.hpp> 
 #include <gutil/filelinereader.hpp> 
@@ -54,6 +55,7 @@ int main(int argc, char ** argv) {
   if (!gsql_fd_checker.passed_) { 
     exit(-1); 
   } 
+  gse2::Canonnical_Loader_Config loaderConfig("/home/vagrant/neo4j.yaml");
 
   gse2::SysConfig sysConfig("/data/rc4/config/gse_loader/gse_loader1.conf"); 
   sysConfig.printout(); 
@@ -65,7 +67,7 @@ int main(int argc, char ** argv) {
   if (sysConfig.isValidServerWorker(worker_id)) { 
     bool dumpGraph = true; 
     char separator = ','; 
-    UDIMPL::GSE_CANONNICAL_LOADER single_load_worker(workerConfig, separator); 
+    gse2::GSE_CANONNICAL_LOADER single_load_worker(workerConfig, separator); 
     std::vector<std::string> inputFiles; 
     single_load_worker.LoadVertexData(inputFiles); 
     single_load_worker.LoadEdgeData(inputFiles); 

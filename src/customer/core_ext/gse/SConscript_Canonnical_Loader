@@ -1,5 +1,8 @@
 # -*- mode: python; -*-
 # GSE IDS -- gse_loader
+#
+# ../../../core/gse/gse2/loader/canonnical_loader_config.hpp
+#        ../../../core/gse/gse2/loader/canonnical_loader_config.hpp
 Import('env')
 
 if int(ARGUMENTS.get('use_zmq', 0)) == 1:
