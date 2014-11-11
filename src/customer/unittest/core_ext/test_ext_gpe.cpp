@@ -9,10 +9,12 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
+#include <inttypes.h>
 #include "../../core_ext/gpe/unionfind.hpp"
 #include "../../core_ext/gpe/global_vector.hpp"
 #include "../../core_ext/gpe/global_set.hpp"
 #include "../../core_ext/gpe/global_heap.hpp"
+
 
 /// TODO add unit test for core_ext gpe
 
@@ -120,8 +122,10 @@ TEST(Ext_GPE, GlobalHeap) {
   ASSERT_EQ(heapvariable.size(), maxsize);
   // original heap should be filled with [0..maxsize-1]
   // we should be able to add maxsize, maxsize+1 to verify we can go past the old capacity by 2
-  heapvariable.Reduce(maxsize);
-  heapvariable.Reduce(maxsize+1);
+  int val = maxsize;
+  heapvariable.Reduce(&val);
+  ++val;
+  heapvariable.Reduce(&val);
   ASSERT_EQ(heapvariable.size(),maxsize+2);
 
 

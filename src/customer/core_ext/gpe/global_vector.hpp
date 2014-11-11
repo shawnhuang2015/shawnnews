@@ -49,7 +49,7 @@ class VectorVariable : public BaseVariableObject {
       localResults_.insert(localResults_.end(),
           otherVector->localResults_.begin(), otherVector->localResults_.end());
     } else {
-      // We know that otherVector->localResults.size() >= maxSize_ - localResults.size() > 0 
+      // We know that otherVector->localResults.size() >= maxSize_ - localResults.size() > 0
       uint32_t numToInsert = maxSize_ - localResults_.size();
       localResults_.insert(localResults_.end(), otherVector->localResults_.begin(),
           otherVector->localResults_.begin() + numToInsert);
