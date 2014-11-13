@@ -55,6 +55,7 @@ int main(int argc, char ** argv) {
   if (!gsql_fd_checker.passed_) { 
     exit(-1); 
   } 
+  //init loader config
   gse2::Canonnical_Loader_Config loaderConfig("/home/vagrant/neo4j.yaml");
 
   gse2::SysConfig sysConfig("/data/rc4/config/gse_loader/gse_loader1.conf"); 
@@ -67,7 +68,7 @@ int main(int argc, char ** argv) {
   if (sysConfig.isValidServerWorker(worker_id)) { 
     bool dumpGraph = true; 
     char separator = ','; 
-    gse2::GSE_CANONNICAL_LOADER single_load_worker(workerConfig, separator); 
+    gse2::GSE_CANONNICAL_LOADER single_load_worker(workerConfig, loaderConfig, separator); 
     std::vector<std::string> inputFiles; 
     single_load_worker.LoadVertexData(inputFiles); 
     single_load_worker.LoadEdgeData(inputFiles); 
