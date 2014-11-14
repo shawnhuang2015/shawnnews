@@ -20,45 +20,46 @@ int main(){
   //create 2-element function array
   int funcNum = 2;
   char *error;
-  void (*T[funcNum])(const char* const input, uint32_t input_len, char *const output);
+  void (*T[funcNum])(const char* const input, uint32_t input_len, char *const output,uint32_t& output_len);
 
   string f1 = "Reverse";
   string f2 = "Zero";
 
+  uint32_t len;
 
-
-  T[0]= (void (*)(const char* const input, uint32_t input_len, char *const output))dlsym(handle, f1.c_str());
+  T[0]= (void (*)(const char* const input, uint32_t input_len, char *const output,uint32_t& output_len))dlsym(handle, f1.c_str());
 
   if ((error = dlerror()) != NULL)  {
-    cout<<error<<endl;
+    cout<<error<< " 1"<<endl;
     exit(1);
   }
 
   char a[3]={'a','b','c'};
   char b[100];
 
-  (*T[0])(a,3,b);
+
+  (*T[0])(a,3,b,len);
 
   for(int i =0; i<3; i++){
     std::cout<<b[i]<<",";
   }
 
-  std::cout<<std::endl;
+  std::cout<<len <<std::endl;
 
-  T[1]= (void (*)(const char* const input, uint32_t input_len, char *const output))dlsym(handle, f2.c_str());
+  T[1]= (void (*)(const char* const input, uint32_t input_len, char *const output, uint32_t& output_len))dlsym(handle, f2.c_str());
 
   if ((error = dlerror()) != NULL)  {
     cout<<error<<endl;
     exit(1);
   }
 
-  (*T[1])(a,3,b);
+  (*T[1])(a,3,b, len);
 
   for(int i =0; i<3; i++){
 
     std::cout<<b[i]<<",";
   }
-  std::cout<<std::endl;
+  std::cout<<len<<std::endl;
 
 }
 
