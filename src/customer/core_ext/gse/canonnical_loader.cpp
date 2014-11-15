@@ -43,6 +43,13 @@ void LoadTopology4(std::string datapath) {
       topology4::EdgeBlockReaderSetting(true, true, true)); 
 } 
 
+/**
+ * The Driver take two arguments:
+ *
+ * arg1: the intermediate yaml file
+ * arg2: the graph schema yaml file
+ *
+ */
 int main(int argc, char ** argv) { 
 #ifdef BUILDVERSION
   std::string versStr = BUILDVERSION;
@@ -63,7 +70,10 @@ int main(int argc, char ** argv) {
   gse2::SysConfig sysConfig("/data/rc4/config/gse_loader/gse_loader1.conf"); 
   sysConfig.printout(); 
   GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader"); 
-  gse2::GraphConfig graphConfig("/vagrant/repo2/product/bin/output/neo4j.yaml"); 
+
+  std::string graphConfigPath(argv[2]);
+  //gse2::GraphConfig graphConfig(/vagrant/repo2/product/bin/output/neo4j.yaml"); 
+  gse2::GraphConfig graphConfig(graphConfigPath); 
   graphConfig.printout(); 
   uint32_t worker_id = 1; 
   gse2::WorkerConfig workerConfig(sysConfig, graphConfig, worker_id);
