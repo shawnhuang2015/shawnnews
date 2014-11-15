@@ -56,7 +56,9 @@ int main(int argc, char ** argv) {
     exit(-1); 
   } 
   //init loader config
-  gse2::Canonnical_Loader_Config loaderConfig("/home/vagrant/neo4j.yaml");
+  //gse2::Canonnical_Loader_Config loaderConfig("/home/vagrant/neo4j.yaml");
+  std::string tmpYaml(argv[1]);
+  gse2::Canonnical_Loader_Config loaderConfig(tmpYaml);
 
   gse2::SysConfig sysConfig("/data/rc4/config/gse_loader/gse_loader1.conf"); 
   sysConfig.printout(); 
