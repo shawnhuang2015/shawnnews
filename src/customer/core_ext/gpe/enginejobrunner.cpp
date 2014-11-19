@@ -151,7 +151,7 @@ namespace gperun {
                                                       jsonwriter,
                                                       num_iterations,
                                                       GPEConfig::customizedsetttings_);
-        if (!succeed) {
+        if (!succeed && !request->error_) {
           request->message_ = "error_: unknown function error "
                               + request->requeststr_;
           request->error_ = true;
@@ -201,6 +201,7 @@ namespace gperun {
       response_writer.WriteStartObject();
       if(v1 != NULL){
         response_writer.WriteName("degree").WriteUnsignedInt(v1->outgoing_degree());
+        response_writer.WriteName("type").WriteUnsignedInt(v1->type());
         response_writer.WriteName("attr");
         v1->WriteToJson(response_writer);
       }
@@ -228,8 +229,8 @@ namespace gperun {
         response_writer.WriteStartObject();
         VertexLocalId_t toid = edgeresults.GetCurrentToVId();
         response_writer.WriteName("to_vid").WriteMarkVId(toid);
-        topology4::EdgeAttribute* edgeattr = edgeresults
-                                             .GetCurrentEdgeAttribute();
+        topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
+        response_writer.WriteName("type").WriteUnsignedInt(edgeattr->type());
         idservice_vids.push_back(toid);
         if(writetgtvattr){
           topology4::VertexAttribute* v1 = api.GetOneVertex(toid);
