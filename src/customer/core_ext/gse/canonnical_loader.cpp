@@ -16,7 +16,7 @@
 #include <gse2/ids/impl/ids_server_worker.hpp> 
 #include <core_impl/gse_impl/loader_combiner.hpp> 
 #include <core_impl/gse_impl/loader_mapper.hpp> 
-#include <core_impl/gse_impl/canonnical_loader_mapper.hpp> 
+#include <gse2/loader/canonnical_loader_config.hpp>
 #include <core_impl/gse_impl/loader_mapper_mt.hpp> 
 #include <core_impl/gse_impl/loader_mapper_distributed.hpp> 
 #include <gse2/partition/gse_single_server_repartition.hpp> 
@@ -89,6 +89,6 @@ int main(int argc, char ** argv) {
     if (dumpGraph) { 
       LoadTopology4(workerConfig.partitionRootDir_); 
     } 
-  } 
+  }  
   return 0; 
 }
