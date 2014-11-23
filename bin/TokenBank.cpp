@@ -35,8 +35,7 @@ extern "C"  void Reverse (const char* const input, uint32_t input_len,
     char *const output, uint32_t& output_len) {
 
   uint32_t j =0;
-
-  for (uint32_t i = input_len; i>0; i--){
+   for (uint32_t i = input_len; i>0; i--){
     output[j++]= input[i-1];     
   }
   output_len =j;
@@ -53,6 +52,9 @@ extern "C"  void Zero(const char* const input, uint32_t input_len,
   output_len = input_len;
 }
 
+/**
+ *  Unit testing of the token bank functions
+ */ 
 int main(){
 
   char a[3]={'a','b','c'};
