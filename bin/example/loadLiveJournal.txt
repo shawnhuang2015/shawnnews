@@ -1,0 +1,5 @@
+create loading job wj_load_job for graph wj 
+ load "/vagrant/data/TestData/LiveJournal.txt" to edge friendship values ($0,$1) using Separator="\t", Header="false";
+end
+
+
