@@ -4,6 +4,13 @@ if [ ! -d "$WORKDIR" ]; then
   mkdir  "$WORKDIR"
 fi
 
+LOGDIR="$WORKDIR/log"
+
+if [ ! -d "$LOGDIR" ]; then
+  mkdir  "$LOGDIR"
+fi
+
+
 export LD_LIBRARY_PATH='/vagrant/repo2/product/bin/'
 echo "LD_LIBRARY_PATH="$LD_LIBRARY_PATH
 
