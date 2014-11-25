@@ -23,6 +23,17 @@
  *  e.g. 
  *  values( $1, func($2), $3...)
  *
+ *
+ *  Once defined UDF, run  the following script to compile it to a shared libary.
+ *
+ *  ./compileTokenBank.sh
+ *
+ *  The shared library path is specified in run.sh 
+ *
+ *  export LD_LIBRARY_PATH='/vagrant/repo2/product/bin/'
+ *
+ *  The loader binary will automatically use the library at runtime.
+ *
  *  Created on: Nov 13, 2014
  *  Author: Mingxi
  ******************************************************************************/
