@@ -6,7 +6,7 @@
 
 2. change backend to MT for edge loading.
 
-3. Make dump= true  a default option for sample
+3. Make dump= true  a default option for sample (this is done)
 
 4. Support Aggregate transformation on columns to support kv_list attribute type. Such as uint32_uint32_kv_list, uint32_udt_kv_list etc. 
 
