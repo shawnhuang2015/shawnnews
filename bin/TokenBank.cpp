@@ -2,24 +2,31 @@
  * Copyright (c) 2014, GraphSQL Inc.
  * All rights reserved.
  * Project: GraphSQL-GS-1
- * TokenBank.hpp: a set of token conversion function declaration.
+ * TokenBank.hpp: a library of token conversion function declaration.
  *
  * All functions must have the same argument signature, but different function 
  * name.
  *
- * funcName(const char* const input, uint32_t input_len, char *const output);
+ * funcName(const char* const input, uint32_t input_len, char *const output, uint32_t& output_len);
  *  @param: const char* const input: const pointer, const data
  *  @param: input_len: input char array's length
  *  @param: char* const output: const pointer, non-const data
  *  @param: output_len: output char array's length 
  *
- *  The func will take a input char array and do a customized conversion,
+ *  The func will take an input char array and do a customized conversion,
  *  then, put the converted char array to output char buffer.
+ *
+ *  The function can be unit tested in the main function.
+ *
+ *  All functions can be used in the loading job definition, in the values caluse.
+ *
+ *  e.g. 
+ *  values( $1, func($2), $3...)
  *
  *  Created on: Nov 13, 2014
  *  Author: Mingxi
  ******************************************************************************/
-
+#include <graphsqltokefuncs>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -48,9 +55,11 @@ extern "C"  void Reverse (const char* const input, uint32_t input_len,
  */
 extern "C"  void Zero(const char* const input, uint32_t input_len, 
     char *const output, uint32_t& output_len){
-  memset (output, '0', input_len );
+  memset (output, '1', input_len );
   output_len = input_len;
 }
+
+
 
 /**
  *  Unit testing of the token bank functions
