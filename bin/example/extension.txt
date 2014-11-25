@@ -6,9 +6,11 @@
 
 2. change backend to MT for edge loading.
 
-3. Support Aggregate transformation on columns to support kv_list attribute type. Such as uint32_uint32_kv_list, uint32_udt_kv_list etc. 
+3. Make dump= true  a default option for sample
 
-4. TokenValidationBank.cpp + Sanity check binary(schema checking as well as token constraints)
+4. Support Aggregate transformation on columns to support kv_list attribute type. Such as uint32_uint32_kv_list, uint32_udt_kv_list etc. 
+
+5. TokenValidationBank.cpp + Sanity check binary(schema checking as well as token constraints)
 
 The syntax is simple, for a kv_list attribute type, we use 
 
@@ -18,6 +20,6 @@ The syntax is simple, for a kv_list attribute type, we use
 
       load "./roles.csv"  to vertex person values ($0,key($1):val(min($2),max($3)) group by ($0,f($1)), $2) using Separator=",", Header="false";
 
-5. KeyValue list column such as a,b,c:d splits to multiple vertex keys.
+6. KeyValue list column such as a,b,c:d splits to multiple vertex keys.
 
 

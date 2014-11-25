@@ -78,7 +78,7 @@ int main(int argc, char ** argv) {
   uint32_t worker_id = 1; 
   gse2::WorkerConfig workerConfig(sysConfig, graphConfig, worker_id);
   if (sysConfig.isValidServerWorker(worker_id)) { 
-    bool dumpGraph = true; 
+    bool dumpGraph = loaderConfig.Dump;
     char separator = ','; 
     gse2::GSE_CANONNICAL_LOADER single_load_worker(workerConfig, loaderConfig, separator); 
     std::vector<std::string> inputFiles; 
