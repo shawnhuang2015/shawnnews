@@ -14,38 +14,38 @@ create vertex AllDate (primary_id seed string, yearStart uint32, yearEnd uint32)
 create vertex YYYY (primary_id year string)
 create vertex Quarter (primary_id yyyyq uint32, yyyy uint32, quarterth string compress)
 create vertex Month (primary_id yyyymm uint32, yyyy uint32, mm string compress)
-create undirected (AllDate - YYYY) edge AllDate_YYYY 
-create undirected (YYYY - Quarter) edge YYYY_Quarter
-create undirected (Quarter - Month) edge Quarter_Month 
-create undirected (Month - AppLog) edge Month_AppLog
+create undirected edge AllDate_YYYY (from AllDate, to YYYY)
+create undirected edge YYYY_Quarter (from YYYY, to Quarter)
+create undirected edge Quarter_Month (from Quarter, to Month)
+create undirected edge Month_AppLog (from Month, to AppLog)
 
 create vertex ALLChannel(primary_id seed string)
 create vertex Ch1(primary_id cid string)
 create vertex Ch2(primary_id ccid string)
 
-create undirected (AllChannel - Ch1) edge AllChannel_Ch1
-create undirected (Ch1 - Ch2) edge Ch1_Ch2 
-create undirected (Ch2 - ChannelLog) edge Ch2_ChannelLog 
-create undirected (YYYY - ChannelLog) edge YYYY_ChannelLog 
+create undirected edge AllChannel_Ch1 (from AllChannel, to Ch1)
+create undirected edge Ch1_Ch2 (from Ch1, to Ch2)
+create undirected edge Ch2_ChannelLog (from Ch2, to ChannelLog)
+create undirected edge YYYY_ChannelLog (from YYYY, to ChannelLog)
 
 create vertex AllApps(primary_id seed string)
 create vertex OS(primary_id name string)
 create vertex URL(primary_id link string)
 
 
-create undirected (AllApps - OS) edge AllApps_OS
-create undirected (OS - URL) edge OS_URL 
-create undirected (URL - AppLog ) edge  URL_AppLog
+create undirected edge AllApps_OS (from AllApps, to OS)
+create undirected edge OS_URL (from OS, to URL)
+create undirected edge  URL_AppLog (from URL, to AppLog)
 
 
 create vertex AllIPs(primary_id seed string)
 create vertex IPLevel2(primary_id region string)
 create vertex IPLevel3(primary_id address string)
 
-create undirected (AllIPs - IPLevel2) edge AllIPs_IPLevel2
-create undirected (IPLevel2 - IPLevel3) edge IPLevel2_IPLevel3 
-create undirected (IPLevel3 - AppLog ) edge  IPLevel3_AppLog
-create undirected (IPLevel3 - ChannelLog ) edge  IPLevel3_ChannelLog
+create undirected edge AllIPs_IPLevel2 (from AllIPs, to IPLevel2)
+create undirected edge IPLevel2_IPLevel3 (from IPLevel2, to IPLevel3)
+create undirected edge  IPLevel3_AppLog (from IPLevel3, to AppLog)
+create undirected edge  IPLevel3_ChannelLog (from IPLevel3, to ChannelLog)
 
 
 

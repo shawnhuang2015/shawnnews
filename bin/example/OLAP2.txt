@@ -15,21 +15,21 @@ create vertex AllDate (primary_id seed string, yearStart uint32, yearEnd uint32)
 create vertex YYYY (primary_id year string)
 create vertex Quarter (primary_id yyyyq uint32, yyyy uint32, quarterth string compress)
 create vertex Month (primary_id yyyymm uint32, yyyy uint32, mm string compress)
-create directed (AllDate -> YYYY) edge AllDate_YYYY 
-create directed (YYYY -> Quarter) edge YYYY_Quarter
-create directed (Quarter -> Month) edge Quarter_Month 
-create directed (Month -> AppLog) edge Month_AppLog
+create directed edge AllDate_YYYY (from AllDate, to YYYY)
+create directed edge YYYY_Quarter (from YYYY, to Quarter)
+create directed edge Quarter_Month (from Quarter, to Month)
+create directed edge Month_AppLog (from Month, to AppLog)
+
+
 
 create vertex ALLChannel(primary_id seed string)
 create vertex Ch1(primary_id cid string)
 create vertex Ch2(primary_id ccid string)
 
-create directed (AllChannel -> Ch1) edge AllChannel_Ch1
-create directed (Ch1 -> Ch2) edge Ch1_Ch2 
-create directed (Ch2 -> ChannelLog) edge Ch2_ChannelLog 
-
-
-create directed (YYYY -> ChannelLog) edge YYYY_ChannelLog 
+create directed edge AllChannel_Ch1 (from AllChannel, to Ch1)
+create directed edge Ch1_Ch2 (from Ch1, to Ch2)
+create directed edge Ch2_ChannelLog (from Ch2, to ChannelLog)
+create directed edge YYYY_ChannelLog (from YYY, to ChannelLog)
 
 
 create vertex AllApps(primary_id seed string)
@@ -37,19 +37,19 @@ create vertex OS(primary_id name string)
 create vertex URL(primary_id link string)
 
 
-create directed (AllApps -> OS) edge AllApps_OS
-create directed (OS -> URL) edge OS_URL 
-create directed (URL -> AppLog ) edge  URL_AppLog
+create directed edge AllApps_OS (from AllApps, to OS)
+create directed edge OS_URL (from OS, to URL)
+create directed edge  URL_AppLog (from URL, to AppLog)
 
 
 create vertex AllIPs(primary_id seed string)
 create vertex IPLevel2(primary_id region string)
 create vertex IPLevel3(primary_id address string)
 
-create directed (AllIPs -> IPLevel2) edge AllIPs_IPLevel2
-create directed (IPLevel2 -> IPLevel3) edge IPLevel2_IPLevel3 
-create directed (IPLevel3 -> AppLog ) edge  IPLevel3_AppLog
-create directed (IPLevel3 -> ChannelLog ) edge  IPLevel3_ChannelLog
+create directed edge AllIPs_IPLevel2 (from AllIPs, to IPLevel2)
+create directed edge IPLevel2_IPLevel3 (from IPLevel2, to IPLevel3)
+create directed edge  IPLevel3_AppLog (from IPLevel3, to AppLog)
+create directed edge  IPLevel3_ChannelLog (from IPLevel3, to ChannelLog)
 
 
 
