@@ -1,0 +1,16 @@
+EdgeTypes: 
+- EdgeId: 0
+  EdgeName: friendship
+  FromVertexTypeName: blogger
+  IsDirected: false
+  ToVertexTypeName: blogger
+GraphConfigVersion: 1
+GraphId: 0
+GraphName: wj
+SegSizeInBits: 20
+VertexTypes: 
+- PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT32
+  VertexId: 0
+  VertexName: blogger

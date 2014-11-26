@@ -1,0 +1,21 @@
+EdgeTypeConfigs: 
+- ColumnMapping: 
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 1
+  EdgeId: 0
+  EdgeName: friendship
+  FileName: /vagrant/data/testdata/livejournal.txt
+  FromVertexId: 0
+  FromVertexName: blogger
+  Header: false
+  IsDirected: false
+  MaxTokenCount: 2
+  SchemaLen: 2
+  Separator: ','
+  ToVertexId: 0
+  ToVertexName: blogger
+GraphName: wj
+JobName: wj_loading
+LoaderConfigVersion: 1
