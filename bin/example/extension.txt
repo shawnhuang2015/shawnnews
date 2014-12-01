@@ -1,16 +1,27 @@
-1. Load 1 file to multiple vertices and/or edges.
+0. add "abort" command for creating job
+
+1. use line regex condition
+
+load "./persons.csv" to vertex person values ($0,$0,$1), 
+                      to vertex movie values ($0,$0,$1,$2,$3),
+                      to edge roles values ($0,$1,$2) using Separator=",", Header="true", linesRegex="xxxxx";
+
+
+2. Load 1 file to multiple vertices and/or edges.
 
  load "./persons.csv" to vertex person values ($0,$0,$1), 
                       to vertex movie values ($0,$0,$1,$2,$3),
                       to edge roles values ($0,$1,$2) using Separator=",", Header="true";
 
-2. change backend to MT for edge loading.
+3. change backend to MT for edge loading.
 
-3. Make dump= true  a default option for sample (this is done)
+4. Make dump= true  a default option for sample (this is done)
 
-4. Support Aggregate transformation on columns to support kv_list attribute type. Such as uint32_uint32_kv_list, uint32_udt_kv_list etc. 
+5. Make Default values clause works.
 
-5. TokenValidationBank.cpp + Sanity check binary(schema checking as well as token constraints)
+6. Support Aggregate transformation on columns to support kv_list attribute type. Such as uint32_uint32_kv_list, uint32_udt_kv_list etc. 
+
+7. TokenValidationBank.cpp + Sanity check binary(schema checking as well as token constraints)
 
 The syntax is simple, for a kv_list attribute type, we use 
 
@@ -20,6 +31,6 @@ The syntax is simple, for a kv_list attribute type, we use
 
       load "./roles.csv"  to vertex person values ($0,key($1):val(min($2),max($3)) group by ($0,f($1)), $2) using Separator=",", Header="false";
 
-6. KeyValue list column such as a,b,c:d splits to multiple vertex keys.
+8. KeyValue list column such as a,b,c:d splits to multiple vertex keys.
 
 
