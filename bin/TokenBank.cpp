@@ -5,7 +5,7 @@
  * TokenBank.hpp: a library of token conversion function declaration.
  *
  * All functions must have the same argument signature, but different function 
- * name.
+ * name. 
  *
  * funcName(const char* const input, uint32_t input_len, char *const output, uint32_t& output_len);
  *  @param: const char* const input: const pointer, const data
@@ -25,6 +25,8 @@
  *
  *  e.g. Let a function named Reverse (), we can use it in the DDL shell as below
  *  values( $1, Reverse($2), $3...)
+ *
+ *  For 1 loading job, one can use at most *20* token UDFs.
  *
  *
  *  Once defined UDF, run  the following script to compile it to a shared libary.
