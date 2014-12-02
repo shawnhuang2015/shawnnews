@@ -9,6 +9,8 @@ if int(ARGUMENTS.get('use_zmq', 0)) == 1:
     env.Append(CPPDEFINES={'USE_ZMQ':1})
 
 env.Append(CPPFLAGS=['-ldl'] )
+env.Append(CPPDEFINES=['MULTIEDGETYPES'])
+
 
 src_files = Split("""canonnical_loader.cpp
         ../../../core/gse/gse2/dict/enum/RedisEnumeratorClient.cpp

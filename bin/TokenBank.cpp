@@ -13,15 +13,18 @@
  *  @param: char* const output: const pointer, non-const data
  *  @param: output_len: output char array's length 
  *
- *  The func will take an input char array and do a customized conversion,
+ *  The UDF token conversion functions will take an input char array and do a customized conversion,
  *  then, put the converted char array to output char buffer.
  *
- *  The function can be unit tested in the main function.
+ *  Think it as a UDF designed to transform a specific column before we load it in GStore.
+ *
+ *  The function can be unit tested in the main function. Just do g++ TokenBank.cpp, and ./a.out 
+ *  to run it in bin folder.
  *
  *  All functions can be used in the loading job definition, in the values caluse.
  *
- *  e.g. 
- *  values( $1, func($2), $3...)
+ *  e.g. Let a function named Reverse (), we can use it in the DDL shell as below
+ *  values( $1, Reverse($2), $3...)
  *
  *
  *  Once defined UDF, run  the following script to compile it to a shared libary.
@@ -37,7 +40,6 @@
  *  Created on: Nov 13, 2014
  *  Author: Mingxi
  ******************************************************************************/
-#include <graphsqltokefuncs>
 
 #include <stdio.h>
 #include <stdint.h>
