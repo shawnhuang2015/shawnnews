@@ -28,14 +28,7 @@ namespace gperun {
     if(postListener_ == NULL)
       return;
     // do first time (make up) delta pull
-    uint64_t deltasize = 0;
-    char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_,
-                                                 current_postqueue_pos_, current_idresponsequeue_pos_);
-    if (deltadata != NULL){
-      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize,
-                                               current_postqueue_pos_, current_idresponsequeue_pos_);
-      delete[] deltadata;
-    }
+    PullDelta();
     // start pull delta thread
     pulldeltathread_ = new boost::thread(boost::bind(&EngineJobRunner::PullDeltaThread, this));
   }
@@ -46,7 +39,7 @@ namespace gperun {
 #ifdef ENABLETRANSACTION
     instance->querystate_.tid_ = gutil::extract_transactionid(instance->requestid_);
 #else
-    instance->querystate_.tid_ = current_post_tid_;
+    instance->querystate_.tid_ = tid_;
 #endif
     topology_->GetCurrentSegementMeta(instance->querystate_.query_segments_meta_);
     instance->udfstatus_ = GetUdfStatus();
@@ -356,17 +349,30 @@ namespace gperun {
     if (postListener_ == NULL)
       return;
     while (isrunning_) {
-      uint64_t deltasize = 0;
-      char* deltadata = postListener_->getAllDelta(deltasize, current_post_tid_,
-                                                   current_postqueue_pos_, current_idresponsequeue_pos_);
-      if (deltadata != NULL){
-        topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize,
-                                                 current_postqueue_pos_, current_idresponsequeue_pos_);
-        delete[] deltadata;
-      }
-      else
+      bool ok = PullDelta();
+      if(!ok)
         usleep(1000);
     }
+  }
+
+  bool EngineJobRunner::PullDelta(){
+    uint64_t deltasize = 0;
+    topology4::TransactionId_t tid = 0;
+    size_t current_postqueue_pos = 0, current_idresponsequeue_pos = 0;
+    char* deltadata = postListener_->getAllDelta(deltasize, tid,
+                                                 current_postqueue_pos, current_idresponsequeue_pos);
+    if (deltadata != NULL){
+      topology_->GetDeltaRecords()->ReadDeltas(reinterpret_cast<uint8_t*>(deltadata), deltasize,
+                                               current_postqueue_pos, current_idresponsequeue_pos);
+      delete[] deltadata;
+      boost::mutex::scoped_lock lock(mpiid_mutex_);
+      topology_->GetCurrentSegementMeta(segmentmetas_);
+      postq_pos_ = current_postqueue_pos;
+      idresq_pos_ = current_idresponsequeue_pos;
+      tid_ = tid;
+      return true;
+    }
+    return false;
   }
 
 }  // namespace gperun
