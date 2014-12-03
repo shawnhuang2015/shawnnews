@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include "gpeconfig.hpp"
+#include <gutil/gstring.hpp>
 
 namespace gperun {
   bool GPEConfig::enabledelta_ = true;
@@ -41,30 +42,11 @@ namespace gperun {
   topology4::RebuildSetting GPEConfig::rebuildsetting_;
 
   bool GPEConfig::CheckTimeOut(std::string requestid) {
-    std::vector<std::string> strs;
-    boost::split(strs, requestid, boost::is_any_of(":"));
-    if (strs.size() != 4)
-      return true;
-    uint64_t ms = gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
-    uint64_t request_ms = boost::lexical_cast<uint64_t>(strs[2]);
-    // std::cout << " gpe time: " << ms << "\n";
-    // std::cout << "rest time: " << request_ms << "\n";
-    GPROFILER(requestid) << "GPE|Run|resttime|"  << request_ms << "\n";
-    if (strs[1] == "g" || strs[1] == "a" ) {
-      if (ms
-          > (request_ms + (uint64_t) (get_request_timeoutsec_ * 1000))) {
-        std::cout << ms << "," << request_ms << ","
-                  << get_request_timeoutsec_ << "\n";
-        return false;
-      }
-    } else if (strs[1] == "p") {
-      if (ms
-          > (request_ms + (uint64_t) (prefetch_request_timeoutsec_ * 1000))) {
-        std::cout << ms << "," << request_ms << ","
-                  << prefetch_request_timeoutsec_ << "\n";
-        return false;
-      }
-    }
+    uint64_t current_ms = gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
+    uint64_t resttime_ms = gutil::extract_rest_request_time(requestid);
+    GPROFILER(requestid) << "GPE|Run|resttime|"  << resttime_ms << "|gpetime|" << current_ms << "\n";
+    if (resttime_ms > 0 && current_ms > (resttime_ms + (uint64_t) (get_request_timeoutsec_ * 1000)))
+      return false;
     return true;
   }
 
