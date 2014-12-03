@@ -94,6 +94,8 @@ namespace gperun {
                              gutil::JSONWriter& response_writer);
 
     void PullDeltaThread();
+
+    bool PullDelta();
   };
 }  // namespace gperun
 #endif /* GPE_ENGINEJOBRUNNER_HPP_ */

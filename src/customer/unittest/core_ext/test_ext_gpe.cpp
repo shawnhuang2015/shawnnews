@@ -9,10 +9,12 @@
  ******************************************************************************/
 
 #include <gtest/gtest.h>
+#include <inttypes.h>
 #include "../../core_ext/gpe/unionfind.hpp"
 #include "../../core_ext/gpe/global_vector.hpp"
 #include "../../core_ext/gpe/global_set.hpp"
 #include "../../core_ext/gpe/global_heap.hpp"
+
 
 /// TODO add unit test for core_ext gpe
 
@@ -111,9 +113,36 @@ TEST(Ext_GPE, GlobalHeap) {
   heapvariable.Combine(copy3);
   delete copy3;
   ASSERT_EQ(heapvariable.size(), maxsize);
+
+  // ADAM: added this to test new features.
+  // 1.  re-size heap.
+  int newMaxSize = 1 << 20;
+  heapvariable.resize_heap(newMaxSize);
+  // 1.a increasing size should leave variable unchnaged.
+  ASSERT_EQ(heapvariable.size(), maxsize);
+  // original heap should be filled with [0..maxsize-1]
+  // we should be able to add maxsize, maxsize+1 to verify we can go past the old capacity by 2
+  int val = maxsize;
+  heapvariable.Reduce(&val);
+  ++val;
+  heapvariable.Reduce(&val);
+  ASSERT_EQ(heapvariable.size(),maxsize+2);
+
+
+  // 1.b decreasing size should truncate the heap.
+  newMaxSize = 1<<9;
+  heapvariable.resize_heap(newMaxSize);
+  ASSERT_EQ(heapvariable.size(),newMaxSize);
+
+  // are the results sorted at the end?
   std::cout << heapvariable.getFinalResults().size() << "\n";
   std::vector<int>& intvec = heapvariable.getFinalResults();
   for(int i = 0; i < intvec.size(); ++i){
     ASSERT_EQ(intvec[i], i);
   }
+
+  // 2.  clear the heap, it should now be empty.
+  heapvariable.clear_heap();
+  ASSERT_EQ(heapvariable.size(), 0);
+
 }

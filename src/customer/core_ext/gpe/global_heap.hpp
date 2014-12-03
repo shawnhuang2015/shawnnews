@@ -55,7 +55,7 @@ namespace UDIMPL {
     ~HeapVariable() { }
 
     BaseVariableObject* MakeLocalCopy() const {
-      return new HeapVariable<ELEMENT_t>(maxSize_);
+      return new HeapVariable<ELEMENT_t, COMPARATOR_t>(maxSize_);
     }
 
     void Combine(BaseVariableObject* other) {
@@ -102,6 +102,23 @@ namespace UDIMPL {
       }
       return contents_;
     }
+
+
+    void clear_heap(){
+      contents_.clear();
+    }
+
+    void resize_heap(uint32_t newSize){
+      maxSize_ = newSize;
+      if(contents_.size() > maxSize_){
+        // Enforce maximum heap size
+        while (contents_.size() > maxSize_) {
+          std::pop_heap(contents_.begin(), contents_.end(), comparator_);
+          contents_.pop_back();
+        }
+      }
+    }
+
 
     size_t size() {
       return contents_.size();

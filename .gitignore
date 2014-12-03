@@ -16,6 +16,7 @@
 *.iso
 *.rar
 *.tar.gz
+*.tgz
 
 # Logs and databases #
 ######################
@@ -51,7 +52,7 @@ product.*
 
 # ER generated files #
 ######################
-.mgnt_cli/
+mgnt_cli/
 src/core/topology
 src/core/gpe
 src/core/gse
