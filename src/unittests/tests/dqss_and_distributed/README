@@ -1,0 +1,9 @@
+This test currently invoke two gunit tests: dqss.* and dist.*.
+It will first install zk and kafka in a tmp directory and launch
+them. After the test is down, it will shutdwon the zk and kafka.
+
+To run the test:
+./gen_conf.sh
+./run.sh
+
+* the unit test binaries need to be built first. 
