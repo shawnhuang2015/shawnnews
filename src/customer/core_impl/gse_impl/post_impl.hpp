@@ -2,7 +2,6 @@
 #define UDIMPL_GSE_POSTJSON2DELTA_HPP_
 
 #include <post_service/post_json2delta.hpp>
-#include "../udt.hpp"
 
 namespace UDIMPL {
   /**
@@ -10,18 +9,17 @@ namespace UDIMPL {
  */
   class UD_PostJson2Delta : public gse2::PostJson2Delta {
   public:
-    UD_PostJson2Delta(gse2::IdConverter *idconverter)
-      : gse2::PostJson2Delta(idconverter) {
+    UD_PostJson2Delta() : gse2::PostJson2Delta() {
     }
 
     PostJson2Delta* Clone() {
-      return new UD_PostJson2Delta(idconverter_);
+      return new UD_PostJson2Delta();
     }
 
     bool s2_parseJSON(std::string &requestStr,
                       Json::Value &vertex_list_node,
                       Json::Value &edge_list_node) {
-      gutil::GTimer timer;
+      // gutil::GTimer timer;
       Json::Value requestRoot;
       Json::Reader jsonReader;
       if (!jsonReader.parse(requestStr, requestRoot)) {
@@ -29,7 +27,7 @@ namespace UDIMPL {
         errmsg_ = "parse input failed " + requestStr;
         return false;
       }
-      timer.Stop("s2_parseJSON " + requestid_,  Verbose_EngineHigh);
+      // timer.Stop("s2_parseJSON " + requestid_,  Verbose_EngineHigh);
       Json::Value json_updateEvent = requestRoot["updateEvent"];
       vertex_list_node = requestRoot["nodeList"];
       edge_list_node = requestRoot["edgeList"];

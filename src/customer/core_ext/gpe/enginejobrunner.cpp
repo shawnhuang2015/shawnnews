@@ -10,15 +10,20 @@
 
 #include "enginejobrunner.hpp"
 #include <gutil/gsystem.hpp>
+#include <gpelib4/enginedriver/degreehistogram.hpp>
+#include <gpelib4/engine/master.hpp>
+#include <gpelib4/engine/worker.hpp>
 #include <gapi4/graphapi.hpp>
+#include <topology4/deltarecords.hpp>
+#include <topology4/topologygraph.hpp>
 #include <json/json.h>
-#include "util.hpp"
-#include "../../core_impl/gpe_impl/impl.hpp"
+#include "serviceapi.hpp"
+#include "serviceimplbase.hpp"
 
 namespace gperun {
 
   void EngineJobRunner::Topology_Prepare() {
-    UDIMPL::GPE_UD_Impl::Topology_Prepare(topology_);
+    // UDIMPL::GPE_UD_Impl::Topology_Prepare(topology_);
     if (postListener_ != NULL)
       topology_->GetTopologyMeta()->SetEnumeratorMapping(
             postListener_->enumMappers()->GetEnumeratorMappings());
@@ -27,26 +32,26 @@ namespace gperun {
   void EngineJobRunner::Topology_PullDelta() {
     if(postListener_ == NULL)
       return;
-    // do first time (make up) delta pull
     PullDelta();
     // start pull delta thread
     pulldeltathread_ = new boost::thread(boost::bind(&EngineJobRunner::PullDeltaThread, this));
   }
 
-  std::string EngineJobRunner::RunInstance(EngineServiceRequest* instance) {
+  std::string EngineJobRunner::RunInstance(gpelib4::EngineServiceRequest* instance) {
     gutil::GTimer timer;
-    instance->querystate_.tid_ = gutil::GTimer::GetTotalMicroSecondsSinceEpoch();
+    instance->querystate_ = new topology4::QueryState();
+    instance->querystate_->tid_ = gutil::GTimer::GetTotalMicroSecondsSinceEpoch();
 #ifdef ENABLETRANSACTION
-    instance->querystate_.tid_ = gutil::extract_transactionid(instance->requestid_);
+    instance->querystate_->tid_ = gutil::extract_transactionid(instance->requestid_);
 #else
-    instance->querystate_.tid_ = tid_;
+    instance->querystate_->tid_ = tid_;
 #endif
-    topology_->GetCurrentSegementMeta(instance->querystate_.query_segments_meta_);
+    topology_->GetCurrentSegementMeta(instance->querystate_->query_segments_meta_);
     instance->udfstatus_ = GetUdfStatus();
-    instance->writer_ = new gutil::JSONWriter();
-    gutil::JSONWriter& jsonwriter = *instance->writer_;
-    jsonwriter.WriteStartObject();
-    jsonwriter.WriteName("results");
+    instance->outputwriter_ = new gutil::JSONWriter();
+    instance->output_num_iterations_ = 0;
+    instance->outputwriter_->WriteStartObject();
+    instance->outputwriter_->WriteName("results");
     std::ostringstream debugmsg;
     if (!GPEConfig::CheckTimeOut(instance->requestid_)) {
       instance->message_ = "error_: request timed out";
@@ -62,22 +67,21 @@ namespace gperun {
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
       }
-      gse2::IdConverter::RequestIdMaps* maps = NULL;
       if(gutil::extract_rest_request_idrequestflag(instance->requestid_)){
-        maps = idconverter_->GetIdMaps(instance->requestid_);
-        if (maps == NULL) {
+        instance->requestid_maps_ = idconverter_->GetIdMaps(instance->requestid_);
+        if (instance->requestid_maps_ == NULL) {
           instance->message_ = "error_: Request  " + instance->requestid_ + " failed to retrieve id map.";
           instance->error_ = true;
         }
       }
-      unsigned int iterations = 0;
       if(!instance->error_)
-        Run(instance, maps, jsonwriter);
-      if(maps != NULL)
-        delete maps;
+        Run(instance);
+      if(instance->requestid_maps_ != NULL)
+        delete instance->requestid_maps_;
+      delete instance->querystate_;
       if (debugmode) {
         debugmsg << "{\nRequest end at " << gutil::GTimer::now_str() << " with "
-                 << iterations << " iterations in "
+                 << instance->output_num_iterations_ << " iterations in "
                  << timer.GetTotalMilliSeconds() << " ms\n";
         debugmsg << "CPU usage: " << gutil::GSystem::get_sys_cpu_usage() << "%\n";
         debugmsg << "Free memory: " << gutil::GSystem::get_sys_free_memory() << "\n}\n";
@@ -92,93 +96,69 @@ namespace gperun {
     }
     if(instance->error_){
       // if error. Write start object and end object for "results".
-      jsonwriter.WriteStartObject();
-      jsonwriter.WriteEndObject();
+      instance->outputwriter_->WriteStartObject();
+      instance->outputwriter_->WriteEndObject();
     }
-    jsonwriter.WriteName("error").WriteBool(instance->error_);
-    jsonwriter.WriteName("message").WriteString(instance->message_);
+    instance->outputwriter_->WriteName("error").WriteBool(instance->error_);
+    instance->outputwriter_->WriteName("message").WriteString(instance->message_);
     std::string debugstrmsg = debugmsg.str();
-    jsonwriter.WriteName("debug").WriteString(debugstrmsg);
-    jsonwriter.WriteEndObject(); // end of everything
+    instance->outputwriter_->WriteName("debug").WriteString(debugstrmsg);
+    instance->outputwriter_->WriteEndObject(); // end of everything
     GVLOG(Verbose_UDFHigh) << "Finished " << instance->requestid_ << "|"
                            << timer.GetTotalMilliSeconds() << " ms";
     return "";
   }
 
-  unsigned int EngineJobRunner::Run(EngineServiceRequest* request,
-                                    gse2::IdConverter::RequestIdMaps* maps,
-                                    gutil::JSONWriter& jsonwriter) {
-    size_t num_iterations = 0;
+  void EngineJobRunner::Run(gpelib4::EngineServiceRequest* request) {
     try {
       // parse request json string
       Json::Value requestRoot;
       Json::Reader jsonReader;
       jsonReader.parse(request->requeststr_, requestRoot);
-      std::vector<std::string> argv;
       Json::Value jsArgv = requestRoot["argv"];
       for (uint32_t i = 0; i < jsArgv.size(); ++i) {
-        argv.push_back(jsArgv[i].asString());
+        request->request_argv_.push_back(jsArgv[i].asString());
       }
-      Json::Value jsoptions = requestRoot["options"];
-      if(argv.size() == 0){
+      request->jsoptions_ = requestRoot["options"];
+      if(request->request_argv_.size() == 0){
         request->message_ = "error_: Request  " + request->requestid_
                             + " does not contain argv.";
         request->error_ = true;
-        return 0;
+        return;
       }
-      std::vector<VertexLocalId_t> idservice_vids;
-      if (argv[0] == "debug_neighbors") {
-        VertexLocalId_t vid = 0;
-        if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, argv[1], vid, request->querystate_))
-          return 0;
-        ShowOneVertexInfo(request, jsonwriter, vid, idservice_vids);
-      } else if (argv[0] == "builtins") {
-        RunStandardAPI(request, maps, jsoptions, idservice_vids, jsonwriter);
-      } else {
-        bool succeed =  UDIMPL::GPE_UD_Impl::RunQuery(request,
-                                                      this,
-                                                      maps,
-                                                      argv,
-                                                      jsoptions,
-                                                      idservice_vids,
-                                                      jsonwriter,
-                                                      num_iterations,
-                                                      GPEConfig::customizedsetttings_);
+      request->request_function_ = request->request_argv_[0];
+      if (request->request_function_ == "builtins") {
+        RunStandardAPI(request);
+      } else if(serviceapi_->serviceimpl_ != NULL){
+        bool succeed = serviceapi_->serviceimpl_->RunQuery(*serviceapi_, *request);
         if (!succeed && !request->error_) {
-          request->message_ = "error_: unknown function error "
-                              + request->requeststr_;
+          request->message_ = "error_: unknown function error " + request->requeststr_;
           request->error_ = true;
-          return 0;
         }
+      } else{
+        request->message_ = "error_: no handler to handle query requests " + request->requeststr_;
+        request->error_ = true;
       }
       GPROFILER(request->requestid_) << "GPE|Run|sendRequest2IDS|" << "\n";
-      idconverter_->sendRequest2IDS(request->requestid_, idservice_vids);
-      GPROFILER(request->requestid_) << "GPE|Run|sendRequest2IDS|" << idservice_vids.size() << "\n";
+      idconverter_->sendRequest2IDS(request->requestid_, request->output_idservice_vids);
+      GPROFILER(request->requestid_) << "GPE|Run|sendRequest2IDS|" << request->output_idservice_vids.size() << "\n";
     } catch(const boost::exception& bex) {
       request->message_ = "error_: unexpected error " +  boost::diagnostic_information(bex);
       request->error_ = true;
-      return 0;
     } catch(const std::exception& ex) {
       request->message_ = "error_: unexpected error " + std::string(ex.what());
       request->error_ = true;
-      return 0;
     } catch(...) {
       request->message_ = "error_: unexpected error ";
       request->error_ = true;
-      return 0;
     }
-    return num_iterations;
   }
 
-  void EngineJobRunner::RunStandardAPI(gpelib4::EngineDriverService::EngineServiceRequest* request,
-                                       gse2::IdConverter::RequestIdMaps* maps,
-                                       Json::Value& jsoptions,
-                                       std::vector<VertexLocalId_t>& idservice_vids,
-                                       gutil::JSONWriter& response_writer){
+  void EngineJobRunner::RunStandardAPI(gpelib4::EngineServiceRequest* request){
     GPROFILER(request->requestid_) << request->requeststr_ << "\n";
     Json::Value dataRoot;
     Json::Reader jsonReader;
-    jsonReader.parse(jsoptions["payload"][0].asString(), dataRoot);
+    jsonReader.parse(request->jsoptions_["payload"][0].asString(), dataRoot);
     std::string func = dataRoot["function"].asString();
     if(func == "vattr"){
       std::string vidstr = "";
@@ -187,18 +167,17 @@ namespace gperun {
       else
         vidstr = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
       VertexLocalId_t vid = 0;
-      if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
+      if (!serviceapi_->UIdtoVId(*request, vidstr, vid)){
         return;
-      gapi4::GraphAPI api(topology_, &request->querystate_);
-      topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
-      response_writer.WriteStartObject();
-      if(v1 != NULL){
-        response_writer.WriteName("degree").WriteUnsignedInt(v1->outgoing_degree());
-        response_writer.WriteName("type").WriteUnsignedInt(v1->type());
-        response_writer.WriteName("attr");
-        v1->WriteToJson(response_writer);
       }
-      response_writer.WriteEndObject();
+      gapi4::GraphAPI api(topology_, request->querystate_);
+      topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
+      request->outputwriter_->WriteStartObject();
+      if(v1 != NULL){
+        request->outputwriter_->WriteName("attr");
+        v1->WriteToJson(*request->outputwriter_);
+      }
+      request->outputwriter_->WriteEndObject();
     } else if(func == "edges"){
       std::string vidstr = "";
       if(!dataRoot["translate_ids"].isNull())
@@ -209,50 +188,50 @@ namespace gperun {
       bool writetgtvattr = dataRoot["tgtvattr"].asBool();
       size_t limit = dataRoot["limit"].isNull() ? std::numeric_limits<size_t>::max() : dataRoot["limit"].asUInt();
       VertexLocalId_t vid = 0;
-      if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, vidstr, vid, request->querystate_))
+      if (!serviceapi_->UIdtoVId(*request, vidstr, vid))
         return;
-      gapi4::GraphAPI api(topology_, &request->querystate_);
+      gapi4::GraphAPI api(topology_, request->querystate_);
       gapi4::EdgesCollection edgeresults;
       api.GetOneVertexEdges(vid, NULL, edgeresults);
-      response_writer.WriteStartObject();
-      response_writer.WriteName("edges");
-      response_writer.WriteStartArray();
+      request->outputwriter_->WriteStartObject();
+      request->outputwriter_->WriteName("edges");
+      request->outputwriter_->WriteStartArray();
       uint32_t count = 0;
       while (edgeresults.NextEdge()) {
-        response_writer.WriteStartObject();
+        request->outputwriter_->WriteStartObject();
         VertexLocalId_t toid = edgeresults.GetCurrentToVId();
-        response_writer.WriteName("to_vid").WriteMarkVId(toid);
+        request->outputwriter_->WriteName("to_vid").WriteMarkVId(toid);
         topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
-        response_writer.WriteName("type").WriteUnsignedInt(edgeattr->type());
-        idservice_vids.push_back(toid);
+        request->outputwriter_->WriteName("type").WriteUnsignedInt(edgeattr->type());
+        request->output_idservice_vids.push_back(toid);
         if(writetgtvattr){
           topology4::VertexAttribute* v1 = api.GetOneVertex(toid);
           if(v1 != NULL){
-            response_writer.WriteName("to_degree").WriteUnsignedInt(v1->outgoing_degree());
-            response_writer.WriteName("to_attr");
-            v1->WriteToJson(response_writer);
+            request->outputwriter_->WriteName("to_degree").WriteUnsignedInt(v1->outgoing_degree());
+            request->outputwriter_->WriteName("to_attr");
+            v1->WriteToJson(*request->outputwriter_);
           }
         }
         if(writedgeeattr){
-          response_writer.WriteName("edgeattr");
-          edgeattr->WriteToJson(response_writer);
+          request->outputwriter_->WriteName("edgeattr");
+          edgeattr->WriteToJson(*request->outputwriter_);
         }
-        response_writer.WriteEndObject();
+        request->outputwriter_->WriteEndObject();
         if(++count == limit)
           break;
       }
-      response_writer.WriteEndArray();
-      response_writer.WriteEndObject();
+      request->outputwriter_->WriteEndArray();
+      request->outputwriter_->WriteEndObject();
     } else if(func == "randomids"){
       bool writeattr = dataRoot["attr"].asBool();
       uint32_t count = dataRoot["count"].isNull() ? 10 : dataRoot["count"].asUInt();
       uint32_t vtype = dataRoot["vtype"].isNull() ? 0 : dataRoot["vtype"].asUInt();
       DegreeType_t mindegree = dataRoot["mindegree"].isNull() ? 0 : dataRoot["mindegree"].asUInt();
       DegreeType_t maxdegree = dataRoot["maxdegree"].isNull() ? std::numeric_limits<DegreeType_t>::max() : dataRoot["maxdegree"].asUInt();
-      response_writer.WriteStartObject();
-      response_writer.WriteName("ids");
-      response_writer.WriteStartArray();
-      gapi4::GraphAPI api(topology_, &request->querystate_);
+      request->outputwriter_->WriteStartObject();
+      request->outputwriter_->WriteName("ids");
+      request->outputwriter_->WriteStartArray();
+      gapi4::GraphAPI api(topology_, request->querystate_);
       gapi4::VerticesFilter_ByOneType filter(vtype);
       gapi4::VerticesCollection vertexresults;
       api.GetAllVertices(&filter, vertexresults);
@@ -262,21 +241,20 @@ namespace gperun {
         DegreeType_t degree = vattr->outgoing_degree();
         if(degree >= mindegree && degree <= maxdegree){
           VertexLocalId_t id = vertexresults.GetCurrentVId();
-          response_writer.WriteStartObject();
-          response_writer.WriteName("vid").WriteMarkVId(id);
-          response_writer.WriteName("degree").WriteUnsignedInt(vattr->outgoing_degree());
+          request->outputwriter_->WriteStartObject();
+          request->outputwriter_->WriteName("vid").WriteMarkVId(id);
           if(writeattr){
-            response_writer.WriteName("attr");
-            vattr->WriteToJson(response_writer);
+            request->outputwriter_->WriteName("attr");
+            vattr->WriteToJson(*request->outputwriter_);
           }
-          idservice_vids.push_back(id);
-          response_writer.WriteEndObject();
+          request->output_idservice_vids.push_back(id);
+          request->outputwriter_->WriteEndObject();
           if(++matched == count)
             break;
         }
       }
-      response_writer.WriteEndArray();
-      response_writer.WriteEndObject();
+      request->outputwriter_->WriteEndArray();
+      request->outputwriter_->WriteEndObject();
     }  else if(func == "degreehistogram"){
       std::vector<std::string> strs;
       std::string degreelist = dataRoot["degreelist"].asString();
@@ -286,63 +264,17 @@ namespace gperun {
         limits.push_back(boost::lexical_cast<size_t>(strs[i]));
       typedef gpelib4::DegreeHistogram UDF_t;
       UDF_t udf(limits);
-      gpelib4::SingleMachineAdaptor<UDF_t> adaptor(&udf, globalinstance_, topology_, false, &request->querystate_);
+      gpelib4::SingleMachineAdaptor<UDF_t> adaptor(&udf, globalinstance_, topology_, false, request->querystate_);
       gpelib4::Master master(&adaptor, "");
       gpelib4::Worker worker(&adaptor);
       std::string result = master.RunUDF();
-      response_writer.WriteStartObject();
-      response_writer.WriteName("degreehistogram").WriteString(result);
-      response_writer.WriteEndObject();
+      request->outputwriter_->WriteStartObject();
+      request->outputwriter_->WriteName("degreehistogram").WriteString(result);
+      request->outputwriter_->WriteEndObject();
     } else {
       request->message_ = "error_: incorrect function " + func;
       request->error_ = true;
     }
-  }
-
-  void EngineJobRunner::ShowOneVertexInfo(EngineServiceRequest* request,
-                                          gutil::JSONWriter& jsonwriter,
-                                          VertexLocalId_t vid,
-                                          std::vector<VertexLocalId_t>& idservice_vids) {
-    gapi4::GraphAPI api(topology_, &request->querystate_);
-    topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
-    jsonwriter.WriteStartObject();
-    jsonwriter.WriteName("source");
-    jsonwriter.WriteStartObject();
-    jsonwriter.WriteName("vid").WriteMarkVId(vid);
-    idservice_vids.push_back(vid);
-    jsonwriter.WriteName("vertexattr");
-    if(v1 != NULL)
-      v1->WriteToJson(jsonwriter);
-    else{
-      jsonwriter.WriteStartObject();
-      jsonwriter.WriteEndObject();
-    }
-    jsonwriter.WriteEndObject(); // source
-    gapi4::EdgesCollection edgeresults;
-    api.GetOneVertexEdges(vid, NULL, edgeresults);
-    jsonwriter.WriteName("edges");
-    jsonwriter.WriteStartArray();
-    while (edgeresults.NextEdge()) {
-      jsonwriter.WriteStartObject();
-      VertexLocalId_t toid = edgeresults.GetCurrentToVId();
-      topology4::EdgeAttribute* edgeattr = edgeresults
-                                           .GetCurrentEdgeAttribute();
-      jsonwriter.WriteName("to_vid").WriteMarkVId(toid);
-      idservice_vids.push_back(toid);
-      topology4::VertexAttribute* v2 = api.GetOneVertex(toid);
-      jsonwriter.WriteName("to_vertexattr");
-      if(v2 != NULL)
-        v2->WriteToJson(jsonwriter);
-      else{
-        jsonwriter.WriteStartObject();
-        jsonwriter.WriteEndObject();
-      }
-      jsonwriter.WriteName("edgeattr");
-      edgeattr->WriteToJson(jsonwriter);
-      jsonwriter.WriteEndObject();
-    }
-    jsonwriter.WriteEndArray();
-    jsonwriter.WriteEndObject();
   }
 
   void EngineJobRunner::PullDeltaThread() {

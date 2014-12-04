@@ -12,11 +12,13 @@
 #define GPE_ENGINEJOBRUNNER_HPP_
 
 #include <gpelib4/enginedriver/enginedriverservice.hpp>
+#include <gmmnt/globalmemoryserver.hpp>
 #include <post_service/post_listener.hpp>
 #include <ext/idconverter.hpp>
 #include "gpeconfig.hpp"
 
 namespace gperun {
+  class ServiceAPI;
 
   /**
  * Engine job runner.
@@ -27,12 +29,14 @@ namespace gperun {
     EngineJobRunner(std::string enginecfgfile, std::string topologypth,
                     unsigned int max_instances,
                     gse2::IdConverter* idconverter,
-                    gse2::PostListener* postListener)
+                    gse2::PostListener* postListener,
+                    ServiceAPI* serviceapi)
       : gpelib4::EngineDriverService(enginecfgfile, topologypth,
                                      max_instances,  GPEConfig::udfmode_ != "offline",
-                                     true, true, NULL),
+                                     true, true),
         idconverter_(idconverter),
-        postListener_(postListener) {
+        postListener_(postListener),
+        serviceapi_(serviceapi) {
       globalinstance_->memserver_->SetServiceMode(GPEConfig::udfmode_ != "offline");
       globalinstance_->memallocator_->Set_memlimitMB(1000000000);
       pulldeltathread_ = NULL;
@@ -56,7 +60,7 @@ namespace gperun {
     void Topology_PullDelta();
 
     /// subclass provide implementation to translate request to actual udf object
-    std::string RunInstance(EngineServiceRequest* instance);
+    std::string RunInstance(gpelib4::EngineServiceRequest* instance);
 
     /**
    * get enumerator mappers.
@@ -77,24 +81,12 @@ namespace gperun {
     gse2::PostListener* postListener_;
     /// the pull delta thread
     boost::thread* pulldeltathread_;
+    ServiceAPI* serviceapi_;
 
     /// run one request. POC modification: Needed.
-    unsigned int Run(EngineServiceRequest* request,
-                     gse2::IdConverter::RequestIdMaps* maps,
-                     gutil::JSONWriter& jsonwriter);
-
-    /// POC modification: Not Likely.
-    void ShowOneVertexInfo(EngineServiceRequest* request, gutil::JSONWriter& jsonwriter,
-                           VertexLocalId_t vid, std::vector<VertexLocalId_t>& idservice_vids);
-
-    void RunStandardAPI(gpelib4::EngineDriverService::EngineServiceRequest* request,
-                             gse2::IdConverter::RequestIdMaps* maps,
-                             Json::Value& jsoptions,
-                             std::vector<VertexLocalId_t>& idservice_vids,
-                             gutil::JSONWriter& response_writer);
-
+    void Run(gpelib4::EngineServiceRequest* request);
+    void RunStandardAPI(gpelib4::EngineServiceRequest* request);
     void PullDeltaThread();
-
     bool PullDelta();
   };
 }  // namespace gperun

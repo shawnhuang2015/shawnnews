@@ -60,24 +60,23 @@ namespace gperun {
 void EngineJobListener::ReadRequest(std::string& requestid,
                                     std::string& request) {
   // POC modification: Not Likely.
-  std::vector<boost::tuple<std::string, std::string, std::string> > read_queue;
+  std::vector<boost::tuple<std::string, std::string, int64_t> > read_queue;
   while (true) {
     if(GPEConfig::udfmode_ == "offline"){
       if (daemon_->quit_) {
-        connector_->StopReader();
-        connector_->DeleteReader();
+        connector_->stopReader();
         requestid = "";
         request = "";
         return;
       }
       if(deltarebuilder_ != NULL && !deltarebuilder_->RebuildThreadRunning() && jobrunner()->GetExecutingAndQueuedJobCount() == 0)
        deltarebuilder_->StartRebuildThread();
-      connector_->ReadFromKafka(ready_queue_, 1);
+      connector_->readFromKafka(ready_queue_, 1);
       if(ready_queue_.size() == 0) {
         usleep(1000);
       } else {
         GASSERT(ready_queue_.size() == 1, ready_queue_.size());
-        boost::tuple<std::string, std::string, std::string>& requestPair =
+        boost::tuple<std::string, std::string, int64_t>& requestPair =
             ready_queue_.back();
         requestid = requestPair.get<0>();
         request = requestPair.get<1>();
@@ -91,7 +90,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
     }
     // process requests fit on current delta
     if (!ready_queue_.empty()) {
-      boost::tuple<std::string, std::string, std::string>& requestPair =
+      boost::tuple<std::string, std::string, int64_t>& requestPair =
           ready_queue_.back();
       requestid = requestPair.get<0>();
       request = requestPair.get<1>();
@@ -100,7 +99,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       return;
     }
     read_queue.clear();
-    if (daemon_->quit_ && connector_->ReaderIsNull()) {
+    if (daemon_->quit_ && connector_->isReaderNull(0)) {
       // quite and no more requests. tell listener to stop
       requestid = "";
       request = "";
@@ -108,11 +107,10 @@ void EngineJobListener::ReadRequest(std::string& requestid,
     }
     if (daemon_->quit_) {
       // receive command. stop reader and finish queue requests in reader first.
-      connector_->StopReader();
-      connector_->ReadFromKafka(read_queue);  // read all msg.
-      connector_->DeleteReader();
+      connector_->stopReader();
+      connector_->readFromKafka(read_queue);  // read all msg.
     } else {
-      connector_->ReadFromKafka(read_queue);
+      connector_->readFromKafka(read_queue);
     }
     if (read_queue.size() == 0) {
       usleep(1000);
@@ -149,7 +147,7 @@ void EngineJobListener::SetResponse(std::string& requestid, char* response, size
     return;
   GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_enter|" << "\n";
   Lock_t lock(mutex_);
-  connector_->SetResponse(requestid, response, response_size);
+  connector_->setResponse(requestid, response, response_size);
   GPROFILER(requestid) << "GPE|EngineJobListener|SetResponse_done|"<< response_size << std::endl;
 }
 

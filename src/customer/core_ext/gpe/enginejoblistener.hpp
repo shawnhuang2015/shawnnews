@@ -14,13 +14,14 @@
 #include <gutil/gsystem.hpp>
 #include <topology4/deltarebuilder.hpp>
 #include <gpelib4/enginebase/servicebase.hpp>
+#include <gnet/kafkaconnector.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <sstream>
 #include  "gpeconfig.hpp"
-#include  "kafkaconnector.hpp"
+#include "gpe_daemon.hpp"
 
 namespace gperun {
 
@@ -33,7 +34,7 @@ class EngineJobListener : public gpelib4::JobListener {
   typedef boost::mutex Mutex_t;
   typedef boost::mutex::scoped_lock Lock_t;
 
-  EngineJobListener(GPEDaemon* daemon, KafkaConnector* connector,
+  EngineJobListener(GPEDaemon* daemon, gnet::KafkaConnector* connector,
                     std::string hostname, topology4::DeltaRebuilder* deltarebuilder)
       : connector_(connector),
         daemon_(daemon),
@@ -54,11 +55,11 @@ class EngineJobListener : public gpelib4::JobListener {
   /// Lock just for buffer_
   Mutex_t mutex_;
   /// Kafka connector
-  KafkaConnector* connector_;
+  gnet::KafkaConnector* connector_;
   /// GPE daemon pointer
   GPEDaemon* daemon_;
   /// the request ready queue
-  std::vector<boost::tuple<std::string, std::string, std::string> > ready_queue_;
+  std::vector<boost::tuple<std::string, std::string, int64_t> > ready_queue_;
   /// host name
   std::string hostname_;
   topology4::DeltaRebuilder* deltarebuilder_;
