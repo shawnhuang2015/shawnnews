@@ -9,6 +9,7 @@
 #include "gpe_daemon.hpp"
 #include "gpeconfig.hpp"
 #include "serviceimplbase.hpp"
+#include <iostream>
 
 namespace gperun{
   ServiceAPI::ServiceAPI(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl){
@@ -53,6 +54,7 @@ namespace gperun{
     YAML::Node configuration_root = gperun::GPEConfig::LoadConfig(engineConfigFile);
     gutil::GSQLLogger logger(processname_.c_str(), gperun::GPEConfig::log_path_);
     topology4::TopologyMeta topologymeta(gperun::GPEConfig::partitionpath_);
+    std::cout << topologymeta << "\n";
     gse2::IdConverter idconverter(
           config_info_[0], config_info_[1], atoi(config_info_[2].c_str()),
         gperun::GPEConfig::get_request_timeoutsec_, topologymeta.idresq_pos_);
