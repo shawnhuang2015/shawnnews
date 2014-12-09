@@ -1,0 +1,9 @@
+for p in dqss dqss_ACK 
+do
+  /SOME_DIR/tmp/kafka/bin/kafka-create-topic.sh --topic $p --partition 4 --replica 1 --zookeeper 127.0.0.1:13010
+done
+
+for p in buckets buckets_ACK 
+do
+  /SOME_DIR/tmp/kafka/bin/kafka-create-topic.sh --topic $p --partition 30 --replica 1 --zookeeper 127.0.0.1:13010
+done

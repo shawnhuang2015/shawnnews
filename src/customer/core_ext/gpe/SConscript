@@ -7,11 +7,10 @@ if int(ARGUMENTS.get('use_zmq', 0)) == 1:
     env.Append(CPPDEFINES={'USE_ZMQ':1})
 
 src_files = Split("""gperun.cpp
+                     serviceapi.cpp 
                      gpeconfig.cpp
                      enginejoblistener.cpp
                      enginejobrunner.cpp
-                     enginejobrunner_zmq.cpp
-                     ../../../core/gse/gse2/dict/enum/RedisEnumeratorClient.cpp
                      ../../core_impl/udt.cpp
 				  """)
 

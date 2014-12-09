@@ -2,7 +2,6 @@
 #define UDIMPL_GSE_POSTJSON2DELTA_HPP_
 
 #include <post_service/post_json2delta.hpp>
-#include "../udt.hpp"
 
 namespace UDIMPL {
   /**
@@ -10,18 +9,17 @@ namespace UDIMPL {
  */
   class UD_PostJson2Delta : public gse2::PostJson2Delta {
   public:
-    UD_PostJson2Delta(gse2::IdConverter *idconverter)
-      : gse2::PostJson2Delta(idconverter) {
+    UD_PostJson2Delta() : gse2::PostJson2Delta() {
     }
 
     PostJson2Delta* Clone() {
-      return new UD_PostJson2Delta(idconverter_);
+      return new UD_PostJson2Delta();
     }
 
     bool s2_parseJSON(std::string &requestStr,
                       Json::Value &vertex_list_node,
                       Json::Value &edge_list_node) {
-      gutil::GTimer timer;
+      // gutil::GTimer timer;
       Json::Value requestRoot;
       Json::Reader jsonReader;
       if (!jsonReader.parse(requestStr, requestRoot)) {
@@ -29,7 +27,7 @@ namespace UDIMPL {
         errmsg_ = "parse input failed " + requestStr;
         return false;
       }
-      timer.Stop("s2_parseJSON " + requestid_,  Verbose_EngineHigh);
+      // timer.Stop("s2_parseJSON " + requestid_,  Verbose_EngineHigh);
       Json::Value json_updateEvent = requestRoot["updateEvent"];
       vertex_list_node = requestRoot["nodeList"];
       edge_list_node = requestRoot["edgeList"];
@@ -116,22 +114,12 @@ namespace UDIMPL {
     bool processOneVertexNoAttribs(Json::Value &VertexNode, bool &newVertex){
       newVertex = false;
       std::string nodeIDStr = VertexNode.get("id", "").asString();
-      vidmap_itr_t itr = oneReq_maps_->idmaps_.find(nodeIDStr);
-      if (itr != oneReq_maps_->idmaps_.end()) {  // should always succeed
-        if (itr->second.new_) {
-          newVertex = true;
-          /* after match this, set flag new_ to false:
-             * this serves 2 corner cases
-             * 1) nodelist has duplicate id ...
-             * 2) a new node exists in edge but not in node list
-             *
-             */
-          itr->second.new_ = false;
-        }
+      VertexLocalId_t vid = getVidfromUid(nodeIDStr, newVertex);
+      if(vid != (VertexLocalId_t)-1){
         deltaWriter_.write_flag(
               (uint8_t) topology4::DeltaRecord_Vertex,
                 (uint8_t) topology4::DeltaAction_Update);
-        deltaWriter_.write(itr->second.vid_);
+        deltaWriter_.write(vid);
         // no attributes in this situation.
         //writeVertexAttribute(VertexNode);
         deltaWriter_.write_watermark();

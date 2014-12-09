@@ -10,7 +10,7 @@
 #ifndef SRC_CUSTOMERS_GPE_DAEMON_H_
 #define SRC_CUSTOMERS_GPE_DAEMON_H_
 
-#include <BaseDaemon.h>
+#include <gnet/zk/zookeeper_daemon.hpp>
 #include <gutil/dummyqueue.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
@@ -22,18 +22,17 @@ namespace gperun {
  * GPE server Daemon.
  * POC modification: Not Likely.
  */
-  class GPEDaemon : public gdist::BaseDaemon {
+  class GPEDaemon : public gnet::ZookeeperDaemon {
   public:
     GPEDaemon(string hostportStr, std::string rootPath)
-      : BaseDaemon(hostportStr, rootPath) {
+      : gnet::ZookeeperDaemon(hostportStr, rootPath) {
       type_ = "GPE";
       quit_ = false;
       rebuild_ = false;
       dummyqueue_ = NULL;
       listenerthread_ = NULL;
 #ifdef ComponentTest
-      dummyqueue_ = new gutil::DummyReadQueue("", "daemon",
-                                              "", 0, 1, 0);
+      dummyqueue_ = new gutil::DummyReadQueue("daemon");
       listenerthread_ = new boost::thread(boost::bind(&GPEDaemon::run, this));
 #endif
     }
@@ -49,9 +48,9 @@ namespace gperun {
 
     void run() {
       while (!quit_) {
-        gdist::DQMessage* msg = dummyqueue_->read(false);
+        gnet::Message* msg = dummyqueue_->readOneMsg();
         if(msg != NULL){
-          handleCommand(msg->key);
+          handleCommand(msg->getKeyStr());
           delete msg;
         } else
           usleep(500);
@@ -67,7 +66,7 @@ namespace gperun {
     void StartGPEDaemon() {
       LOG(INFO)<< "startDaemon";
 #ifndef ComponentTest
-      BaseDaemon::startDaemon();
+      startDaemon();
       std::vector<std::string> cfgs = getChildren(
                                         rootPath_ + "/global_config", false);
       for (size_t i = 0; i < cfgs.size(); ++i) {
@@ -80,7 +79,7 @@ namespace gperun {
 
     void connect(std::string str, int timeout) {
 #ifndef ComponentTest
-      BaseDaemon::connect(str, timeout);
+      gnet::ZookeeperDaemon::connect(str, timeout);
 #endif
     }
 

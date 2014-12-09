@@ -14,6 +14,6 @@
 
 int main(int argc, char** argv) {
   testing::InitGoogleTest(&argc, argv);
-  GSQLLogger logger(argv[0], "/tmp/log/unit");
+  gutil::GSQLLogger logger(argv[0], "/tmp/log/unit");
   return RUN_ALL_TESTS();
 }

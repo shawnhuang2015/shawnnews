@@ -1,0 +1,26 @@
+# this test only needs to start a zk 
+# server and a kafka server.
+# 
+
+# Some Global stuff
+GLOG_DIR: /SOME_DIR/tmp/logs
+# the directory that GPE, GSE binaries and configuration
+# files, scripts are put
+DEPLOY_DIR: /SOME_DIR/tmp/rc
+           
+KAFKA:
+    machines:
+        - ip: 127.0.0.1
+          port: 13011
+    kafka_home: /SOME_DIR/tmp/kafka    
+    pkg_name: kafka_2.8.0-0.8.0-beta1.tar.gz
+    jmx_port: 13012
+
+ZOOKEEPER:
+    machines:
+        - ip: 127.0.0.1
+          port: 13010
+    # where we install zookeeper
+    zk_home: /SOME_DIR/tmp/zk
+    pkg_name: zookeeper-3.4.5.tar.gz
+

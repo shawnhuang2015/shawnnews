@@ -1,0 +1,95 @@
+EdgeTypeConfigs: 
+- Attributes: 
+  - AttributeName: role
+    AttributeType: STRING
+  ColumnMapping: 
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 1
+  - PrimitiveIndex: 
+      SrcColIndex: 2
+  EdgeId: 0
+  EdgeName: roles
+  FileName: /vagrant/data/testdata/roles.csv
+  FromVertexAttributes: 
+  - AttributeName: id
+    AttributeType: UINT32
+  - AttributeName: name
+    AttributeType: STRING
+  FromVertexId: 0
+  FromVertexName: person
+  Header: true
+  IsDirected: true
+  MaxTokenCount: 3
+  SchemaLen: 3
+  Separator: ','
+  ToVertexAttributes: 
+  - AttributeName: id
+    AttributeType: UINT32
+  - AttributeName: title
+    AttributeType: STRING
+  - AttributeName: country
+    AttributeType: UINT32
+    Enumerator: 1
+  - AttributeName: year
+    AttributeType: UINT32
+  ToVertexId: 1
+  ToVertexName: movie
+GraphName: neo4j
+JobName: neo4j_load_job
+LoaderConfigVersion: 1
+VertexTypeConfigs: 
+- Attributes: 
+  - AttributeName: id
+    AttributeType: UINT32
+  - AttributeName: name
+    AttributeType: STRING
+  ColumnMapping: 
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 1
+  FileName: /vagrant/data/testdata/persons.csv
+  Header: true
+  MaxTokenCount: 2
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT32
+  SchemaLen: 3
+  Separator: ','
+  VertexId: 0
+  VertexName: person
+- Attributes: 
+  - AttributeName: id
+    AttributeType: UINT32
+  - AttributeName: title
+    AttributeType: STRING
+  - AttributeName: country
+    AttributeType: UINT32
+    Enumerator: 1
+  - AttributeName: year
+    AttributeType: UINT32
+  ColumnMapping: 
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 0
+  - PrimitiveIndex: 
+      SrcColIndex: 1
+  - PrimitiveIndex: 
+      SrcColIndex: 2
+  - PrimitiveIndex: 
+      SrcColIndex: 3
+  FileName: /vagrant/data/testdata/movies.csv
+  Header: true
+  MaxTokenCount: 4
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT32
+  SchemaLen: 5
+  Separator: ','
+  VertexId: 1
+  VertexName: movie
