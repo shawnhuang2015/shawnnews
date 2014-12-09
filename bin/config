@@ -5,7 +5,7 @@ SegSizeInBits=20
 # e.g. DotDir=/usr/bin/
 DotDir=/usr/bin/
 WorkDir=./Work/
-CanonnicalLoader=/vagrant/repo2/product/build/debug/customer/core_ext/gse/gse_canonnical_loader
+CanonnicalLoader=/vagrant/repo2/product/build/release/customer/core_ext/gse/gse_canonnical_loader
 GraphStoreDir=/data/rc4/gstore/0/
 
 
