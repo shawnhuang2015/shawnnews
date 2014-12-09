@@ -1,4 +1,4 @@
-CatalogDir=../src/core/gse/gse2/loader/java/catalog
+CatalogDir=./catalog
 SegSizeInBits=20
 # To generate visiualization of the graph schema in pdf format, you need to install graphviz (http://www.graphviz.org/) 
 # on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
