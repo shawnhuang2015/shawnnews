@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
 
   gse2::SysConfig sysConfig("/data/rc4/config/gse_loader/gse_loader1.conf"); 
   sysConfig.printout(); 
-  GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader"); 
+  gutil::GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader"); 
 
   std::string graphConfigPath(argv[2]);
   //gse2::GraphConfig graphConfig(/vagrant/repo2/product/bin/output/neo4j.yaml"); 

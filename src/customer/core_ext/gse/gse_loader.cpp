@@ -101,7 +101,7 @@ int main(int argc, char ** argv) {
   std::vector<std::string> config_info = gutil::tokenize_file(std::string(argv[1]));
   gse2::SysConfig sysConfig(config_info[0]);
   sysConfig.printout();
-  GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader");
+  gutil::GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader");
   gse2::GraphConfig graphConfig(config_info[1]);
   graphConfig.printout();
   uint32_t worker_id = atoi(config_info[2].c_str());
