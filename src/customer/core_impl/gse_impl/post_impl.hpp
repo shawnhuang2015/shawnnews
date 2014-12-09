@@ -114,22 +114,12 @@ namespace UDIMPL {
     bool processOneVertexNoAttribs(Json::Value &VertexNode, bool &newVertex){
       newVertex = false;
       std::string nodeIDStr = VertexNode.get("id", "").asString();
-      vidmap_itr_t itr = oneReq_maps_->idmaps_.find(nodeIDStr);
-      if (itr != oneReq_maps_->idmaps_.end()) {  // should always succeed
-        if (itr->second.new_) {
-          newVertex = true;
-          /* after match this, set flag new_ to false:
-             * this serves 2 corner cases
-             * 1) nodelist has duplicate id ...
-             * 2) a new node exists in edge but not in node list
-             *
-             */
-          itr->second.new_ = false;
-        }
+      VertexLocalId_t vid = getVidfromUid(nodeIDStr, newVertex);
+      if(vid != (VertexLocalId_t)-1){
         deltaWriter_.write_flag(
               (uint8_t) topology4::DeltaRecord_Vertex,
                 (uint8_t) topology4::DeltaAction_Update);
-        deltaWriter_.write(itr->second.vid_);
+        deltaWriter_.write(vid);
         // no attributes in this situation.
         //writeVertexAttribute(VertexNode);
         deltaWriter_.write_watermark();
