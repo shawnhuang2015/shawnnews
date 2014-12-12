@@ -4,11 +4,4 @@ Author: Mingxi Wu
 
 The comprehensive doc is at https://graphsql.atlassian.net/wiki/display/GS/GraphSQL+Shell+Guide
 
-To run the shell, make sure run.sh is executable (chmod 777). Then, type ./run.sh
-Or, you can do
-
-java -jar gsql.jar config
-
-In config file, we put where we store the catalog and online help file. We also store the segment size.
-If you installed graphviz, you can set the dot path such that the graph schema can be visualized in pdf file.
 
