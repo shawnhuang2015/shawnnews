@@ -94,6 +94,11 @@ void EngineJobListener::ReadRequest(std::string& requestid,
           ready_queue_.back();
       requestid = requestPair.get<0>();
       request = requestPair.get<1>();
+      if(requestid == "STOPGPE"){
+        daemon_->quit_ = true;
+        requestid = "";
+        request = "";
+      }
       ready_queue_.pop_back();
       GVLOG(Verbose_UDFHigh) << "running " << requestid << ", " << request;
       return;

@@ -7,14 +7,19 @@
  *      Author: lichen
  ******************************************************************************/
 
-#include <core_ext/gpe/serviceapi.hpp>
+#include "serviceapi.hpp"
 #include <core_impl/gpe_impl/impl.hpp>
+#ifndef OPENCODE
 #include <core_impl/gse_impl/post_impl.hpp>
+#endif
 
 int main(int argc, char** argv) {
-  UDIMPL::GPE_UD_Impl impl;
+  UDIMPL::UDFRunner impl;
+#ifndef OPENCODE
   UDIMPL::UD_PostJson2Delta postdelta_impl;
-  gperun::ServiceAPI api(argc, argv, &impl, &postdelta_impl);
-  api.RunMain();
+  gperun::ServiceAPI::Run(argc, argv, &impl, &postdelta_impl);
+#else
+  gperun::ServiceAPI::Run(argc, argv, &impl);
+#endif
 }
 

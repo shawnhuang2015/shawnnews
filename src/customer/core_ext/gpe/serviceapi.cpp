@@ -14,7 +14,14 @@
 namespace gperun{
   ServiceAPI::ServiceAPI(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl){
     serviceimpl_ = serviceimpl;
+    create_postdelta_impl_ = false;
     postdelta_impl_ = postdelta_impl;
+#ifndef NOPOST
+    if(postdelta_impl_ == NULL){
+      postdelta_impl_ = new gse2::PostJson2Delta();
+      create_postdelta_impl_ = true;
+    }
+#endif
     service_ = NULL;
 #ifdef BUILDVERSION
     std::string versStr = BUILDVERSION;
@@ -49,6 +56,16 @@ namespace gperun{
     }
   }
 
+  ServiceAPI::~ServiceAPI(){
+    if(create_postdelta_impl_)
+      delete postdelta_impl_;
+  }
+
+  void ServiceAPI::Run(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl){
+    ServiceAPI api(argc, argv, serviceimpl, postdelta_impl);
+    api.RunMain();
+  }
+
   void ServiceAPI::RunMain(){
     std::string engineConfigFile = config_info_[0];
     YAML::Node configuration_root = gperun::GPEConfig::LoadConfig(engineConfigFile);
@@ -77,7 +94,7 @@ namespace gperun{
     }
     runner->Topology_PullDelta();
     if(serviceimpl_ != NULL)
-      serviceimpl_->Init(*this, configuration_root);
+      serviceimpl_->Init(*this);
     gperun::GPEDaemon gpe_daemon(
           gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_,
           "/gdbms");

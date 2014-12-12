@@ -9,48 +9,41 @@
 #ifndef SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 #define SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 
-#include "kneighborsize.hpp"
-#include "../udt.hpp"
-#include <core_ext/gpe/serviceapi.hpp>
 #include <core_ext/gpe/serviceimplbase.hpp>
+#include "kneighborsize.hpp"
+
+using namespace gperun;
 
 namespace UDIMPL {
 
-  class GPE_UD_Impl : public gperun::ServiceImplBase{
+  class UDFRunner : public ServiceImplBase{
   public:
-    /// one time initialization for service.
-    void Init(gperun::ServiceAPI& serviceapi, YAML::Node& configuration_node) {
-       // std::cout << *serviceapi.GetTopologyMeta() << "\n";
-    }
-
-    /// run one query request.
-    bool RunQuery(gperun::ServiceAPI& serviceapi, gpelib4::EngineServiceRequest& request){
-      if(request.request_function_== "kneighborsize"){
-        RunUDF_KNeighborSize(serviceapi, request);
-        return true;
-      }
-      return false;
+    bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
+      if(request.request_function_== "kneighborsize")
+        return RunUDF_KNeighborSize(serviceapi, request);
+      return false; /// not a valid request
     }
 
   private:
-
-    void RunUDF_KNeighborSize(gperun::ServiceAPI& serviceapi, gpelib4::EngineServiceRequest& request){
-      typedef KNeighborSize UDF_t;
+    bool RunUDF_KNeighborSize(ServiceAPI& serviceapi, EngineServiceRequest& request){
+      // sample to convert vid.
       VertexLocalId_t local_start;
-      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start)){
-        return;
-      }
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start))
+        return false;
       request.outputwriter_->WriteStartObject();
-      gapi4::GraphAPI* graphapi = serviceapi.CreateGraphAPI(request);
-      VertexAttribute* vattr = graphapi->GetOneVertex(local_start);
       request.outputwriter_->WriteName("vertex");
-      vattr->WriteToJson(*request.outputwriter_);
+      // sample to use GraphAPI
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(request);
+      graphapi->GetOneVertex(local_start)->WriteToJson(*request.outputwriter_);
       delete graphapi;
       request.outputwriter_->WriteName("neighborsize");
+      // sample to run one UDF
+      typedef KNeighborSize UDF_t;
       UDF_t udf(3, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, serviceapi.GetAdaptor(&request, &udf));
-      request.output_idservice_vids.push_back(local_start);
       request.outputwriter_->WriteEndObject();
+      request.output_idservice_vids.push_back(local_start);
+      return true;
     }
 
   };

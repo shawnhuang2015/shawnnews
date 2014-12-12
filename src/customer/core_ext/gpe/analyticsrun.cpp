@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
 
   // Sets the registry to be pure topologies only
   gperun::UDFRegistry& registry = gperun::Registries<char>::pureTopologyRegistry;
-  UDIMPL::GPE_UD_Impl::registerAll();
+  UDIMPL::UDFRunner::registerAll();
 
   if (displayHelp) {
     // Display the help
