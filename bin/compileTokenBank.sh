@@ -1,8 +1,12 @@
 #!/bin/sh
 
-export LD_LIBRARY_PATH='.'
+SHARED_LIB=./UDF
+export "LD_LIBRARY_PATH=$SHARED_LIB"
 
-g++ -fPIC -shared TokenBank.cpp -o TokenBank.so
+g++ -fPIC -shared "$SHARED_LIB/TokenBank1.cpp" -o "$SHARED_LIB/TokenBank1.so"
+g++ -fPIC -shared "$SHARED_LIB/TokenBankM.cpp" -o "$SHARED_LIB/TokenBankM.so"
+g++ -fPIC -shared "$SHARED_LIB/ConditionBank1.cpp" -o "$SHARED_LIB/ConditionBank1.so"
+g++ -fPIC -shared "$SHARED_LIB/ConditionBankM.cpp" -o "$SHARED_LIB/ConditionBankM.so"
 
 g++  Driver.cpp -ldl -o a.out
 

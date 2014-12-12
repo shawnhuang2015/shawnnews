@@ -10,8 +10,8 @@ if [ ! -d "$LOGDIR" ]; then
   mkdir  "$LOGDIR"
 fi
 
+export LD_LIBRARY_PATH='./UDF'
 
-export LD_LIBRARY_PATH='/vagrant/repo2/product/bin/'
 
 JAR=gsql.jar
 

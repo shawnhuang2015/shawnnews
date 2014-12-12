@@ -4,8 +4,8 @@ SegSizeInBits=20
 # on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
 # e.g. DotDir=/usr/bin/
 DotDir=/usr/bin/
-WorkDir=./Work/
-CanonnicalLoader=/vagrant/repo2/product/build/release/customer/core_ext/gse/gse_canonnical_loader
+WorkDir=./work/
+CanonnicalLoader=/vagrant/repo/product/build/release/customer/core_ext/gse/gse_canonnical_loader
 GraphStoreDir=/data/rc4/gstore/0/
 
 
