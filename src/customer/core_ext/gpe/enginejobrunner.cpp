@@ -271,7 +271,51 @@ namespace gperun {
       request->outputwriter_->WriteStartObject();
       request->outputwriter_->WriteName("degreehistogram").WriteString(result);
       request->outputwriter_->WriteEndObject();
-    } else {
+    }else if(func == "edge_exists"){
+    std::string src_str = "";
+    std::string tgt_str = "";
+    if(!dataRoot["translate_ids"].isNull()){
+      src_str = dataRoot["translate_ids"][0].asString();
+      tgt_str = dataRoot["translate_ids"][1].asString();
+    }else{
+      src_str = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
+      tgt_str  = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][1]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][1]["id"].asString();
+    }
+
+
+    if(!dataRoot["type"].isNull()){
+      request->error_ = true;
+      request->message_ = "edge_exists function requires you to specify type:int";
+      return;
+    }
+
+    uint32_t edge_type =dataRoot["type"].asUInt();
+
+    VertexLocalId_t src = 0;
+    VertexLocalId_t tgt = 0;
+
+    if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, src_str, src, request->querystate_))
+      return;
+    if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, tgt_str, tgt, request->querystate_))
+      return;
+    gapi4::GraphAPI api(topology_, &request->querystate_);
+    gapi4::EdgesCollection edgeresults;
+    api.GetOneEdge(src,tgt, edgeresults);
+
+    bool edge_exists = false;
+    // two fail cases:  the edge exists but is the wrong type.
+    // the edge does not exist for any type.
+    while(edgeresults.NextEdge() && !edge_exists){
+      topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
+      edge_exists = edgeattr->type() == edge_type;
+    }
+
+
+    response_writer.WriteStartObject();
+    response_writer.WriteName("edge_exists");
+    response_writer.WriteBool(edge_exists);
+
+  } else {
       request->message_ = "error_: incorrect function " + func;
       request->error_ = true;
     }
