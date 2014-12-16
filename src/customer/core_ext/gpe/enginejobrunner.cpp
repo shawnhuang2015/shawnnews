@@ -283,24 +283,24 @@ namespace gperun {
     }
 
 
-    if(!dataRoot["type"].isNull()){
+    if(!dataRoot["etype"].isNull()){
       request->error_ = true;
       request->message_ = "edge_exists function requires you to specify type:int";
       return;
     }
 
-    uint32_t edge_type =dataRoot["type"].asUInt();
+    uint32_t edge_type =dataRoot["etype"].asUInt();
 
     VertexLocalId_t src = 0;
     VertexLocalId_t tgt = 0;
 
-    if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, src_str, src, request->querystate_))
+    if (!serviceapi_->UIdtoVId(*request, src_str, src))
       return;
-    if (!Util::UIdtoVId(topology_, maps, request->message_, request->error_, tgt_str, tgt, request->querystate_))
+    if (!serviceapi_->UIdtoVId(*request, tgt_str, tgt))
       return;
-    gapi4::GraphAPI api(topology_, &request->querystate_);
-    gapi4::EdgesCollection edgeresults;
-    api.GetOneEdge(src,tgt, edgeresults);
+    gapi4::GraphAPI api(topology_, request->querystate_);
+      gapi4::EdgesCollection edgeresults;
+    api.GetSpecifiedEdges(src,tgt, edgeresults);
 
     bool edge_exists = false;
     // two fail cases:  the edge exists but is the wrong type.
@@ -311,9 +311,10 @@ namespace gperun {
     }
 
 
-    response_writer.WriteStartObject();
-    response_writer.WriteName("edge_exists");
-    response_writer.WriteBool(edge_exists);
+    request->outputwriter_->WriteStartObject();
+    request->outputwriter_->WriteName("edge_exists");
+    request->outputwriter_->WriteBool(edge_exists);
+    request->outputwriter_->WriteEndObject();
 
   } else {
       request->message_ = "error_: incorrect function " + func;
