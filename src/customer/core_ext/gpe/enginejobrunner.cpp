@@ -22,6 +22,99 @@
 
 namespace gperun {
 
+  class PrintOneVertex : public gpelib4::BaseUDF {
+  public:
+    // These consts are required by the engine.
+    //Mode_SingleValue or Mode_MultipleValue or Mix Value
+    static const gpelib4::ValueTypeFlag ValueTypeMode_ = gpelib4::Mode_SingleValue;
+    //Mode_NotDefined or Mode_Defined
+    static const gpelib4::UDFDefineInitializeFlag InitializeMode_ = gpelib4::Mode_Initialize_Globally;
+    //Mode_NotDefined or Mode_Defined
+    static const gpelib4::UDFDefineFlag AggregateReduceMode_ = gpelib4::Mode_Defined;
+    //Mode_NotDefined or Mode_Defined
+    static const gpelib4::UDFDefineFlag CombineReduceMode_ = gpelib4::Mode_NotDefined;
+    //Mode_NotDefined or Mode_Defined
+    static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_Defined;
+    //Mode_NotDefined or Mode_Defined
+    static const gpelib4::UDFDefineFlag PrintMode_ = gpelib4::Mode_NotDefined;
+
+    // These typedefs are required by the engine.
+    typedef topology4::VertexAttribute V_ATTR;
+    typedef topology4::EdgeAttribute E_ATTR;
+    typedef uint8_t V_VALUE;
+    typedef uint8_t MESSAGE;
+
+    VertexLocalId_t start_node_;
+    gutil::JSONWriter* writer_;
+    bool vertexlevel_;
+    std::vector<VertexLocalId_t>& idservice_vids_;
+
+    PrintOneVertex(VertexLocalId_t start_node, gutil::JSONWriter* jsonwriter, bool vertexlevel, std::vector<VertexLocalId_t>& idservice_vids)
+      : gpelib4::BaseUDF(gpelib4::EngineProcessMode_ActiveVertices, 1),
+        start_node_(start_node),
+        writer_(jsonwriter),
+        vertexlevel_(vertexlevel),
+        idservice_vids_(idservice_vids){
+    }
+
+    void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE>* valuecontext) {
+      writer_->WriteStartObject();
+      if(!vertexlevel_){
+        writer_->WriteName("edges");
+        writer_->WriteStartArray();
+      }
+      valuecontext->Write(start_node_,1,true);
+    }
+
+    ALWAYS_INLINE void VertexMap( const VertexLocalId_t& id,
+                                  V_ATTR* vertexattr,
+                                  const V_VALUE& vertexvalue,
+                                  gpelib4::SingleValueMapContext<MESSAGE>* context) {
+      if(!vertexlevel_)
+        return;
+      writer_->WriteName("degree").WriteUnsignedInt(vertexattr->outgoing_degree());
+      writer_->WriteName("type").WriteUnsignedInt(vertexattr->type());
+      writer_->WriteName("attr");
+      vertexattr->WriteToJson(*writer_);
+    }
+
+    ALWAYS_INLINE void EdgeMap( const VertexLocalId_t& srcvid,
+                                V_ATTR* srcvertexattr,
+                                const V_VALUE& srcvertexvalue,
+                                const VertexLocalId_t& targetvid,
+                                V_ATTR* targetvertexattr,
+                                const V_VALUE& targetvertexvalue,
+                                E_ATTR* edgeattr,
+                                gpelib4::SingleValueMapContext<MESSAGE>* context) {
+      if(vertexlevel_)
+        return;
+      writer_->WriteStartObject();
+      writer_->WriteName("to_vid").WriteMarkVId(targetvid);
+      writer_->WriteName("type").WriteUnsignedInt(edgeattr->type());
+      idservice_vids_.push_back(targetvid);
+      writer_->WriteName("to_degree").WriteUnsignedInt(targetvertexattr->outgoing_degree());
+      writer_->WriteName("to_attr");
+      targetvertexattr->WriteToJson(*writer_);
+      writer_->WriteName("edgeattr");
+      edgeattr->WriteToJson(*writer_);
+      writer_->WriteEndObject();
+    }
+
+    ALWAYS_INLINE void Reduce( const VertexLocalId_t& vid,
+                               V_ATTR* vertexattr,
+                               const V_VALUE& singlevalue,
+                               const MESSAGE& accumulator,
+                               gpelib4::SingleValueContext<V_VALUE>* context) {
+    }
+
+    void EndRun(gpelib4::BasicContext* context) {
+      if(!vertexlevel_)
+        writer_->WriteEndArray();
+      writer_->WriteEndObject();
+    }
+
+  };
+
   void EngineJobRunner::Topology_Prepare() {
     // UDIMPL::GPE_UD_Impl::Topology_Prepare(topology_);
     if (postListener_ != NULL)
@@ -160,25 +253,32 @@ namespace gperun {
     Json::Reader jsonReader;
     jsonReader.parse(request->jsoptions_["payload"][0].asString(), dataRoot);
     std::string func = dataRoot["function"].asString();
-    if(func == "vattr"){
+    if(func == "vattr" || func == "vattr_udf"){
       std::string vidstr = "";
       if(!dataRoot["translate_ids"].isNull())
         vidstr = dataRoot["translate_ids"][0].asString();
       else
         vidstr = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
       VertexLocalId_t vid = 0;
-      if (!serviceapi_->UIdtoVId(*request, vidstr, vid)){
+      if (!serviceapi_->UIdtoVId(*request, vidstr, vid))
         return;
+      if(func == "vattr"){
+        gapi4::GraphAPI api(topology_, request->querystate_);
+        topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
+        request->outputwriter_->WriteStartObject();
+        if(v1 != NULL){
+          request->outputwriter_->WriteName("degree").WriteUnsignedInt(v1->outgoing_degree());
+          request->outputwriter_->WriteName("type").WriteUnsignedInt(v1->type());
+          request->outputwriter_->WriteName("attr");
+          v1->WriteToJson(*request->outputwriter_);
+        }
+        request->outputwriter_->WriteEndObject();
+      } else {
+        typedef PrintOneVertex UDF_t;
+        UDF_t udf(vid, request->outputwriter_, true, request->output_idservice_vids);
+        serviceapi_->RunUDF(request, serviceapi_->GetAdaptor(request, &udf));
       }
-      gapi4::GraphAPI api(topology_, request->querystate_);
-      topology4::VertexAttribute* v1 = api.GetOneVertex(vid);
-      request->outputwriter_->WriteStartObject();
-      if(v1 != NULL){
-        request->outputwriter_->WriteName("attr");
-        v1->WriteToJson(*request->outputwriter_);
-      }
-      request->outputwriter_->WriteEndObject();
-    } else if(func == "edges"){
+    } else if(func == "edges" || func == "edges_udf"){
       std::string vidstr = "";
       if(!dataRoot["translate_ids"].isNull())
         vidstr = dataRoot["translate_ids"][0].asString();
@@ -190,38 +290,44 @@ namespace gperun {
       VertexLocalId_t vid = 0;
       if (!serviceapi_->UIdtoVId(*request, vidstr, vid))
         return;
-      gapi4::GraphAPI api(topology_, request->querystate_);
-      gapi4::EdgesCollection edgeresults;
-      api.GetOneVertexEdges(vid, NULL, edgeresults);
-      request->outputwriter_->WriteStartObject();
-      request->outputwriter_->WriteName("edges");
-      request->outputwriter_->WriteStartArray();
-      uint32_t count = 0;
-      while (edgeresults.NextEdge()) {
+      if(func == "edges"){
+        gapi4::GraphAPI api(topology_, request->querystate_);
+        gapi4::EdgesCollection edgeresults;
+        api.GetOneVertexEdges(vid, NULL, edgeresults);
         request->outputwriter_->WriteStartObject();
-        VertexLocalId_t toid = edgeresults.GetCurrentToVId();
-        request->outputwriter_->WriteName("to_vid").WriteMarkVId(toid);
-        topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
-        request->outputwriter_->WriteName("type").WriteUnsignedInt(edgeattr->type());
-        request->output_idservice_vids.push_back(toid);
-        if(writetgtvattr){
+        request->outputwriter_->WriteName("edges");
+        request->outputwriter_->WriteStartArray();
+        uint32_t count = 0;
+        while (edgeresults.NextEdge()) {
+          VertexLocalId_t toid = edgeresults.GetCurrentToVId();
           topology4::VertexAttribute* v1 = api.GetOneVertex(toid);
-          if(v1 != NULL){
+          if(v1 == NULL)
+            continue;
+          request->outputwriter_->WriteStartObject();
+          request->outputwriter_->WriteName("to_vid").WriteMarkVId(toid);
+          topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
+          request->outputwriter_->WriteName("type").WriteUnsignedInt(edgeattr->type());
+          request->output_idservice_vids.push_back(toid);
+          if(writetgtvattr){
             request->outputwriter_->WriteName("to_degree").WriteUnsignedInt(v1->outgoing_degree());
             request->outputwriter_->WriteName("to_attr");
             v1->WriteToJson(*request->outputwriter_);
           }
+          if(writedgeeattr){
+            request->outputwriter_->WriteName("edgeattr");
+            edgeattr->WriteToJson(*request->outputwriter_);
+          }
+          request->outputwriter_->WriteEndObject();
+          if(++count == limit)
+            break;
         }
-        if(writedgeeattr){
-          request->outputwriter_->WriteName("edgeattr");
-          edgeattr->WriteToJson(*request->outputwriter_);
-        }
+        request->outputwriter_->WriteEndArray();
         request->outputwriter_->WriteEndObject();
-        if(++count == limit)
-          break;
+      } else{
+        typedef PrintOneVertex UDF_t;
+        UDF_t udf(vid, request->outputwriter_, false, request->output_idservice_vids);
+        serviceapi_->RunUDF(request, serviceapi_->GetAdaptor(request, &udf));
       }
-      request->outputwriter_->WriteEndArray();
-      request->outputwriter_->WriteEndObject();
     } else if(func == "randomids"){
       bool writeattr = dataRoot["attr"].asBool();
       uint32_t count = dataRoot["count"].isNull() ? 10 : dataRoot["count"].asUInt();
@@ -272,51 +378,51 @@ namespace gperun {
       request->outputwriter_->WriteName("degreehistogram").WriteString(result);
       request->outputwriter_->WriteEndObject();
     }else if(func == "edge_exists"){
-    std::string src_str = "";
-    std::string tgt_str = "";
-    if(!dataRoot["translate_ids"].isNull()){
-      src_str = dataRoot["translate_ids"][0].asString();
-      tgt_str = dataRoot["translate_ids"][1].asString();
-    }else{
-      src_str = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
-      tgt_str  = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][1]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][1]["id"].asString();
-    }
+      std::string src_str = "";
+      std::string tgt_str = "";
+      if(!dataRoot["translate_ids"].isNull()){
+        src_str = dataRoot["translate_ids"][0].asString();
+        tgt_str = dataRoot["translate_ids"][1].asString();
+      }else{
+        src_str = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][0]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][0]["id"].asString();
+        tgt_str  = boost::lexical_cast<std::string>(dataRoot["translate_typed_ids"][1]["type"].asInt()) + "_" +  dataRoot["translate_typed_ids"][1]["id"].asString();
+      }
 
 
-    if(!dataRoot["etype"].isNull()){
-      request->error_ = true;
-      request->message_ = "edge_exists function requires you to specify type:int";
-      return;
-    }
+      if(!dataRoot["etype"].isNull()){
+        request->error_ = true;
+        request->message_ = "edge_exists function requires you to specify type:int";
+        return;
+      }
 
-    uint32_t edge_type =dataRoot["etype"].asUInt();
+      uint32_t edge_type =dataRoot["etype"].asUInt();
 
-    VertexLocalId_t src = 0;
-    VertexLocalId_t tgt = 0;
+      VertexLocalId_t src = 0;
+      VertexLocalId_t tgt = 0;
 
-    if (!serviceapi_->UIdtoVId(*request, src_str, src))
-      return;
-    if (!serviceapi_->UIdtoVId(*request, tgt_str, tgt))
-      return;
-    gapi4::GraphAPI api(topology_, request->querystate_);
+      if (!serviceapi_->UIdtoVId(*request, src_str, src))
+        return;
+      if (!serviceapi_->UIdtoVId(*request, tgt_str, tgt))
+        return;
+      gapi4::GraphAPI api(topology_, request->querystate_);
       gapi4::EdgesCollection edgeresults;
-    api.GetSpecifiedEdges(src,tgt, edgeresults);
+      api.GetSpecifiedEdges(src,tgt, edgeresults);
 
-    bool edge_exists = false;
-    // two fail cases:  the edge exists but is the wrong type.
-    // the edge does not exist for any type.
-    while(edgeresults.NextEdge() && !edge_exists){
-      topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
-      edge_exists = edgeattr->type() == edge_type;
-    }
+      bool edge_exists = false;
+      // two fail cases:  the edge exists but is the wrong type.
+      // the edge does not exist for any type.
+      while(edgeresults.NextEdge() && !edge_exists){
+        topology4::EdgeAttribute* edgeattr = edgeresults.GetCurrentEdgeAttribute();
+        edge_exists = edgeattr->type() == edge_type;
+      }
 
 
-    request->outputwriter_->WriteStartObject();
-    request->outputwriter_->WriteName("edge_exists");
-    request->outputwriter_->WriteBool(edge_exists);
-    request->outputwriter_->WriteEndObject();
+      request->outputwriter_->WriteStartObject();
+      request->outputwriter_->WriteName("edge_exists");
+      request->outputwriter_->WriteBool(edge_exists);
+      request->outputwriter_->WriteEndObject();
 
-  } else {
+    } else {
       request->message_ = "error_: incorrect function " + func;
       request->error_ = true;
     }

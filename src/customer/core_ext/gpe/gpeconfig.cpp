@@ -140,9 +140,9 @@ namespace gperun {
          it != rest_hosts.end(); ++it) {
       rest_incoming_host_strs_.push_back((*it)["ip"].as<std::string>("") + ":" + (*it)["incoming_port"].as<std::string>(""));
     }
-    rebuildsetting_.sleep_no_job_ = root["INSTANCE"]["rebuild_nojob_sleepsec"].as<unsigned int>(60);
-    rebuildsetting_.sleep_between_jobs_ = root["INSTANCE"]["rebuild_betweenjob_sleepsec"].as<unsigned int>(60);
-    rebuildsetting_.sleep_switch_topology_ptr_ = root["INSTANCE"]["rebuild_switch_sleepsec"].as<unsigned int>(60);
+    rebuildsetting_.sleep_no_job_ = root["INSTANCE"]["rebuild_nojob_sleepsec"].as<unsigned int>(10);
+    rebuildsetting_.sleep_between_jobs_ = root["INSTANCE"]["rebuild_betweenjob_sleepsec"].as<unsigned int>(10);
+    rebuildsetting_.sleep_switch_topology_ptr_ = root["INSTANCE"]["rebuild_switch_sleepsec"].as<unsigned int>(10);
     std::cout << "enabledelta: " << enabledelta_ << "\n"
               << "accuratedegree: " << accuratedegree_ << "\n"
               << "udfmode: " << udfmode_ << "\n"

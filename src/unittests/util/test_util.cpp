@@ -248,7 +248,7 @@ TEST(UTILTEST, Write_Read_Binary) {
   {
     size_t filesize = boost::filesystem::file_size(file);
     char* data = new char[filesize];
-    gmmnt::GlobalDiskIO::readonefile(256 * 1024, file, filesize, data);
+    gmmnt::GlobalDiskIO::readonefile(file, data, filesize);
     uint8_t* ptr = (uint8_t*)data;
     for(size_t i = 0; i < size; ++i){
       ASSERT_EQ(gutil::CompactWriter::readCompressed(ptr), i);
@@ -302,17 +302,16 @@ TEST(UTILTEST, GCharBuffer) {
   }
 }
 
-
 TEST(UTILTEST, DISABLED_TestingReadPerformance1) {
   std::string filename = "/Users/lichen/Downloads/dataset/twitter_rv.zip";
   char buffer[4096];
   {
     gutil::GTimer timer;
-    FILE* file = fopen(filename.c_str(), "r");
+    int file = open(filename.c_str(), O_RDONLY);
     for(size_t i = 0; i < 4000; ++i)
-      gmmnt::GlobalDiskIO::readfilebinary(file, i << 20, 4096, buffer);
-    fclose(file);
-    timer.Stop("fread");
+      gmmnt::GlobalDiskIO::RawReadFileBinary(file, i << 20, 4096, buffer);
+    close(file);
+    timer.Stop("C read");
   }
 }
 
@@ -340,8 +339,7 @@ TEST(UTILTEST, DISABLED_TestingReadPerformance3) {
     std::string srcfilename = "/Users/lichen/Downloads/dataset/twitter_rv.zip";
     size_t filesize = boost::filesystem::file_size(srcfilename);
     char* data = new char[filesize];
-    gmmnt::GlobalDiskIO::readonefile(1 << 20, srcfilename,
-                                     filesize, data);
+    gmmnt::GlobalDiskIO::readonefile(srcfilename, data, filesize);
     filesize -= filesize % 4096;
     gutil::GTimer timer;
     int file = open(filename.c_str(), O_RDWR| O_NONBLOCK);
