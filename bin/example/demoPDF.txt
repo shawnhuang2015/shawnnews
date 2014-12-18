@@ -1,0 +1,39 @@
+########################################
+# Clean up everything before creating. #
+########################################
+
+DROP GRAPH dvdtGraph CASCADE
+
+###############################################
+# Creates the time tree for finding messages. #
+###############################################
+
+CREATE VERTEX time_tree_vertex (primary_id id string, beginningTime uint32, endingTime uint32)
+CREATE VERTEX message (primary_id id string, secondary_id tickerVenueSequenceNumber string, ticker string compress, venue string compress, messageTime uint32, messageAction string compress, buy bool, price uint32, size uint32, entryTime uint32)
+
+CREATE DIRECTED EDGE time_tree_edge (from time_tree_vertex, to time_tree_vertex, beginningTime uint32, endingTime uint32)
+CREATE DIRECTED EDGE message_time (from time_tree_vertex, to message)
+
+###########################################
+# Creates the snapshot / order structure. #
+###########################################
+
+CREATE VERTEX order (primary_id id string, secondary_id tickerVenueId string, ticker string compress, venue string compress)
+CREATE VERTEX parentOrder (primary_id id string, ticker string compress)
+CREATE VERTEX snapshot (primary_id id string)
+CREATE VERTEX snapshot_priceLevel (primary_id id string)
+CREATE VERTEX bucket (primary_id id string, secondary_id tickerVenueId string, client string compress, trader string compress, algo string compress, orderPlacer string compress, clientClass uint32,  bucketSubmissionTime uint32)
+
+CREATE DIRECTED EDGE snapshot_to_priceLevel (from snapshot, to snapshot_priceLevel)
+CREATE DIRECTED EDGE priceLevel_to_order (from snapshot_priceLevel, to order, size uint32, entryTime uint32)
+CREATE UNDIRECTED EDGE message_to_order (from message, to order)
+CREATE UNDIRECTED EDGE message_to_bucket (from message, to bucket)
+CREATE UNDIRECTED EDGE parentOrder_to_order (from parentOrder, to order)
+CREATE UNDIRECTED EDGE parentOrder_to_bucket (from parentOrder, to bucket)
+
+#############################
+# Creates the graph itself. #
+#############################
+
+CREATE GRAPH dvdtGraph (time_tree_vertex, message, time_tree_edge, message_time, order, parentOrder, snapshot, snapshot_priceLevel, bucket, snapshot_to_priceLevel, priceLevel_to_order, message_to_order, message_to_bucket, parentOrder_to_order, parentOrder_to_bucket)
+EXPORT SCHEMA dvdtGraph
