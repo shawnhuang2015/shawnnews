@@ -7,6 +7,6 @@ DotDir=/usr/bin/
 WorkDir=./work/
 CanonnicalLoader=/vagrant/repo/product/build/release/customer/core_ext/gse/gse_canonnical_loader
 GraphStoreDir=/data/rc4/gstore/0/
-#GSELoaderConfig=/data/rc4/config/gse_loader/gse_loader1.conf
+GSELoaderConfig=/data/rc4/config/gse_loader/gse_loader1.conf
 
 

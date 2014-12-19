@@ -72,6 +72,19 @@ extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[]
 
 }
 
+extern "C" bool GreaterThan3_2(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
+
+  for (int i=0; i < iTokenNum; i++){
+    int tmp = atoi(iToken[i]);
+    if( tmp <= 3) 
+      return false;
+  }
+  return true;
+}
+
+
+
+
 
 /**
  *  Unit testing of the token bank functions
