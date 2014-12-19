@@ -73,6 +73,8 @@ void LoadTopology4(std::string datapath, std::string graphStore) {
   topologyprinter.PrintVertexAttributes(true); 
   topologyprinter.PrintEdges( 
       topology4::EdgeBlockReaderSetting(true, true, true)); 
+  remove(dumpConfigFile.c_str());
+
 } 
 
 /**
