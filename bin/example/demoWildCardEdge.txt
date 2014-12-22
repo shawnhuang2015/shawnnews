@@ -1,0 +1,20 @@
+
+drop graph neo2 cascade
+drop edge test
+
+create directed edge test (from *, to *, att string)
+create graph neo2 (person, movie, test)
+
+
+drop job neo2job
+create loading job neo2job for graph neo2
+load "/vagrant/data/testdata/persons.csv" to vertex person values($0, $0, Concat("abc",$1)) where GreaterThan3($0)  using separator=",", header="true";
+load "/vagrant/data/testdata/movies.csv" to vertex movie values($0, $0, NULL, $2, NULL) using separator=",", header="true";
+load "/vagrant/data/testdata/roles.csv" to edge test values($0, $1, "efg")  using separator=",", header="true", from="person", to="movie";
+end
+
+clear graph store
+run job neo2job 100
+
+
+
