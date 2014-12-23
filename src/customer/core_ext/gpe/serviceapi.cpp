@@ -81,7 +81,7 @@ namespace gperun{
     gperun::GPEDaemon gpe_daemon(gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_, "/gdbms");
     if(msgqueuefactory_ == NULL){
 #ifndef ComponentTest
-      msgqueuefactory_ = new gnet::KAFKAMessageQueueFactory(config_info_[1], &gpe_daemon);
+      msgqueuefactory_ = new gnet::KAFKAMessageQueueFactory(config_info_[0], &gpe_daemon);
 #else
       msgqueuefactory_ = new gnet::DummyMessageQueueFactory();
 #endif
