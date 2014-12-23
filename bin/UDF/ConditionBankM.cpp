@@ -12,6 +12,8 @@
  *      @param: iToken: 1 or M input tokens, each pointed by one char pointer 
  *      @param: iTokenLen: each input token's length
  *
+ *      Note: extern "C" make C++ compiler not change/mangle the function name.
+ *
  *   The UDF token conversion functions will take M input char array and do a customized check.
  *   Then, return true or false depending on the tokens pass the condition or not. 
  *
