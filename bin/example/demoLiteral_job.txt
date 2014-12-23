@@ -1,5 +1,4 @@
 drop job neojob2
-#load "/vagrant/data/testdata/movies.csv" to vertex movie values($0, $0, Reverse(Reverse($1)), 2, $3) using separator=",", header="true";
 create loading job neojob2 for graph neo4j
  load "/vagrant/data/testdata/persons.csv" to vertex person values($0, $0, Concat("abc",$1)) using separator=",", header="true";
  load "/vagrant/data/testdata/movies.csv" to vertex movie values($0, $0, Reverse(Reverse($1)), $2, 2014) using separator=",", header="true";
