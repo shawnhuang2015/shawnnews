@@ -16,6 +16,9 @@
  *       @param: oTokenLen: the output token length 
  *
  *       Note: extern "C" make C++ compiler not change/mangle the function name.
+ *       Note: To avoid array out of boundary issue in oToken buffer, it is 
+ *             recommended to add semantic check to ensure oToken length does not exceed 
+ *             OutputTokenBufferSize parameter specified in the shell config.
  *
  *    The UDF token conversion functions will take an input char array and do a customized conversion.
  *    Then, put the converted char array to output char buffer.

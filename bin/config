@@ -1,4 +1,4 @@
-CatalogDir=./catalog
+CatalogDir=/vagrant/repo/product/src/core/gse/gse2/loader/java/catalog
 SegSizeInBits=20
 # To generate visiualization of the graph schema in pdf format, you need to install graphviz (http://www.graphviz.org/) 
 # on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
@@ -7,5 +7,7 @@ DotDir=/usr/bin/
 WorkDir=./work/
 CanonnicalLoader=/vagrant/repo/product/build/release/customer/core_ext/gse/gse_canonnical_loader
 GraphStoreDir=/data/rc4/gstore/0/
+GSELoaderConfig=/data/rc4/config/gse_loader/gse_loader1.conf
+OutputTokenBufferSize=200
 
 

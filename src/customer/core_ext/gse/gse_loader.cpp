@@ -25,6 +25,8 @@
 #include <gutil/gstring.hpp>
 
 
+#include <iostream>
+#include <fstream>
 #include <gutil/filelinereader.hpp>
 #include "topology4/topologyprinter.hpp"
 #include "topology4/deltarebuilder.hpp"
@@ -38,14 +40,47 @@ std::string topologycfgfile_ = "";
 std::string outputpath_ = "/tmp/gpe";
 
 
-void LoadTopology4(std::string datapath) {
-  gmmnt::GlobalInstances instance("/data/rc4/config/gpe/gpe1.conf");
+void LoadTopology4(std::string datapath, std::string graphStore) {
+  //generate  a dummy gpe config file ".dump_config.yaml"
+  std::string dumpConfigFile = ".dump_config.yaml";
+  ofstream dumpConfig;
+  dumpConfig.open (dumpConfigFile.c_str());
+  dumpConfig<< "INSTANCE:\n";
+  dumpConfig<< "    cache_store_path: /data/rc4/tmp/cache_store\n";
+  dumpConfig<< "    engine_setting:\n";
+  dumpConfig<< "        bucket_split_perpartition: 1\n";
+  dumpConfig<< "        num_running_threads: 0\n";
+  dumpConfig<< "    executable: poc_gpe_server\n";
+  dumpConfig<< "    get_request_timeoutsec: 10\n";
+  dumpConfig<< "    graph_partition_snapshot:\n";
+  dumpConfig<< "        snapshot_path: " <<graphStore<<"\n";
+  dumpConfig<< "    ids_id: 1\n";
+  dumpConfig<< "    ip: 127.0.0.1\n";
+  dumpConfig<< "    machine_config:\n";
+  dumpConfig<< "        disks:\n";
+  dumpConfig<< "        -   compress_method: None\n";
+  dumpConfig<< "            num_load_threads: 1\n";
+  dumpConfig<< "            num_save_threads: 1\n";
+  dumpConfig<< "            path: /data/rc4/tmp/gdisks\n";
+  dumpConfig<< "            type: SSD\n";
+  dumpConfig<< "        memory_limit: 32768\n";
+  dumpConfig<< "        num_memory_server_threads: 2\n";
+  dumpConfig<< "    name: GPE_Server_1\n";
+  dumpConfig<< "    num_max_running_instances: 6\n";
+  dumpConfig<< "    num_post_threads: 3\n";
+  dumpConfig<< "    port: 7001\n";
+  dumpConfig<< "    prefetch_request_limit: 12\n";
+  dumpConfig<< "    prefetch_request_timeoutsec: 5\n";
+  dumpConfig<< "    queue_client_name_prefix: gpe\n";
+  dumpConfig.close();
+  gmmnt::GlobalInstances instance(dumpConfigFile);
   topology4::TopologyGraph topology(&instance, datapath);
   topology4::TopologyPrinter topologyprinter(&instance, &topology);
   topologyprinter.PrintMeta();
   topologyprinter.PrintVertexAttributes(true);
   topologyprinter.PrintEdges(
       topology4::EdgeBlockReaderSetting(true, true, true));
+  remove(dumpConfigFile.c_str());
 }
 
 void gse_loading_help(std::string config_file) {
@@ -100,6 +135,9 @@ int main(int argc, char ** argv) {
   }
   std::vector<std::string> config_info = gutil::tokenize_file(std::string(argv[1]));
   gse2::SysConfig sysConfig(config_info[0]);
+
+  std::string graphStore = sysConfig.graphs_.store_root_;
+
   sysConfig.printout();
   gutil::GSQLLogger logger(argv[0], sysConfig.GLOG_DIR_ + "/gse_loader");
   gse2::GraphConfig graphConfig(config_info[1]);
@@ -156,7 +194,7 @@ int main(int argc, char ** argv) {
        * in property file
        */
       if (dumpGraph) {
-        LoadTopology4(workerConfig.partitionRootDir_);
+        LoadTopology4(workerConfig.partitionRootDir_, graphStore);
       }
       exit(0);
     } else {

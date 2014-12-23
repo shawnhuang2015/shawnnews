@@ -1,0 +1,13 @@
+drop job demoMToJob
+create loading job demoMToJob for graph neo4j
+ load "/vagrant/data/TestData/roles.csv"  to edge roles values ($0,$1,$2) using Separator=",", Header="true";
+ load "/vagrant/data/TestData/persons2.csv" to vertex person values ($2,$2,$1), 
+                                            to vertex movie values ($3,$3,$4,$5,$6)
+                                            using Separator="|", Header="true";
+end
+
+
+clear graph store
+run job demoMToJob 100
+
+
