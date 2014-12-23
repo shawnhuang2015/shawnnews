@@ -2,6 +2,8 @@
 #include <gpelib4/enginedriver/enginedriver.hpp>
 #include <post_service/post_json2delta.hpp>
 #include <topology4/topologygraph.hpp>
+#include <gnet/kafka/kafkamessagequeuefactory.hpp>
+#include <gnet/dummymessagequeuefactory.hpp>
 #include <gutil/glogging.hpp>
 #include <gutil/gstring.hpp>
 #include "enginejoblistener.hpp"
@@ -12,10 +14,12 @@
 #include <iostream>
 
 namespace gperun{
-  ServiceAPI::ServiceAPI(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl){
+  ServiceAPI::ServiceAPI(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl, MessageQueueFactory* msgqueuefactory){
     serviceimpl_ = serviceimpl;
     create_postdelta_impl_ = false;
+    create_msgqueuefactory_ = false;
     postdelta_impl_ = postdelta_impl;
+    msgqueuefactory_ = msgqueuefactory;
 #ifndef NOPOST
     if(postdelta_impl_ == NULL){
       postdelta_impl_ = new gse2::PostJson2Delta();
@@ -59,28 +63,38 @@ namespace gperun{
   ServiceAPI::~ServiceAPI(){
     if(create_postdelta_impl_)
       delete postdelta_impl_;
+    if(create_msgqueuefactory_)
+      delete msgqueuefactory_;
   }
 
-  void ServiceAPI::Run(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl){
-    ServiceAPI api(argc, argv, serviceimpl, postdelta_impl);
+  void ServiceAPI::Run(int argc, char** argv, ServiceImplBase* serviceimpl, gse2::PostJson2Delta* postdelta_impl, MessageQueueFactory* msgqueuefactory){
+    ServiceAPI api(argc, argv, serviceimpl, postdelta_impl, msgqueuefactory);
     api.RunMain();
   }
 
   void ServiceAPI::RunMain(){
     std::string engineConfigFile = config_info_[0];
-    YAML::Node configuration_root = gperun::GPEConfig::LoadConfig(engineConfigFile);
+    gperun::GPEConfig::LoadConfig(engineConfigFile);
     gutil::GSQLLogger logger(processname_.c_str(), gperun::GPEConfig::log_path_);
     topology4::TopologyMeta topologymeta(gperun::GPEConfig::partitionpath_);
-    std::cout << topologymeta << "\n";
+    // std::cout << topologymeta << "\n";
+    gperun::GPEDaemon gpe_daemon(gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_, "/gdbms");
+    if(msgqueuefactory_ == NULL){
+#ifndef ComponentTest
+      msgqueuefactory_ = new gnet::KAFKAMessageQueueFactory(config_info_[1], &gpe_daemon);
+#else
+      msgqueuefactory_ = new gnet::DummyMessageQueueFactory();
+#endif
+      create_msgqueuefactory_ = true;
+    }
     gse2::IdConverter idconverter(
           config_info_[0], config_info_[1], atoi(config_info_[2].c_str()),
-        gperun::GPEConfig::get_request_timeoutsec_, topologymeta.idresq_pos_);
+        gperun::GPEConfig::get_request_timeoutsec_, topologymeta.idresq_pos_, msgqueuefactory_);
     gse2::PostListener* postListener = NULL;
-    if(postdelta_impl_ == NULL)
-      gperun::GPEConfig::enabledelta_ = false;
-    if(gperun::GPEConfig::enabledelta_){
+    if(postdelta_impl_ != NULL){
       postdelta_impl_->SetIdConverter(&idconverter);
-      postListener = new gse2::PostListener(&idconverter, topologymeta.postq_pos_, gperun::GPEConfig::num_post_threads_);
+      postListener = new gse2::PostListener(&idconverter, topologymeta.postq_pos_, msgqueuefactory_,
+                                            gperun::GPEConfig::num_post_threads_);
       postListener->setPostProcessor(postdelta_impl_);
     }
     gperun::EngineJobRunner *runner = new gperun::EngineJobRunner(
@@ -95,37 +109,13 @@ namespace gperun{
     runner->Topology_PullDelta();
     if(serviceimpl_ != NULL)
       serviceimpl_->Init(*this);
-    gperun::GPEDaemon gpe_daemon(
-          gperun::GPEConfig::ipaddress_ + ":" + gperun::GPEConfig::port_,
-          "/gdbms");
     gpe_daemon.connect(gperun::GPEConfig::zk_connection_, 30000);
-    gpe_daemon.StartGPEDaemon();
-    gnet::KafkaConnector* connector = NULL;
-    {
-      gnet::KafkaConnectorConfig connectorCfg;
-      connectorCfg.rest_num_ = gperun::GPEConfig::rest_num_;
-      gnet::KafkaConfig writerCfg;
-      writerCfg.topicName_ = gperun::GPEConfig::response_queue_;
-      writerCfg.connectionStr_ = gperun::GPEConfig::kafka_connection_;
-      connectorCfg.writer_topic_cfg_ = writerCfg;
-
-      gnet::KafkaConfig get_request_Cfg;
-      get_request_Cfg.topicName_ = gperun::GPEConfig::get_request_queue_;
-      get_request_Cfg.connectionStr_ = gperun::GPEConfig::kafka_connection_;
-
-      connectorCfg.readers_cfg_.push_back(get_request_Cfg);
-
-      if(gperun::GPEConfig::prefetch_request_queue_.size()>0) {
-        gnet::KafkaConfig prefetch_request_Cfg;
-        prefetch_request_Cfg.topicName_ = gperun::GPEConfig::prefetch_request_queue_;
-        prefetch_request_Cfg.connectionStr_ = gperun::GPEConfig::kafka_connection_;
-        connectorCfg.readers_cfg_.push_back(prefetch_request_Cfg);
-      }
-      connector = new gnet::KafkaConnector(&gpe_daemon, connectorCfg,
-                                           gperun::GPEConfig::client_prefix_ + ":" + gperun::GPEConfig::hostname_);
-    }
+    msgqueuefactory_->RegisterWorker();
+    gnet::KafkaConnector* connector = new gnet::KafkaConnector(msgqueuefactory_,
+                                                               GPEConfig::get_request_queue_,
+                                                               GPEConfig::response_queue_, GPEConfig::rest_num_);
     topology4::DeltaRebuilder* rebuilder = NULL;
-    if(gperun::GPEConfig::enabledelta_){
+    if(postdelta_impl_ != NULL){
       rebuilder = new topology4::DeltaRebuilder(runner->globalinstance(), runner->topology(), runner);
       rebuilder->rebuildsetting_ = gperun::GPEConfig::rebuildsetting_;
     }

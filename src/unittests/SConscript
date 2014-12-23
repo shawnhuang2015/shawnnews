@@ -12,6 +12,7 @@ src_files = Split("""
                     gpe4/test_gpe4_udf.cpp
                     gpe4/test_topology_delta.cpp
                     util/test_util.cpp
+                    util/test_gnet.cpp
                   """
                   )
 unittest_build = env.Program(target='gunit', source=src_files)

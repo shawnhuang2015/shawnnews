@@ -17,9 +17,14 @@ namespace gperun{
   class EngineJobRunner;
 }
 
+namespace gnet{
+  class MessageQueueFactory;
+}
+
 using gpelib4::EngineServiceRequest;
 using gapi4::GraphAPI;
 using gpelib4::WorkerAdaptor;
 using gse2::PostJson2Delta;
 using gse2::EnumMappers;
 using topology4::TopologyMeta;
+using gnet::MessageQueueFactory;

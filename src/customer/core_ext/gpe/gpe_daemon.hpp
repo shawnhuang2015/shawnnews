@@ -32,7 +32,7 @@ namespace gperun {
       dummyqueue_ = NULL;
       listenerthread_ = NULL;
 #ifdef ComponentTest
-      dummyqueue_ = new gutil::DummyReadQueue("daemon");
+      dummyqueue_ = new gutil::DummyReadMessageQueue("daemon", 0);
       listenerthread_ = new boost::thread(boost::bind(&GPEDaemon::run, this));
 #endif
     }
@@ -123,7 +123,7 @@ namespace gperun {
 
   private:
     /// the dummy queue for component testing
-    gutil::DummyReadQueue* dummyqueue_;
+    gutil::DummyReadMessageQueue* dummyqueue_;
     /// listen thread
     boost::thread* listenerthread_;
 
