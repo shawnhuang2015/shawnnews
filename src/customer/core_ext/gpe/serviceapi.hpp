@@ -20,7 +20,7 @@ namespace gperun{
   class ServiceAPI{
   public:
     /// run main function for service.
-    static void Run(int argc, char** argv, ServiceImplBase* serviceimpl, PostJson2Delta* postdelta_impl = NULL);
+    static void Run(int argc, char** argv, ServiceImplBase* serviceimpl, PostJson2Delta* postdelta_impl = NULL, MessageQueueFactory* msgqueuefactory = NULL);
 
     ~ServiceAPI();
 
@@ -51,13 +51,15 @@ namespace gperun{
 
   private:
     friend class EngineJobRunner;
-    ServiceAPI(int, char**, ServiceImplBase*, PostJson2Delta*);
+    ServiceAPI(int, char**, ServiceImplBase*, PostJson2Delta*, MessageQueueFactory*);
     void RunMain();
     std::string processname_;
     std::vector<std::string> config_info_;
     ServiceImplBase* serviceimpl_;
+    MessageQueueFactory* msgqueuefactory_;
     PostJson2Delta* postdelta_impl_;
     bool create_postdelta_impl_;
+    bool create_msgqueuefactory_;
     EngineJobRunner* service_;
     gmmnt::GlobalInstances* globalinstance() const;
     topology4::TopologyGraph* topology() const;

@@ -71,19 +71,20 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       }
       if(deltarebuilder_ != NULL && !deltarebuilder_->RebuildThreadRunning() && jobrunner()->GetExecutingAndQueuedJobCount() == 0)
        deltarebuilder_->StartRebuildThread();
-      connector_->readFromKafka(ready_queue_, 1);
+      connector_->readMsgs(ready_queue_);
       if(ready_queue_.size() == 0) {
         usleep(1000);
       } else {
-        GASSERT(ready_queue_.size() == 1, ready_queue_.size());
-        boost::tuple<std::string, std::string, int64_t>& requestPair =
-            ready_queue_.back();
-        requestid = requestPair.get<0>();
-        request = requestPair.get<1>();
-        ready_queue_.pop_back();
-        if(HandleOffLineRequest(requestid, request)){
-          GVLOG(Verbose_UDFHigh) << "running " << requestid << ", " << request;
-          return;
+        for(size_t i = 0; i < ready_queue_.size(); i++){
+          boost::tuple<std::string, std::string, int64_t>& requestPair =
+              ready_queue_.back();
+          requestid = requestPair.get<0>();
+          request = requestPair.get<1>();
+          ready_queue_.pop_back();
+          if(HandleOffLineRequest(requestid, request)){
+            GVLOG(Verbose_UDFHigh) << "running " << requestid << ", " << request;
+            return;
+          }
         }
       }
       continue;
@@ -104,7 +105,7 @@ void EngineJobListener::ReadRequest(std::string& requestid,
       return;
     }
     read_queue.clear();
-    if (daemon_->quit_ && connector_->isReaderNull(0)) {
+    if (daemon_->quit_ && connector_->isReaderStopped()) {
       // quite and no more requests. tell listener to stop
       requestid = "";
       request = "";
@@ -113,9 +114,9 @@ void EngineJobListener::ReadRequest(std::string& requestid,
     if (daemon_->quit_) {
       // receive command. stop reader and finish queue requests in reader first.
       connector_->stopReader();
-      connector_->readFromKafka(read_queue);  // read all msg.
+      connector_->readMsgs(read_queue);  // read all msg.
     } else {
-      connector_->readFromKafka(read_queue);
+      connector_->readMsgs(read_queue);
     }
     if (read_queue.size() == 0) {
       usleep(1000);
