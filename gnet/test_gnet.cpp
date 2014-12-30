@@ -7,22 +7,28 @@
 
 /*
 Single partition test
-(11:31:40.776225): (10769.536 ms) Finished thread 0 write for responseQ0
-(11:31:47.045778): (6269.248 ms) Finished thread 0 read for responseQ0 current offset 10485759
+(11:17:43.380413): (1984.024 ms) Finished thread 0 write for responseQ
+(11:17:43.397739): (2001.299 ms) Finished thread 2 write for responseQ
+(11:17:43.422556): (2026.148 ms) Finished thread 1 write for responseQ
+(11:17:43.424763): (2028.474 ms) Finished thread 0 read for responseQ current offset 1048575
+(11:17:43.430077): (2033.806 ms) Finished thread 2 read for responseQ current offset 1048575
+(11:17:43.431130): (2034.871 ms) Finished thread 1 read for responseQ current offset 1048575
 Multiple partition test
-(11:31:57.585248): (10521.033 ms) Finished thread 0 write for requestQ0
-(11:32:01.130618): (3523.592 ms) Finished thread 0 read for requestQ0 current offset 10485759
+(11:17:44.599239): (1119.605 ms) Finished thread 1 write for requestQ
+(11:17:44.601835): (1122.137 ms) Finished thread 2 write for requestQ
+(11:17:44.621353): (1141.863 ms) Finished thread 0 read for requestQ current offset 0
+(11:17:44.638224): (1158.603 ms) Finished thread 0 write for requestQ
  */
 
 boost::mutex mutex_;
 size_t num_read_ready_;
-size_t numofwrites_ = 10 << 20;
+size_t numofwrites_ = 1 << 20;
 
 void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t threadindex,
-                bool usingstring){
+                size_t writethreads, bool usingstring){
   gnet::QueueMsgWriter* writer = queuecenter->createQueueMsgWriter(topicname);
   gutil::GTimer timer;
-  for(size_t key = 0; key < numofwrites_; ++key){
+  for(size_t key = threadindex; key < numofwrites_; key += writethreads){
     size_t value = key * 2;
     if(usingstring){
       std::string keystr = boost::lexical_cast<std::string>(key);
@@ -50,7 +56,6 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
   while(numberofreads < numofwrites_){
     reader->readMsgs(msg);
     if(msg.size() == 0){
-      // std::cout << numberofreads << ", " << numofwrites_ << "\n";
       usleep(100);
       continue;
     }
@@ -78,23 +83,20 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
   queuecenter->destoryQueueMsgReader(reader);
 }
 
-void TestQueue(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t num_threads = 1,
+void TestQueue(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t readthreads = 3, size_t writethreads = 3,
                bool usingstring = false) {
   std::vector<boost::thread*> threads;
-  for(size_t i = 0; i < num_threads; ++i)
-    threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname + boost::lexical_cast<std::string>(i), i, usingstring)));
+  num_read_ready_ = 0;
+  for(size_t i = 0; i < readthreads; ++i)
+    threads.push_back(new boost::thread(boost::bind(&QueueRead, queuecenter, topicname, i, usingstring)));
+  while(num_read_ready_ < readthreads)
+    usleep(100);
+  for(size_t i = 0; i < writethreads; ++i)
+    threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname, i, writethreads, usingstring)));
   for(size_t i = 0; i < threads.size(); ++i){
     threads[i]->join();
     delete threads[i];
   }
-  threads.clear();
-  for(size_t i = 0; i < num_threads; ++i)
-    threads.push_back(new boost::thread(boost::bind(&QueueRead, queuecenter, topicname + boost::lexical_cast<std::string>(i), i, usingstring)));
-  for(size_t i = 0; i < threads.size(); ++i){
-    threads[i]->join();
-    delete threads[i];
-  }
-  threads.clear();
 }
 
 TEST(GNETTEST, KAFKA_SINGLEPART) {
@@ -110,13 +112,12 @@ TEST(GNETTEST, KAFKA_MULTIPLEPART) {
   {
     gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", &daemon);
     messagequeuefactory.RegisterWorker();
-    TestQueue(&messagequeuefactory, "requestQ");
+    TestQueue(&messagequeuefactory, "requestQ", 1); // can only have one read thread. otherwise zookeeper will have conflict
   }
-  daemon.stopDaemon();
 }
 
 TEST(GNETTEST, DummyQueue) {
   gnet::DummyMessageQueueFactory messagequeuefactory;
-  QueueWrite(&messagequeuefactory, "test", 0, true);
+  QueueWrite(&messagequeuefactory, "test", 0, 1, true);
   QueueRead(&messagequeuefactory, "test", 0, true);
 }
