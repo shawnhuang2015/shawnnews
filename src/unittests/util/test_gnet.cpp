@@ -7,11 +7,15 @@
 
 /*
 Single partition test
-(11:31:40.776225): (10769.536 ms) Finished thread 0 write for responseQ0
-(11:31:47.045778): (6269.248 ms) Finished thread 0 read for responseQ0 current offset 10485759
+(11:36:30.842285): (10542.575 ms) Finished thread 0 write for responseQ0
+(11:36:36.874257): (6031.833 ms) Finished thread 0 read for responseQ0 current offset 10485759
 Multiple partition test
-(11:31:57.585248): (10521.033 ms) Finished thread 0 write for requestQ0
-(11:32:01.130618): (3523.592 ms) Finished thread 0 read for requestQ0 current offset 10485759
+(11:36:47.019659): (10128.746 ms) Finished thread 0 write for requestQ0
+(11:36:50.452009): (3411.900 ms) Finished thread 0 read for requestQ0 current offset 10485759
+RequestResponse test
+Average request ms is 7
+Average request (client to server) ms is 4
+Average request (server to client) ms is 2
  */
 
 boost::mutex mutex_;
@@ -78,7 +82,7 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
   queuecenter->destoryQueueMsgReader(reader);
 }
 
-void TestQueue(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t num_threads = 1,
+void TestQueue_Batch(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t num_threads = 1,
                bool usingstring = false) {
   std::vector<boost::thread*> threads;
   for(size_t i = 0; i < num_threads; ++i)
@@ -97,10 +101,94 @@ void TestQueue(gnet::MessageQueueFactory* queuecenter, std::string topicname, si
   threads.clear();
 }
 
+size_t requestreads_;
+
+void RequestWriteThread(gnet::QueueMsgWriter* requestwriter, size_t numofrequest){
+  size_t requestwrites = 0;
+  while(requestwrites < numofrequest){
+    if(requestwrites > requestreads_ + 20){
+      usleep(10);
+      continue;
+    }
+    uint64_t ts = gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
+    requestwriter->write((const char*)&ts, sizeof(ts), (const char*)&ts, sizeof(ts));
+    ++requestwrites;
+  }
+}
+
+void RequestReadThread(gnet::QueueMsgReader* requestreader, size_t numofrequest){
+  requestreads_ = 0;
+  std::vector<gnet::Message*> msg;
+  uint64_t sum = 0;
+  uint64_t sum_1to2 = 0;
+  uint64_t sum_2to1 = 0;
+  while(requestreads_ < numofrequest){
+    requestreader->readMsgs(msg);
+    if(msg.size() == 0){
+      usleep(10);
+      continue;
+    }
+    requestreads_ += msg.size();
+    for(size_t i = 0; i < msg.size(); ++i){
+      uint64_t ts1 =  *((uint64_t*)msg[i]->getKey());
+      uint64_t ts2 =  *((uint64_t*)msg[i]->getValue());
+      uint64_t ts3 =  gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
+      // std::cout << ts1 << ","<< ts2 << ","<< ts3 << "\n";
+      sum += ts3 - ts1;
+      sum_1to2 += ts2 - ts1;
+      sum_2to1 += ts3 - ts2;
+      delete msg[i];
+    }
+    msg.clear();
+  }
+  std::cout << "Average request ms is " << (sum / numofrequest) << "\n";
+  std::cout << "Average request (client to server) ms is " << (sum_1to2 / numofrequest) << "\n";
+  std::cout << "Average request (server to client) ms is " << (sum_2to1 / numofrequest) << "\n";
+}
+
+void ResponseThread(gnet::QueueMsgReader* reader, gnet::QueueMsgWriter* writer, size_t numofrequest){
+  size_t requests = 0;
+  std::vector<gnet::Message*> msg;
+  while(requests < numofrequest){
+    reader->readMsgs(msg);
+    if(msg.size() == 0){
+      usleep(10);
+      continue;
+    }
+    requests += msg.size();
+    for(size_t i = 0; i < msg.size(); ++i){
+      uint64_t ts = gutil::GTimer::GetTotalMilliSecondsSinceEpoch();
+      writer->write(msg[i]->getKey(), msg[i]->getKeyLength(), (const char*)&ts, sizeof(ts));
+      delete msg[i];
+    }
+    msg.clear();
+  }
+}
+
+void TestQueue_RequestResponse(gnet::MessageQueueFactory* queuecenter, std::string requestQ, std::string responseQ,
+                               size_t numofrequest) {
+  gnet::QueueMsgWriter* requestQwriter = queuecenter->createQueueMsgWriter(requestQ);
+  gnet::QueueMsgReader* requestQreader = queuecenter->createQueueMsgReader(requestQ, -2);
+  gnet::QueueMsgWriter* responseQwriter = queuecenter->createQueueMsgWriter(responseQ);
+  gnet::QueueMsgReader* responseQreader = queuecenter->createQueueMsgReader(responseQ, -2);
+  std::vector<boost::thread*> threads;
+  threads.push_back(new boost::thread(boost::bind(&ResponseThread, requestQreader, responseQwriter, numofrequest)));
+  threads.push_back(new boost::thread(boost::bind(&RequestReadThread, responseQreader, numofrequest)));
+  threads.push_back(new boost::thread(boost::bind(&RequestWriteThread, requestQwriter, numofrequest)));
+  for(size_t i = 0; i < threads.size(); ++i){
+    threads[i]->join();
+    delete threads[i];
+  }
+  queuecenter->destoryQueueMsgReader(requestQreader);
+  queuecenter->destoryQueueMsgReader(responseQreader);
+  queuecenter->destoryQueueMsgWriter(requestQwriter);
+  queuecenter->destoryQueueMsgWriter(responseQwriter);
+}
+
 TEST(GNETTEST, KAFKA_SINGLEPART) {
   // local test single partition topic write / read.
   gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", NULL);
-  TestQueue(&messagequeuefactory, "responseQ");
+  TestQueue_Batch(&messagequeuefactory, "responseQ");
 }
 
 TEST(GNETTEST, KAFKA_MULTIPLEPART) {
@@ -110,7 +198,19 @@ TEST(GNETTEST, KAFKA_MULTIPLEPART) {
   {
     gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", &daemon);
     messagequeuefactory.RegisterWorker();
-    TestQueue(&messagequeuefactory, "requestQ");
+    TestQueue_Batch(&messagequeuefactory, "requestQ");
+  }
+  daemon.stopDaemon();
+}
+
+TEST(GNETTEST, KAFKA_REQUESTRESPONSE) {
+  // local test multiple partition topic write / read. It require daemon for rebalance multiple partition.
+  gnet::ZookeeperDaemon daemon("127.0.0.1:7100");
+  daemon.connect("127.0.0.1:13010", 30000);
+  {
+    gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", &daemon);
+    messagequeuefactory.RegisterWorker();
+    TestQueue_RequestResponse(&messagequeuefactory, "requestQ", "responseQ", 1 << 10);
   }
   daemon.stopDaemon();
 }
