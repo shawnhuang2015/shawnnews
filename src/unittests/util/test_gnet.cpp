@@ -210,7 +210,7 @@ TEST(GNETTEST, KAFKA_REQUESTRESPONSE) {
   {
     gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", &daemon);
     messagequeuefactory.RegisterWorker();
-    TestQueue_RequestResponse(&messagequeuefactory, "requestQ", "responseQ", 1 << 10);
+    TestQueue_RequestResponse(&messagequeuefactory, "requestQ", "responseQ", 1 << 15);
   }
   daemon.stopDaemon();
 }
