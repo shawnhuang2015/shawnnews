@@ -10,10 +10,10 @@
 
 #include <gtest/gtest.h>
 #include <inttypes.h>
-#include "../../core_ext/gpe/unionfind.hpp"
-#include "../../core_ext/gpe/global_vector.hpp"
-#include "../../core_ext/gpe/global_set.hpp"
-#include "../../core_ext/gpe/global_heap.hpp"
+#include "../../core_impl/gpe_impl/base/unionfind.hpp"
+#include "../../core_impl/gpe_impl/base/global_vector.hpp"
+#include "../../core_impl/gpe_impl/base/global_set.hpp"
+#include "../../core_impl/gpe_impl/base/global_heap.hpp"
 
 
 /// TODO add unit test for core_ext gpe

@@ -53,6 +53,8 @@ product.*
 # ER generated files #
 ######################
 mgnt_cli/
+src/core/olgp
+src/olgp
 src/core/topology
 src/core/gpe
 src/core/gse

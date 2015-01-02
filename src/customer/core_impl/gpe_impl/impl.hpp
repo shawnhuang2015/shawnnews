@@ -9,7 +9,7 @@
 #ifndef SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 #define SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 
-#include <core_ext/gpe/serviceimplbase.hpp>
+#include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 
 using namespace gperun;

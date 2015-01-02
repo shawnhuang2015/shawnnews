@@ -7,7 +7,7 @@
  *      Author: lichen
  ******************************************************************************/
 
-#include "serviceapi.hpp"
+#include <gpe/serviceapi.hpp>
 #include <core_impl/gpe_impl/impl.hpp>
 #ifndef OPENCODE
 #include <core_impl/gse_impl/post_impl.hpp>

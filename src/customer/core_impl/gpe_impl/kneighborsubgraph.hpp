@@ -17,12 +17,10 @@
 #include <gpelib4/enginebase/context.hpp>
 #include <gpelib4/enginedriver/enginedriver.hpp>
 #include <gpelib4/enginebase/variable.hpp>
-#include "core_impl/udt.hpp"
-#include "core_ext/gpe/util.hpp"
-#include "core_ext/gpe/registry.hpp"
-#include "gse/gse2/dict/enum/enum_mapper.hpp"
-#include "core_ext/gpe/global_vector.hpp"
-#include "core_ext/gpe/global_set.hpp"
+#include <gse2/dict/enum/enum_mapper.hpp>
+#include <core_impl/udt.hpp>
+#include "base/global_vector.hpp"
+#include "base/global_set.hpp"
 
 
 namespace UDIMPL {
