@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SHARED_LIB=./UDF
+SHARED_LIB=./TokenUDF
 export "LD_LIBRARY_PATH=$SHARED_LIB"
 
 g++ -fPIC -shared "$SHARED_LIB/TokenBank1.cpp" -o "$SHARED_LIB/TokenBank1.so"
