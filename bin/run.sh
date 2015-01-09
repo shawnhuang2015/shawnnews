@@ -10,7 +10,7 @@ if [ ! -d "$LOGDIR" ]; then
   mkdir  "$LOGDIR"
 fi
 
-export LD_LIBRARY_PATH='./UDF'
+export LD_LIBRARY_PATH='./TokenUDF'
 
 
 JAR=gsql.jar
