@@ -8,10 +8,10 @@
  ******************************************************************************/
 
 #include <gpe/serviceapi.hpp>
-#include <core_impl/gpe_impl/impl.hpp>
 #ifndef OPENCODE
 #include <core_impl/gse_impl/post_impl.hpp>
 #endif
+#include "impl.hpp"
 
 int main(int argc, char** argv) {
   UDIMPL::UDFRunner impl;
