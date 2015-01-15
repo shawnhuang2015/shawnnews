@@ -565,19 +565,27 @@ TEST(GPE4DELTATEST, Topology_Small) {
   std::string topologypath = "/tmp/deltatopology/";
   gutil::GDiskUtil::CreateEmptyFolder(topologypath);
   MakeEmptyPartition(topologypath, 2);
-  topology4::QueryState query_state(61);
   {
     topology4::TopologyGraph topology(&instance, topologypath,true, true);
     std::cout << *topology.GetTopologyMeta() << "\n";
-    for(VertexLocalId_t i = 0; i < 12; ++i){
-      InsertOneDelta(instance, topology, i, true);
+    {
+      for(VertexLocalId_t i = 0; i < 6; ++i){
+        InsertOneDelta(instance, topology, i, true);
+      }
+      topology4::QueryState query_state(61);
+      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      DeltaRebuilder rebuilder1(&instance, &topology, NULL);
+      rebuilder1.Rebuild("/tmp/deltatopology_half/", &query_state);
     }
-    topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
-    DeltaRebuilder rebuilder1(&instance, &topology, NULL, true);
-    rebuilder1.Rebuild("/tmp/deltatopology_half/", &query_state);
-    query_state.tid_ =121;
-    DeltaRebuilder rebuilder2(&instance, &topology, NULL, true);
-    rebuilder2.Rebuild("/tmp/deltatopology_full/", &query_state);
+    {
+      for(VertexLocalId_t i = 6; i < 12; ++i){
+        InsertOneDelta(instance, topology, i, true);
+      }
+      topology4::QueryState query_state(121);
+      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      DeltaRebuilder rebuilder1(&instance, &topology, NULL);
+      rebuilder1.Rebuild("/tmp/deltatopology_full/", &query_state);
+    }
   }
   {
     topology4::TopologyGraph topology2(&instance, "/tmp/deltatopology_half/",true, true);
@@ -589,15 +597,15 @@ TEST(GPE4DELTATEST, Topology_Small) {
     for(VertexLocalId_t i = 6; i < 12; ++i){
       InsertOneDelta(instance, topology2, i, false);
     }
-    query_state.tid_ =121;
+    topology4::QueryState query_state(121);
     topology2.GetCurrentSegementMeta(query_state.query_segments_meta_);
-    DeltaRebuilder rebuilder3(&instance, &topology2, NULL, true);
+    DeltaRebuilder rebuilder3(&instance, &topology2, NULL);
     rebuilder3.Rebuild("/tmp/deltatopology_full2/", &query_state);
     //std::string cmd = "diff  -r /tmp/deltatopology_full /tmp/deltatopology_full2";
     //EXPECT_EQ(system(cmd.c_str()), 0);
   }
   {
-    topology4::TopologyGraph topology3(&instance, "/tmp/deltatopology_full2/",true, true);
+    // topology4::TopologyGraph topology3(&instance, "/tmp/deltatopology_full2/",true, true);
     // std::cout << "Print /tmp/deltatopology_full2/\n";
     // topology4::TopologyPrinter printer2(&instance, &topology3);
     // printer2.PrintVertexAttributes(true, -1);
@@ -606,7 +614,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
   {
     topology4::TopologyGraph topology4(&instance, "/tmp/deltatopology_half/",true, true);
     MPIIDImpl mpiidimpl;
-    DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl, true);
+    DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl);
     // std::cout << "Print /tmp/deltatopology_half/\n";
     // TopologyPrinter printer(&instance, &topology4);
     // printer.PrintVertexAttributes(true, -1);
@@ -642,23 +650,31 @@ TEST(GPE4DELTATEST, Topology_Large) {
   std::string topologypath = "/tmp/deltatopology_large/";
   gutil::GDiskUtil::CreateEmptyFolder(topologypath);
   MakeEmptyPartition(topologypath, 7);
-  topology4::QueryState query_state(size * 5);
   {
     topology4::TopologyGraph topology(&instance, topologypath,true, true);
-    for(VertexLocalId_t i = 0; i < size; ++i){
-      InsertOneDelta(instance, topology, i, false);
+    {
+      for(VertexLocalId_t i = 0; i < size / 2; ++i){
+        InsertOneDelta(instance, topology, i, false);
+      }
+      topology4::QueryState query_state(size * 5);
+      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      DeltaRebuilder rebuilder1(&instance, &topology, NULL);
+      rebuilder1.Rebuild("/tmp/deltatopology_large_half/", &query_state);
     }
-    topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
-    DeltaRebuilder rebuilder1(&instance, &topology, NULL, true);
-    rebuilder1.Rebuild("/tmp/deltatopology_large_half/", &query_state);
-    query_state.tid_ = size * 10;
-    DeltaRebuilder rebuilder2(&instance, &topology, NULL, true);
-    rebuilder2.Rebuild("/tmp/deltatopology_large_full/", &query_state);
+    {
+      for(VertexLocalId_t i = size / 2; i < size; ++i){
+        InsertOneDelta(instance, topology, i, false);
+      }
+      topology4::QueryState query_state(size * 10);
+      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      DeltaRebuilder rebuilder2(&instance, &topology, NULL);
+      rebuilder2.Rebuild("/tmp/deltatopology_large_full/", &query_state);
+    }
   }
   {
     topology4::TopologyGraph topology4(&instance, "/tmp/deltatopology_large_half/",true, true);
     MPIIDImpl mpiidimpl;
-    DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl, true);
+    DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl);
     rebuilder4.StartRebuildThread();
     rebuilder4.rebuildsetting_.print_debug_msg_ = false;
     for(VertexLocalId_t i = size / 2 - 10; i < size; ++i){
