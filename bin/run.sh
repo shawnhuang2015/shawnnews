@@ -12,6 +12,9 @@ fi
 
 export LD_LIBRARY_PATH='./TokenUDF'
 
+#compile  token bank
+./compileTokenBank.sh
+
 
 JAR=gsql.jar
 
