@@ -1,0 +1,35 @@
+#
+# This demo shows dry-run will report
+# - attribute error: 
+#    + persons.txt, (id real, name string), some ids are not real number
+#    + movies.txt, (id int, title string, country string, year int), some ids and year are not int
+# - count duplicate objects: 
+#    + movies.txt has duplicate movie_id. 
+# - detect lines short of tokens:
+#    + roles.txt has one line does not confirm with edge schema
+#
+####
+
+# prepare graph schema 
+drop graph movieperson cascade
+
+create vertex person (primary_id id string, id real, name string)
+create vertex movie (primary_id id string, id uint32, title string, country string compress, year uint32)
+create directed edge roles (from person, to movie, role string)
+create graph movieperson (movie, person, roles)
+
+# create loading job
+drop job dryruntest
+
+create loading job dryruntest for graph movieperson
+load "/vagrant/data/testdata/persons.csv" to vertex person values($0, $0, $1) using separator=",", header="true";
+load "/vagrant/data/testdata/movies.csv" to vertex movie values($0, $0, $1, $2, $3) using separator=",", header="true";
+load "/vagrant/data/testdata/roles.csv" to edge roles values($0, $1, $2) using separator=",", header="true";
+end
+
+# set dry-run session parameters
+set dryrun_report_interval = 1
+set dryrun_report_startline = 0
+
+clear graph store
+run job -dryrun -n 100 dryruntest
