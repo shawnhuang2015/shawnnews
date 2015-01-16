@@ -6,6 +6,9 @@
 #include <boost/thread.hpp>
 
 /*
+Read / Write at same time
+(11:11:09.773759): (11876.069 ms) Finished thread 0 read for deltaQ current offset 10485759
+(11:11:09.781502): (11883.809 ms) Finished thread 0 write for deltaQ
 Single partition test
 (11:36:30.842285): (10542.575 ms) Finished thread 0 write for responseQ0
 (11:36:36.874257): (6031.833 ms) Finished thread 0 read for responseQ0 current offset 10485759
@@ -101,6 +104,18 @@ void TestQueue_Batch(gnet::MessageQueueFactory* queuecenter, std::string topicna
   threads.clear();
 }
 
+void TestQueue_ReadWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname,
+               bool usingstring = false) {
+  std::vector<boost::thread*> threads;
+  threads.push_back(new boost::thread(boost::bind(&QueueRead, queuecenter, topicname, 0, usingstring)));
+  threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname, 0, usingstring)));
+  for(size_t i = 0; i < threads.size(); ++i){
+    threads[i]->join();
+    delete threads[i];
+  }
+  threads.clear();
+}
+
 size_t requestreads_;
 
 void RequestWriteThread(gnet::QueueMsgWriter* requestwriter, size_t numofrequest){
@@ -183,6 +198,12 @@ void TestQueue_RequestResponse(gnet::MessageQueueFactory* queuecenter, std::stri
   queuecenter->destoryQueueMsgReader(responseQreader);
   queuecenter->destoryQueueMsgWriter(requestQwriter);
   queuecenter->destoryQueueMsgWriter(responseQwriter);
+}
+
+TEST(GNETTEST, KAFKA_READWRITE) {
+  // local test single partition topic write / read at same time
+  gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", NULL);
+  TestQueue_ReadWrite(&messagequeuefactory, "deltaQ");
 }
 
 TEST(GNETTEST, KAFKA_SINGLEPART) {
