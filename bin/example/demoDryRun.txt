@@ -30,6 +30,7 @@ end
 # set dry-run session parameters
 set dryrun_report_interval = 1
 set dryrun_report_startline = 0
+set dryrun_report_first_nlines = 1
 
 clear graph store
 run job -dryrun -n 100 dryruntest
