@@ -1,0 +1,5 @@
+This directory stores
+
+- ddl/  /* ddl shell script source code for a POC case */
+- TokenBank  /* the token and condition UDFs for a POC case */
+
