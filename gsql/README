@@ -1,22 +1,31 @@
-repo/product/gsql/   /* this folder will be installed on customer site */
-▾ lib/                /* this folder contains compiled .so file and .gsql.jar */
-    ConditionBank1.so*
-    ConditionBankM.so*
-    TokenBank1.so*
-    TokenBankM.so*
-    .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar
+How to ?
 
-▾ output/            /* this folder contains all shell output, such as graph_config.yaml, and loading log */
-    load_output.log
-▾ src/
-  ▾ ddl/             /* user put their ddl script here */
-    ▸ example/ -> /vagrant/repo/product/src/utility/tools/gshell/example/
-  ▾ TokenBank/       /* user input their UDF  in this folder's cpp files, and compile them by type compile* */
-      compile* -> /vagrant/repo/product/src/utility/tools/gshell/compileTokenBank.sh
-      ConditionBank1.cpp
-      ConditionBankM.cpp
-      TokenBank1.cpp
-      TokenBankM.cpp
-config     /* gsql shell launch config */
-gsql* -> /vagrant/repo/product/src/utility/tools/gshell/gsql.sh    /* user type this to launch shell */
-README    /* readme */
+In below struct, users will only work under src directory.
+1) in src/TokenBank, implement input token UDFs, compile to generate .so
+   Note this step is optional.
+2) under src/ddl, create DDL scripts 
+Then invokes gsql shell to generate graph schema and load the data.
+
+==================================================================================
+gsql              /* this folder will be installed on customer site */
+├── README        /* readme */
+├── config        /* gsql shell launch config */
+├── gsql -> ../src/utility/tools/gshell/gsql.sh   /* user type this to launch shell */
+├── lib/          /* this folder contains compiled .so file and .gsql.jar */
+│   ├── .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar   /* DDL driver */
+│   ├── boost -> ../../src/third_party/boost      			   /* boost status lib */
+│   ├──    ConditionBank1.so*
+│   ├──    ConditionBankM.so*
+│   ├──    TokenBank1.so*
+│   └──    TokenBankM.so*
+├── src
+│   └── TokenBank     /* user implement belwo cpp files, and compile them with *compile* */
+│       │   ├── ConditionBank1.cpp
+│       │   ├── ConditionBankM.cpp
+│       │   ├── TokenBank1.cpp
+│       │   ├── TokenBankM.cpp
+│       │   └── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh
+│       └── ddl       /* user provides their ddl script here */
+│           └── example -> ../../../src/utility/tools/gshell/example
+└── output            /* gsql shell output: e.g., graph_config.yaml, and loading log */
+    └──load_output.log
