@@ -11,7 +11,7 @@ repo/product/gsql/   /* this folder will be installed on customer site */
 ▾ src/
   ▾ ddl/             /* user put their ddl script here */
     ▸ example/ -> /vagrant/repo/product/src/utility/tools/gshell/example/
-  ▾ TokenBank/       /* user input their UDF  in this folder's cpp files, and compile them by compile* */
+  ▾ TokenBank/       /* user input their UDF  in this folder's cpp files, and compile them by type compile* */
       compile* -> /vagrant/repo/product/src/utility/tools/gshell/compileTokenBank.sh
       ConditionBank1.cpp
       ConditionBankM.cpp
