@@ -1,9 +1,0 @@
-VertexTypeList: 
-- Attributes: 
-  - AttributeName: name
-    AttributeType: STRING
-  PrimaryId: 
-    AttributeName: a
-    AttributeType: STRING
-  VertexId: 1
-  VertexName: abc

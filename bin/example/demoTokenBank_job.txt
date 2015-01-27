@@ -1,7 +1,0 @@
-create loading job demoTokenBank_job for graph neo4j
- load "/vagrant/data/TestData/persons.csv" to vertex person values ($0,$0,Reverse($1)) using Separator=",", Header="true";
- load "/vagrant/data/TestData/movies.csv"  to vertex movie values ($0,$0,$1,$2,Zero($3)) using Separator=",", Header="true";
- load "/vagrant/data/TestData/roles.csv"  to edge roles values ($0,$1,$2) using Separator=",", Header="true";
-end
-
-
