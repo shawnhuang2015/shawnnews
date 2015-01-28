@@ -16,5 +16,5 @@ GSELoaderConfig=/data/rc4/config/gse_loader/gse_loader1.conf
 
 # IUM generate this.
 # This is tokenUDF string->string function's output buffer size
-OutputTokenBufferSize=200 
+OutputTokenBufferSize=2000
 
