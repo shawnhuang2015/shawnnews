@@ -27,6 +27,7 @@ gsql              /* this folder is dev folder on both in-house and customer sit
 │       │   ├── TokenBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBankM.cpp
 │       │   └── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh /* user run this to compile this folder's cpp file */
 │       └── ddl -> ../../src/customer/core_impl/gsql_impl/ddl    /* user provides their ddl scripts in this folder */
+|            └── example -> ../../../../utility/tools/gshell/example /* many ddl examples showing the language */
 └── output    /* shell output: graph_config.yaml by loading job or export cmd; and loading job log; */
       ├── graph_config.yaml -> ../../src/customer/core_impl/gsql_impl/graph_config.yaml  
       └── load_output.log  /* log of loading job */
