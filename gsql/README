@@ -1,31 +1,32 @@
-How to ?
+HOW TO GUIDE
 
 In below struct, users will only work under src directory.
-1) in src/TokenBank, implement input token UDFs, compile to generate .so
+1) in src/TokenBank, implement input token UDFs, compile to generate "*.so" files
    Note this step is optional.
 2) under src/ddl, create DDL scripts 
 Then invokes gsql shell to generate graph schema and load the data.
 
 ==================================================================================
-gsql              /* this folder will be installed on customer site */
+
+gsql              /* this folder is dev folder on both in-house and customer site */
 ├── README        /* readme */
 ├── config        /* gsql shell launch config */
 ├── gsql -> ../src/utility/tools/gshell/gsql.sh   /* user type this to launch shell */
 ├── lib/          /* this folder contains compiled .so file and .gsql.jar */
-│   ├── .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar   /* DDL driver */
-│   ├── boost -> ../../src/third_party/boost      			   /* boost status lib */
-│   ├──    ConditionBank1.so*
-│   ├──    ConditionBankM.so*
-│   ├──    TokenBank1.so*
-│   └──    TokenBankM.so*
+│   ├── .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar   /* DDL driver */
+│   ├── boost -> ../../src/third_party/boost               /* boost status lib */
+│   ├──    ConditionBank1.so*    /* produced by TokenBank/compile */
+│   ├──    ConditionBankM.so*    /* produced by TokenBank/compile */
+│   ├──    TokenBank1.so*        /* produced by TokenBank/compile */
+│   └──    TokenBankM.so*        /* produced by TokenBank/compile */
 ├── src
-│   └── TokenBank     /* user implement belwo cpp files, and compile them with *compile* */
-│       │   ├── ConditionBank1.cpp
-│       │   ├── ConditionBankM.cpp
-│       │   ├── TokenBank1.cpp
-│       │   ├── TokenBankM.cpp
-│       │   └── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh
-│       └── ddl       /* user provides their ddl script here */
-│           └── example -> ../../../src/utility/tools/gshell/example
-└── output            /* gsql shell output: e.g., graph_config.yaml, and loading log */
-    └──load_output.log
+│   └── TokenBank     /* user implement below cpp files, and compile them with *compile*, the output will be put in gsql/lib/ */
+│       │   ├── ConditionBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBank1.cpp
+│       │   ├── ConditionBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBankM.cpp
+│       │   ├── TokenBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBank1.cpp
+│       │   ├── TokenBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBankM.cpp
+│       │   └── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh /* user run this to compile this folder's cpp file */
+│       └── ddl -> ../../src/customer/core_impl/gsql_impl/ddl    /* user provides their ddl scripts in this folder */
+└── output    /* shell output: graph_config.yaml by loading job or export cmd; and loading job log; */
+      ├── graph_config.yaml -> ../../src/customer/core_impl/gsql_impl/graph_config.yaml  
+      └── load_output.log  /* log of loading job */
