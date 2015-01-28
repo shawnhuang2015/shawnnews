@@ -14,7 +14,7 @@ gsql              /* this folder is dev folder on both in-house and customer sit
 ├── gsql -> ../src/utility/tools/gshell/gsql.sh   /* user type this to launch shell */
 ├── lib/          /* this folder contains compiled .so file and .gsql.jar */
 │   ├── .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar   /* DDL driver */
-│   ├── boost -> ../../src/third_party/boost               /* boost status lib */
+│   ├── boost -> ../../src/third_party/boost               /* boost static lib */
 │   ├──    ConditionBank1.so*    /* produced by TokenBank/compile */
 │   ├──    ConditionBankM.so*    /* produced by TokenBank/compile */
 │   ├──    TokenBank1.so*        /* produced by TokenBank/compile */
