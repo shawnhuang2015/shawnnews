@@ -6,6 +6,7 @@ export GSQL_PKG_HOME="${GSQL_PROJ_HOME}/deploy_pkg"
 mkdir -p $GSQL_PKG_HOME
 export GSQL_PKG_TMP="${GSQL_PROJ_HOME}/tmp"
 mkdir -p $GSQL_PKG_TMP
+export GSQL_DEV_HOME="${GSQL_PROJ_HOME}/gsql"
 
 # set git env by default. If given any option, bypass setting git env
 if [ "$#" -eq 0 ]; then

@@ -63,3 +63,7 @@ src/utility
 src/realtime
 src/msg
 src/er
+# GSW generated files
+# ###################
+gsql/.history
+gsql/output
