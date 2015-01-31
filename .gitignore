@@ -53,7 +53,11 @@ product.*
 # ER generated files #
 ######################
 mgnt_cli/
-src/core/olgp
+# GSW generated files
+# ###################
+gsql/.history
+gsql/output
+################ auto generated =====
 src/olgp
 src/core/topology
 src/core/gpe
@@ -63,7 +67,3 @@ src/utility
 src/realtime
 src/msg
 src/er
-# GSW generated files
-# ###################
-gsql/.history
-gsql/output
