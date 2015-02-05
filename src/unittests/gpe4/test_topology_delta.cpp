@@ -59,7 +59,7 @@ void InsertAttribute(int type, uint8_t*& ptr, int sequence_id) {
       *ptr = sequence_id % 2 == 0;
       ++ptr;
       break;
-    case topology4::Attribute::UINT32_TYPE:
+    case topology4::Attribute::UINT_TYPE:
       *ptr = sequence_id + 1;
       ++ptr;
       break;
@@ -113,7 +113,7 @@ void InsertAttribute(int type, uint8_t*& ptr, int sequence_id) {
       ptr += sizeof(fixed);
     }
       break;
-    case topology4::Attribute::UINT32_SET:
+    case topology4::Attribute::UINT_SET:
       *ptr = 2;
       ++ptr;
       *ptr = sequence_id;
@@ -174,10 +174,10 @@ void ValidResult(topology4::Attribute& attribute, uint32_t sequence_id) {
           EXPECT_EQ(attribute.GetBool(4 * (index - 1) + 3, false), true);
         }
         break;
-      case topology4::Attribute::UINT32_TYPE:
-        EXPECT_EQ(attribute.GetUInt32(4 * (index - 1) + 2, 0),
+      case topology4::Attribute::UINT_TYPE:
+        EXPECT_EQ(attribute.GetUInt(4 * (index - 1) + 2, 0),
                   sequence_id + 1);
-        EXPECT_EQ(attribute.GetUInt32(4 * (index - 1) + 3, 0),
+        EXPECT_EQ(attribute.GetUInt(4 * (index - 1) + 3, 0),
                   (sequence_id + 1) * (sequence_id + 2) / 2);
         break;
       case topology4::Attribute::REAL_TYPE:
@@ -262,15 +262,15 @@ void ValidResult(topology4::Attribute& attribute, uint32_t sequence_id) {
         }
       }
         break;
-      case topology4::Attribute::UINT32_SET: {
-        topology4::UInt32_Reader reader = attribute
-                                          .GetUInt32Reader(4 * (index - 1) + 2);
+      case topology4::Attribute::UINT_SET: {
+        topology4::UInt_Reader reader = attribute
+                                          .GetUIntReader(4 * (index - 1) + 2);
         EXPECT_EQ(reader.count(), 2u);
         reader.MoveNext();
         EXPECT_EQ(reader.value_, sequence_id);
         reader.MoveNext();
         EXPECT_EQ(reader.value_, sequence_id + 1);
-        reader = attribute.GetUInt32Reader(4 * (index - 1) + 3);
+        reader = attribute.GetUIntReader(4 * (index - 1) + 3);
         EXPECT_EQ(reader.count(), sequence_id + 2);
         uint32_t index1 = 0;
         while (reader.MoveNext()) {
@@ -528,7 +528,7 @@ void MakeEmptyPartition(std::string topologypath, VertexLocalId_t segmentsizeinp
     vertextypemeta.typename_ = "vertextype";
     meta.vertextypemeta_.push_back(vertextypemeta);
     topology4::AttributeMeta attrmeta1;
-    attrmeta1.type_ = topology4::Attribute::UINT32_TYPE;
+    attrmeta1.type_ = topology4::Attribute::UINT_TYPE;
     attrmeta1.name_ = "int1";
     attrmeta1.isnullable_ = false;
     meta.vertextypemeta_[0].attributes_.attributelist_.push_back(attrmeta1);
@@ -540,7 +540,7 @@ void MakeEmptyPartition(std::string topologypath, VertexLocalId_t segmentsizeinp
     edgetypemeta.isdirected_ = false;
     meta.edgetypemeta_.push_back(edgetypemeta);
     topology4::AttributeMeta attrmeta2;
-    attrmeta2.type_ = topology4::Attribute::UINT32_TYPE;
+    attrmeta2.type_ = topology4::Attribute::UINT_TYPE;
     attrmeta2.name_ = "int2";
     attrmeta2.isnullable_ = false;
     meta.edgetypemeta_[0].attributes_.attributelist_.push_back(attrmeta2);
@@ -552,7 +552,7 @@ void MakeEmptyPartition(std::string topologypath, VertexLocalId_t segmentsizeinp
     edgetypemeta.isdirected_ = true;
     meta.edgetypemeta_.push_back(edgetypemeta);
     topology4::AttributeMeta attrmeta2;
-    attrmeta2.type_ = topology4::Attribute::UINT32_TYPE;
+    attrmeta2.type_ = topology4::Attribute::UINT_TYPE;
     attrmeta2.name_ = "int3";
     attrmeta2.isnullable_ = false;
     meta.edgetypemeta_[1].attributes_.attributelist_.push_back(attrmeta2);
@@ -621,6 +621,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
     // printer.PrintEdges(EdgeBlockReaderSetting(true, true, true), -1);
     rebuilder4.StartRebuildThread();
     rebuilder4.rebuildsetting_.print_debug_msg_ = false;
+    rebuilder4.rebuildsetting_.sleep_no_job_ = 1;
     for(VertexLocalId_t i = 0; i < 12; ++i){
       InsertOneDelta(instance, topology4, i, false, false);
       mpiidimpl.tid_ = (i + 1)* 10 + 1;
@@ -677,6 +678,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl);
     rebuilder4.StartRebuildThread();
     rebuilder4.rebuildsetting_.print_debug_msg_ = false;
+    rebuilder4.rebuildsetting_.sleep_no_job_ = 1;
     for(VertexLocalId_t i = size / 2 - 10; i < size; ++i){
       InsertOneDelta(instance, topology4, i, false, false, false);
       mpiidimpl.tid_ = (i + 1)* 10;
@@ -688,7 +690,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     //EXPECT_EQ(system(cmd.c_str()), 0);
   }
   {
-    std::cout << "Delete Edge Sample\n";
+    std::cout << "Delete Edge Sample: delete 1918 to 1919 \n";
     topology4::TopologyGraph topology5(&instance, "/tmp/deltatopology_large_full/",true, true);
     topology4::TopologyPrinter printer(&instance, &topology5);
     printer.PrintOneVertexEdges(1918);
@@ -716,7 +718,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     printer.PrintOneVertexEdges(1918);
   }
   {
-    std::cout << "Delete Vertex Sample\n";
+    std::cout << "Delete Vertex Sample: delete 1919\n";
     topology4::TopologyGraph topology5(&instance, "/tmp/deltatopology_large_full/",true, true);
     topology4::TopologyPrinter printer(&instance, &topology5);
     printer.PrintOneVertexEdges(1918);

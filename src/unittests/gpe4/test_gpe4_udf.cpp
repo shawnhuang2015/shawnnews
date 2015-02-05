@@ -65,7 +65,7 @@ TEST(BLUEAPITEST, NoFilter) {
   ASSERT_EQ(totalcount, api.GetVertexCount());
   for (size_t i = 0; i < totalcount; i += 10) {
     topology4::VertexAttribute* v1 = api.GetOneVertex(i);
-    ASSERT_EQ(v1->GetUInt32(1, -1), i);
+    ASSERT_EQ(v1->GetUInt(1, -1), i);
   }
   std::vector<VertexLocalId_t> vidlist;
   vidlist.push_back(totalcount - 1);

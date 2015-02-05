@@ -19,6 +19,7 @@
 #include <gutil/goutputstream.hpp>
 #include <gutil/filelinereader.hpp>
 #include <gutil/gdiskutil.hpp>
+#include <gutil/compactwriter.hpp>
 #include <gmmnt/globaldiskio.hpp>
 #include <boost/thread.hpp>
 
@@ -299,6 +300,31 @@ TEST(UTILTEST, GCharBuffer) {
     binary = (char*)ptr;
     ASSERT_EQ(strlen(binary), (i % 5) + 1);
     binary += strlen(binary) + 1;
+  }
+}
+
+TEST(UTILTEST, CompactWriter) {
+  char buf[100];
+  char* tmpptr = buf;
+  uint8_t* tmpptr2 = (uint8_t*)buf;
+  for(size_t i = 1; i <= 6; ++i){
+    uint64_t test1 = (((uint64_t)1) << ((i  - 1)* 7));
+    uint64_t test2 = (((uint64_t)1) << (i * 7)) - 1;
+    // std::cout << test1 << ", " << test2 << "\n";
+    ASSERT_EQ(gutil::CompactWriter::GetCompressedByteSize(test1), i);
+    ASSERT_EQ(gutil::CompactWriter::GetCompressedByteSize(test2), i);
+    tmpptr = buf;
+    ASSERT_EQ(gutil::CompactWriter::writeCompressed(test1, tmpptr), i);
+    tmpptr = buf;
+    ASSERT_EQ(gutil::CompactWriter::GetCompressedSize((uint8_t*)tmpptr), i);
+    tmpptr2 = (uint8_t*)buf;
+    ASSERT_EQ(gutil::CompactWriter::readCompressed(tmpptr2), test1);
+    tmpptr = buf;
+    ASSERT_EQ(gutil::CompactWriter::writeCompressed(test2, tmpptr), i);
+    tmpptr = buf;
+    ASSERT_EQ(gutil::CompactWriter::GetCompressedSize((uint8_t*)tmpptr), i);
+    tmpptr2 = (uint8_t*)buf;
+    ASSERT_EQ(gutil::CompactWriter::readCompressed(tmpptr2), test2);
   }
 }
 
