@@ -369,7 +369,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
     for(uint32_t id = 0; id < endid; ++id) {
       topology4::DeltaVertexAttributeRecord* v0 = segmentrecord.vertexattrrecords_.GetPointerForWrite(id, ret_lock, true);
       v0->AddVertexDelta(tid, (uint8_t*)&id, sizeof(id));
-      v0->AddVertexDegree(tid, 6);
+      //v0->AddVertexDegree(tid, 6);
       gutil::pthread_spin_writeunlock(ret_lock);
       topology4::DeltaVertexEdgesRecord* v1 = segmentrecord.vertexedgerecords_.GetPointerForWrite(id, ret_lock, true);
       v1->AddEdgeDelta(1, 75, tid, (uint8_t*)&id, sizeof(id));
@@ -387,7 +387,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
     for(uint32_t id = 0; id < endid; ++id) {
       topology4::DeltaVertexAttributeRecord* v0 = segmentrecord.vertexattrrecords_.GetPointerForWrite(id, ret_lock, true);
       v0->AddVertexDelta(tid, (uint8_t*)&id, sizeof(id));
-      v0->AddVertexDegree(tid, 6);
+      //v0->AddVertexDegree(tid, 6);
       gutil::pthread_spin_writeunlock(ret_lock);
       topology4::DeltaVertexEdgesRecord* v1 = segmentrecord.vertexedgerecords_.GetPointerForWrite(id, ret_lock, true);
       v1->AddEdgeDelta(1, 125, tid, (uint8_t*)&id, sizeof(id));
