@@ -5,7 +5,18 @@
  * TokenBankM.cpp: a library of token conversion function declaration. 
  *
  * - It is an M-tokens-in, one-token-out function.
- * - All functions must have the same funcion signature, but different func name.
+ * - All functions must have the same funcion signature, 
+ *   but different func name.
+ * - A token function can have nested other token function;
+ *   The out-most token function should return the same type
+ *   as the targeted attribute type specified in the 
+ *   vertex/edge schema.
+ *  
+ *   1. string[] -> string 
+ *
+ *   The UDF token conversion functions will take M input char 
+ *   array and do a customized conversion. Then, put the 
+ *   converted char array to the output char buffer.
  *
  *     extern "C" void funcName (const char* const iToken[], uint32_t iTokenLen[], 
  *     uint32_t iTokenNum, char* const oToken, uint32_t& oTokenLen);
@@ -18,37 +29,48 @@
  *
  *      Note: extern "C" make C++ compiler not change/mangle the function name.
  *      Note: To avoid array out of boundary issue in oToken buffer, it is 
- *             recommended to add semantic check to ensure oToken length does not exceed 
- *             OutputTokenBufferSize parameter specified in the shell config.
+ *            recommended to add semantic check to ensure oToken length does 
+ *            not exceed  OutputTokenBufferSize parameter specified in the 
+ *            shell config.
  *
+ *  
+ *   2. string[] -> int/bool/float
  *
- *   The UDF token conversion functions will take M input char array and do a customized conversion.
- *   Then, put the converted char array to the output char buffer.
+ *     extern "C" uint64_t funcName (const char* const iToken[], 
+ *     uint32_t iTokenLen[], uint32_t iTokenNum)
  *
- *   Think it as a UDF designed to combine M specific columns into one column before we load it in GStore.
+ *     extern "C" bool funcName (const char* const iToken[], uint32_t iTokenLen[], 
+ *     uint32_t iTokenNum)
+ *
+ *     extern "C" float funcName (const char* const iToken[], uint32_t iTokenLen[], 
+ *     uint32_t iTokenNum)
+ *
+ *      @param: iToken: 1 or M input tokens, each pointed by one char pointer 
+ *      @param: iTokenLen: each input token's length
+ *      @param: iTokenNum: how many input tokens 
+ *
+ *   Think token function as a UDF designed to combine M specific columns into 
+ *   one column before we load them into graph store.
  * 
- * - For 1 loading job, one can use at most *20* token UDFs from this file.
  * - All functions can be used in the loading job definition, in the VALUES caluse.
  *    e.g. Let a function named Concat(), we can use it in the DDL shell as below
  *      values( $1, Concat($2,$3), $3...)
  *
- * - Once defined UDF, run the following script to compile it to a shared libary.
  *
- *  ./compileTokenBank.sh
+ * - Once defined UDF, run the follow to compile a shared libary.
  *
- *  The shared library path can be specified in run.sh, e.g.
+ *    TokenBank/compile
  *
- *   export LD_LIBRARY_PATH='/vagrant/repo/product/bin/'
- *
- *  GraphSQL loader binary will automatically use the library at runtime.
+ *   GraphSQL loader binary will automatically use the library at runtime.
  *
  * - You can unit test your token function in the main function in this file.
  *   To run your test, you can do 
  *
- *   g++ TokenBank1.cpp 
- *   ./a.out
+ *     g++ TokenBankM.cpp 
+ *     ./a.out
  *
  * Created on: Dec 11, 2014
+ * Updated on: Feb 7, 2014
  * Author: Mingxi Wu
  ******************************************************************************/
 

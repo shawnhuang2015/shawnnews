@@ -5,7 +5,18 @@
  * TokenBank1.cpp: a library of token conversion function declaration. 
  *
  * - It is a one-token-in, one-token-out function.
- * - All functions must have the same funcion signature, but different func name.
+ * - All functions must use one of the following signatures, 
+ *   but different function name.
+ * - A token function can have nested other token function;
+ *   The out-most token function should return the same type
+ *   as the targeted attribute type specified in the 
+ *   vertex/edge schema.
+ *
+ *   1. string -> string 
+ *
+ *      The UDF token conversion functions will take an input char array and do 
+ *      a customized conversion. Then, put the converted char array to output 
+ *      char buffer. 
  *
  *      extern "C" void funcName (const char* const iToken, uint32_t iTokenLen, 
  *                           char *const oToken, uint32_t& oTokenLen);
@@ -18,27 +29,32 @@
  *       Note: extern "C" make C++ compiler not change/mangle the function name.
  *       Note: To avoid array out of boundary issue in oToken buffer, it is 
  *             recommended to add semantic check to ensure oToken length does not exceed 
- *             OutputTokenBufferSize parameter specified in the shell config.
+ *             OutputTokenBufferSize parameter value specified in the shell config.
  *
- *    The UDF token conversion functions will take an input char array and do a customized conversion.
- *    Then, put the converted char array to output char buffer.
  *
- *     Think it as a UDF designed to transform a specific column before we load it in GStore.
+ *   2. string -> bool/uint/float
  *
- * - For 1 loading job, one can use at most *20* token UDFs from this file.
+ *      extern "C" bool funcName (const char* const iToken, uint32_t iTokenLen);
+ *      extern "C" uint64_t funcName (const char* const iToken, uint32_t iTokenLen);
+ *      extern "C" float funcName (const char* const iToken, uint32_t iTokenLen);
+ *
+ *       @param: iToken: 1 input token pointed by one char pointer.
+ *       @param: iTokenLen: the input token length 
+ *       @return: converted value
+ *
+ * 
+ *  Think token function as a UDF designed to transform a specific column before we load 
+ *  it in graph store.
+ *
  * - All functions can be used in the loading job definition, in the VALUES caluse.
  *    e.g. Let a function named Reverse (), we can use it in the DDL shell as below
  *      values( $1, Reverse($2), $3...)
  *
- * - Once defined UDF, run the following script to compile it to a shared libary.
+ * - Once defined UDF, run the follow to compile a shared libary.
  *
- *    ./compileTokenBank.sh
+ *    TokenBank/compile
  *
- *    The shared library path can be specified in run.sh, e.g.
- *
- *     export LD_LIBRARY_PATH='/vagrant/repo/product/bin/'
- *
- *    GraphSQL loader binary will automatically use the library at runtime.
+ *   GraphSQL loader binary will automatically use the library at runtime.
  *
  * - You can unit test your token function in the main function in this file.
  *   To run your test, you can do 
@@ -47,6 +63,7 @@
  *     ./a.out
  *
  * Created on: Dec 11, 2014
+ * Updated on: Feb 7, 2014
  * Author: Mingxi Wu
  ******************************************************************************/
 
@@ -75,10 +92,8 @@ extern "C"  void Reverse (const char* const iToken, uint32_t iTokenLen,
  * and put it in oToken.
  *
  */
-extern "C"  void Zero(const char* const iToken, uint32_t iTokenLen, 
-    char *const oToken, uint32_t& oTokenLen){
-  memset (oToken, '0', iTokenLen);
-  oTokenLen = iTokenLen;
+extern "C"  uint64_t Zero(const char* const iToken, uint32_t iTokenLen) {
+  return 0;
 }
 
 
@@ -100,7 +115,7 @@ int main(){
   std::cout<<len <<std::endl;
 
   len =0;
-  Zero(a,3,b,len);
+  Zero(a,3);
 
   for(int i =0; i<3; i++){
 
