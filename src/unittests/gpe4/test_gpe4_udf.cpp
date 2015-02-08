@@ -21,7 +21,7 @@
 #include "partitiondatafeeder_unittest.hpp"
 #include "udfs_generic.hpp"
 
-std::string output_gpe4_path_ = "/tmp/unittest/gpe4_udf/";
+std::string output_gpe4_path_ = "/tmp/unittest/gpe4.2_udf/";
 VertexLocalId_t num_gpe4_vertices_ = 10238;
 uint32_t num_worker_ = 3;
 
@@ -65,7 +65,7 @@ TEST(BLUEAPITEST, NoFilter) {
   ASSERT_EQ(totalcount, api.GetVertexCount());
   for (size_t i = 0; i < totalcount; i += 10) {
     topology4::VertexAttribute* v1 = api.GetOneVertex(i);
-    ASSERT_EQ(v1->GetUInt32(1, -1), i);
+    ASSERT_EQ(v1->GetUInt(1, -1), i);
   }
   std::vector<VertexLocalId_t> vidlist;
   vidlist.push_back(totalcount - 1);

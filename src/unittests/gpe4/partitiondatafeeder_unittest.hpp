@@ -60,11 +60,11 @@ class TestPartitionDataFeeder_DenseD : public PartitionDataFeeder {
   std::vector<int> GetVertexAttributeType() {
     std::vector<int> vec;
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::REAL_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::REAL_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     return vec;
@@ -73,11 +73,11 @@ class TestPartitionDataFeeder_DenseD : public PartitionDataFeeder {
   std::vector<int> GetEdgeAttributeType() {
     std::vector<int> vec;
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::REAL_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::REAL_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     return vec;
@@ -204,7 +204,7 @@ class TestPartitionDataFeeder_UD : public PartitionDataFeeder {
   std::vector<int> GetVertexAttributeType() {
     std::vector<int> vec;
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     return vec;
   }
@@ -339,7 +339,7 @@ class TestPartitionDataFeeder_D : public PartitionDataFeeder {
   std::vector<int> GetVertexAttributeType() {
     std::vector<int> vec;
     vec.push_back(Attribute::BOOL_TYPE);
-    vec.push_back(Attribute::UINT32_TYPE);
+    vec.push_back(Attribute::UINT_TYPE);
     vec.push_back(Attribute::STRING_TYPE);
     return vec;
   }
