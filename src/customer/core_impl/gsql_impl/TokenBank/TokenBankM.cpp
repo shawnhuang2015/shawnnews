@@ -5,8 +5,8 @@
  * TokenBankM.cpp: a library of token conversion function declaration. 
  *
  * - It is an M-tokens-in, one-token-out function.
- * - All functions must have the same funcion signature, 
- *   but different func name.
+ * - All functions must use one of the following signatures, 
+ *   but different function name.
  * - A token function can have nested other token function;
  *   The out-most token function should return the same type
  *   as the targeted attribute type specified in the 
