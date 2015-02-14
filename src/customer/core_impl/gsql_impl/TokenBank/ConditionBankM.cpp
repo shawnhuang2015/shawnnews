@@ -17,7 +17,6 @@
  *   The UDF token conversion functions will take M input char array and do a customized check.
  *   Then, return true or false depending on the tokens pass the condition or not. 
  *
- * - For 1 loading job, one can use at most *20* condition UDFs from this file.
  * - All functions can be used in the loading job definition, in the WHERE caluse.
  *    e.g. Let a function named SumGreaterThan3(), we can use it in the DDL shell as below
  *
@@ -25,11 +24,7 @@
  *
  * - Once defined UDF, run the following script to compile it to a shared libary.
  *
- *    ./compileTokenBank.sh
- *
- *    The shared library path can be specified in run.sh, e.g.
- *
- *     export LD_LIBRARY_PATH='/vagrant/repo/product/bin/'
+ *    ./compile
  *
  *    GraphSQL loader binary will automatically use the library at runtime.
  *

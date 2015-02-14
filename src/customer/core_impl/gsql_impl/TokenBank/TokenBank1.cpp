@@ -23,7 +23,7 @@
  *
  *       @param: iToken: 1 input token pointed by one char pointer.
  *       @param: iTokenLen: the input token length 
- *       @param: oToken: the output token buffer; maximum 200 characters.
+ *       @param: oToken: the output token buffer; caller will prepare this buffer
  *       @param: oTokenLen: the output token length 
  *
  *       Note: extern "C" make C++ compiler not change/mangle the function name.
