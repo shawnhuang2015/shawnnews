@@ -73,8 +73,8 @@
 #include <cstring>
 
 /**
- * This function convert iToken char array of size iTokenLen, reverse order and 
- * put it in oToken.
+ * This function convert iToken char array of size iTokenLen, reverse order 
+ * and put it in oToken.
  *
  */
 extern "C"  void Reverse (const char* const iToken, uint32_t iTokenLen, 
@@ -88,8 +88,7 @@ extern "C"  void Reverse (const char* const iToken, uint32_t iTokenLen,
 }
 
 /**
- * This function convert iToken of size iTokenLen to zero array 
- * and put it in oToken.
+ * This function convert iToken of size iTokenLen to a zero integer
  *
  */
 extern "C"  uint64_t Zero(const char* const iToken, uint32_t iTokenLen) {

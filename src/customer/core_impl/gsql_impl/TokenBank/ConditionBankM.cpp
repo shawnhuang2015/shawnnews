@@ -47,12 +47,12 @@
 
 
 /**
- * This function convert iToken to integer, sum them and compare the sum with 3.
- * If it is greater than 3, return true. Otherwise, return false.
+ * This function convert each input token to an integer, sum them and compare 
+ * the sum with 3. If it is greater than 3, return true. Otherwise, return false.
  *
  */
-extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
-
+extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) 
+{
   int k = 0;
   int sum = 0;
 
@@ -68,18 +68,6 @@ extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[]
   return false;
 
 }
-
-extern "C" bool GreaterThan3_2(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
-
-  for (int i=0; i < iTokenNum; i++){
-    int tmp = atoi(iToken[i]);
-    if( tmp <= 3) 
-      return false;
-  }
-  return true;
-}
-
-
 
 
 

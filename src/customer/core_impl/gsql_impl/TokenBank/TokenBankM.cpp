@@ -80,6 +80,10 @@
 #include <cstring>
 
 
+ /**
+  * this function concatenate all input tokens into one big token
+  *
+  */
 extern "C" void Concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
     char* const oToken, uint32_t& oTokenLen){
       
