@@ -58,4 +58,6 @@ utility/gutil/gsorter.hpp
 utility/gutil/iterator.hpp
 utility/gutil/jsonwriter.hpp
 utility/gutil/spinlock.hpp
+# for batch mode
+core/gpe/gpelib4/enginedriver/enginedriver.hpp
 #_Do_not_delete_last_line
