@@ -506,7 +506,7 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
   }
   if(idcheck){
     topology4::QueryState query_state((i + 1) * 5);
-    topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+    topology.SetCurrentQueryState(query_state);
     if(checkid){
       for(VertexLocalId_t j = 0; j <= i ; ++j)
         EXPECT_EQ(topology.IsValidVertexId(j, query_state), j < (i + 1) / 2);
@@ -573,7 +573,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
         InsertOneDelta(instance, topology, i, true);
       }
       topology4::QueryState query_state(61);
-      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      topology.SetCurrentQueryState(query_state);
       DeltaRebuilder rebuilder1(&instance, &topology, NULL);
       rebuilder1.Rebuild("/tmp/deltatopology_half/", &query_state);
     }
@@ -582,7 +582,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
         InsertOneDelta(instance, topology, i, true);
       }
       topology4::QueryState query_state(121);
-      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      topology.SetCurrentQueryState(query_state);
       DeltaRebuilder rebuilder1(&instance, &topology, NULL);
       rebuilder1.Rebuild("/tmp/deltatopology_full/", &query_state);
     }
@@ -598,7 +598,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
       InsertOneDelta(instance, topology2, i, false);
     }
     topology4::QueryState query_state(121);
-    topology2.GetCurrentSegementMeta(query_state.query_segments_meta_);
+    topology2.SetCurrentQueryState(query_state);
     DeltaRebuilder rebuilder3(&instance, &topology2, NULL);
     rebuilder3.Rebuild("/tmp/deltatopology_full2/", &query_state);
     //std::string cmd = "diff  -r /tmp/deltatopology_full /tmp/deltatopology_full2";
@@ -624,7 +624,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
     rebuilder4.rebuildsetting_.sleep_no_job_ = 1;
     for(VertexLocalId_t i = 0; i < 12; ++i){
       InsertOneDelta(instance, topology4, i, false, false);
-      mpiidimpl.tid_ = (i + 1)* 10 + 1;
+      // mpiidimpl.tid_ = (i + 1)* 10 + 1;
       usleep(100000);
       // TopologyPrinter printer(&instance, &topology4);
       // printer.PrintVertexAttributes(true, -1);
@@ -658,7 +658,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
         InsertOneDelta(instance, topology, i, false);
       }
       topology4::QueryState query_state(size * 5);
-      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      topology.SetCurrentQueryState(query_state);
       DeltaRebuilder rebuilder1(&instance, &topology, NULL);
       rebuilder1.Rebuild("/tmp/deltatopology_large_half/", &query_state);
     }
@@ -667,7 +667,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
         InsertOneDelta(instance, topology, i, false);
       }
       topology4::QueryState query_state(size * 10);
-      topology.GetCurrentSegementMeta(query_state.query_segments_meta_);
+      topology.SetCurrentQueryState(query_state);
       DeltaRebuilder rebuilder2(&instance, &topology, NULL);
       rebuilder2.Rebuild("/tmp/deltatopology_large_full/", &query_state);
     }
@@ -681,7 +681,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     rebuilder4.rebuildsetting_.sleep_no_job_ = 1;
     for(VertexLocalId_t i = size / 2 - 10; i < size; ++i){
       InsertOneDelta(instance, topology4, i, false, false, false);
-      mpiidimpl.tid_ = (i + 1)* 10;
+      //mpiidimpl.tid_ = (i + 1)* 10;
     }
     sleep(3); // wait until all rebuild done
   }
