@@ -1,0 +1,48 @@
+HOW TO GUIDE
+
+In below struct, users will only work under drivers/ and test_case/ directory.
+1) In drivers/, put your test program driver 
+2) In test_case/, put your test cases here, follows the structures
+3) Run the test framework
+     ./gtest PROGRAM 1 2 ...
+ 
+     PROGRAM is your program name, you don't need to write drivers/PROGRAM
+     The numbers represent the regress number: 1 means test_case/PROGRAM/regress1
+     You can use '\*' to represent multiple directories:
+         ./gr.sh PROGRAM \*
+     To run 1* and 2*, you can do
+         ./gr.sh PROGRAM 1\* 2\*
+
+==================================================================================
+
+gtest/
+├── base_line -> ../src/olgp/regress/base_line        /* The baseline of your program output, will be compare with the output */
+├── config                                            /* The configurations file */
+├── data_set -> ../src/olgp/regress/data_set          /* You can put your test input data here */
+├── diff                                              /* The difference of output and base_line will be put in this folder (subfolders based on driver name and regression) */
+│   ├── gsql                                          /* The diff for driver named 'gsql' (same name with the correspond driver without extension) will be put inside here */
+│   │   ├── regress1                                  /* The diff for first regress test cases */
+│   │   │   ├── test1.diff                            /* The diff of test_case named 'test1' (same name with the correspond test case without extension) */
+│   │   │   └── test2.diff
+│   │   ├── regress2                                  /* The diff for second regress test cases */
+│   │   └── regress3                                  /* The diff for third regress test cases */
+│   └── loader                                        /* The diff for driver named 'loader' will be put inside here */
+│       └── regress1
+├── drivers -> ../src/olgp/regress/drivers            /* Your testing program's driver should be here */
+├── gtest -> ../src/utility/tools/gtest/gtest.sh      /* Script to run this framework */
+├── lib
+│   └── .gtest.jar -> ../src/utility/tools/gtest/gtest.jar      /*The binary */  
+├── output                                            /* The output of your programs, same structure as diff/ */
+│   ├── gsql
+│   │   ├── regress1
+│   │   │   ├── test1.log
+│   │   │   └── test2.log
+│   │   ├── regress2
+│   │   │   └── test1.log
+│   │   └── regress3
+│   │       └── test1.log
+│   └── loader
+│       └── regress1
+│           └── test1.log
+└── test_case -> ../src/olgp/regress/test_case       /* The test cases for all your programs should be here */
+

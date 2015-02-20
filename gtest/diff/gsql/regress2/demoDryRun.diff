@@ -1,0 +1,28 @@
+log < Vertex person is created.
+---
+base> 
+
+log < Vertex movie is created.
+---
+base> 
+
+log < Edge roles is created.
+---
+base> 
+
+log < Graph movieperson is created.
+---
+base> 
+
+log < Semantic Check Fails: File or directory ./data_set/loader/persons.csv does not exists!
+---
+base> 
+
+log < Job dryruntest could not be created!
+---
+base> 
+
+log < Semantic Check Fails:  cannot find job dryruntest
+---
+base> 
+

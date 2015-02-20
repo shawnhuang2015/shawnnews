@@ -1,0 +1,56 @@
+log < Everything is dropped.
+---
+base> 
+
+log < Graph store gstore/./test_case/gsql/regress1/demoUDF/ has been cleared!
+---
+base> 
+
+log < Vertex person1 is created.
+---
+base> 
+
+log < Vertex personm is created.
+---
+base> 
+
+log < Edge roles1 is created.
+---
+base> 
+
+log < Graph udfperson is created.
+---
+base> 
+
+log < Job udftest could not be found.
+---
+base> 
+
+log < Job udftest is created.
+---
+base> 
+
+log < Semantic Check Fails: UDF summ appears in TokenBank1.cpp; it should be in TokenBankM.cpp!
+---
+base> 
+
+log < Semantic Check Fails: UDF sum1m is not found in ./src/TokenBank/TokenBank1.cpp
+---
+base> 
+
+log < Semantic Check Fails: UDF sum1 is expected to return STRING, but the actual is UINT, when loading udf Reverse!
+---
+base> 
+
+log < Semantic Check Fails: UDF divd1 is expected to return UINT, but the actual is REAL, when loading vertex person1 attribute r!
+---
+base> 
+
+log < Semantic Check Fails: UDF sum1 is expected to return STRING, but the actual is UINT, when loading udf summ!
+---
+base> 
+
+log < Semantic Check Fails: UDF sum1 is expected to return STRING, but the actual is UINT, when loading edge roles1 to_vertex!
+---
+base> 
+

@@ -1,0 +1,240 @@
+log < 
+---
+base> [GTEST_LINE] Source File Name: ./resources/data_set/loader/persons.csv
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Statistics------------------------------
+
+log < 
+---
+base> Vertex:                  person
+
+log < 
+---
+base> Valid lines:             3
+
+log < 
+---
+base> Duplicate primary_id:    0
+
+log < 
+---
+base> No ID found:             0
+
+log < 
+---
+base> Not enough token:        0
+
+log < 
+---
+base> Invalid Attributes:      2
+
+log < 
+---
+base> Invalid primary id:      0
+
+log < 
+---
+base> Invalid secondary id:    0
+
+log < 
+---
+base> Incorrect fixed
+
+log < 
+---
+base> binary length:           0
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Invalid attributes----------------------
+
+log < 
+---
+base> line 0:0:person:     1..1,Charlie Sheen
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> [GTEST_LINE] Source File Name: ./resources/data_set/loader/movies.csv
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Statistics------------------------------
+
+log < 
+---
+base> Vertex:                  movie
+
+log < 
+---
+base> Valid lines:             2
+
+log < 
+---
+base> Duplicate primary_id:    1
+
+log < 
+---
+base> No ID found:             0
+
+log < 
+---
+base> Not enough token:        0
+
+log < 
+---
+base> Invalid Attributes:      2
+
+log < 
+---
+base> Invalid primary id:      0
+
+log < 
+---
+base> Invalid secondary id:    0
+
+log < 
+---
+base> Incorrect fixed
+
+log < 
+---
+base> binary length:           0
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Invalid attributes----------------------
+
+log < 
+---
+base> line 0:0:movie:     a,Wall Street,USA,1987
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> [GTEST_LINE] Source File Name: ./resources/data_set/loader/roles.csv
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Statistics------------------------------
+
+log < 
+---
+base> Edge:                    roles
+
+log < 
+---
+base> Valid lines:             5
+
+log < 
+---
+base> Duplicate primary_id:    0
+
+log < 
+---
+base> No ID found:             0
+
+log < 
+---
+base> Not enough token:        1
+
+log < 
+---
+base> Invalid Attributes:      0
+
+log < 
+---
+base> Invalid primary id:      0
+
+log < 
+---
+base> Invalid secondary id:    0
+
+log < 
+---
+base> Incorrect fixed
+
+log < 
+---
+base> binary length:           0
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
+log < 
+---
+base> --------------------Lines short of tokens-------------------
+
+log < 
+---
+base> line 5:    5,Ellis Boyd 'Red' Redding
+
+log < 
+---
+base> 
+
+log < 
+---
+base> 
+
