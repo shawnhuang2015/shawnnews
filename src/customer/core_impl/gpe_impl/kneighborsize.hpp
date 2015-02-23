@@ -17,6 +17,8 @@ namespace UDIMPL {
     }
 
     void StartRun(MasterContext* context) {
+      context->set_udfedgemapsetting(gpelib4::UDFEdgeMapSetting_RequireTargetVertexValue);
+      context->set_udfreducesetting(0);
       writer_->WriteStartObject();
     }
 
