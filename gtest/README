@@ -4,9 +4,9 @@ In below struct, users will only work under drivers/ and test_case/ directory.
 1) In drivers/, put your test program driver 
 2) In test_case/, put your test cases here, follows the structures
 3) Run the test framework
-     ./gtest PROGRAM 1 2 ...
+     ./gtest program_driver 1 2 ...
  
-     PROGRAM is your program name, you don't need to write drivers/PROGRAM
+     program_driver is your test program driver file name, found in drivers folder.
      The numbers represent the regress number: 1 means test_case/PROGRAM/regress1
      You can use '\*' to represent multiple directories:
          ./gr.sh PROGRAM \*
