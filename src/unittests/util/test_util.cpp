@@ -34,12 +34,12 @@ uint32_t gsparsearray_num_clean_ = 0;
 uint32_t gsparsearray_gap_ = 128;
 
 void GSparseArray_Write(){
-  gutil::pthread_spinlock_t* ret_lock = NULL;
+  gutil::spinlock_mutex* ret_lock = NULL;
   //std::cout << "GSparseArray_WriteThread\n";
   for(uint32_t id = 0; id < (((uint32_t)1) << gsparsearray_size_inbits_); id+=gsparsearray_gap_){
     uint32_t* value = sparsearray_->GetPointerForWrite(id, ret_lock, true);
     ++(*value);
-    gutil::pthread_spin_writeunlock(ret_lock);
+    gutil::spin_writeunlock(ret_lock);
   }
 }
 
@@ -51,14 +51,14 @@ void GSparseArray_WriteThread(){
 }
 
 void GSparseArray_Cleanup(){
-  gutil::pthread_spinlock_t* ret_lock = NULL;
+  gutil::spinlock_mutex* ret_lock = NULL;
   //std::cout << "GSparseArray_CleanupThread\n";
   for(uint32_t id = 0; id < (((uint32_t)1) << gsparsearray_size_inbits_); id+=gsparsearray_gap_){
     uint32_t* value = sparsearray_->GetPointerForWrite(id, ret_lock, false);
     if(value != NULL){
       if(id % 7 == 0)
         sparsearray_->RemovePointer(id);
-      gutil::pthread_spin_writeunlock(ret_lock);
+      gutil::spin_writeunlock(ret_lock);
     }
   }
 }
@@ -71,13 +71,13 @@ void GSparseArray_CleanupThread(){
 }
 
 void GSparseArray_Read(){
-  gutil::pthread_spinlock_t* ret_lock = NULL;
+  gutil::spinlock_mutex* ret_lock = NULL;
   //std::cout << "GSparseArray_ReadThread\n";
   for(uint32_t id = 0; id < (((uint32_t)1) << gsparsearray_size_inbits_); id+=gsparsearray_gap_){
     uint32_t* value = sparsearray_->GetPointerForRead(id, ret_lock);
     if(value != NULL) {
       //std::cout << id << "," << *value << "\n";
-      gutil::pthread_spin_readunlock(ret_lock);
+      gutil::spin_readunlock(ret_lock);
       // std::cout << *ret_lock << "\n";
     }
   }
@@ -91,21 +91,21 @@ void GSparseArray_ReadThread(){
 }
 
 void GSparseArray_SingleTest(){
-  gutil::pthread_spinlock_t* ret_lock = NULL;
+  gutil::spinlock_mutex* ret_lock = NULL;
   for(size_t i = 0; i < (((uint32_t)1) << gsparsearray_size_inbits_) - 1; i+=gsparsearray_gap_){
     uint32_t* value = sparsearray_->GetPointerForWrite(i, ret_lock, true);
     ASSERT_EQ(*value, 0u);
     ++(*value);
-    gutil::pthread_spin_writeunlock(ret_lock);
+    gutil::spin_writeunlock(ret_lock);
 
     value = sparsearray_->GetPointerForRead(i, ret_lock);
     ASSERT_EQ(*value, 1u);
-    gutil::pthread_spin_readunlock(ret_lock);
+    gutil::spin_readunlock(ret_lock);
 
     value = sparsearray_->GetPointerForWrite(i + 1, ret_lock, true);
     ASSERT_EQ(*value, 0u);
     sparsearray_->RemovePointer(i + 1);
-    gutil::pthread_spin_writeunlock(ret_lock);
+    gutil::spin_writeunlock(ret_lock);
 
     value = sparsearray_->GetPointerForRead(i + 1, ret_lock);
     ASSERT_EQ(value == NULL, true);

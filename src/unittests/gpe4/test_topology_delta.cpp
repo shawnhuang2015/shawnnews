@@ -361,7 +361,7 @@ TEST(GPE4DELTATEST, DeltaItemBinary) {
 }
 
 TEST(GPE4DELTATEST, DeltaRecords) {
-  gutil::pthread_spinlock_t* ret_lock = NULL;
+  gutil::spinlock_mutex* ret_lock = NULL;
   topology4::DeltaSegmentRecords segmentrecord(0, 10);
   const uint32_t endid = 2;
   {
@@ -370,7 +370,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
       topology4::DeltaVertexAttributeRecord* v0 = segmentrecord.vertexattrrecords_.GetPointerForWrite(id, ret_lock, true);
       v0->AddVertexDelta(tid, (uint8_t*)&id, sizeof(id));
       //v0->AddVertexDegree(tid, 6);
-      gutil::pthread_spin_writeunlock(ret_lock);
+      gutil::spin_writeunlock(ret_lock);
       topology4::DeltaVertexEdgesRecord* v1 = segmentrecord.vertexedgerecords_.GetPointerForWrite(id, ret_lock, true);
       v1->AddEdgeDelta(1, 75, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(0, 100, tid, (uint8_t*)&id, sizeof(id));
@@ -378,7 +378,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
       v1->AddEdgeDelta(1, 125, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(0, 200, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(1, 25, tid, (uint8_t*)&id, sizeof(id));
-      gutil::pthread_spin_writeunlock(ret_lock);
+      gutil::spin_writeunlock(ret_lock);
     }
     std::cout << "After Transaction " << tid << "\n" << segmentrecord;
   }
@@ -388,7 +388,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
       topology4::DeltaVertexAttributeRecord* v0 = segmentrecord.vertexattrrecords_.GetPointerForWrite(id, ret_lock, true);
       v0->AddVertexDelta(tid, (uint8_t*)&id, sizeof(id));
       //v0->AddVertexDegree(tid, 6);
-      gutil::pthread_spin_writeunlock(ret_lock);
+      gutil::spin_writeunlock(ret_lock);
       topology4::DeltaVertexEdgesRecord* v1 = segmentrecord.vertexedgerecords_.GetPointerForWrite(id, ret_lock, true);
       v1->AddEdgeDelta(1, 125, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(0, 200, tid, (uint8_t*)&id, sizeof(id));
@@ -396,7 +396,7 @@ TEST(GPE4DELTATEST, DeltaRecords) {
       v1->AddEdgeDelta(1, 75, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(0, 100, tid, (uint8_t*)&id, sizeof(id));
       v1->AddEdgeDelta(0, 50, tid, (uint8_t*)&id, sizeof(id));
-      gutil::pthread_spin_writeunlock(ret_lock);
+      gutil::spin_writeunlock(ret_lock);
     }
     std::cout << "After Transaction " << tid << "\n" << segmentrecord;
   }

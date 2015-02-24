@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <gbucket/buckettable.hpp>
+#include <gbucket/bucket.hpp>
 #include <gmmnt/globalinstances.hpp>
 #include <gutil/spinlock.hpp>
 #include <gutil/gthreadpool.hpp>
@@ -30,14 +31,13 @@ void ThreadSave_SingleValueBucket(
     std::pair<size_t, gbucket::BucketTable*> info) {
   size_t index = info.first;
   for (VertexLocalId_t index = info.first; index < num_items_inbuckets_;
-      index += write_bucket_threads_) {
+       index += write_bucket_threads_) {
     gbucket::Bucket* bucket = info.second->GetBucket(
-        index >> bucketsize_bits_);
-    gutil::pthread_spin_lock(bucket->spinlock());
+                                index >> bucketsize_bits_);
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::SingleValueContainer>(index, index * 2);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::SingleValueContainer>(index, index * 2);
   }
 }
 
@@ -54,14 +54,14 @@ TEST(BUCKETTEST, SINGLEVALUE) {
                                      globalinstance.membuffer_,
                                      globalinstance.diskio_);
     unsigned int* intarray = (unsigned int*) globalinstance.memallocator_
-        ->RegisterAndNewptr(num_items_inbuckets_ * sizeof(unsigned int),
-                            "singledataarray", "Array");
+                             ->RegisterAndNewptr(num_items_inbuckets_ * sizeof(unsigned int),
+                                                 "singledataarray", "Array");
     std::fill(intarray, intarray + num_items_inbuckets_, 0);
     buckettable.AddMemoryDataId("singledataarray");
     VertexLocalId_t bucketindex = 0;
     while (true) {
       buckettable.AddBucket(
-          new gpelib::SingleValueContainer(
+            new gpelib::SingleValueContainer(
               bucketindex * bucketsize_,
               std::min(bucketsize_,
                        num_items_inbuckets_ - bucketsize_ * bucketindex),
@@ -87,12 +87,11 @@ void ThreadSave_SingleMessageValueBucket(
     std::pair<size_t, gbucket::BucketTable*> info) {
   for (VertexLocalId_t index = 0; index < num_items_inbuckets_; ++index) {
     gbucket::Bucket* bucket = info.second->GetBucket(
-        index >> bucketsize_bits_);
-    gutil::pthread_spin_lock(bucket->spinlock());
+                                index >> bucketsize_bits_);
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::SingleMessageDataContainer>(index, index + info.first);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::SingleMessageDataContainer>(index, index + info.first);
   }
 }
 
@@ -109,14 +108,14 @@ TEST(BUCKETTEST, SINGLEMESSAGE) {
                                      globalinstance.membuffer_,
                                      globalinstance.diskio_);
     unsigned int* intarray = (unsigned int*) globalinstance.memallocator_
-        ->RegisterAndNewptr(num_items_inbuckets_ * sizeof(unsigned int),
-                            "singledataarray", "Array");
+                             ->RegisterAndNewptr(num_items_inbuckets_ * sizeof(unsigned int),
+                                                 "singledataarray", "Array");
     std::fill(intarray, intarray + num_items_inbuckets_, 0);
     buckettable.AddMemoryDataId("singledataarray");
     VertexLocalId_t bucketindex = 0;
     while (true) {
       buckettable.AddBucket(
-          new gpelib::SingleMessageDataContainer(
+            new gpelib::SingleMessageDataContainer(
               bucketindex * bucketsize_,
               std::min(bucketsize_,
                        num_items_inbuckets_ - bucketsize_ * bucketindex),
@@ -130,15 +129,15 @@ TEST(BUCKETTEST, SINGLEMESSAGE) {
       for (size_t i = 0; i < write_bucket_threads_; i++) {
         std::pair<size_t, gbucket::BucketTable*> pair(i, &buckettable);
         pool.run_task(
-            boost::bind(ThreadSave_SingleMessageValueBucket, pair));
+              boost::bind(ThreadSave_SingleMessageValueBucket, pair));
       }
       pool.wait();
     }
     for (size_t i = 0; i < num_items_inbuckets_; i++)
       EXPECT_EQ(
-          intarray[i],
-          i * write_bucket_threads_
-              + write_bucket_threads_ * (write_bucket_threads_ - 1) / 2);
+            intarray[i],
+            i * write_bucket_threads_
+            + write_bucket_threads_ * (write_bucket_threads_ - 1) / 2);
   }
 }
 
@@ -146,21 +145,19 @@ void ThreadSave_MultipleValueBucket1(
     std::pair<size_t, gbucket::BucketTable*> info) {
   for (VertexLocalId_t index = 0; index < num_items_inbuckets_; ++index) {
     gbucket::Bucket* bucket = info.second->GetBucket(
-        index >> bucketsize_bits_);
-    gutil::pthread_spin_lock(bucket->spinlock());
+                                index >> bucketsize_bits_);
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::MultipleValueContainer>(index, index + info.first);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::MultipleValueContainer>(index, index + info.first);
   }
   if (info.first == 0) {
     gbucket::Bucket* bucket = info.second->GetBucket(0);
     for (size_t i = 0; i < bigwritesize_; i++) {
-      gutil::pthread_spin_lock(bucket->spinlock());
+      gutil::GLock lock(bucket->lockmutex());
       bucket
           ->AddCell<VertexLocalId_t, unsigned int,
-              gpelib::MultipleValueContainer>(0, 0);
-      gutil::pthread_spin_unlock(bucket->spinlock());
+          gpelib::MultipleValueContainer>(0, 0);
     }
   }
 }
@@ -170,20 +167,20 @@ void InitMultipleValueBucket(gmmnt::GlobalInstances& globalinstance,
   std::string offset_dataid = buckettable.name() + "offsetarray_unittest";
   BucketDataOffset_t* offsetarray =
       reinterpret_cast<BucketDataOffset_t*>(globalinstance.memallocator_
-          ->RegisterAndNewptr(
-          num_items_inbuckets_ * sizeof(BucketDataOffset_t), offset_dataid,
-          "Array"));
+                                            ->RegisterAndNewptr(
+                                              num_items_inbuckets_ * sizeof(BucketDataOffset_t), offset_dataid,
+                                              "Array"));
   std::fill(offsetarray, offsetarray + num_items_inbuckets_, 0);
   buckettable.AddMemoryDataId(offset_dataid);
   VertexLocalId_t bucketindex = 0;
   while (true) {
     buckettable.AddBucket(
-        new gpelib::MultipleValueContainer(
+          new gpelib::MultipleValueContainer(
             bucketindex * bucketsize_,
             std::min(bucketsize_,
                      num_items_inbuckets_ - bucketsize_ * bucketindex),
             sizeof(unsigned int), offsetarray))->SetBucketLoadPattern(
-        gbucket::BucketLoad_MultipleTimes);
+          gbucket::BucketLoad_MultipleTimes);
     bucketindex++;
     if (num_items_inbuckets_ <= bucketindex * bucketsize_)
       break;
@@ -207,12 +204,12 @@ void WriteMultipleValueBucket1(gmmnt::GlobalInstances& globalinstance,
     std::vector<std::string> requests;
     requests.push_back(bucket->dataid());
     EXPECT_EQ(
-        globalinstance.memserver_->SendRequests(callerid, requests,
-                                                gmmnt::MemHigh, true),
-        true);
+          globalinstance.memserver_->SendRequests(callerid, requests,
+                                                  gmmnt::MemHigh, true),
+          true);
     EXPECT_EQ(
-        globalinstance.memserver_->IsAllRequestsReady(callerid, true),
-        true);
+          globalinstance.memserver_->IsAllRequestsReady(callerid, true),
+          true);
     gpelib::MultipleValueContainer* container =
         (gpelib::MultipleValueContainer*) bucket->GetBucketContainer();
     BucketDataOffset_t* localoffsetarray =
@@ -241,20 +238,18 @@ void WriteMultipleValueBucket2(gmmnt::GlobalInstances& globalinstance,
   InitMultipleValueBucket(globalinstance, buckettable);
   for (VertexLocalId_t index = 0; index < num_items_inbuckets_; ++index) {
     gbucket::Bucket* bucket = buckettable.GetBucket(
-        index >> bucketsize_bits_);
-    gutil::pthread_spin_lock(bucket->spinlock());
+                                index >> bucketsize_bits_);
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::MultipleValueContainer>(index, index);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::MultipleValueContainer>(index, index);
   }
   gbucket::Bucket* bucket = buckettable.GetBucket(0);
   for (size_t i = 0; i < bigwritesize_; i++) {
-    gutil::pthread_spin_lock(bucket->spinlock());
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::MultipleValueContainer>(0, 0);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::MultipleValueContainer>(0, 0);
   }
   /*for (size_t i = 0; i < buckettable.size(); ++i) {
    gbucket::Bucket* bucket = buckettable.GetBucket(i);
@@ -291,12 +286,11 @@ void WriteMultipleValueBucket3(gmmnt::GlobalInstances& globalinstance,
     if (index % 2 == 0)
       continue;
     gbucket::Bucket* bucket = buckettable.GetBucket(
-        index >> bucketsize_bits_);
-    gutil::pthread_spin_lock(bucket->spinlock());
+                                index >> bucketsize_bits_);
+    gutil::GLock lock(bucket->lockmutex());
     bucket
         ->AddCell<VertexLocalId_t, unsigned int,
-            gpelib::MultipleValueContainer>(index, index);
-    gutil::pthread_spin_unlock(bucket->spinlock());
+        gpelib::MultipleValueContainer>(index, index);
   }
 }
 
@@ -329,12 +323,12 @@ TEST(BUCKETTEST, MULTIPLEVALUE) {
       std::vector<std::string> requests;
       requests.push_back(bucket->dataid());
       EXPECT_EQ(
-          globalinstance.memserver_->SendRequests(callerid, requests,
-                                                  gmmnt::MemHigh, true),
-          true);
+            globalinstance.memserver_->SendRequests(callerid, requests,
+                                                    gmmnt::MemHigh, true),
+            true);
       EXPECT_EQ(
-          globalinstance.memserver_->IsAllRequestsReady(callerid, true),
-          true);
+            globalinstance.memserver_->IsAllRequestsReady(callerid, true),
+            true);
       gpelib::MultipleValueContainer* container =
           (gpelib::MultipleValueContainer*) bucket->GetBucketContainer();
       BucketDataOffset_t* localoffsetarray =
@@ -371,7 +365,7 @@ TEST(BUCKETTEST, MULTIPLEVALUE) {
     // test replacement
     for (size_t i = 0; i < buckettable1.size(); i++) {
       buckettable1.GetBucket(i)->CopyUntouchedDataTo(
-          buckettable2.GetBucket(i));
+            buckettable2.GetBucket(i));
     }
     buckettable1.Switch(&buckettable2, false);
     for (size_t i = 0; i < buckettable1.size(); ++i) {
@@ -380,12 +374,12 @@ TEST(BUCKETTEST, MULTIPLEVALUE) {
       std::vector<std::string> requests;
       requests.push_back(bucket->dataid());
       EXPECT_EQ(
-          globalinstance.memserver_->SendRequests(callerid, requests,
-                                                  gmmnt::MemHigh, true),
-          true);
+            globalinstance.memserver_->SendRequests(callerid, requests,
+                                                    gmmnt::MemHigh, true),
+            true);
       EXPECT_EQ(
-          globalinstance.memserver_->IsAllRequestsReady(callerid, true),
-          true);
+            globalinstance.memserver_->IsAllRequestsReady(callerid, true),
+            true);
       gpelib::MultipleValueContainer* container =
           (gpelib::MultipleValueContainer*) bucket->GetBucketContainer();
       BucketDataOffset_t* localoffsetarray =

@@ -200,6 +200,7 @@ void TestQueue_RequestResponse(gnet::MessageQueueFactory* queuecenter, std::stri
   queuecenter->destoryQueueMsgWriter(responseQwriter);
 }
 
+#ifdef KAFKATEST
 TEST(GNETTEST, KAFKA_READWRITE) {
   // local test single partition topic write / read at same time
   gnet::KAFKAMessageQueueFactory messagequeuefactory("gpe1.conf", NULL);
@@ -241,3 +242,4 @@ TEST(GNETTEST, DummyQueue) {
   QueueWrite(&messagequeuefactory, "test", 0, true);
   QueueRead(&messagequeuefactory, "test", 0, true);
 }
+#endif

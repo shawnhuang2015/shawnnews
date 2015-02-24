@@ -271,6 +271,7 @@ protected:
 const static string connectionStr = "127.0.0.1:13011"; // "localhost:12345,localhost:9092";
 const static string test_topic = "dqss";
 
+#ifdef KAFKATEST
 TEST(dqss,pub3to1) {
 	int NMSG =10;
 	int PP = 3;
@@ -391,6 +392,7 @@ TEST(dqss,pub1to1_large_msg) {
 
 	sleep(1);
 }
+#endif
 
 //------------------------- DQ test ----------------
 
@@ -518,6 +520,7 @@ public:
   int cnt_;
 };
 
+#ifdef KAFKATEST
 TEST(dqss,dq_two_threads) {
 	cout << "Sync Producer test" << endl;
 
@@ -586,4 +589,4 @@ TEST(dqss,dq_async) {
 	delete kp2;
 
 }
-
+#endif

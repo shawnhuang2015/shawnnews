@@ -255,7 +255,8 @@ public:
 };
 
 
-TEST(DISABLED_dist,noop) {
+#ifdef KAFKATEST
+TEST(dist,noop) {
 	int WW = 2;
 	cout << " Hello world!" << endl;
 
@@ -335,3 +336,4 @@ TEST(DISABLED_dist,noop) {
 	}
 
 }
+#endif
