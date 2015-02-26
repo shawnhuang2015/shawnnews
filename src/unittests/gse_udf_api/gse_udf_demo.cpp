@@ -35,7 +35,7 @@ int main(int argc, char ** argv) {
   std::cout << "gse_udf_demo: Storage Engine Version: " <<
   MAKE_BOLD << BUILDVERSION << RESET_BOLD << std::endl;
 #endif
-  Gsql_Fd_Checker gsql_fd_checker(100000);
+  Gsql_Fd_Checker gsql_fd_checker(65532);
   if (!gsql_fd_checker.passed_)
     exit(-1);
   /* validate the graph store path */

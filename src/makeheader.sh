@@ -20,6 +20,9 @@ done < headerfiles.txt
 scp -r third_party ../deploy/src/
 find ../deploy/ -type d -empty -delete
 
+cd ../deploy
+mkdir lib; rm -rf lib/*; find . -name "*.a" | xargs -exec cp -ft lib/
+
 #REQUEST-10 - Open code for external customers
 #cd src;./makeheader.sh;cd ..;
 #/opt/local/bin/g++ -o gperun.o -c -O3 -Wall -c -fmessage-length=0 -Wno-unused -fpermissive -fno-omit-frame-pointer -ldl -ldl -DOS_MACOSX=1 -DMULTIEDGETYPES -DComponentTest -DRELEASE -Isrc/third_party -Isrc/third_party/boost -Isrc/third_party/yaml/usr/local/include -Isrc/third_party/sparsehash/usr/local/include -Isrc/third_party/glog/usr/local/include -Isrc/third_party/jsoncpp/include -Isrc/third_party/redis/deps/hiredis -Isrc/third_party/zlib -Isrc/third_party/zookeeper_c/include/zookeeper -Isrc/third_party/zeromq/include -Isrc/third_party/librdkafka/include -Isrc/third_party/mpich/include -Isrc/customer -Isrc/core -Isrc/core/gse -Isrc/core/gpe -Isrc/olgp -Isrc/core/topology -Isrc/utility -Isrc/msg -Isrc/msg/distributed -Isrc/customer/core_impl/gpe_impl -Isrc/customer/core_impl/gpe_impl gperun.cpp
