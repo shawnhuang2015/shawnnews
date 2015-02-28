@@ -57,6 +57,12 @@ mgnt_cli/
 # ###################
 gsql/.history
 gsql/output
+
+# GTEST generated files#
+# ###################
+gtest/diff/*
+gtest/output/*
+
 ################ auto generated =====
 src/olgp
 src/core/topology
