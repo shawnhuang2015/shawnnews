@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gnet/kafka/kafkamessagequeuefactory.hpp>
+#include <gnet/zeromq/zeromqfactory.hpp>
 #include <gnet/dummymessagequeuefactory.hpp>
 #include <gutil/gtimer.hpp>
 #include <boost/thread.hpp>
@@ -39,9 +40,12 @@ void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, s
       writer->write((const char*)&key, sizeof(key), (const char*)&value, sizeof(value));
     }
   }
-  queuecenter->destoryQueueMsgWriter(writer);
+  {
   boost::mutex::scoped_lock lock(mutex_);
   timer.Stop("Finished thread " + boost::lexical_cast<std::string>(threadindex) + " write for " + topicname);
+  }
+  sleep(2);
+  queuecenter->destoryQueueMsgWriter(writer);
 }
 
 void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
@@ -61,7 +65,6 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
       usleep(100);
       continue;
     }
-    numberofreads += msg.size();
     for(size_t i = 0; i < msg.size(); ++i){
       if(usingstring){
         size_t key = boost::lexical_cast<size_t>(msg[i]->getKeyStr());
@@ -70,10 +73,12 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
       } else{
         ASSERT_EQ(msg[i]->getKeyLength(), (size_t)8);
         ASSERT_EQ(msg[i]->getValueLength(), (size_t)8);
+        GASSERT(*((size_t*)msg[i]->getKey()) == numberofreads + i, *((size_t*)msg[i]->getKey()) << ", " << numberofreads + i);
         ASSERT_EQ(*((size_t*)msg[i]->getKey()) * 2, *((size_t*)msg[i]->getValue()));
       }
       delete msg[i];
     }
+    numberofreads += msg.size();
     msg.clear();
   }
   ASSERT_EQ(numberofreads, numofwrites_);
@@ -86,7 +91,7 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
 }
 
 void TestQueue_Batch(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t num_threads = 1,
-               bool usingstring = false) {
+                     bool usingstring = false) {
   std::vector<boost::thread*> threads;
   for(size_t i = 0; i < num_threads; ++i)
     threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname + boost::lexical_cast<std::string>(i), i, usingstring)));
@@ -105,7 +110,7 @@ void TestQueue_Batch(gnet::MessageQueueFactory* queuecenter, std::string topicna
 }
 
 void TestQueue_ReadWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname,
-               bool usingstring = false) {
+                         bool usingstring = false) {
   std::vector<boost::thread*> threads;
   threads.push_back(new boost::thread(boost::bind(&QueueRead, queuecenter, topicname, 0, usingstring)));
   threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname, 0, usingstring)));
@@ -237,9 +242,23 @@ TEST(GNETTEST, KAFKA_REQUESTRESPONSE) {
   daemon.stopDaemon();
 }
 
+#endif
+
 TEST(GNETTEST, DummyQueue) {
   gnet::DummyMessageQueueFactory messagequeuefactory;
   QueueWrite(&messagequeuefactory, "test", 0, true);
   QueueRead(&messagequeuefactory, "test", 0, true);
 }
-#endif
+
+TEST(GNETTEST, ZeroMQ) {
+  gnet::ZeroMQFactory gpe1("GPE1", "gpe1.conf");
+  gnet::ZeroMQFactory rest1("REST1", "gpe1.conf");
+  std::vector<boost::thread*> threads;
+  threads.push_back(new boost::thread(boost::bind(&QueueRead, &gpe1, "requestQ", 0, false)));
+  threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "requestQ", 0, false)));
+  for(size_t i = 0; i < threads.size(); ++i){
+    threads[i]->join();
+    delete threads[i];
+  }
+  threads.clear();
+}
