@@ -60,4 +60,11 @@ utility/gutil/jsonwriter.hpp
 utility/gutil/spinlock.hpp
 # for batch mode
 core/gpe/gpelib4/enginedriver/enginedriver.hpp
+# post customization
+core/gse/post_service/post_json2delta.hpp
+utility/gutil/requestidmaps.hpp
+# for gpp
+olgp/gpp/internalgppincludes.hpp
+olgp/gpp/serviceapi.hpp
+core/topology/topology4/postfilterbase.hpp
 #_Do_not_delete_last_line

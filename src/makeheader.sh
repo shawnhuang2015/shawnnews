@@ -17,7 +17,10 @@ do
     fi
 done < headerfiles.txt
 
-scp -r third_party ../deploy/src/
+#cp -r third_party/boost ../deploy/src/third_party/
+cp -r third_party/glog ../deploy/src/third_party/
+cp -r third_party/sparsehash ../deploy/src/third_party/
+cp -r third_party/jsoncpp ../deploy/src/third_party/
 find ../deploy/ -type d -empty -delete
 
 cd ../deploy
