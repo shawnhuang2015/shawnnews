@@ -307,7 +307,7 @@ TEST(UTILTEST, CompactWriter) {
   char buf[100];
   char* tmpptr = buf;
   uint8_t* tmpptr2 = (uint8_t*)buf;
-  for(size_t i = 1; i <= 6; ++i){
+  for(size_t i = 1; i <= 8; ++i){
     uint64_t test1 = (((uint64_t)1) << ((i  - 1)* 7));
     uint64_t test2 = (((uint64_t)1) << (i * 7)) - 1;
     // std::cout << test1 << ", " << test2 << "\n";
