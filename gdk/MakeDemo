@@ -1,0 +1,69 @@
+EXECUTABLE=bin/gperun
+SOURCES = $(wildcard src/demo/*.cpp)
+
+CC=g++
+LIBB = gsdk/lib
+LIBINCLUDE = -Igsdk/include
+LIBINCLUDE += -Igsdk/include/third_party
+LIBINCLUDE += -Igsdk/include/third_party/yaml/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/sparsehash/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/glog/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/jsoncpp/include
+LIBINCLUDE += -Igsdk/include/third_party/redis/deps/hiredis
+LIBINCLUDE += -Igsdk/include/third_party/zlib
+LIBINCLUDE += -Igsdk/include/third_party/zookeeper_c/include/zookeeper
+LIBINCLUDE += -Igsdk/include/third_party/zeromq/include
+LIBINCLUDE += -Igsdk/include/third_party/librdkafka/include
+LIBINCLUDE += -Igsdk/include/third_party/mpich/include
+LIBINCLUDE += -Igsdk/include/third_party/mpich/include
+LIBINCLUDE += -Igsdk/include/core/gpe
+LIBINCLUDE += -Igsdk/include/olgp
+LIBINCLUDE += -Igsdk/include/core/topology
+LIBINCLUDE += -Igsdk/include/utility
+
+
+CFLAGS  = -c -O3 -Wall -c -fmessage-length=0
+CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
+CFLAGS += -ldl
+CFLAGS += -DRELEASE
+CFLAGS += -DComponentTest
+CFLAGS += $(LIBINCLUDE)
+
+LDFLAGS += -L$(LIBB)
+LDFLAGS += -lgpelib
+LDFLAGS += -ldistlib
+LDFLAGS += -lnetlib
+LDFLAGS += -lmurmurhash
+LDFLAGS += -ljson
+LDFLAGS += -lsnappy
+LDFLAGS += -lyaml-cpp
+LDFLAGS += -lboost_date_time
+LDFLAGS += -lboost_serialization
+LDFLAGS += -lboost_wserialization
+LDFLAGS += -lboost_filesystem
+LDFLAGS += -lboost_system
+LDFLAGS += -lboost_program_options
+LDFLAGS += -lboost_thread
+LDFLAGS += -lglog
+LDFLAGS += -lgtest
+LDFLAGS += -lhiredis
+LDFLAGS += -lz
+LDFLAGS += -lzookeeper_mt
+LDFLAGS += -lzmq
+LDFLAGS += -lrdkafka
+LDFLAGS += -lmpi
+LDFLAGS += -lpthread -ldl
+OBJECTS = $(patsubst src/%.cpp,objs/%.o,$(SOURCES))
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
+
+#.cpp.o:
+$(OBJECTS): objs/%.o : src/%.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm -f objs/*.o bin/*
+
