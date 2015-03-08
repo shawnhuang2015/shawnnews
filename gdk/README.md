@@ -15,5 +15,5 @@ That is all. The pacakge is under the root directory of the product.
 
 
 FYI: Build GPE Example:
->> make -f MakeGPE
->> make -f MakeDEMO
+>> make -f MakeDemo
+>> bin/release/demo_gperun /data/rc4/gstore/0/part output_dir

@@ -34,10 +34,10 @@ CFLAGS += -DComponentTest
 CFLAGS += $(LIBINCLUDE)
 
 LDFLAGS += -L$(LIBB)
+LDFLAGS += -lolgplib
 LDFLAGS += -lgpelib
 LDFLAGS += -ldistlib
 LDFLAGS += -lnetlib
-LDFLAGS += -lolgplib
 #LDFLAGS += -lmurmurhash
 LDFLAGS += -ljson
 LDFLAGS += -lsnappy
@@ -52,10 +52,10 @@ LDFLAGS += -lboost_thread
 LDFLAGS += -lglog
 #LDFLAGS += -lgtest
 LDFLAGS += -lhiredis
-LDFLAGS += -lz
 LDFLAGS += -lzookeeper_mt
 #LDFLAGS += -lzmq
 LDFLAGS += -lrdkafka
+LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS += -lpthread -ldl
 
