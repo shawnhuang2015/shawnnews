@@ -24,8 +24,8 @@ get_os_signature() {
         else
             version=`system_profiler SPSoftwareDataType | egrep -o '[0-9]{2}.[0-9]{2}.[0-9]{1}'`
             OS_TYPE_VERSION="os_x_${version}"
-        fi  
-    fi  
+        fi
+    fi
 }
 get_os_signature
 
@@ -33,7 +33,7 @@ rm -rf ../deploy_gsdk/*
 mkdir -p ../deploy_gsdk/gsdk/include
 mkdir -p ../deploy_gsdk/gsdk/lib/release
 mkdir -p ../deploy_gsdk/gsdk/lib/debug
-mkdir -p ../deploy_gsdk/gsdk/gsql
+# mkdir -p ../deploy_gsdk/gsdk/gsql
 mkdir -p ../deploy_gsdk/gsdk/bin/release
 mkdir -p ../deploy_gsdk/gsdk/bin/debug
 # populate include
@@ -62,7 +62,7 @@ do
 done
 
 # add gsql
-cp -RL ${GSQL_PROJ_HOME}/gsql/* deploy_gsdk/gsdk/gsql
+#cp -RL ${GSQL_PROJ_HOME}/gsql/* deploy_gsdk/gsdk/gsql
 
 # add binaris
 cp build/release/core/gse/ids_worker ${GSQL_PKG_HOME}/bin

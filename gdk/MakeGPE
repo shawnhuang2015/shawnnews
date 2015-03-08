@@ -1,4 +1,4 @@
-EXECUTABLE=bin/poc_gpe_server
+EXECUTABLE=bin/release/poc_gpe_server
 SOURCE_MAIN_DIR = src/customer/core_impl/gpe_impl
 SOURCE_OTHER_DIR = src/customer/core_impl
 SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp)
@@ -78,4 +78,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 clean:
-	rm -f objs/*.o bin/*
+	rm -rf objs/*.o bin/*/*

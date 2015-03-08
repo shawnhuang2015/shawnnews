@@ -221,7 +221,7 @@ int main(){
   char c[14] = {'4',':','1',',','2','|','5',':','3','|','1','0',':','4'};
 
   uint32_t alen = 0; 
-  ABC(c,14, b, alen);
+//ABC(c,14, b, alen);
 
   cout<<"alen= "<<alen<<endl;
 
