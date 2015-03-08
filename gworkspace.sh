@@ -183,14 +183,16 @@ populate_dir() {
 #######################################################
 populate_repos() {
     for i in "${!DIRECTORY[@]}"; do
-        if ! [ "${PUSHABLE[$i]}" == "x" ]; then
+        if [ "${SRC_TYPE[$i]}" == "src" ]; then
             if [ "${VERSION[$i]}" == "latest" ]; then
                 cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git fetch; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; cd ${CWD}")
             else
-                if ! [ "${VERSION[$i]}" == "*" ]; then
+                if ! [ "${VERSION[$i]}" == "*" ] ; then
                     cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; git fetch; git checkout ${BRANCH[$i]}; git fetch --tags; git pull; git checkout ${VERSION[$i]} -q; cd ${CWD}")
                 fi
             fi
+        else
+            cmdarr=("${cmdarr[@]}" "${SRC_TYPE[$i]} ${REPO[$i]} ${BRANCH[$i]} ${VERSION[$i]} ${DIRECTORY[$i]} ")
         fi
     done
 }

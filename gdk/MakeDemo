@@ -1,0 +1,74 @@
+EXECUTABLE=bin/release/demo_gperun
+SOURCE_MAIN_DIR = src/demo
+SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp)
+
+CC=g++
+LIBB = gsdk/lib/release
+LIBINCLUDE = -Isrc/customer
+LIBINCLUDE += -Igsdk/include
+LIBINCLUDE += -Igsdk/include/third_party
+#LIBINCLUDE += -Igsdk/include/third_party/yaml/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/sparsehash/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/glog/usr/local/include
+LIBINCLUDE += -Igsdk/include/third_party/jsoncpp/include
+#LIBINCLUDE += -Igsdk/include/third_party/redis/deps/hiredis
+#LIBINCLUDE += -Igsdk/include/third_party/zlib
+#LIBINCLUDE += -Igsdk/include/third_party/zookeeper_c/include/zookeeper
+#LIBINCLUDE += -Igsdk/include/third_party/librdkafka/include
+LIBINCLUDE += -Igsdk/include/core/gpe
+LIBINCLUDE += -Igsdk/include/core/gse
+LIBINCLUDE += -Igsdk/include/olgp
+LIBINCLUDE += -Igsdk/include/core/topology
+LIBINCLUDE += -Igsdk/include/utility
+
+#debug: CFLAGS += -DDEBUG -g
+#debug: $(EXECUTABLE)
+
+CFLAGS  = -c -O3 -Wall -c -fmessage-length=0
+CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
+CFLAGS += -ldl
+CFLAGS += -DRELEASE
+CFLAGS += -DComponentTest
+CFLAGS += $(LIBINCLUDE)
+
+LDFLAGS += -L$(LIBB)
+LDFLAGS += -lolgplib
+LDFLAGS += -lgpelib
+LDFLAGS += -ldistlib
+LDFLAGS += -lnetlib
+#LDFLAGS += -lmurmurhash
+LDFLAGS += -ljson
+LDFLAGS += -lsnappy
+LDFLAGS += -lyaml-cpp
+#LDFLAGS += -lboost_date_time
+#LDFLAGS += -lboost_serialization
+#LDFLAGS += -lboost_wserialization
+LDFLAGS += -lboost_filesystem
+LDFLAGS += -lboost_system
+#LDFLAGS += -lboost_program_options
+LDFLAGS += -lboost_thread
+LDFLAGS += -lglog
+#LDFLAGS += -lgtest
+LDFLAGS += -lhiredis
+LDFLAGS += -lzookeeper_mt
+#LDFLAGS += -lzmq
+LDFLAGS += -lrdkafka
+LDFLAGS += -lz
+#LDFLAGS += -lmpi
+LDFLAGS += -lpthread -ldl
+
+ODIR = objs
+OBJECTS1  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
+OBJECTS = $(OBJECTS1)
+
+$(ODIR)/%.o: $(SOURCE_MAIN_DIR)/%.cpp
+	$(CC) -o $@ $< $(CFLAGS) 
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
+
+
+clean:
+	rm -rf objs/*.o bin/*/*

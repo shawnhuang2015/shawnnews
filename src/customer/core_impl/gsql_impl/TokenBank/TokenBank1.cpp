@@ -222,7 +222,7 @@ int main(){
 
   /*
   uint32_t alen = 0; 
-  ABC(c,14, b, alen);
+//ABC(c,14, b, alen);
 
   cout<<"alen= "<<alen<<endl;
 
