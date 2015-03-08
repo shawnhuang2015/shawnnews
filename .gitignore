@@ -63,6 +63,8 @@ gsql/output
 gtest/diff/*
 gtest/output/*
 
+# gdk generated
+deploy_gsdk/
 ################ auto generated =====
 src/olgp
 src/core/topology
