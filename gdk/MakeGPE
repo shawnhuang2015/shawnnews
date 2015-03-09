@@ -79,4 +79,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 clean:
-	rm -rf objs/*.o bin/*/*
+	rm -rf objs/*.o bin/release/*
