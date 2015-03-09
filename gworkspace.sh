@@ -362,6 +362,13 @@ update_gitignore_file()
 #######################################
 # Start from here                     #
 #######################################
+if [ -d "gdk" ] && [ ! -d "src/core" ]; then
+    if [ $cmd_show_repo == true ] || [ $cmd_show_info == true ] || [ $cmd_config_info == true ]; then
+        cd gdk
+        CWD=$(pwd)
+    fi
+fi
+
 getRepoConfig "config/proj.config"
 
 if [ $cmd_update_repo == true ]; then
