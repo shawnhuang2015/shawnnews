@@ -31,7 +31,8 @@
  *      Note: To avoid array out of boundary issue in oToken buffer, it is 
  *            recommended to add semantic check to ensure oToken length does 
  *            not exceed  OutputTokenBufferSize parameter specified in the 
- *            shell config.
+ *            shell config. Default is 2000 chars.
+ *             
  *
  *  
  *   2. string[] -> int/bool/float

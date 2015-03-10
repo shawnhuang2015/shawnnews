@@ -41,6 +41,11 @@ namespace UDIMPL {
       typedef KNeighborSize UDF_t;
       UDF_t udf(3, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
+      if(udf.abortmsg_.size() > 0){
+        request.error_ = true;
+        request.message_ += udf.abortmsg_;
+        return true;
+      }
       request.outputwriter_->WriteEndObject();
       request.output_idservice_vids.push_back(local_start);
       return true;

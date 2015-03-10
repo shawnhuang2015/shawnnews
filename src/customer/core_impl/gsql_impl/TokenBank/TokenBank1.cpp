@@ -30,7 +30,7 @@
  *       Note: To avoid array out of boundary issue in oToken buffer, it is 
  *             recommended to add semantic check to ensure oToken length does not exceed 
  *             OutputTokenBufferSize parameter value specified in the shell config.
- *
+ *             Default is 2000 chars. 
  *
  *   2. string -> bool/uint/float
  *
@@ -222,8 +222,9 @@ int main(){
 
   char c[14] = {'4',':','1',',','2','|','5',':','3','|','1','0',':','4'};
 
+  /*
   uint32_t alen = 0; 
-  ABC(c,14, b, alen);
+//ABC(c,14, b, alen);
 
   cout<<"alen= "<<alen<<endl;
 
@@ -237,6 +238,7 @@ int main(){
      }
   }
   cout <<endl;
+  */
 
 }
 
