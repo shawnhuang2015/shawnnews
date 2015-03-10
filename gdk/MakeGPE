@@ -1,3 +1,6 @@
+CFLAGS = -DGOOGLE_DENSEHASHMAP
+CFLAGS += -DMULTIEDGETYPES
+
 EXECUTABLE=bin/release/poc_gpe_server
 SOURCE_MAIN_DIR = src/customer/core_impl/gpe_impl
 SOURCE_OTHER_DIR = src/customer/core_impl
@@ -23,14 +26,12 @@ LIBINCLUDE += -Igsdk/include/olgp
 LIBINCLUDE += -Igsdk/include/core/topology
 LIBINCLUDE += -Igsdk/include/utility
 
-#debug: CFLAGS += -DDEBUG -g
-#debug: $(EXECUTABLE)
-
-CFLAGS  = -c -O3 -Wall -c -fmessage-length=0
+CFLAGS += -c -Wall -fmessage-length=0
 CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
 CFLAGS += -ldl
-CFLAGS += -DRELEASE
-CFLAGS += -DComponentTest
+CFLAGS += -DRELEASE -O3 -DREMOVETESTASSERT
+CFLAGS += -D__STDC_FORMAT_MACROS
+#CFLAGS += -DComponentTest
 CFLAGS += $(LIBINCLUDE)
 
 LDFLAGS += -L$(LIBB)
@@ -78,4 +79,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 clean:
-	rm -rf objs/*.o bin/*/*
+	rm -rf objs/*.o bin/release/*

@@ -1,2 +1,3 @@
-../../src/realtime
-../../src/er
+.MakeGPEDebug
+../src/realtime
+../src/er
