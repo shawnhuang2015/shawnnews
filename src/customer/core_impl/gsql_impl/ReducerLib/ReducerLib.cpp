@@ -4,7 +4,10 @@
  * Project: GraphSQL Loader
  * ReducerLib.cpp: a library of reudce function declaration and implementation.
  *
- * - It takes a list of token, reduce them to one value. 
+ * - It takes a list of values, reduce them to one value. 
+ *   The reducer return type and the values type must be the same
+ *   and match the targeting attribute type.
+ 
  * - All functions must use one of the following signatures, 
  *   but different function name.
  *
@@ -124,13 +127,6 @@ extern "C" float gsql_min_real(const vector<float> iValueList) {
   return 0.0;
 }
 
-/**
- * find average of a list of uint
- */
-extern "C" float gsql_avg_uint(const vector<uint64_t> iValueList) {
-
-  return 0.0;
-}
 
 /**
  * find average of a list of real
@@ -144,28 +140,6 @@ extern "C" float gsql_avg_real(const vector<float> iValueList) {
  * find count of a list of uint
  */
 extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList) {
-  return 0;
-}
-/**
- * find count of a list of real
- */
-extern "C" uint64_t gsql_cnt_real(const vector<float> iValueList) {
-  return 0;
-}
-
-/**
- * find count of a list of string
- */
-extern "C" uint64_t gsql_cnt_str(const vector<const char*> iValueList) {
-
-  return 0;
-}
-
-/**
- * find count of a list of bool
- */
-extern "C" uint64_t gsql_cnt_bool(const vector<bool> iValueList) {
-
   return 0;
 }
 
