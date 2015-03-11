@@ -62,98 +62,166 @@
  * Author: Mingxi Wu
  ******************************************************************************/
 
+
 #include <stdio.h>
 #include <stdint.h>
 #include <iostream>
 #include <cstring>
 #include <vector>
 #include <string>
+#include "ReducerLib.hpp"
 
 using namespace std;
-
 /**
  * sum a list of uint
  */
-extern "C" uint64_t gsql_sum_uint(const vector<uint64_t> iValueList);
+extern "C" uint64_t gsql_sum_uint(const vector<uint64_t> iValueList) {
+  uint64_t sum = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      sum += iValueList[i];
+    }
+  }
+
+  return sum;
+}
 
 /**
  * sum a list of float 
  */
-extern "C" float gsql_sum_real(const vector<float> iValueList);
-
+extern "C" float gsql_sum_real(const vector<float> iValueList) {
+  return 0.0;
+}
 /**
  * find max of a list of uint
  */
-extern "C" uint64_t gsql_max_uint(const vector<uint64_t> iValueList);
+extern "C" uint64_t gsql_max_uint(const vector<uint64_t> iValueList) {
+
+  return 0;
+}
 
 /**
  * find max of a list of real
  */
-extern "C" float gsql_max_real(const vector<float> iValueList);
+extern "C" float gsql_max_real(const vector<float> iValueList) {
+
+  return 0.0;
+}
 
 /**
  * find min of a list of uint
  */
-extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList);
+extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList) {
+
+  return 0;
+}
 
 /**
  * find min of a list of real
  */
-extern "C" float gsql_min_real(const vector<float> iValueList);
+extern "C" float gsql_min_real(const vector<float> iValueList) {
+
+  return 0.0;
+}
 
 /**
  * find average of a list of uint
  */
-extern "C" float gsql_avg_uint(const vector<uint64_t> iValueList);
+extern "C" float gsql_avg_uint(const vector<uint64_t> iValueList) {
+
+  return 0.0;
+}
 
 /**
  * find average of a list of real
  */
-extern "C" float gsql_avg_real(const vector<float> iValueList);
+extern "C" float gsql_avg_real(const vector<float> iValueList) {
+
+  return 0.0;
+}
 
 /**
  * find count of a list of uint
  */
-extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList);
-
+extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList) {
+  return 0;
+}
 /**
  * find count of a list of real
  */
-extern "C" uint64_t gsql_cnt_real(const vector<float> iValueList);
+extern "C" uint64_t gsql_cnt_real(const vector<float> iValueList) {
+  return 0;
+}
 
 /**
  * find count of a list of string
  */
-extern "C" uint64_t gsql_cnt_str(const vector<const char*> iValueList);
+extern "C" uint64_t gsql_cnt_str(const vector<const char*> iValueList) {
+
+  return 0;
+}
 
 /**
  * find count of a list of bool
  */
-extern "C" uint64_t gsql_cnt_bool(const vector<bool> iValueList);
+extern "C" uint64_t gsql_cnt_bool(const vector<bool> iValueList) {
+
+  return 0;
+}
 
 
 /**
  * bit OR a list of uint
  */
-extern "C" uint64_t gsql_or_uint(const vector<uint64_t> iValueList);
+extern "C" uint64_t gsql_or_uint(const vector<uint64_t> iValueList) {
+
+  return 0;
+}
 
 /**
  * bit OR  a list of bool
  */
-extern "C" bool gsql_or_bool(const vector<bool> iValueList);
+extern "C" bool gsql_or_bool(const vector<bool> iValueList) {
+
+  return true;
+}
 
 /**
  * bit AND a list of uint
  */
-extern "C" uint64_t gsql_and_uint(const vector<uint64_t> iValueList);
+extern "C" uint64_t gsql_and_uint(const vector<uint64_t> iValueList) {
+   return 0;
+}
 
 /**
  * bit AND a list of bool
  */
-extern "C" bool gsql_and_bool(const vector<bool> iValueList);
+extern "C" bool gsql_and_bool(const vector<bool> iValueList) {
+  return true;
+}
 
 /**
  * concatenate a list of char string
  */
-extern "C" void gsql_concat_str( const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen);
+extern "C" void gsql_concat_str( const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen) {
+ 
+  return;
+}
+
+
+/**
+ *  Unit testing of the token bank functions
+ */ 
+int main(){
+
+  vector<uint64_t> input;
+
+  input.push_back(1);
+  input.push_back(2);
+  input.push_back(3);
+  input.push_back(4);
+
+  cout<<gsql_sum_uint(input)<<endl;
+
+}
 
