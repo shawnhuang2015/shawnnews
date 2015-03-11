@@ -7,7 +7,7 @@
  * - It takes a list of values, reduce them to one value. 
  *   The reducer return type and the values type must be the same
  *   and match the targeting attribute type.
- 
+
  * - All functions must use one of the following signatures, 
  *   but different function name.
  *
@@ -72,7 +72,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
-#include "ReducerLib.hpp"
+#include <ReducerLib.hpp>
 
 using namespace std;
 /**
@@ -93,38 +93,72 @@ extern "C" uint64_t gsql_sum_uint(const vector<uint64_t> iValueList) {
  * sum a list of float 
  */
 extern "C" float gsql_sum_real(const vector<float> iValueList) {
-  return 0.0;
+  float sum = 0.0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      sum += iValueList[i];
+    }
+  }
+  return sum;
 }
 /**
  * find max of a list of uint
  */
 extern "C" uint64_t gsql_max_uint(const vector<uint64_t> iValueList) {
-
-  return 0;
+  uint64_t max = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      if (iValueList[i] > max){
+        max = iValueList[i];
+      }
+    }
+  }
+  return max;
 }
 
 /**
  * find max of a list of real
  */
 extern "C" float gsql_max_real(const vector<float> iValueList) {
-
-  return 0.0;
+  float max = 0.0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      if (iValueList[i] > max){
+        max = iValueList[i];
+      }
+    }
+  }
+  return max;
 }
 
 /**
  * find min of a list of uint
  */
 extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList) {
-
-  return 0;
+  uint64_t min = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      if (iValueList[i] < min){
+        min = iValueList[i];
+      }
+    }
+  }
+  return min;
 }
 
 /**
  * find min of a list of real
  */
 extern "C" float gsql_min_real(const vector<float> iValueList) {
-
-  return 0.0;
+  float min = 0.0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      if (iValueList[i] < min){
+        min = iValueList[i];
+      }
+    }
+  }
+  return min;
 }
 
 
@@ -132,15 +166,19 @@ extern "C" float gsql_min_real(const vector<float> iValueList) {
  * find average of a list of real
  */
 extern "C" float gsql_avg_real(const vector<float> iValueList) {
-
-  return 0.0;
+  float avg = 0.0;
+  if (!iValueList.empty()) {
+    avg = gsql_sum_real(iValueList)/iValueList.size();
+  }
+  return avg;
 }
 
 /**
  * find count of a list of uint
  */
 extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList) {
-  return 0;
+
+  return iValueList.size();
 }
 
 
@@ -148,54 +186,73 @@ extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList) {
  * bit OR a list of uint
  */
 extern "C" uint64_t gsql_or_uint(const vector<uint64_t> iValueList) {
-
-  return 0;
+  uint64_t result = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      result |= iValueList[i];
+    }
+  }
+  return result;
 }
 
 /**
  * bit OR  a list of bool
  */
 extern "C" bool gsql_or_bool(const vector<bool> iValueList) {
-
-  return true;
+  bool result = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      result = result || iValueList[i];
+    }
+  }
+  return result;
 }
 
 /**
  * bit AND a list of uint
  */
 extern "C" uint64_t gsql_and_uint(const vector<uint64_t> iValueList) {
-   return 0;
+  uint64_t result = 0;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      result &= iValueList[i];
+    }
+  }
+  return result;
 }
 
 /**
  * bit AND a list of bool
  */
 extern "C" bool gsql_and_bool(const vector<bool> iValueList) {
-  return true;
+  bool result = 1;
+  if (!iValueList.empty()) {
+    for (int i = 0; i < iValueList.size(); i++) {
+      result = result && iValueList[i];
+    }
+  }
+  return result;
 }
 
 /**
  * concatenate a list of char string
  */
 extern "C" void gsql_concat_str( const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen) {
- 
-  return;
+
+  if (!iValueList.empty()) {
+    int index = 0;
+    for (int i = 0; i < iValueList.size(); i++) {
+      for (int j = 0; j< iValueLen[i]; j ++){
+        oValue[index++]= iValueList[i][j];
+      }
+    }
+    oValueLen = index;
+  } else {
+    oValue[0]='\0';
+    oValueLen =0;
+  }
 }
 
 
-/**
- *  Unit testing of the token bank functions
- */ 
-int main(){
 
-  vector<uint64_t> input;
-
-  input.push_back(1);
-  input.push_back(2);
-  input.push_back(3);
-  input.push_back(4);
-
-  cout<<gsql_sum_uint(input)<<endl;
-
-}
 
