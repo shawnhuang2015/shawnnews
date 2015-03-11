@@ -16,7 +16,7 @@ int main(){
   input.push_back(3);
   input.push_back(4);
 
-  cout<<gsql_sum(input)<<endl;
+  cout<<gsql_sum_uint(input)<<endl;
 
 
   vector<const char*> input2;
@@ -37,7 +37,7 @@ int main(){
   uint32_t outputLen;
   char outputBuffer[2000];
 
-  gsql_concat(input2, inputLen, outputBuffer, outputLen);
+  gsql_concat_str(input2, inputLen, outputBuffer, outputLen);
 
   for (int i=0; i<outputLen; i ++){
     cout<<outputBuffer[i]<<"," ;
