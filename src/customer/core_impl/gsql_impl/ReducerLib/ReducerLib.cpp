@@ -72,6 +72,7 @@
 #include <stdint.h>
 #include <iostream>
 #include <cstring>
+#include <cfloat>
 #include <vector>
 #include <string>
 #include <ReducerLib.hpp>
@@ -137,7 +138,7 @@ extern "C" float gsql_max_real(const vector<float> iValueList) {
  * find min of a list of uint
  */
 extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList) {
-  uint64_t min = 0;
+  uint64_t min = UINT64_MAX;
   if (!iValueList.empty()) {
     for (int i = 0; i < iValueList.size(); i++) {
       if (iValueList[i] < min){
@@ -152,7 +153,7 @@ extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList) {
  * find min of a list of real
  */
 extern "C" float gsql_min_real(const vector<float> iValueList) {
-  float min = 0.0;
+  float min = FLT_MAX;
   if (!iValueList.empty()) {
     for (int i = 0; i < iValueList.size(); i++) {
       if (iValueList[i] < min){
@@ -173,6 +174,17 @@ extern "C" float gsql_avg_real(const vector<float> iValueList) {
     avg = gsql_sum_real(iValueList)/iValueList.size();
   }
   return avg;
+}
+
+/**
+ * find average of a list of uint
+ */
+extern "C" uint64_t gsql_avg_uint(const vector<uint64_t> iValueList) {
+  double avg = 0.0;
+  if (!iValueList.empty()) {
+    avg = gsql_sum_uint(iValueList)/iValueList.size();
+  }
+  return (uint64_t)avg;
 }
 
 /**
