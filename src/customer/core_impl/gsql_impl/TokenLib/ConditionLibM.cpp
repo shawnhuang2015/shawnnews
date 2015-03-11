@@ -25,9 +25,13 @@
  *
  *     load "xx" into vertex abc values($1,$2) where SumGreaterThan3($0,$1) using seperator=",";
  *
- * - This header file will be included in the ConditionBankM.cpp
+ * - The declaration is in ConditionLibM.hpp
  *
- * - The implementation in ConditionLibM.cpp
+ * - You can unit test your token function in the main.cc
+ *   To run your test, you can do 
+ *
+ *     g++ -I./ main.cpp TokenLib1.cpp TokenLibM.cpp ConditionLib1.cpp ConditionLibM.cpp
+ *     ./a.out
  *
  * - You must use GTEST to test the UDFs before deliver to customers
  *
@@ -35,15 +39,8 @@
  * Author: Zixuan Zhuang, Mingxi Wu
  ******************************************************************************/
 
-#ifndef CONDITIONLIBM_HPP_
-#define CONDITIONLIBM_HPP_
+#include <ConditionLibM.hpp>
 
-#include <stdio.h>
-#include <stdint.h>
-#include <iostream>
-#include <cstring>
-#include <stdbool.h>
-#include <cstdlib>
 
 /**
  * This funtion compares two string, and returns true if they are equal.
@@ -52,6 +49,21 @@
  *   - if any character is not equal, return false.
  */
 
-extern "C" bool gsql_token_is(const char* const[], uint32_t[], uint32_t);
+extern "C" bool gsql_token_is(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
 
-#endif /* CONDITIONLIBM_HPP_ */
+  if (iTokenNum != 2) {
+    return false;
+  }
+
+  if (iTokenLen[0] != iTokenLen[1]) {
+    return false;
+  }
+
+  for (int i =0; i < iTokenLen[0]; i++) {
+    if (iToken[0][i] != iToken[1][i]) {
+      return false;
+    }
+  }
+
+  return true;
+}

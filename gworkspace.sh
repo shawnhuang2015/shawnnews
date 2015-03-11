@@ -265,9 +265,17 @@ show_repos() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
-        cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
+        if [ "${SRC_TYPE[$i]}" == "src" ]; then
+            cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
+            cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}SHA :${bldgre}")
+            cmdarr=("${cmdarr[@]}" "git name-rev $(git rev-parse HEAD); cd ${CWD}")
+        else
+            version_filename=version.txt
+            if [ -f ${version_filename} ]; then
+                line=$(head -n 1 ${version_filename})
+                cmdarr=("${cmdarr[@]}" "echo $line")
+            fi
+        fi
         cd "${CWD}"
     done
 }
@@ -281,8 +289,16 @@ show_info() {
         cmdarr=("${cmdarr[@]}" "echo; echo ${bldblu}REPO:${bldgre}${REPO[$i]}")
         cmdarr=("${cmdarr[@]}" "echo ${bldblu}DIR :${bldgre}${DIRECTORY[$i]}")
         cmdarr=("${cmdarr[@]}" "echo -ne ${bldblu}TAG :${bldgre}")
-        cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
-        cmdarr=("${cmdarr[@]}" "printf \"${txtrst}\"; git status; cd ${CWD}")
+        if [ "${SRC_TYPE[$i]}" == "src" ]; then
+            cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; print_git_dirty; parse_git_branch_or_tag; print_git_need_push")
+            cmdarr=("${cmdarr[@]}" "printf \"${txtrst}\"; git status; cd ${CWD}")
+        else
+            version_filename=version.txt
+            if [ -f ${version_filename} ]; then
+                line=$(head -n 1 ${version_filename})
+                cmdarr=("${cmdarr[@]}" "echo $line")
+            fi  
+        fi 
         cd "${CWD}"
     done
 }
@@ -295,12 +311,22 @@ config_info() {
     printf '%-20s %-20s %s  ' "product" "$(parse_git_branch_or_tag)" $(git rev-parse HEAD)
     echo "$(git log --pretty=format:%ci -1)"
     for i in "${!DIRECTORY[@]}"; do
-        cd "${DIRECTORY[$i]}"
-        local timestr=$(git log --pretty=format:%ci -1)
-        local tag="$(parse_git_branch_or_tag)"  #$(git name-rev --tags --name-only $(git rev-parse HEAD))
-        local formatedTag="${tag%^0}"
-        printf '%-20s %-20s %s  ' ${REPO[$i]} $formatedTag $(git rev-parse HEAD)
-        echo "$timestr"
+        if [ "${SRC_TYPE[$i]}" == "src" ]; then
+            cd "${DIRECTORY[$i]}"
+            local timestr=$(git log --pretty=format:%ci -1)
+            local tag="$(parse_git_branch_or_tag)"  #$(git name-rev --tags --name-only $(git rev-parse HEAD))
+            local formatedTag="${tag%^0}"
+            printf '%-20s %-20s %s  ' ${REPO[$i]} $formatedTag $(git rev-parse HEAD)
+            echo "$timestr"
+        else
+            version_filename=${DIRECTORY[$i]}/version.txt
+            if [ -f ${version_filename} ]; then
+                line=$(head -n 1 ${version_filename})
+            else
+                line="gsdk"
+            fi
+            printf '%-20s %-20s %s  \n' ${REPO[$i]} "-" $line
+        fi
         cd "${CWD}"
     done
 }

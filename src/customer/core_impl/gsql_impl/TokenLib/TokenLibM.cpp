@@ -1,12 +1,15 @@
 /******************************************************************************
- * Copyright (c) 2014, GraphSQL Inc.
+ * Copyright (c) 2015, GraphSQL Inc.
  * All rights reserved.
  * Project: GraphSQL Loader
- * TokenBankM.cpp: a library of token conversion function declaration. 
+ * TokenLibM.cpp: a system library of token conversion function implementation. 
  *
  * - It is an M-tokens-in, one-token-out function.
  * - All functions must use one of the following signatures, 
- *   but different function name.
+ *   you can have different function name but you must follow the name convetion
+ *   using snake case gsql_funcname (...). E.g.  gsql_find_max_digit (...).
+ *   see http://en.wikipedia.org/wiki/Snake_case
+ *
  * - A token function can have nested other token function;
  *   The out-most token function should return the same type
  *   as the targeted attribute type specified in the 
@@ -31,8 +34,7 @@
  *      Note: To avoid array out of boundary issue in oToken buffer, it is 
  *            recommended to add semantic check to ensure oToken length does 
  *            not exceed  OutputTokenBufferSize parameter specified in the 
- *            shell config. Default is 2000 chars.
- *             
+ *            shell config.
  *
  *  
  *   2. string[] -> int/bool/float
@@ -58,35 +60,28 @@
  *      values( $1, Concat($2,$3), $3...)
  *
  *
- * - Once defined UDF, run the follow to compile a shared libary.
+ * - The declaration is in TokenLibM.hpp
  *
- *    TokenBank/compile
- *
- *   GraphSQL loader binary will automatically use the library at runtime.
- *
- * - You can unit test your token function in the main function in this file.
+ * - You can unit test your token function in the main.cc
  *   To run your test, you can do 
  *
- *     g++ TokenBankM.cpp 
+ *     g++ -I./ main.cpp TokenLib1.cpp TokenLibM.cpp ConditionLib1.cpp ConditionLibM.cpp
  *     ./a.out
  *
- * Created on: Dec 11, 2014
- * Updated on: Feb 7, 2014
- * Author: Mingxi Wu
+ * - You must use GTEST to test the UDFs before deliver to customers
+ *
+ * Created on: Mar 05, 2015
+ * Author: Zixuan Zhuang, Mingxi Wu
  ******************************************************************************/
 
-#include <stdio.h>
-#include <stdint.h>
-#include <iostream>
-#include <cstring>
-
 #include <TokenLibM.hpp>
+
 
  /**
   * this function concatenate all input tokens into one big token
   *
   */
-extern "C" void Concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
+extern "C" void gsql_concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
     char* const oToken, uint32_t& oTokenLen){
       
   int k = 0;
@@ -98,31 +93,4 @@ extern "C" void Concat(const char* const iToken[], uint32_t iTokenLen[], uint32_
   oTokenLen = k;
 }
 
-
-/**
- *  Unit testing of the token bank functions
- */ 
-int main(){
-
-  char* a[2];
-  char d[100]={'a','b','c','d','e','f'};
-
-  a[0]=&d[0];
-  a[1]=&d[3];
-
-  uint32_t len[2];
-
-  len[0] = 3;
-  len[1] = 3;
-
-
-  char b[100];
-  uint32_t  outlen;
-  Concat(a,len,2, b, outlen);
-  for(int i =0; i<outlen; i++){
-    std::cout<<b[i]<<",";
-  }
-  std::cout<<std::endl;
-
-}
 

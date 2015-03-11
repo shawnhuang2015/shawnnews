@@ -2,13 +2,12 @@
  * Copyright (c) 2015, GraphSQL Inc.
  * All rights reserved.
  * Project: GraphSQL Loader
- * ConditionLib1.hpp: a system library of token conversion function declaration. 
+ * ConditionLibM.hpp: a system library of token conversion function implementation. 
  *
  * - It is a one-token-in boolean function.
  * - All functions must have the same funcion signature,
  *   you can have different function name but you must follow the name convetion
- *   using snake case gsql_funcname (...). E.g.  gsql_find_max_digit (...).
- *   see http://en.wikipedia.org/wiki/Snake_case
+ *      gsql_funcName
  *
  *     extern "C" bool conditionFuncName(const char* const iToken, uint32_t iTokenLen);
  *  
@@ -27,9 +26,13 @@
  *               
  *     load "xx" into vertex abc values($1,$2) where Greater($5) using seperator=",";
  *
- * - This header file will be included in the ConditionBankM.cpp
+ * - The declaration is in ConditionLib1.hpp
  *
- * - The implementation is in TokenLib1.cpp
+ * - You can unit test your token function in the main.cc
+ *   To run your test, you can do 
+ *
+ *     g++ -I./ main.cpp TokenLib1.cpp TokenLibM.cpp ConditionLib1.cpp ConditionLibM.cpp
+ *     ./a.out
  *
  * - You must use GTEST to test the UDFs before deliver to customers
  *
@@ -37,19 +40,18 @@
  * Author: Zixuan Zhuang, Mingxi Wu
  ******************************************************************************/
 
-#ifndef CONDITIONLIB1_HPP_
-#define CONDITIONLIB1_HPP_
-
-#include <stdio.h>
-#include <stdint.h>
-#include <iostream>
-#include <cstring>
-#include <stdbool.h>
-#include <cstdlib>
+#include <ConditionLibM.hpp>
 
 
-extern "C"  bool gsql_is_click(const char* const, uint32_t);
+extern "C"  bool gsql_is_click(const char* const iToken, uint32_t iTokenLen) {
+  char click[] = "Click";
+  return strncmp(click,iToken,iTokenLen) == 0;
 
-extern "C"  bool gsql_is_add(const char* const, uint32_t);
+}
 
-#endif /* CONDITIONLIB1_HPP_ */
+extern "C"  bool gsql_is_add(const char* const iToken, uint32_t iTokenLen) {
+  char click[] = "Add";
+  return strncmp(click,iToken,iTokenLen) == 0;
+
+}
+
