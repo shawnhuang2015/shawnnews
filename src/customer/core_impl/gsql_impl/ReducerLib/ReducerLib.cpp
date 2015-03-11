@@ -55,11 +55,13 @@
  *
  *   GraphSQL loader binary will automatically use the library at runtime.
  *
- * - You can unit test your reducer function in the main function in this file.
+ * - You can unit test your reducer function in the main.cpp
  *   To run your test, you can do 
  *
- *     g++ ReducerBank.cpp 
+ *     g++ ReducerBank.cpp main.cpp -I./
  *     ./a.out
+ *
+ * - You must use GTEST to test the UDFs before deliver to customers
  *
  * Created on: Mar 10, 2015
  * Author: Mingxi Wu
