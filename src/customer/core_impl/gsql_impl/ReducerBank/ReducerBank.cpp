@@ -55,7 +55,7 @@
  * - You can unit test your reducer function in the main function in this file.
  *   To run your test, you can do 
  *
- *     g++ -I../ReducerLib/ ReducerBank.cpp 
+ *     g++ ReducerBank.cpp 
  *     ./a.out
  *
  * Created on: Mar 10, 2015
@@ -68,7 +68,6 @@
 #include <cstring>
 #include <vector>
 #include <string>
-#include <ReducerLib.hpp>
 
 using namespace std;
 /**
