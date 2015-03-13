@@ -58,7 +58,7 @@
  * - You can unit test your reducer function in the main.cpp
  *   To run your test, you can do 
  *
- *     g++ ReducerBank.cpp main.cpp -I./
+ *     g++ -I./ ReducerLib.cpp  main.cpp
  *     ./a.out
  *
  * - You must use GTEST to test the UDFs before deliver to customers
