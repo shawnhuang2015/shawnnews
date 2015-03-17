@@ -1,0 +1,36 @@
+CREATE VERTEX transaction(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX userId(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX ssn(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX bankId(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX cell(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX imei(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+CREATE VERTEX ip(PRIMARY_ID value string NOT NULL, isFraudulent bool NULL DEFAULT false)
+
+CREATE UNDIRECTED EDGE transToEntity(FROM *, TO *)
+
+CREATE GRAPH lianlian(transaction, userId, ssn, bankId, cell, imei, ip, transToEntity)
+
+
+
+CREATE LOADING JOB lianlianLoad FOR GRAPH lianlian
+  LOAD "" TO VERTEX transaction VALUES($c0, ),
+          TO VERTEX userId VALUES($c8,),
+          TO VERTEX ssn VALUES($c15,) WHERE IsSSNIDType($c16),
+          TO VERTEX bankId VALUES($c11,),
+          TO VERTEX cell VALUES($c14,),
+          TO VERTEX imei VALUES($c20,),
+          TO VERTEX ip VALUES($c18,)
+       USING HEADER="false", SEPARATOR=",", ;
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c8)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="userId";
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c15)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ssn";
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c11) WHERE IsSSNIDType($c16)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="bankId";
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c14)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="cell";
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c20)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="imei";
+  LOAD "" TO EDGE transToEntity VALUES($c0, $c18)
+       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ip";
+END
