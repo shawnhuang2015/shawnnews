@@ -45,6 +45,7 @@
 #include <stdbool.h>
 #include <cstdlib>
 
+#include <ConditionLibM.hpp>
 
 /**
  * This function convert each input token to an integer, sum them and compare 

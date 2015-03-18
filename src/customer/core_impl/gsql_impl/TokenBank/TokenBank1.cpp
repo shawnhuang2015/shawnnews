@@ -30,7 +30,7 @@
  *       Note: To avoid array out of boundary issue in oToken buffer, it is 
  *             recommended to add semantic check to ensure oToken length does not exceed 
  *             OutputTokenBufferSize parameter value specified in the shell config.
- *
+ *             Default is 2000 chars. 
  *
  *   2. string -> bool/uint/float
  *
@@ -91,6 +91,8 @@
 #include <cstring>
 #include <vector>
 #include <string>
+
+#include <TokenLib1.hpp>
 
 using namespace std;
 /**
