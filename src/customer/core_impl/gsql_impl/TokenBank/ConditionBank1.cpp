@@ -61,6 +61,16 @@ extern "C"  bool GreaterThan3(const char* const iToken, uint32_t iTokenLen) {
   return false;
 }
 
+extern "C"  bool IsSSNIDType(const char* const iToken, uint32_t iTokenLen) {
+
+  int tmp = atoi(iToken);
+
+  if (tmp == 7 || tmp == 0) {
+    return true;
+  }
+  return false;
+}
+
 
 /**
  *  Unit testing of the token bank functions
