@@ -14,7 +14,7 @@ CanonnicalLoader=../build/release/olgp/gse/gse_canonnical_loader
 BatchDeltaBinary=../build/release/olgp/tools/batchdelta
 
 # IUM will create this
-GSELoaderConfig=/data/rc4/config/gse_loader/gse_loader1.conf
+GSELoaderConfig=/home/benjamin/graphsql/config/gse_loader/gse_loader1.conf
 
 # IUM generate this.
 # This is tokenUDF string->string function's output buffer size

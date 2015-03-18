@@ -13,7 +13,7 @@ CREATE GRAPH lianlian(transaction, userId, ssn, bankId, cell, imei, ip, transToE
 
 
 CREATE LOADING JOB lianlianLoad FOR GRAPH lianlian
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO VERTEX transaction VALUES($0, "false"),
+  LOAD "../testdata.csv" TO VERTEX transaction VALUES($0, "false"),
           TO VERTEX userId VALUES($8,"false"),
           TO VERTEX ssn VALUES($15,"false") WHERE IsSSNIDType($16),
           TO VERTEX bankId VALUES($11,"false"),
@@ -21,16 +21,16 @@ CREATE LOADING JOB lianlianLoad FOR GRAPH lianlian
           TO VERTEX imei VALUES($20,"false"),
           TO VERTEX ip VALUES($18,"false")
        USING HEADER="false", SEPARATOR=",";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $8)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $8)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="userId";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $15)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $15)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ssn";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $11) WHERE IsSSNIDType($16)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $11) WHERE IsSSNIDType($16)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="bankId";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $14)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $14)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="cell";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $20)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $20)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="imei";
-  LOAD "/Users/Ben/Programming/jodi365/testdata.csv" TO EDGE transToEntity VALUES($0, $18)
+  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $18)
        USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ip";
 END
