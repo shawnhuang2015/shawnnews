@@ -46,6 +46,9 @@
 #include <stdbool.h>
 #include <cstdlib>
 
+#include <ConditionLib1.hpp>
+
+
 /**
  * This function convert iToken to integer and compare with 3.
  * If it is greater than 3, return true. Otherwise, return false.
