@@ -65,6 +65,7 @@ void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
       usleep(100);
       continue;
     }
+    //std::cout << numberofreads << ", " << numofwrites_ << "\n";
     for(size_t i = 0; i < msg.size(); ++i){
       if(usingstring){
         size_t key = boost::lexical_cast<size_t>(msg[i]->getKeyStr());
@@ -251,8 +252,8 @@ TEST(GNETTEST, DummyQueue) {
 }
 
 TEST(GNETTEST, ZeroMQ) {
-  gnet::ZeroMQFactory gpe1("GPE1", "gpe1.conf");
-  gnet::ZeroMQFactory rest1("REST1", "gpe1.conf");
+  gnet::ZeroMQFactory gpe1("GPE_SERVER_1", "gpe1.conf");
+  gnet::ZeroMQFactory rest1("REST_1", "gpe1.conf");
   std::vector<boost::thread*> threads;
   threads.push_back(new boost::thread(boost::bind(&QueueRead, &gpe1, "requestQ", 0, false)));
   threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "requestQ", 0, false)));
