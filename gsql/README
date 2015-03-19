@@ -1,4 +1,4 @@
-HOW TO GUIDE
+USER GUIDE
 
 In below struct, users will only work under src directory.
 1) in src/TokenBank, implement input token UDFs, compile to generate "*.so" files
