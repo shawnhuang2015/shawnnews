@@ -49,7 +49,7 @@
  *   - if any character is not equal, return false.
  */
 
-extern "C" bool gsql_token_is(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
+extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
 
   if (iTokenNum != 2) {
     return false;
@@ -67,3 +67,35 @@ extern "C" bool gsql_token_is(const char* const iToken[], uint32_t iTokenLen[], 
 
   return true;
 }
+
+/**
+ * This funtion compares two string in case insensitive, and returns true if they are equal.
+ *   - if there isn't two string, return false.
+ *   - if two string are not equal length, return false.
+ *   - if any character is not equal, return false.
+ *
+ */
+
+extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[], 
+    uint32_t iTokenLen[], uint32_t iTokenNum) {
+
+  if (iTokenNum != 2) {
+    return false;
+  }
+
+  if (iTokenLen[0] != iTokenLen[1]) {
+    return false;
+  }
+
+  for (int i =0; i < iTokenLen[0]; i++) {
+    if (tolower(iToken[0][i]) != tolower(iToken[1][i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
+
+

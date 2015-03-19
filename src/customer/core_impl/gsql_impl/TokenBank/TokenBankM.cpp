@@ -5,6 +5,8 @@
  * TokenBankM.cpp: a library of token conversion function declaration. 
  *
  * - It is an M-tokens-in, one-token-out function.
+ *     which means in ddl, it should be load .... values (...,funcName($0,$1)..);
+ *     statements like load .... values (...,funcName($1)..); will search funcName in TokenBank1.cpp
  * - All functions must use one of the following signatures, 
  *   but different function name.
  * - A token function can have nested other token function;

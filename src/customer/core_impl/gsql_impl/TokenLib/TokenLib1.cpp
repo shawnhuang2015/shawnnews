@@ -96,11 +96,6 @@ class GtimeConv {
  public:
 
   /**
-
-  TODO---SERIOUSLY!!  Talk to Mingxi about how we can build this into the build cycle.
-  this is from gtimelib.hpp, and we don't want 2 copies of it around...
-
-
    * Only support 3 types
    * "%Y-%m-%d %H:%M:%S"
    * "%Y/%m/%d %H:%M:%S"
@@ -174,7 +169,7 @@ extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen,
   oTokenLen = j;
 }
 
-extern "C" uint64_t gsql_timestamp_to_epoch(const char* const iToken, uint32_t iTokenLen){
+extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen){
   GtimeConv converter;
   return converter.seconds_from_epoch(iToken,iTokenLen);
 }

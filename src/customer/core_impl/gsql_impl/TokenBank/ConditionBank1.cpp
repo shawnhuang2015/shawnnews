@@ -64,6 +64,16 @@ extern "C"  bool GreaterThan3(const char* const iToken, uint32_t iTokenLen) {
   return false;
 }
 
+/**
+ * POC: Aliapy Anti Money Laundry
+ * IsValidRecord(): This function will test whether the current record is a valid
+ * one. "Y": yes. "N" not a valid one. -- Eric Chu 03/10/2015
+ */
+extern "C" bool IsValidRecord(const char* const iToken, uint32_t iTokenLen) {
+    std::string is_use(iToken, iTokenLen);
+    return is_use == "Y";
+}
+
 
 /**
  *  Unit testing of the token bank functions

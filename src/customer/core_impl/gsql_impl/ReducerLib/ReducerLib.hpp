@@ -1,4 +1,4 @@
-/******************************************************************************
+/**************************************************************************//**
  * Copyright (c) 2015, GraphSQL Inc.
  * All rights reserved.
  * Project: GraphSQL Loader
@@ -63,7 +63,7 @@
  *
  * Created on: Mar 10, 2015
  * Author: Mingxi Wu
- ******************************************************************************/
+ *//*****************************************************************************/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -75,73 +75,101 @@
 using namespace std;
 
 /**
- * sum a list of uint
+ * Sum a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_sum_uint($2))); 
  */
 extern "C" uint64_t gsql_sum_uint(const vector<uint64_t> iValueList);
 
 /**
- * sum a list of float 
+ * Sum a list of real numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_sum_real($2))); 
  */
 extern "C" float gsql_sum_real(const vector<float> iValueList);
 
 /**
- * find max of a list of uint
+ * Find max of a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_max_uint($2))); 
  */
 extern "C" uint64_t gsql_max_uint(const vector<uint64_t> iValueList);
 
 /**
- * find max of a list of real
+ * Find max of a list of real numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_max_real($2))); 
  */
 extern "C" float gsql_max_real(const vector<float> iValueList);
 
 /**
- * find min of a list of uint
+ * Find min of a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_min_uint($2))); 
  */
 extern "C" uint64_t gsql_min_uint(const vector<uint64_t> iValueList);
 
 /**
- * find min of a list of real
+ * Find min of a list of real numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_min_real($2))); 
  */
 extern "C" float gsql_min_real(const vector<float> iValueList);
 
 /**
- * find average of a list of uint
+ * Find average of a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_avg_uint($2))); 
  */
 extern "C" uint64_t gsql_avg_uint(const vector<uint64_t> iValueList);
 
 /**
- * find average of a list of real
+ * Find average of a list of real numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_avg_real($2))); 
  */
 extern "C" float gsql_avg_real(const vector<float> iValueList);
 
 /**
- * find count of a list of uint
+ * Find count of a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_cnt_uint($2))); 
  */
 extern "C" uint64_t gsql_cnt_uint(const vector<uint64_t> iValueList);
 
 
 /**
- * bit OR a list of uint
+ * Bit OR a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_and_bool($2))); 
  */
 extern "C" uint64_t gsql_or_uint(const vector<uint64_t> iValueList);
 
 /**
- * bit OR  a list of bool
+ * OR  a list of bool values.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_or_bool($2))); 
  */
 extern "C" bool gsql_or_bool(const vector<bool> iValueList);
 
 /**
- * bit AND a list of uint
+ * Bit AND a list of uint numbers.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_and_uint($2))); 
  */
 extern "C" uint64_t gsql_and_uint(const vector<uint64_t> iValueList);
 
 /**
- * bit AND a list of bool
+ * AND a list of bool values.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_and_bool($2))); 
  */
 extern "C" bool gsql_and_bool(const vector<bool> iValueList);
 
 /**
- * concatenate a list of char string
+ * Concatenate a list of char string.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_concat_str($2))); 
  */
-extern "C" void gsql_concat_str( const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen);
+extern "C" void gsql_concat_str(const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen);
 
