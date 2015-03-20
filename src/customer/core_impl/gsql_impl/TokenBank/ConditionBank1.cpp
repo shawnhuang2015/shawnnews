@@ -64,6 +64,10 @@ extern "C"  bool GreaterThan3(const char* const iToken, uint32_t iTokenLen) {
   return false;
 }
 
+extern "C" bool NotNull(const char* const iToken, uint32_t iTokenLen) {
+  return iTokenLen != 0;
+}
+
 extern "C"  bool IsSSNIDType(const char* const iToken, uint32_t iTokenLen) {
 
   int tmp = atoi(iToken);

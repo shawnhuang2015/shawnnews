@@ -118,6 +118,9 @@ extern "C"  uint64_t Zero(const char* const iToken, uint32_t iTokenLen) {
   return 0;
 }
 
+extern "C" bool IsNotNull(const char* const iToken, uint32_t iTokenLen) {
+  return iTokenLen != 0;
+}
 
 /**
  * Suppose I have a schema, and the third column is 

@@ -76,6 +76,16 @@ using namespace std;
  *
  */
 
+extern "C" bool OR(const vector<bool> iTokenList) {
+  int size = iTokenList.size();
+  for (int i = 0 ; i < size; i++) {
+    if (iTokenList[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 extern "C" uint64_t MySum(const vector<uint64_t> iTokenList) {
 
     int size = iTokenList.size();

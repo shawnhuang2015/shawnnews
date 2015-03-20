@@ -13,24 +13,24 @@ CREATE GRAPH lianlian(transaction, userId, ssn, bankId, cell, imei, ip, transToE
 
 
 CREATE LOADING JOB lianlianLoad FOR GRAPH lianlian
-  LOAD "../testdata.csv" TO VERTEX transaction VALUES($0, "false"),
-          TO VERTEX userId VALUES($8,"false"),
-          TO VERTEX ssn VALUES($15,"false") WHERE IsSSNIDType($16),
-          TO VERTEX bankId VALUES($11,"false"),
-          TO VERTEX cell VALUES($14,"false"),
-          TO VERTEX imei VALUES($20,"false"),
-          TO VERTEX ip VALUES($18,"false")
-       USING HEADER="false", SEPARATOR=",";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $8)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="userId";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $15)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ssn";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $11) WHERE IsSSNIDType($16)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="bankId";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $14)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="cell";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $20)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="imei";
-  LOAD "../testdata.csv" TO EDGE transToEntity VALUES($0, $18)
-       USING HEADER="false", SEPARATOR=",", FROM="transaction", TO="ip";
+  LOAD "../graphdata-sample.csv" TO VERTEX transaction VALUES($0,reduce(OR(IsNotNull($5)))),
+          TO VERTEX userId VALUES($8,reduce(OR(IsNotNull($5)))) WHERE NotNull($8),
+          TO VERTEX ssn VALUES($14,reduce(OR(IsNotNull($5)))) WHERE IsSSNIDTypeAndNotNull($15,$14),
+          TO VERTEX bankId VALUES($10,reduce(OR(IsNotNull($5)))) WHERE NotNull($10),
+          TO VERTEX cell VALUES($13,reduce(OR(IsNotNull($5)))) WHERE NotNull($13),
+          TO VERTEX imei VALUES($19,reduce(OR(IsNotNull($5)))) WHERE NotNull($19),
+          TO VERTEX ip VALUES($17,reduce(OR(IsNotNull($5)))) WHERE NotNull($17)
+       USING HEADER="true", SEPARATOR=",";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $8)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="userId";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $14) WHERE IsSSNIDTypeAndNotNull($15,$14)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="ssn";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $10)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="bankId";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $13)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="cell";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $19)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="imei";
+  LOAD "../graphdata-sample.csv" TO EDGE transToEntity VALUES($0, $17)
+       USING HEADER="true", SEPARATOR=",", FROM="transaction", TO="ip";
 END
