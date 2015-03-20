@@ -78,6 +78,7 @@
 #include <ReducerLib.hpp>
 
 using namespace std;
+
 /**
  * sum a list of uint
  */
@@ -104,6 +105,7 @@ extern "C" float gsql_sum_real(const vector<float> iValueList) {
   }
   return sum;
 }
+
 /**
  * find max of a list of uint
  */
@@ -251,12 +253,13 @@ extern "C" bool gsql_and_bool(const vector<bool> iValueList) {
 /**
  * concatenate a list of char string
  */
-extern "C" void gsql_concat_str( const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen) {
+extern "C" void gsql_concat_str( const vector<const char*> iValueList, 
+    vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen) {
 
   if (!iValueList.empty()) {
     int index = 0;
     for (int i = 0; i < iValueList.size(); i++) {
-      for (int j = 0; j< iValueLen[i]; j ++){
+      for (int j = 0; j< iValueLen[i]; j ++) {
         oValue[index++]= iValueList[i][j];
       }
     }

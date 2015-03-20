@@ -169,13 +169,13 @@ extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen,
   oTokenLen = j;
 }
 
-extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen){
+extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen) {
   GtimeConv converter;
   return converter.seconds_from_epoch(iToken,iTokenLen);
 }
 
 extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLen,
-         char *const oToken, uint32_t& oTokenLen){
+         char *const oToken, uint32_t& oTokenLen) {
   for(int i = 0; i < iTokenLen; i++) {
     if(iToken[i] == ' '){
       oToken[i] = (char)30; 

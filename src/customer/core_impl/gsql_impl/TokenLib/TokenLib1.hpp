@@ -98,7 +98,7 @@
 using namespace std;
 
 /**
- * This function convert iToken char array of size iTokenLen, reverse order 
+ * This function will convert iToken char array of size iTokenLen, reverse order 
  * and put it in oToken.
  * @par  Example 
  *       load "source_file" to vertex v values ($0, $1, gsql_reverse($2)); 
@@ -109,7 +109,7 @@ extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen,
 /**
  * This funcion will convert timestamp to epoch seconds. 
  *
- * Only support 3 types
+ * It only supports 3 types of input:
  *
  * "%Y-%m-%d %H:%M:%S"
  *
@@ -131,7 +131,9 @@ extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t 
 /**
  * This funcion will replace space with ((char)30).
  * @par  Example 
- *       load "source_file" to to temp_table t1(pid,pname,rating,mid) values($0, $1, flatten(gsql_split_by_space($2)));
+ *       load "source_file" to to temp_table t1(pid,pname,rating,mid) values($0, $1, flatten(gsql_split_by_space($2)));<br>
+ *       load temp_table t1 to vertex v values ($pid, $pid, $pname);<br>
+ *       load temp_table t1 to edge e values ($pid, $mid, $rating);
  */
 extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLen,
          char *const oToken, uint32_t& oTokenLen);

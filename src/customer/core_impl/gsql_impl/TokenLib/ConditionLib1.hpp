@@ -49,8 +49,8 @@
 
 
 /**
- * This function check whether the input string is "true" or "t" case insensitive.
- * return true if it is "true" or "t".
+ * This function checks whether the input string is "true" or "t" (case insensitive),
+ * returns true if it is "true" or "t".
  *
  * @par  Example
  *       load "source_file" to vertex v values ($0, $1) where gsql_is_true($2);
@@ -58,8 +58,8 @@
 extern "C"  bool gsql_is_true(const char* const iToken, uint32_t iTokenLen);
 
 /**
- * This function check whether the input string is "false" or "f" case insensitive.
- * return true if it is "false" or "f".
+ * This function checks whether the input string is "false" or "f" (case insensitive),
+ * and returns true if it is "false" or "f".
  *
  * @par  Example
  *       load "source_file" to vertex v values ($0, $1) where gsql_is_false($2);
