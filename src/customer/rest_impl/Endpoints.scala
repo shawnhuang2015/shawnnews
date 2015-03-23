@@ -49,6 +49,10 @@ object EndpointDefinitions {
     context.gpe.writeAndWait(request, List(uid))
   }))
 
+  Endpoints.register(Endpoint(GET(), "transactionfraud", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("kneighborhood", uid), queryString)
+    context.gpe.writeAndWait(request, List(uid))
+  }))
 
   /*
    * This endpoint is re-usable because it assumes that you are following a fixed format for graph update:

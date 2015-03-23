@@ -11,6 +11,7 @@
 
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
+#include "TransactionFraudScore.hpp"
 
 using namespace gperun;
 
@@ -21,10 +22,23 @@ namespace UDIMPL {
     bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
       if(request.request_function_== "kneighborsize")
         return RunUDF_KNeighborSize(serviceapi, request);
+      else if(request.request_function_ == "transactionfraud") {
+        return RunUDF_TransactionFraud(serviceapi, request);
+      }
       return false; /// not a valid request
     }
 
   private:
+    bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start))
+        return false;
+      typedef TransactionFraudScore UDF_t;
+      UDF_t udf(3, local_start, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
+      return true;
+    }
+
     bool RunUDF_KNeighborSize(ServiceAPI& serviceapi, EngineServiceRequest& request){
       // sample to convert vid.
       VertexLocalId_t local_start;

@@ -44,6 +44,7 @@ namespace gperun{
 	uint32_t TRANSACTION_ID; 
 //  const int INF = 1000000;
     enum {GV_DISTANCE, GV_TRANSACTION_ID}; 
+    enum {TYPE_TRANSACTION, TYPE_USERID, TYPE_SSN, TYPE_BANKID, TYPE_CELL, TYPE_IMEI, TYPE_IP};
   public:
     // UDF Settings: Computation Modes
     static const gpelib4::EngineProcessingMode EngineMode_ = gpelib4::EngineProcessMode_ActiveVertices;
@@ -63,10 +64,10 @@ namespace gperun{
     typedef FlagMessage MESSAGE;
  
     /**************Class Constructor************/
-    TransactionFraudScore(int iteration_limit, uint32_t transaction_id, JSONWriter* writer): gpelib4::BaseUDF(EngineMode_, iteration_limit), TRANSACTION_ID(transaction_id), writer(writer_) {}
+    TransactionFraudScore(int iteration_limit, uint32_t transaction_id, JSONWriter* writer): gpelib4::BaseUDF(EngineMode_, iteration_limit * 2), TRANSACTION_ID(transaction_id), writer_(writer) {}
      
     /**************Class Destructor************/
-    ~CountFraudScore() {}
+    ~TransactionFraudScore() {}
      
     /**************Initialize Globals************/
     void Initialize_GlobalVariables(
@@ -82,10 +83,10 @@ namespace gperun{
     //}
 
     ALWAYS_INLINE void Initialize(gpelib4::SingleValueContext<V_VALUE> * context, VertexLocalId_t vid, V_ATTR* vertexattr)  {   
-		if (vertexattr->GetUInt(0, 111) == 0 && vertexattr->GetUInt(2, 111) == TRANSACTION_ID) {
+		if (vertexattr->type() == TYPE_TRANSACTION && vid == TRANSACTION_ID) {
 			context->Write(vid, V_VALUE(FLAG_USER_ID | FLAG_SSN | FLAG_BANK_ID | FLAG_CELL | FLAG_IMEI | FLAG_IP), true);         
 		} else {
-			context->Write(vid, V_VALUE(), false);         
+			context->Write(vid, V_VALUE(), false);
 		}
     }
 
@@ -97,9 +98,9 @@ namespace gperun{
     ALWAYS_INLINE void EdgeMap(const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr,const V_VALUE& srcvertexvalue, 
                            const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr,const V_VALUE& targetvertexvalue,
                            E_ATTR* edgeattr,gpelib4::SingleValueMapContext<MESSAGE> * context){
-        if (!srcvertexattr->GetBool(1, false)) {
+        if (!srcvertexattr->GetBool(0, false)) {
             if (context->Iteration() == 1) {
-                MESSAGE mesg(1 << (targetvertexattr->GetUInt(0, 0) - 1));
+                MESSAGE mesg(1 << (targetvertexattr->type() - 1));
                 context->Write(targetvid, mesg);
             } else {
                 context->Write(targetvid, srcvertexvalue);
@@ -112,11 +113,10 @@ namespace gperun{
     ALWAYS_INLINE void Reduce(const VertexLocalId_t& vid, V_ATTR* vertexattr,
                               const V_VALUE& vertexvalue, MESSAGE& accumulator,
                               gpelib4::SingleValueContext<V_VALUE>* context){
-		std::string name = vertexattr->GetString(3);
         if ( !vertexvalue.cover(accumulator) ) {
             V_VALUE value = vertexvalue;
             value += accumulator;
-            if (vertexattr->GetBool(1, false)) {
+            if (vertexattr->GetBool(0, false)) {
                 int flags = value.flags;
                 uint32_t dist = context->Iteration() / 2;
                 uint32_t res  = context->GlobalVariable_GetValue<uint32_t>(GV_DISTANCE);
@@ -177,17 +177,17 @@ namespace gperun{
     JSONWriter* writer_;
   };
 }
- 
-int main(int argc, char** argv) {
-   std::string cfgfile = "";
-   std::string partitionpath = argv[1];
-   std::string output = argv[2];
-   std::string transactionIdStr = argv[3];
-   uint32_t transactionId = atoi(transactionIdStr.c_str());
-   gpelib4::EngineDriver driver(cfgfile, partitionpath);
-   gperun::CountFraudScore udf(gperun::MAX_ITERATION, transactionId);
-   driver.RunSingleVersion(&udf, output);
-   return 0;
-}
-
-
+// 
+//int main(int argc, char** argv) {
+//   std::string cfgfile = "";
+//   std::string partitionpath = argv[1];
+//   std::string output = argv[2];
+//   std::string transactionIdStr = argv[3];
+//   uint32_t transactionId = atoi(transactionIdStr.c_str());
+//   gpelib4::EngineDriver driver(cfgfile, partitionpath);
+//   gperun::TransactionFraudScore udf(gperun::MAX_ITERATION, transactionId);
+//   driver.RunSingleVersion(&udf, output);
+//   return 0;
+//}
+//
+//
