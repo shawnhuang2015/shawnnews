@@ -50,8 +50,8 @@ object EndpointDefinitions {
   }))
 
   Endpoints.register(Endpoint(GET(), "transactionfraud", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
-    val request = GpeRequest(List("kneighborhood", uid), queryString)
-    context.gpe.writeAndWait(request, List(uid))
+    val request = GpeRequest(List("transactionfraud", uid), queryString)
+    context.gpe.writeAndWait_TypedIds(request, List(uid -> 0));
   }))
 
   /*
