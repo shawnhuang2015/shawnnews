@@ -1,0 +1,1 @@
+/usr/local/nginx/sbin/nginx -c /home/ec2-user/product/nginx_conf/conf/nginx.conf -p /home/ec2-user/product/nginx_conf 
