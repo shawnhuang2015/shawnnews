@@ -20,7 +20,6 @@ namespace UDIMPL {
   class UDFRunner : public ServiceImplBase{
   public:
     bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
-      std::cout<<request.request_function_<<std::endl;
       if(request.request_function_== "kneighborsize")
         return RunUDF_KNeighborSize(serviceapi, request);
       else if(request.request_function_ == "transactionfraud") {
@@ -31,12 +30,10 @@ namespace UDIMPL {
 
   private:
     bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
-std::cout<<"Transaction Fraud"<<std::endl;
       VertexLocalId_t local_start;
       if (!serviceapi.UIdtoVId(request, "0_" + request.request_argv_[1], local_start))
         return false;
       typedef TransactionFraudScore UDF_t;
-      std::cout<<"local_start"<<std::endl;
       UDF_t udf(3, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
@@ -48,6 +45,9 @@ std::cout<<"Transaction Fraud"<<std::endl;
       
       std::vector <VertexLocalId_t> vids;
       writer_->WriteStartObject();
+
+      writer_->WriteName("score").WriteUnsignedInt(udf.getScore());
+
       writer_->WriteName("vertices");
       writer_->WriteStartArray();
       for(boost::unordered_set<Vertex,VertexHash> :: iterator it = vertices.begin();

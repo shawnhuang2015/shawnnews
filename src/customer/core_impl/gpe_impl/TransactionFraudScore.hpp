@@ -107,8 +107,9 @@ namespace gperun{
    */
   class TransactionFraudScore : public gpelib4::BaseUDF {
   private: 
-    boost::unordered_set<Vertex,VertexHash> vertices_;
+    uint32_t score_;
 
+    boost::unordered_set<Vertex,VertexHash> vertices_;
     boost::unordered_set<EdgePair,EdgePairHash> edges_;
   // define constants here, make sure to initialize them in the constructor
 	uint32_t TRANSACTION_ID; 
@@ -242,6 +243,7 @@ namespace gperun{
       boost::unordered_set<EdgePair,EdgePairHash> edges = context->GlobalVariable_GetValue<boost::unordered_set<EdgePair,EdgePairHash> >(GV_EDGELIST);
       boost::unordered_set<Vertex,VertexHash> vertices = context->GlobalVariable_GetValue<boost::unordered_set<Vertex,VertexHash> >(GV_VERTLIST);
 
+      score_ = score;
       edges_ = edges;
       vertices_ = vertices;
 
@@ -257,6 +259,10 @@ namespace gperun{
     */
     std::string Output(gpelib4::BasicContext* context) {
         return "";
+    }
+
+    uint32_t getScore() {
+      return score_;
     }
 
     boost::unordered_set<Vertex,VertexHash> getVertices() {
