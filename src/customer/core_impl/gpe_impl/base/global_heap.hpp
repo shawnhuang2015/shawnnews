@@ -106,6 +106,7 @@ namespace UDIMPL {
 
     void clear_heap(){
       contents_.clear();
+      finalsorted_ = false;
     }
 
     void resize_heap(uint32_t newSize){
