@@ -39,6 +39,53 @@ std::cout<<"Transaction Fraud"<<std::endl;
       std::cout<<"local_start"<<std::endl;
       UDF_t udf(3, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
+
+      boost::unordered_set<EdgePair,EdgePairHash> edges = udf.getEdges();
+      boost::unordered_set<Vertex,VertexHash> vertices = udf.getVertices();
+      
+      gutil::JSONWriter* writer_ = request.outputwriter_; 
+
+      
+      std::vector <VertexLocalId_t> vids;
+      writer_->WriteStartObject();
+      writer_->WriteName("vertices");
+      writer_->WriteStartArray();
+      for(boost::unordered_set<Vertex,VertexHash> :: iterator it = vertices.begin();
+            it != vertices.end();
+            ++it){
+          vids.push_back(it ->vid);
+          writer_ ->WriteStartObject();
+          writer_ ->WriteName("id");
+          writer_ ->WriteMarkVId(it->vid);
+          writer_ ->WriteName("type");
+          writer_ ->WriteUnsignedInt(it ->type);
+          writer_ ->WriteName("isFraud");
+          writer_ ->WriteBool(it ->isFraud);
+          writer_ ->WriteEndObject();
+      }
+      writer_->WriteEndArray();
+      writer_->WriteName("Edges");
+      writer_->WriteStartArray();
+
+      gapi4::EdgesCollection results;
+
+      for(boost::unordered_set<EdgePair,EdgePairHash> ::iterator it = edges.begin();
+            it != edges.end();
+            ++it){
+          writer_->WriteStartObject();
+
+          writer_->WriteName("src");
+          writer_->WriteMarkVId(it->src);
+
+          writer_->WriteName("tgt");
+          writer_->WriteMarkVId(it->tgt);
+
+          writer_ ->WriteEndObject();
+      }
+      writer_->WriteEndArray();
+      writer_->WriteEndObject();
+      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+
       return true;
     }
 

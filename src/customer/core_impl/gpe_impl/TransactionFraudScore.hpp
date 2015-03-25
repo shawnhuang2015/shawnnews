@@ -4,6 +4,9 @@
 #include <gpelib4/enginebase/context.hpp>
 #include <gpelib4/udfs/singleactiveudfbase.hpp>
 #include <gpelib4/enginedriver/enginedriver.hpp>
+#include "base/global_set.hpp"
+#include "base/global_vector.hpp"
+#include "core_impl/udt.hpp"
 
 namespace gperun{
     const int FLAG_USER_ID = 1;
@@ -31,6 +34,70 @@ namespace gperun{
         }
     };
 
+  struct Vertex {
+    uint64_t vid;
+    uint32_t type;
+    bool isFraud;
+    Vertex(uint64_t v = 0): vid(v), type(0), isFraud(false) {}
+    Vertex(uint64_t v, uint32_t t, bool fraud): vid(v), type(t), isFraud(fraud) {}
+    friend std::ostream& operator<<(std::ostream& os, const Vertex& obj) {
+      os << obj.vid;
+      os << obj.type;
+      os << obj.isFraud;
+      return os;
+    }
+    friend std::istream& operator>>(std::istream& is, Vertex& obj) {
+      is >> obj.vid;
+      is >> obj.type;
+      is >> obj.isFraud;
+      return is;
+    }
+    friend bool operator==(const Vertex& left, const Vertex& right) {
+      return left.vid == right.vid;
+    }
+  };
+
+  struct VertexHash : public std::unary_function<Vertex,std::size_t> {
+    std::size_t operator()(Vertex const& p) const {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, p.vid);
+      return seed;
+    }
+  };
+
+  struct EdgePair{
+    VertexLocalId_t src;
+    VertexLocalId_t tgt;
+  
+    EdgePair(unsigned int s=0, unsigned int t=0): src(s), tgt(t) {}
+  
+    friend std::ostream& operator<<(std::ostream& os, const EdgePair& obj){
+      os<<obj.src<<" "<<obj.tgt;
+      return os;
+    }
+  
+    friend std::istream& operator>>(std::istream& is, EdgePair& obj){
+      // read obj from stream
+      is>>obj.src;
+      is>>obj.tgt;
+      return is;
+    }
+  
+    friend bool operator==(const EdgePair& left, const EdgePair& right){
+      return left.src == right.src && left.tgt == right.tgt;
+    }
+  };
+  
+  // define a hash function so we can use fast unordered_set to do counting of unique values
+  struct EdgePairHash : public std::unary_function<EdgePair,std::size_t>{
+    std::size_t operator()(EdgePair const& p) const {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, p.src);
+      boost::hash_combine(seed, p.tgt);
+      return seed;
+    }
+  };
+
  
 /**TransactionFraudScore
    *
@@ -40,10 +107,13 @@ namespace gperun{
    */
   class TransactionFraudScore : public gpelib4::BaseUDF {
   private: 
+    boost::unordered_set<Vertex,VertexHash> vertices_;
+
+    boost::unordered_set<EdgePair,EdgePairHash> edges_;
   // define constants here, make sure to initialize them in the constructor
 	uint32_t TRANSACTION_ID; 
 //  const int INF = 1000000;
-    enum {GV_DISTANCE, GV_TRANSACTION_ID}; 
+    enum {GV_DISTANCE, GV_TRANSACTION_ID, GV_VERTLIST, GV_EDGELIST}; 
     enum {TYPE_TRANSACTION, TYPE_USERID, TYPE_SSN, TYPE_BANKID, TYPE_CELL, TYPE_IMEI, TYPE_IP};
   public:
     // UDF Settings: Computation Modes
@@ -54,7 +124,7 @@ namespace gperun{
     static const gpelib4::UDFDefineInitializeFlag InitializeMode_ = gpelib4::Mode_Initialize_Individually;
     static const gpelib4::UDFDefineFlag AggregateReduceMode_ = gpelib4::Mode_Defined;
     static const gpelib4::UDFDefineFlag CombineReduceMode_ = gpelib4::Mode_NotDefined;
-    static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_NotDefined;
+    static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_Defined;
     static const int PrintMode_ = gpelib4::Mode_Print_ByVertex;
     
     // These typedefs are required by the engine.
@@ -74,6 +144,8 @@ namespace gperun{
       gpelib4::GlobalVariables* globalvariables) { 
         globalvariables->Register(GV_DISTANCE, new gpelib4::UnsignedIntStateVariable(0));
         globalvariables->Register(GV_TRANSACTION_ID, new gpelib4::UnsignedIntStateVariable(TRANSACTION_ID));
+        globalvariables->Register(GV_VERTLIST, new UDIMPL::SetVariable<Vertex, VertexHash>());
+        globalvariables->Register(GV_EDGELIST, new UDIMPL::SetVariable<EdgePair, EdgePairHash>());
     }
  
     //ALWAYS_INLINE void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context)  {   
@@ -105,7 +177,14 @@ namespace gperun{
             } else {
                 context->Write(targetvid, srcvertexvalue);
             }
+          context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
         }
+    }
+
+    ALWAYS_INLINE void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr,
+                             const V_VALUE& singlevalue,
+                             gpelib4::SingleValueMapContext<MESSAGE> * context){
+      context->GlobalVariable_Reduce<Vertex>(GV_VERTLIST, Vertex(vid));
     }
      
     void BetweenMapAndReduce(gpelib4::MasterContext* context) { }
@@ -160,6 +239,12 @@ namespace gperun{
 			std::cout << (dist & 3) << std::endl;
 			dist >>= 2;
 		}
+      boost::unordered_set<EdgePair,EdgePairHash> edges = context->GlobalVariable_GetValue<boost::unordered_set<EdgePair,EdgePairHash> >(GV_EDGELIST);
+      boost::unordered_set<Vertex,VertexHash> vertices = context->GlobalVariable_GetValue<boost::unordered_set<Vertex,VertexHash> >(GV_VERTLIST);
+
+      edges_ = edges;
+      vertices_ = vertices;
+
     }
      
     // If PrintMode_ = gpelib4::Mode_Print_ByVertex  or if PrintMode_ = gpelib4::Mode_Print_ByVertex|gpelib4::Mode_Print_ByEdge
@@ -173,8 +258,18 @@ namespace gperun{
     std::string Output(gpelib4::BasicContext* context) {
         return "";
     }
+
+    boost::unordered_set<Vertex,VertexHash> getVertices() {
+      return vertices_;
+    }
+
+    boost::unordered_set<EdgePair,EdgePairHash> getEdges() {
+      return edges_;
+    }
      
     JSONWriter* writer_;
+
+    
   };
 }
 // 
