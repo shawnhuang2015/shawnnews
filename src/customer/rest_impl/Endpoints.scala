@@ -54,6 +54,76 @@ object EndpointDefinitions {
     context.gpe.writeAndWait_TypedIds(request, List(uid -> 0));
   }))
 
+  Endpoints.register(Endpoint(POST(), "transaction", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val trans_str = "transactionId";
+    val user_str = "userId";
+    val ssn_str = "ssn";
+    val bank_str = "bankId";
+    val cell_str = "cell";
+    val imei_str = "imei";
+    val ip_str = "ip";
+    val fraud_str = "fraud";
+
+    var transId = "";
+    var userId = "";
+    var ssn = "";
+    var bankId = "";
+    var cell = "";
+    var imei = "";
+    var ip = "";
+    var isFraud = false;
+
+    if (dataPayload.keys.contains(trans_str)) {
+      transId = (dataPayload \ trans_str).as[String];
+    }
+    if (dataPayload.keys.contains(user_str)) {
+      userId = (dataPayload \ user_str).as[String];
+    }
+    if (dataPayload.keys.contains(ssn_str)) {
+      ssn = (dataPayload \ ssn_str).as[String];
+    }
+    if (dataPayload.keys.contains(bank_str)) {
+      bankId = (dataPayload \ bank_str).as[String];
+    }
+    if (dataPayload.keys.contains(cell_str)) {
+      cell = (dataPayload \ cell_str).as[String];
+    }
+    if (dataPayload.keys.contains(imei_str)) {
+      imei = (dataPayload \ imei_str).as[String];
+    }
+    if (dataPayload.keys.contains(ip_str)) {
+      ip = (dataPayload \ ip_str).as[String];
+    }
+    if (dataPayload.keys.contains(fraud_str)) {
+      isFraud = (dataPayload \ fraud_str).as[String].toBoolean;
+    }
+
+    var verSeq : Seq[Vertex] = List();
+
+
+    var edgeSeq : Seq[Edge] = List();
+    var idSeq : Seq[String] = List(transId,userId,ssn,bankId,cell,imei,ip);
+    for(i<-0 to (idSeq.length - 1))
+    {
+        if(idSeq(i)!="")
+        {
+            verSeq +:= Vertex(idSeq(i),Map("isFraud" -> isFraud), Some(i.toString));
+        }
+    }
+    for(i<-0 to (idSeq.length - 2))
+    {
+        for(j<-i+1 to (idSeq.length - 1))
+        {
+            if(idSeq(i) != "" && idSeq(j) != "")
+            {
+                edgeSeq +:= Edge(idSeq(i),idSeq(j), Map(),Some(i.toString),Some(j.toString))
+            }
+        }
+    }
+    val gseRequest = GseRequest(verSeq++edgeSeq)
+    context.gse.writeAndWait(gseRequest)
+  }))
+
   /*
    * This endpoint is re-usable because it assumes that you are following a fixed format for graph update:
    * {"nodeList":[{"id":"id1","att1":v1,...}, {"id":"id2","a1":v2,...},...],
