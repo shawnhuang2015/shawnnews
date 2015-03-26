@@ -74,25 +74,25 @@ object EndpointDefinitions {
     var isFraud = false;
 
     if (dataPayload.keys.contains(trans_str)) {
-      transId = (dataPayload \ trans_str).as[String];
+      transId = "0_" + (dataPayload \ trans_str).as[String];
     }
     if (dataPayload.keys.contains(user_str)) {
-      userId = (dataPayload \ user_str).as[String];
+      userId = "1_" + (dataPayload \ user_str).as[String];
     }
     if (dataPayload.keys.contains(ssn_str)) {
-      ssn = (dataPayload \ ssn_str).as[String];
+      ssn = "2_" + (dataPayload \ ssn_str).as[String];
     }
     if (dataPayload.keys.contains(bank_str)) {
-      bankId = (dataPayload \ bank_str).as[String];
+      bankId = "3_" + (dataPayload \ bank_str).as[String];
     }
     if (dataPayload.keys.contains(cell_str)) {
-      cell = (dataPayload \ cell_str).as[String];
+      cell = "4_" + (dataPayload \ cell_str).as[String];
     }
     if (dataPayload.keys.contains(imei_str)) {
-      imei = (dataPayload \ imei_str).as[String];
+      imei = "5_" + (dataPayload \ imei_str).as[String];
     }
     if (dataPayload.keys.contains(ip_str)) {
-      ip = (dataPayload \ ip_str).as[String];
+      ip = "6_" + (dataPayload \ ip_str).as[String];
     }
     if (dataPayload.keys.contains(fraud_str)) {
       isFraud = (dataPayload \ fraud_str).as[String].toBoolean;

@@ -42,12 +42,10 @@ namespace UDIMPL {
       
       gutil::JSONWriter* writer_ = request.outputwriter_; 
 
-      
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
+
       std::vector <VertexLocalId_t> vids;
       writer_->WriteStartObject();
-
-      writer_->WriteName("score").WriteUnsignedInt(udf.getScore());
-
       writer_->WriteName("vertices");
       writer_->WriteStartArray();
       for(boost::unordered_set<Vertex,VertexHash> :: iterator it = vertices.begin();
@@ -59,8 +57,10 @@ namespace UDIMPL {
           writer_ ->WriteMarkVId(it->vid);
           writer_ ->WriteName("type");
           writer_ ->WriteUnsignedInt(it ->type);
-          writer_ ->WriteName("isFraud");
-          writer_ ->WriteBool(it ->isFraud);
+          writer_ ->WriteName("attr");
+          writer_ ->WriteStartObject();
+          graphapi->GetOneVertex(it ->vid)->WriteAttributeToJson(*request.outputwriter_);
+          writer_ ->WriteEndObject();
           writer_ ->WriteEndObject();
       }
       writer_->WriteEndArray();
@@ -72,20 +72,37 @@ namespace UDIMPL {
       for(boost::unordered_set<EdgePair,EdgePairHash> ::iterator it = edges.begin();
             it != edges.end();
             ++it){
-          writer_->WriteStartObject();
 
+          graphapi ->GetSpecifiedEdges(it->src, it->tgt, results);
+          while(results.NextEdge()) {
+          writer_->WriteStartObject();
           writer_->WriteName("src");
+          writer_->WriteStartObject();
+          writer_->WriteName("id");
           writer_->WriteMarkVId(it->src);
+          writer_ ->WriteName("type");
+          writer_ ->WriteUnsignedInt( graphapi->GetOneVertex(it ->src) ->type());
+          writer_->WriteEndObject();
 
           writer_->WriteName("tgt");
+          writer_->WriteStartObject();
+          writer_->WriteName("id");
           writer_->WriteMarkVId(it->tgt);
+          writer_ ->WriteName("type");
+          writer_ ->WriteUnsignedInt( graphapi->GetOneVertex(it ->tgt) ->type());
+          writer_->WriteEndObject();
 
+          writer_ ->WriteName("attr");
+          writer_ ->WriteStartObject();
+          results.GetCurrentEdgeAttribute()->WriteAttributeToJson(*request.outputwriter_);
           writer_ ->WriteEndObject();
+          writer_ ->WriteEndObject();
+          }
       }
       writer_->WriteEndArray();
       writer_->WriteEndObject();
+      delete(graphapi);
       request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
-
       return true;
     }
 
