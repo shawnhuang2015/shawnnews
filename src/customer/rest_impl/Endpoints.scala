@@ -44,14 +44,67 @@ object EndpointDefinitions {
   //////////////////////////
   // REST ENDPOINTS       //
   //////////////////////////
+    ///UI END POINTS
+  
+  Endpoints.register(Endpoint(GET(), "UIpages", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => { 
+    
+    val formElements: JsValue = Json.parse("""
+    [ 
+      {
+        "tabname": "Explore Fraud Neighborhood",
+        "index": 0,
+        "elements": [{ "label": { "name" : "ID"} }, { "textbox": {"name": "primaryKey", "length" : 10}}],
+        "attributes": {
+          "depth" : 1
+        },
+        "setting" : {
+          "layout" : "tree"
+        },
+        "initialization":{
+          "coloring" : [
+              {"selection":"isFraudulent == true", "selectionType":"nodes", "color":"#ff0000"}
+          ]
+        },
+        "events" : {
+          "submit" : {
+            "URL_head" : "engine/transactionfraud",
+            "URL_attrs" : {
+                "id" : {"usage":"input", "name":"primaryKey"},
+            }
+          },
+          "node_dblclick" : {
+            "URL_head" : "engine/transactionfraud",
+            "URL_attrs" : {
+                "id" : {"usage":"select", "name":"id"},
+            }
+          }
+        }  
+      }
+    ]
+    """);
+
+    ////"http://uitest.graphsql.com:8080/engine/kneighborhood_full_type?id*primaryKey&type*type&depth@depth",
+ 
+    Some(Json.stringify(formElements));
+    //Some(Json.stringify(Json.obj("results" -> Json.stringify(formElements), "error" -> false, "message" -> ""))) 
+    //Some(Json.stringify(Json.obj("error" -> false, "message" -> "dummy!")))
+  }))
+  ///FINISH UI END POINTS
+
   Endpoints.register(Endpoint(GET(), "kneighborhood", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
     val request = GpeRequest(List("kneighborhood", uid), queryString)
     context.gpe.writeAndWait(request, List(uid))
   }))
 
   Endpoints.register(Endpoint(GET(), "transactionfraud", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
-    val request = GpeRequest(List("transactionfraud", uid), queryString)
-    context.gpe.writeAndWait_TypedIds(request, List(uid -> 0));
+
+    if(queryString.contains("id")) {
+      val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
+      val request = GpeRequest(List("transactionfraud", uid), queryString)
+      context.gpe.writeAndWait_TypedIds(request, List(uid -> 0)); 
+    } else {
+      Some(Json.stringify(Json.obj("error" -> true, "message" -> "id is missing in query string")))
+    }
   }))
 
   Endpoints.register(Endpoint(POST(), "transaction", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
