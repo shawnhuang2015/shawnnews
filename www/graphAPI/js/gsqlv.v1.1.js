@@ -974,6 +974,8 @@ var gsqlv = function(x) {
 	}
 
 	gsqlv.highlightingNodes = function() {
+		var unhighlighting = true;
+
 		if (data.nodes.filter(function(d) { 
 				return d.selected; 
 			}).length == 0) {
@@ -983,6 +985,8 @@ var gsqlv = function(x) {
 			data.links.forEach(function(d) {
 				d.opacity = initLinkSetting.opacity;
 			})
+
+			unhighlighting = false;
 		}
 		else {
 			data.nodes.forEach(function(d) {
@@ -1011,6 +1015,8 @@ var gsqlv = function(x) {
 
 		gsqlv.updateSelectedElements()
 		gsqlv.refresh();
+
+		return unhighlighting;
 	}
 
 	gsqlv.coloringNodes = function(x) {
