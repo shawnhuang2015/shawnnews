@@ -1104,6 +1104,9 @@ var gsqlv = function(x) {
 					jsVariable += "var "+key+"=node.attr."+key+";";
 				}
 
+				jsVariable += "var type =node.type;";
+				jsVariable += "var id =node.id;";
+
 				jsItem += jsVariable;
 				jsItem += 'try{ if ('+x+') {node.selected=true;}\
 						else{node.selected=false;}}catch(err){node.selected=false;}'
@@ -1186,6 +1189,7 @@ var gsqlv = function(x) {
 			jsVariable += "var "+key+"=node.attr."+key+";";
 		}
 
+
 		jsItem += jsVariable;
 		jsItem += 'try{ if ('+condition+') {__$$global_boolean=true;}\
 				else{__$$global_boolean=false;}}catch(err){__$$global_boolean=false;}'
@@ -1229,6 +1233,9 @@ var gsqlv = function(x) {
 		for (var key in l.attr) {
 			jsVariable += "var "+key+"=link.attr."+key+";";
 		}
+
+		jsVariable += "var type =link.type;";
+		jsVariable += "var id =link.id;";		
 
 		jsItem += jsVariable;
 		jsItem += 'try{ if ('+condition+') {__$$global_boolean=true;}\
