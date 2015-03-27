@@ -160,6 +160,10 @@ var gsqlv = function(x) {
 				node_links[nodeKey] = {};
 				node_links[nodeKey].node = d;
 				node_links[nodeKey].links = [];
+
+				if (rootNode == "0&"+d.id) {
+					rootNode = nodeKey;
+				}
 			})
 
 		data.links.forEach(function(d) {
