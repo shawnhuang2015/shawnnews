@@ -69,19 +69,19 @@ object EndpointDefinitions {
           "submit" : {
             "URL_head" : "engine/transactionfraud",
             "URL_attrs" : {
-                "id" : {"usage":"input", "name":"primaryKey"},
+                "id" : {"usage":"input", "name":"primaryKey"}
             }
           },
           "node_dblclick" : {
             "URL_head" : "engine/transactionfraud",
             "URL_attrs" : {
-                "id" : {"usage":"select", "name":"id"},
+                "id" : {"usage":"select", "name":"id"}
             }
           }
         }  
       }
     ]
-    """);
+    """); 
 
     ////"http://uitest.graphsql.com:8080/engine/kneighborhood_full_type?id*primaryKey&type*type&depth@depth",
  
@@ -96,7 +96,7 @@ object EndpointDefinitions {
     context.gpe.writeAndWait(request, List(uid))
   }))
 
-  Endpoints.register(Endpoint(GET(), "transactionfraud", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+  Endpoints.register(Endpoint(GET(), "transactionfraud", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
 
     if(queryString.contains("id")) {
       val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
