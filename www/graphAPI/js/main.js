@@ -433,8 +433,8 @@
 						}
 					}
 
-					var initRootNode = document.getElementsByName(URL_attrs.type.name)[0].value +
-							 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
+					var initRootNode = //document.getElementsByName(URL_attrs.type.name)[0].value +
+							 "0&" + document.getElementsByName(URL_attrs.id.name)[0].value;
 					mygv.rootNode(initRootNode);
 				}
 				else {

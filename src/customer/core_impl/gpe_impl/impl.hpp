@@ -29,6 +29,18 @@ namespace UDIMPL {
     }
 
   private:
+    std::string typestring(int i) {
+      switch(i) {
+        case 0: return "TXN";
+        case 1: return "UID";
+        case 2: return "SSN";
+        case 3: return "BANKID";
+        case 4: return "CELL";
+        case 5: return "IMEI";
+        case 6: return "IP";
+      }
+      return "UNKNOWN";
+    }
     bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
       VertexLocalId_t local_start;
       if (!serviceapi.UIdtoVId(request, "0_" + request.request_argv_[1], local_start))
@@ -56,9 +68,14 @@ namespace UDIMPL {
           writer_ ->WriteName("id");
           writer_ ->WriteMarkVId(it->vid);
           writer_ ->WriteName("type");
-          writer_ ->WriteUnsignedInt(it ->type);
+          std::string tmp = typestring(graphapi->GetOneVertex(it ->vid)->type());
+          writer_ ->WriteString(tmp);
           writer_ ->WriteName("attr");
           writer_ ->WriteStartObject();
+          if(it -> vid == local_start) {
+            writer_ ->WriteName("score");
+            writer_ ->WriteFloat(udf.getScore()); 
+          }
           graphapi->GetOneVertex(it ->vid)->WriteAttributeToJson(*request.outputwriter_);
           writer_ ->WriteEndObject();
           writer_ ->WriteEndObject();
@@ -81,7 +98,8 @@ namespace UDIMPL {
           writer_->WriteName("id");
           writer_->WriteMarkVId(it->src);
           writer_ ->WriteName("type");
-          writer_ ->WriteUnsignedInt( graphapi->GetOneVertex(it ->src) ->type());
+          std::string tmp =  typestring(graphapi->GetOneVertex(it ->src) ->type());
+          writer_ ->WriteString(tmp);
           writer_->WriteEndObject();
 
           writer_->WriteName("tgt");
@@ -89,11 +107,15 @@ namespace UDIMPL {
           writer_->WriteName("id");
           writer_->WriteMarkVId(it->tgt);
           writer_ ->WriteName("type");
-          writer_ ->WriteUnsignedInt( graphapi->GetOneVertex(it ->tgt) ->type());
+          tmp = typestring( graphapi->GetOneVertex(it ->tgt) ->type());
+          writer_ ->WriteString(tmp);
           writer_->WriteEndObject();
 
           writer_ ->WriteName("attr");
           writer_ ->WriteStartObject();
+          writer_ ->WriteName("type");
+          tmp = typestring(results.GetCurrentEdgeAttribute() ->type());
+          writer_ ->WriteString(tmp);
           results.GetCurrentEdgeAttribute()->WriteAttributeToJson(*request.outputwriter_);
           writer_ ->WriteEndObject();
           writer_ ->WriteEndObject();

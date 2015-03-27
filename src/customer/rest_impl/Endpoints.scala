@@ -62,7 +62,7 @@ object EndpointDefinitions {
         },
         "initialization":{
           "coloring" : [
-              {"selection":"isFraudulent == true", "selectionType":"nodes", "color":"#ff0000"}
+              {"selection":"isFraudulent == "true"", "selectionType":"nodes", "color":"#ff00ff"}
           ]
         },
         "events" : {
@@ -127,25 +127,25 @@ object EndpointDefinitions {
     var isFraud = false;
 
     if (dataPayload.keys.contains(trans_str)) {
-      transId = "0_" + (dataPayload \ trans_str).as[String];
+      transId = (dataPayload \ trans_str).as[String];
     }
     if (dataPayload.keys.contains(user_str)) {
-      userId = "1_" + (dataPayload \ user_str).as[String];
+      userId = (dataPayload \ user_str).as[String];
     }
     if (dataPayload.keys.contains(ssn_str)) {
-      ssn = "2_" + (dataPayload \ ssn_str).as[String];
+      ssn = (dataPayload \ ssn_str).as[String];
     }
     if (dataPayload.keys.contains(bank_str)) {
-      bankId = "3_" + (dataPayload \ bank_str).as[String];
+      bankId = (dataPayload \ bank_str).as[String];
     }
     if (dataPayload.keys.contains(cell_str)) {
-      cell = "4_" + (dataPayload \ cell_str).as[String];
+      cell = (dataPayload \ cell_str).as[String];
     }
     if (dataPayload.keys.contains(imei_str)) {
-      imei = "5_" + (dataPayload \ imei_str).as[String];
+      imei = (dataPayload \ imei_str).as[String];
     }
     if (dataPayload.keys.contains(ip_str)) {
-      ip = "6_" + (dataPayload \ ip_str).as[String];
+      ip = (dataPayload \ ip_str).as[String];
     }
     if (dataPayload.keys.contains(fraud_str)) {
       isFraud = (dataPayload \ fraud_str).as[String].toBoolean;
@@ -160,7 +160,7 @@ object EndpointDefinitions {
     {
         if(idSeq(i)!="")
         {
-            verSeq +:= Vertex(idSeq(i),Map("isFraud" -> isFraud), Some(i.toString));
+            verSeq +:= Vertex(idSeq(i),Map("vertype" -> i, "isFraud" -> isFraud), Some(i.toString));
         }
     }
     for(i<-0 to (idSeq.length - 2))
@@ -169,11 +169,11 @@ object EndpointDefinitions {
         {
             if(idSeq(i) != "" && idSeq(j) != "")
             {
-                edgeSeq +:= Edge(idSeq(i),idSeq(j), Map(),Some(i.toString),Some(j.toString))
+                edgeSeq +:= Edge(idSeq(i),idSeq(j), Map("etype" -> 0),Some(i.toString),Some(j.toString))
             }
         }
     }
-    val gseRequest = GseRequest(verSeq++edgeSeq)
+    val gseRequest = GseRequest(verSeq)
     context.gse.writeAndWait(gseRequest)
   }))
 

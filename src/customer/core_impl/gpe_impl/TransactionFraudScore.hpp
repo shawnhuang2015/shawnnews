@@ -201,21 +201,24 @@ namespace gperun{
                            const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr,const V_VALUE& targetvertexvalue,
                            E_ATTR* edgeattr,gpelib4::SingleValueMapContext<MESSAGE> * context){
         if(srcvertexattr ->type() == TYPE_TRANSACTION) {
-          //only if src is not fraudulent
-          if (!srcvertexattr->GetBool(0, false)) {
-            //first iteration, send out flag for entity
-            if (context->Iteration() == 1) {
+          //first iteration, send out flag for entity
+          if (context->Iteration() == 1) {
                 MESSAGE mesg(1 << (targetvertexattr->type() - 1));
-                context->Write(targetvid, mesg);
-            } else {
+                context->Write(targetvid, mesg); 
+                context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
+          }
+          else {
+            //only if src is not fraudulent
+            if (!srcvertexattr->GetBool(0, false)) {
                 context->Write(targetvid, srcvertexvalue);
+                context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
             }
           }
         }
         else { // activate all other targets
           context->Write(targetvid, srcvertexvalue);
+          context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
         }
-        context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
     }
 
     ALWAYS_INLINE void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr,

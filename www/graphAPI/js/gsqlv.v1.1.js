@@ -160,6 +160,10 @@ var gsqlv = function(x) {
 				node_links[nodeKey] = {};
 				node_links[nodeKey].node = d;
 				node_links[nodeKey].links = [];
+
+				if (rootNode == "0&"+d.id) {
+					rootNode = nodeKey;
+				}
 			})
 
 		data.links.forEach(function(d) {
@@ -635,7 +639,7 @@ var gsqlv = function(x) {
 		.enter().append("line")
 		.each(function(d) {
 			d3.select(this)
-			.attr("id", "l_"+d.source.id+d.source.type+d.target.id+d.target.type)
+			.attr("id", "l_"+refineIDString(d.source.id+d.source.type+d.target.id+d.target.type))
 			.attr("fill", d.fill)
 			.attr("stroke", d.stroke)
 			.attr("stroke-width", d["stroke-width"])
@@ -652,7 +656,7 @@ var gsqlv = function(x) {
 		.enter().append("circle")
 		.each(function(d) {
 			d3.select(this)
-			.attr("id", "n_"+d.id+d.type)
+			.attr("id", "n_"+refineIDString(d.id+d.type))
 			.attr("fill", d.fill)
 			.attr("stroke", d.stroke)
 			.attr("stroke-width", d["stroke-width"])
@@ -675,7 +679,7 @@ var gsqlv = function(x) {
 		.each(function(d) {
 			var darkerColor = d3.rgb(d.fill).darker(4)
 			d3.select(this)
-			.attr("id", "nl_"+d.id+d.type)
+			.attr("id", "nl_"+refineIDString(d.id+d.type))
 			.attr("font-size", 3)
 			.attr("stroke", "transparent")
 			.attr("stroke-width", 0.1)
@@ -700,7 +704,7 @@ var gsqlv = function(x) {
 		.each(function(d) {
 			var darkerColor = d3.rgb(d.stroke).darker()
 			d3.select(this)
-			.attr("id", "ll_"+d.source.id+d.source.type+d.target.id+d.target.type)
+			.attr("id", "ll_"+refineIDString(d.source.id+d.source.type+d.target.id+d.target.type))
 			.attr("font-size", 3)
 			.attr("stroke", "transparent")
 			.attr("stroke-width", 0.1)
@@ -1788,12 +1792,12 @@ var gsqlv = function(x) {
 		//	return d.selected = true; 
 		//})
 
-		d3.select("#n_"+d.id+d.type).classed("selected", function() {
+		d3.select("#n_"+refineIDString(d.id+d.type)).classed("selected", function() {
 			d.previouslySelected = d.selected; 
 			return d.selected = true; 
 		})
 
-		d3.select("#nl_"+d.id+d.type).classed("selected", function() {
+		d3.select("#nl_"+refineIDString(d.id+d.type)).classed("selected", function() {
 			d.previouslySelected = d.selected; 
 			return d.selected = true; 
 		})
@@ -1932,12 +1936,12 @@ var gsqlv = function(x) {
 	}
 
 	event_handlers.node_label_mouseover = function(d) {
-		d3.select("#n_"+d.id+d.type)
+		d3.select("#n_"+refineIDString(d.id+d.type))
 		.classed("selected", true);
 	}
 
 	event_handlers.node_label_mouseout = function(d) {
-		d3.select("#n_"+d.id+d.type)
+		d3.select("#n_"+refineIDString(d.id+d.type))
 		.classed("selected", d.selected);
 	}
 
@@ -2117,6 +2121,10 @@ var gsqlv = function(x) {
 		//console.log(result)
 
 		return result
+	}
+
+	function refineIDString(name) {
+		return name.replace(/ /g, '').replace(/[^a-zA-Z0-9]/g, '_')
 	}
 
 	return gsqlv;
