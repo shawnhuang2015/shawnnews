@@ -1,0 +1,236 @@
+
+rm: cannot remove ‘./output/load_output.log’: No such file or directory
+Everything is dropped.
+Vertex user is created.
+Edge connections is created.
+Reverse edge reverseconnections is created.
+Graph poc_graph is created.
+Graph schema file ./output/graph_config.yaml has been generated!
+Graph store /home/vagrant/deploy/gstore/0 has been cleared!
+Job load_data is created.
+Graph schema file ./output/graph_config.yaml has been generated!
+Job config file ./.tmp/load_data.yaml has been generated!
+Kick off job load_data
+[Tips 1: you can run a job over 10 sample lines by "run job -n 10 jobname"]
+[Tips 2: you can dryrun a job to sanity check source data by "run job -dryrun jobname"]
+[Tips 3: open another shell and check progress by "gsql/output/tail -f load_output.log"]
+%3|1427929271.631|FAIL|_PRODUCER#producer-0| 127.0.0.1:30002/bootstrap: Failed to connect to broker at localhost:30002: Connection refused
+%3|1427929271.632|FAIL|_CONSUMER#consumer-1| 127.0.0.1:30002/bootstrap: Failed to connect to broker at localhost:30002: Connection refused
+%3|1427929271.632|ERROR|_CONSUMER#consumer-1| 127.0.0.1:30002/bootstrap: Failed to connect to broker at localhost:30002: Connection refused
+%3|1427929271.632|ERROR|_CONSUMER#consumer-1| 1/1 brokers are down
+%3|1427929271.632|ERROR|_PRODUCER#producer-0| 127.0.0.1:30002/bootstrap: Failed to connect to broker at localhost:30002: Connection refused
+%3|1427929271.633|ERROR|_PRODUCER#producer-0| 1/1 brokers are down
+Job load_data completes in 0.117 seconds!
+GraphSQL Canonical Loader: 
+ --- Version --- 
+product              poc_tango_gtest      095f4f11c7cb190b7f873b79a8c49e45324cd264  2015-03-31 17:40:22 -0400
+olgp                 4.2                  f74de5cb2a1782868383485dc33b9ceea5d96b2c  2015-03-30 13:17:30 -0400
+topology             4.2                  53b3f60ddb9f873d0a7c341c7ac930f1d339ebe8  2015-03-24 16:21:53 -0500
+gpe                  4.2                  087c3df2e781fe2e22c7a85ee76982d8fd7cbfe5  2015-03-20 16:24:32 -0700
+gse                  4.2                  fc759f1f7ddf0d4c11258b35872065b3d08ec698  2015-03-31 14:14:21 -0700
+third_party          master               c99dd20df27dd1e77debbd1394a294ab009cbc2c  2015-03-15 03:07:47 -0700
+utility              4.2                  624dcbb1bcc543a65f539dc752ebad56af1c9cb8  2015-03-31 15:05:58 -0700
+realtime             4.2                  a5f4f38b43e8e9c11af5558e38ce7d0c070a7ebe  2015-01-28 15:33:21 -0800
+msg_layer            master               4551497b27ffd9e38c7674c81f0aaf5384c7d504  2015-01-11 18:43:47 -0800
+er                   4.2                  7130dfa1c7af3cb10cb6910ed0f4706c70f55f63  2015-03-30 14:13:20 -0700
+document             master               c885d07bcba88340069913432c9101fd6de99fdd  2015-03-13 15:44:39 -0700
+
+./.tmp/load_data.yaml
+--- SYS Configuration ---
+=========================
+Kafka Connection    : 127.0.0.1:30002
+Zookeeper Connection: 127.0.0.1:19999
+GLOG_DIR            : /home/vagrant/deploy/logs
+-------------------------
+Server Workers:
+ Prefix: ids_
+ Machines: 
+  - 1: 127.0.0.1
+
+-------------------------
+Client Workers:
+ StartID: 1000
+ Limit: 12
+ ClinetIDs: 
+  - 1011: client_worker_1011
+  - 1010: client_worker_1010
+  - 1009: client_worker_1009
+  - 1007: client_worker_1007
+  - 1004: client_worker_1004
+  - 1003: client_worker_1003
+  - 1005: client_worker_1005
+  - 1002: client_worker_1002
+  - 1006: client_worker_1006
+  - 1001: client_worker_1001
+  - 1008: client_worker_1008
+  - 1000: client_worker_1000
+
+-------------------------
+Queues:
+ id_requestQueue: id_requestQ
+ id_responseQueue2GPE: id_responseQ_GPE
+ id_responseQueue2REST: id_responseQ_REST
+ number_rest_servers: 0
+ request_queue: requestQ
+ response_queue: responseQ
+ post_queue: postQ
+ delta_queue: deltaQ
+ time out: 10
+ Server_Queues: 
+  - 1: ids_serverQ_1
+ Client_Queues:
+  - 1011: ids_clientQ_1011
+  - 1010: ids_clientQ_1010
+  - 1009: ids_clientQ_1009
+  - 1007: ids_clientQ_1007
+  - 1004: ids_clientQ_1004
+  - 1003: ids_clientQ_1003
+  - 1005: ids_clientQ_1005
+  - 1002: ids_clientQ_1002
+  - 1006: ids_clientQ_1006
+  - 1001: ids_clientQ_1001
+  - 1008: ids_clientQ_1008
+  - 1000: ids_clientQ_1000
+
+-------------------------
+Redis:
+ IP: 127.0.0.1 Port: 6379 Lock_expire_time: 100000ms
+
+-------------------------
+Graphs:
+ storage_root: /home/vagrant/deploy/gstore
+ NextID: 1
+ currentGraph: 0
+ Graphs: 
+  - any: 0
+
+=========================
+
+--- Graph Configuration ---
+ Name              : poc_graph
+ ID                : 0
+ segSizeInBits     : 20
+---------------------------
+Worker-segments   :[]
+ =========================
+
+CREATE partition path /home/vagrant/deploy/gstore/0/part/
+Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 1.
+(16:01:11.623670): MessageQueue|Kafka|CreateReader|ids_serverQ_1
+ids_serverQ_1 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.623954): MessageQueue|Kafka|CreateWriter|ids_serverQ_1
+ids_clientQ_1011 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.623973): MessageQueue|Kafka|CreateWriter|ids_clientQ_1011
+ids_clientQ_1010 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.623986): MessageQueue|Kafka|CreateWriter|ids_clientQ_1010
+ids_clientQ_1009 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.623997): MessageQueue|Kafka|CreateWriter|ids_clientQ_1009
+ids_clientQ_1007 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624009): MessageQueue|Kafka|CreateWriter|ids_clientQ_1007
+ids_clientQ_1004 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624020): MessageQueue|Kafka|CreateWriter|ids_clientQ_1004
+ids_clientQ_1003 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624032): MessageQueue|Kafka|CreateWriter|ids_clientQ_1003
+ids_clientQ_1002 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624043): MessageQueue|Kafka|CreateWriter|ids_clientQ_1002
+ids_clientQ_1005 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624054): MessageQueue|Kafka|CreateWriter|ids_clientQ_1005
+ids_clientQ_1001 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624065): MessageQueue|Kafka|CreateWriter|ids_clientQ_1001
+ids_clientQ_1006 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624076): MessageQueue|Kafka|CreateWriter|ids_clientQ_1006
+ids_clientQ_1000 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624124): MessageQueue|Kafka|CreateWriter|ids_clientQ_1000
+ids_clientQ_1008 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 16384, batch.num.messages 16384, fetch.wait.max.ms 10, queued.min.messages 16384, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
+(16:01:11.624138): MessageQueue|Kafka|CreateWriter|ids_clientQ_1008
+Opening TokenBank1.so
+Opening TokenBankM.so
+Opening ConditionBank1.so
+Opening ConditionBankM.so
+Opening ReducerBank.so
+(16:01:11.634409): (0.927 ms) parse file ./resources/end2end/common/sample_vertices.csv completed.
+(16:01:11.635228): (0.754 ms) parse file ./resources/end2end/common/sample_edges.csv completed.
+ Message 27: 1 ms
+Enumerators are saved to /home/vagrant/deploy/gstore/0/1/ids/
+[GSE_SERVER_1[16:01:11.638897]] All IDMAPs are saved
+Enumerators are saved to /home/vagrant/deploy/gstore/0/1/ids/
+[GSE_SERVER_1[16:01:11.639178]] Start parallel partition on 1 segments 
+[GSE_SERVER_1[16:01:11.639863]] processing segment 0 
+Opening ReducerBank.so
+Default edge combiner..
+Default vertex combiner..
+[GSE_SERVER_1[16:01:11.647103]] Finished partition of local 1 segments.
+Total run time is 14 ms!
+Enumerators are saved to /home/vagrant/deploy/gstore/0/1/ids/
+
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[34m[FAB    ][2015-04-01 16:01:12] shutdown_rest_servers[0m
+[34m[FAB    ][2015-04-01 16:01:12] shutdown_gsql_subsystems:GPE[0m
+[34m[FAB    ][2015-04-01 16:01:13] shutdown_gsql_subsystems:GSE_SERVER_WORKERS[0m
+[34m[FAB    ][2015-04-01 16:01:13] shutdown_kafkas[0m
+[34m[FAB    ][2015-04-01 16:01:14] shutdown_zookeepers[0m
+[32m=== zk ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][ZK] process is [1m[31mdown[0m
+[SUMMARY][ZK] /home/vagrant/deploy/zk is ready
+[32m=== kafka ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][KAFKA] process is [1m[31mdown[0m
+[SUMMARY][KAFKA] queue has [1m[31mNOT[0m been initialized
+[32m=== gpe ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][GPE] process is [1m[31mdown[0m
+[SUMMARY][GPE] graph is ready
+[32m=== gse ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][GSE] process is [1m[31mdown[0m
+[SUMMARY][GSE] id service is ready
+[32m=== rest ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][REST] process is [1m[31mdown[0m
+[SUMMARY][REST] setup is ready
+[34m[FAB    ][2015-04-01 16:01:18] launch_zookeepers[0m
+[34m[FAB    ][2015-04-01 16:01:19] launch_kafkas[0m
+[34m[FAB    ][2015-04-01 16:01:58] launch_gsql_subsystems:GPE[0m
+[34m[FAB    ][2015-04-01 16:01:59] launch_gsql_subsystems:GSE_SERVER_WORKERS[0m
+[34m[FAB    ][2015-04-01 16:02:01] launch_rest_servers[0m
+[32m=== zk ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][ZK] process is up
+[SUMMARY][ZK] /home/vagrant/deploy/zk is ready
+[32m=== kafka ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][KAFKA] process is up
+[SUMMARY][KAFKA] queue is ready
+[32m=== gse ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][GSE] process is up
+[SUMMARY][GSE] id service is ready
+[32m=== gpe ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][GPE] process is up
+[SUMMARY][GPE] graph is ready
+[32m=== rest ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][REST] process is up
+[SUMMARY][REST] setup is ready
+[32m=== graph ===[0m
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[SUMMARY][GRAPH] graph is ready
+Done.
+
+
+
+[GTEST_LINE]{"results":{"results":[{"id":"4","active":false,"time":"2014-07-26 22:06:46"},{"id":"5","active":false,"time":"2014-08-02 04:15:39"}]},"error":false,"message":"","debug":""}
+[GTEST_LINE]{"results":{"results":[]},"error":false,"message":"","debug":""}
+[GTEST_LINE]{"results":{"results":[]},"error":false,"message":"","debug":""}
+[GTEST_LINE]{"results":{"results":[{"id":"0","active":false,"time":"2014-07-28 20:26:31"},{"id":"1","active":false,"time":"2014-11-14 07:46:53"},{"id":"2","active":false,"time":"2014-05-08 05:16:26"},{"id":"3","active":false,"time":"2014-01-26 11:19:52"},{"id":"6","active":false,"time":"2014-07-24 06:51:13"},{"id":"7","active":false,"time":"2014-09-28 22:55:34"},{"id":"8","active":false,"time":"2014-04-25 07:58:26"},{"id":"9","active":false,"time":"2014-05-05 02:12:29"}]},"error":false,"message":"","debug":""}
+
+/usr/local/lib/python2.7/dist-packages/setuptools-5.4.1-py2.7.egg/pkg_resources.py:1049: UserWarning: /home/vagrant/.python-eggs is writable by group/others and vulnerable to attack when used with get_resource_filename. Consider a more secure location (set with .set_extraction_path or the PYTHON_EGG_CACHE environment variable).
+[34m[FAB    ][2015-04-01 16:02:16] shutdown_rest_servers[0m
+[34m[FAB    ][2015-04-01 16:02:17] shutdown_gsql_subsystems:GPE[0m
+[34m[FAB    ][2015-04-01 16:02:17] shutdown_gsql_subsystems:GSE_SERVER_WORKERS[0m
+[34m[FAB    ][2015-04-01 16:02:18] shutdown_kafkas[0m
+[34m[FAB    ][2015-04-01 16:02:19] shutdown_zookeepers[0m
+Done.
+
