@@ -16,6 +16,27 @@ g++ -fPIC  -I./resources/common/TokenLib -shared "./resources/common/TokenBank/C
 
 g++ -fPIC -D__STDC_LIMIT_MACROS  -I./resources/common/ReducerLib -shared "./resources/common/ReducerBank/ReducerBank.cpp" "./resources/common/ReducerLib/ReducerLib.cpp" -o "$SHARED_LIB/ReducerBank.so"
 
+# generate config file
+
+if [ -f ./resources/common/gsql/config ]; then
+  rm -f ./resources/common/gsql/config
+fi
+
+touch ./resources/common/gsql/config
+
+VAL=$(echo ~/.ptest/bin_root/gse_canonnical_loader)
+echo "CanonnicalLoader="$VAL >>./resources/common/gsql/config
+
+VAL=$(echo ~/.ptest/config_root/gse_loader/gse_loader1.conf)
+echo GSELoaderConfig=$VAL >> ./resources/common/gsql/config
+
+echo OutputTokenBufferSize=50000 >> ./resources/common/gsql/config
+echo DoNotPersistCatalog=true >> ./resources/common/gsql/config
+echo TokenBankSrc=./resources/common/TokenBank >> ./resources/common/gsql/config
+echo TokenLibSrc=./resources/common/TokenLib >> ./resources/common/gsql/config
+echo ReducerBankSrc=./resources/common/ReducerBank >> ./resources/common/gsql/config
+echo ReducerLibSrc=./resources/common/ReducerLib >> ./resources/common/gsql/config
+
 
 rm ./output/load_output.log
 
