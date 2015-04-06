@@ -13,3 +13,5 @@ In below struct, users will only work under resources/ and test_case/ directory.
      To run 1* and 2*, you can do
          ./ptest end2end.sh 1\* 2\*
 
+Also see higher level flow at:
+ https://graphsql.atlassian.net/wiki/display/GS/PTEST+User+Guide
