@@ -66,6 +66,7 @@ gtest/.working_dir
 ptest/diff/*
 ptest/output/*
 ptest/.working_dir
+ptest/resources/common/gsql/config
 
 # gdk generated
 deploy_gsdk/
