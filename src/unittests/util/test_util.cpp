@@ -171,45 +171,60 @@ TEST(UTILTEST, SparseArray) {
   TestBlockSize(0);
 }
 
-TEST(UTILTEST, Write_Read_Text) {
+void Write_Read_Text(std::string lineend, bool tofile) {
   std::string file = "/tmp/write.txt";
   size_t linecount = 1 << 22;
+  std::string strdata = "";
   {
     gutil::GTimer timer;
+    std::ostream* outstream;
+    if(tofile)
+      outstream = new std::ofstream(file.c_str());
+    else
+      outstream = new std::stringstream();
     {
-      std::ofstream filestream(file.c_str());
-      gutil::GOutputStream out(2, &filestream);
+      gutil::GOutputStream out(2, outstream);
       for(size_t i = 0; i < linecount; ++i){
         out.WriteUnsignedInt(i);
         out.put(',');
         out << "str_" << i;
         out.put(',');
         out.WriteUnsignedFloat(i);
-        out.put('\n');
+        out << lineend;
       }
     }
+    if(!tofile){
+      strdata = ((std::stringstream*)outstream)->str();
+    }
+    delete outstream;
     timer.Stop("write " + boost::lexical_cast<std::string>(linecount) + " lines.");
   }
   {
     gutil::GTimer timer;
     size_t linenum = 0;
     {
-      gutil::FileLineReader reader(file);
+      gutil::FileLineReader* reader;
+      if(tofile)
+        reader = new gutil::FileLineReader(file, 0, true, lineend);
+      else
+        reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
       uint64_t longvalue;
       char* strptr = NULL;
       size_t strlen = 0;
       double doublevalue = 0;
-      while(reader.MoveNextLine()){
-        ASSERT_EQ(reader.NextUnsignedLong(longvalue, ','), true);
+      while(reader->MoveNextLine()){
+        ASSERT_EQ(reader->NextUnsignedLong(longvalue, ','), true);
         ASSERT_EQ(longvalue, linenum);
-        ASSERT_EQ(reader.NextString(strptr, strlen, ','), true);
+        ASSERT_EQ(reader->NextString(strptr, strlen, ','), true);
         strptr[strlen] = 0;
         ASSERT_EQ(strptr, "str_" + boost::lexical_cast<std::string>(linenum));
-        ASSERT_EQ(reader.NextDouble(doublevalue, ','), true);
+        strptr[strlen] = ',';
+        ASSERT_EQ(reader->NextDouble(doublevalue, ','), true);
         ASSERT_EQ(std::abs(doublevalue - linenum) < 0.000001, true);
         linenum++;
       }
       ASSERT_EQ(linenum, linecount);
+      delete reader;
     }
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
@@ -217,27 +232,50 @@ TEST(UTILTEST, Write_Read_Text) {
     gutil::GTimer timer;
     size_t linenum = 0;
     {
-      gutil::FileLineReader reader(file);
+      gutil::FileLineReader* reader;
+      if(tofile)
+        reader = new gutil::FileLineReader(file, 0, true, lineend);
+      else
+        reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
       uint64_t longvalue;
       char* strptr = NULL;
       size_t strlen = 0;
       double doublevalue = 0;
-      while(reader.MoveNextLine()){
-        ASSERT_EQ(reader.NextUnsignedLong(longvalue, ','), true);
+      while(reader->MoveNextLine()){
+        ASSERT_EQ(reader->NextUnsignedLong(longvalue, ','), true);
         ASSERT_EQ(longvalue, linenum);
-        ASSERT_EQ(reader.NextString(strptr, strlen, ','), true);
+        ASSERT_EQ(reader->NextString(strptr, strlen, ','), true);
         strptr[strlen] = 0;
         ASSERT_EQ(strptr, "str_" + boost::lexical_cast<std::string>(linenum));
-        ASSERT_EQ(reader.NextDouble(doublevalue, ','), true);
+        strptr[strlen] = ',';
+        ASSERT_EQ(reader->NextDouble(doublevalue, ','), true);
         ASSERT_EQ(std::abs(doublevalue - linenum) < 0.000001, true);
         linenum++;
         if(linenum == 100) // test partial read
           break;
       }
+      delete reader;
     }
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
-  gutil::FileLineReader::WordCount(file, ',');
+  {
+    gutil::FileLineReader* reader;
+    if(tofile)
+      reader = new gutil::FileLineReader(file, 0, true, lineend);
+    else
+      reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
+    reader->WordCount(',');
+    delete reader;
+  }
+}
+
+TEST(UTILTEST, Write_Read_Text){
+  Write_Read_Text("\r\n", true);
+  Write_Read_Text("\n", true);
+  Write_Read_Text("&", true);
+  Write_Read_Text("\r\n", false);
+  Write_Read_Text("\n", false);
+  Write_Read_Text("&", false);
 }
 
 TEST(UTILTEST, Write_Read_Binary) {
