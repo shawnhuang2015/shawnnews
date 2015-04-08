@@ -1,0 +1,17 @@
+HOW TO GUIDE
+
+In below struct, users will only work under resources/ and test_case/ directory.
+1) In resources/, put your dependent resources, such as libraries and configs, here.
+2) In test_case/, put your test cases here, follow the structures.
+3) Run the test framework
+     ./ptest end2end.sh 1 2 ...
+     or
+     ./ptest end2end.sh
+
+     end2end.sh is your test program driver file name, found in drivers folder.
+     The numbers represent the regress number: 1 means test_case/end2end/regress1
+     To run 1* and 2*, you can do
+         ./ptest end2end.sh 1\* 2\*
+
+Also see higher level flow at:
+ https://graphsql.atlassian.net/wiki/display/GS/PTEST+User+Guide
