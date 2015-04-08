@@ -20,8 +20,10 @@
 #include <gutil/filelinereader.hpp>
 #include <gutil/gdiskutil.hpp>
 #include <gutil/compactwriter.hpp>
+#include <gutil/jsonreader.hpp>
 #include <gmmnt/globaldiskio.hpp>
 #include <boost/thread.hpp>
+#include <jsoncpp/include/json/json.h>
 
 typedef gutil::GSparseArray<uint32_t> GSparseArray_t;
 
@@ -169,45 +171,60 @@ TEST(UTILTEST, SparseArray) {
   TestBlockSize(0);
 }
 
-TEST(UTILTEST, Write_Read_Text) {
+void Write_Read_Text(std::string lineend, bool tofile) {
   std::string file = "/tmp/write.txt";
   size_t linecount = 1 << 22;
+  std::string strdata = "";
   {
     gutil::GTimer timer;
+    std::ostream* outstream;
+    if(tofile)
+      outstream = new std::ofstream(file.c_str());
+    else
+      outstream = new std::stringstream();
     {
-      std::ofstream filestream(file.c_str());
-      gutil::GOutputStream out(2, &filestream);
+      gutil::GOutputStream out(2, outstream);
       for(size_t i = 0; i < linecount; ++i){
         out.WriteUnsignedInt(i);
         out.put(',');
         out << "str_" << i;
         out.put(',');
         out.WriteUnsignedFloat(i);
-        out.put('\n');
+        out << lineend;
       }
     }
+    if(!tofile){
+      strdata = ((std::stringstream*)outstream)->str();
+    }
+    delete outstream;
     timer.Stop("write " + boost::lexical_cast<std::string>(linecount) + " lines.");
   }
   {
     gutil::GTimer timer;
     size_t linenum = 0;
     {
-      gutil::FileLineReader reader(file);
+      gutil::FileLineReader* reader;
+      if(tofile)
+        reader = new gutil::FileLineReader(file, 0, true, lineend);
+      else
+        reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
       uint64_t longvalue;
       char* strptr = NULL;
       size_t strlen = 0;
       double doublevalue = 0;
-      while(reader.MoveNextLine()){
-        ASSERT_EQ(reader.NextUnsignedLong(longvalue, ','), true);
+      while(reader->MoveNextLine()){
+        ASSERT_EQ(reader->NextUnsignedLong(longvalue, ','), true);
         ASSERT_EQ(longvalue, linenum);
-        ASSERT_EQ(reader.NextString(strptr, strlen, ','), true);
+        ASSERT_EQ(reader->NextString(strptr, strlen, ','), true);
         strptr[strlen] = 0;
         ASSERT_EQ(strptr, "str_" + boost::lexical_cast<std::string>(linenum));
-        ASSERT_EQ(reader.NextDouble(doublevalue, ','), true);
+        strptr[strlen] = ',';
+        ASSERT_EQ(reader->NextDouble(doublevalue, ','), true);
         ASSERT_EQ(std::abs(doublevalue - linenum) < 0.000001, true);
         linenum++;
       }
       ASSERT_EQ(linenum, linecount);
+      delete reader;
     }
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
@@ -215,27 +232,50 @@ TEST(UTILTEST, Write_Read_Text) {
     gutil::GTimer timer;
     size_t linenum = 0;
     {
-      gutil::FileLineReader reader(file);
+      gutil::FileLineReader* reader;
+      if(tofile)
+        reader = new gutil::FileLineReader(file, 0, true, lineend);
+      else
+        reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
       uint64_t longvalue;
       char* strptr = NULL;
       size_t strlen = 0;
       double doublevalue = 0;
-      while(reader.MoveNextLine()){
-        ASSERT_EQ(reader.NextUnsignedLong(longvalue, ','), true);
+      while(reader->MoveNextLine()){
+        ASSERT_EQ(reader->NextUnsignedLong(longvalue, ','), true);
         ASSERT_EQ(longvalue, linenum);
-        ASSERT_EQ(reader.NextString(strptr, strlen, ','), true);
+        ASSERT_EQ(reader->NextString(strptr, strlen, ','), true);
         strptr[strlen] = 0;
         ASSERT_EQ(strptr, "str_" + boost::lexical_cast<std::string>(linenum));
-        ASSERT_EQ(reader.NextDouble(doublevalue, ','), true);
+        strptr[strlen] = ',';
+        ASSERT_EQ(reader->NextDouble(doublevalue, ','), true);
         ASSERT_EQ(std::abs(doublevalue - linenum) < 0.000001, true);
         linenum++;
         if(linenum == 100) // test partial read
           break;
       }
+      delete reader;
     }
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
-  gutil::FileLineReader::WordCount(file, ',');
+  {
+    gutil::FileLineReader* reader;
+    if(tofile)
+      reader = new gutil::FileLineReader(file, 0, true, lineend);
+    else
+      reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
+    reader->WordCount(',');
+    delete reader;
+  }
+}
+
+TEST(UTILTEST, Write_Read_Text){
+  Write_Read_Text("\r\n", true);
+  Write_Read_Text("\n", true);
+  Write_Read_Text("&", true);
+  Write_Read_Text("\r\n", false);
+  Write_Read_Text("\n", false);
+  Write_Read_Text("&", false);
 }
 
 TEST(UTILTEST, Write_Read_Binary) {
@@ -326,6 +366,200 @@ TEST(UTILTEST, CompactWriter) {
     tmpptr2 = (uint8_t*)buf;
     ASSERT_EQ(gutil::CompactWriter::readCompressed(tmpptr2), test2);
   }
+}
+
+bool JSONReader(std::string& input, std::ostream* os) {
+  gutil::GTimer timer;
+  gutil::JSONReader reader((char*)input.c_str(), input.size());
+  if(!reader.StartObject()) return false;
+  std::string name;
+  std::string strvalue;
+  double doublevalue = 0;
+  int64_t intvalue = 0;
+  bool boolvalue = false;
+  std::string vid, srcvid, tgtvid, vtype, srcvtype, tgtvtype, etype;
+  long checksum = 0;
+  while(true){
+    bool hasmore = reader.GetName(name);
+    if(!hasmore)
+      break;
+    if(name == "vertices"){
+      if(!reader.StartArray()) return false;
+      while(reader.ArrayHasMore()){
+        if(!reader.StartObject()) return false;
+        if(!reader.GetName(name) && name != "id") return false;
+        if(!reader.GetString(vid)) return false;
+        if(!reader.GetName(name) && name != "type") return false;
+        if(!reader.GetString(vtype)) return false;
+        reader.GetName(name);
+        if(name == "v0_a1"){
+          if(!reader.GetInt(intvalue)) return false;
+          reader.GetName(name);
+        }
+        else
+          intvalue = -1;
+        if(os != NULL)
+          (*os) << "vertex " << vid << ", " << vtype << ", " << intvalue << "\n";
+        checksum += vid.size() + vtype.size() + intvalue;
+        if(name.size() > 0)  return false;
+        if(!reader.EndObject()) return false;
+      }
+    } else if(name == "edges"){
+      if(!reader.StartArray()) return false;
+      while(reader.ArrayHasMore()){
+        if(!reader.StartObject()) return false;
+        if(!reader.GetName(name) && name != "srcid") return false;
+        if(!reader.GetString(srcvid)) return false;
+        if(!reader.GetName(name) && name != "srctype") return false;
+        if(!reader.GetString(srcvtype)) return false;
+        if(!reader.GetName(name) && name != "tgtid") return false;
+        if(!reader.GetString(tgtvid)) return false;
+        if(!reader.GetName(name) && name != "tgttype") return false;
+        if(!reader.GetString(tgtvtype)) return false;
+        if(!reader.GetName(name) && name != "type") return false;
+        if(!reader.GetString(etype)) return false;
+        if(os != NULL)
+          (*os) << "edge " << srcvid << ", " << srcvtype << ", " << tgtvid << ", " << tgtvtype<< ", " << etype;
+        checksum += srcvid.size() + srcvtype.size() + tgtvid.size() + tgtvtype.size() + etype.size() ;
+        /*
+         // the way to go through attribute list and match with reader.
+         reader.GetName(name);
+         for(size_t i = 0; i < attrmeta.size(); ++i){
+           if(name == attrmeta[i].name_){
+             1. get value accroding to attribute type
+             2. write it to binary
+             3. reader.GetName(name); // move to next reader item
+           } else
+             //write default value by attribute type
+         }
+         //name should be empty right here. Otherwise json provide something extra which we did not handle.
+         */
+        if(etype == "etype0"){ //\"type\":\"etype0\",\"e0_a1\":10,\"e0_a2\":\"abc\"
+          reader.GetName(name);
+          if(name == "e0_a1"){
+            if(!reader.GetInt(intvalue)) return false;
+            reader.GetName(name);
+          }
+          else
+            intvalue = -1;
+          if(name == "e0_a2"){
+            if(!reader.GetString(strvalue)) return false;
+            reader.GetName(name);
+          }
+          else
+            strvalue = "";
+          if(os != NULL)
+            (*os) << ", " << intvalue << ", " << strvalue;
+          checksum += intvalue + strvalue.size();
+        } else if(etype == "etype1"){ //\"type\":\"etype1\",\"e1_a1\":true,\"e1_a2\":10.07
+          reader.GetName(name);
+          if(name == "e1_a1"){
+            if(!reader.GetBool(boolvalue)) return false;
+            reader.GetName(name);
+          }
+          else
+            boolvalue = false;
+          if(name == "e1_a2"){
+            if(!reader.GetDouble(doublevalue)) return false;
+            reader.GetName(name);
+          } else
+            doublevalue = -1;
+          if(os != NULL)
+            (*os) << ", " << boolvalue << ", " << doublevalue;
+          checksum += boolvalue + (long)doublevalue;
+        }
+        if(os != NULL)
+          (*os) << "\n";
+        if(name.size() > 0)  return false;
+        if(!reader.EndObject()) return false;
+      }
+    } else {
+      if(!reader.GetString(strvalue)) return false;
+      if(os != NULL)
+        (*os) << name << ": " << strvalue << "\n";
+      checksum += strvalue.size();
+    }
+  }
+  if(!reader.EndObject()) return false;
+  timer.Stop("JSONReader parse " + boost::lexical_cast<std::string>(input.size()) + " bytes json string with checksum " + boost::lexical_cast<std::string>(checksum));
+  return true;
+}
+
+void JSONCPP(std::string& input, std::ostream* os){
+  gutil::GTimer timer;
+  Json::Value dataRoot;
+  Json::Reader jsonReader;
+  jsonReader.parse(input, dataRoot);
+  std::string strvalue;
+  double doublevalue = 0;
+  int64_t intvalue = 0;
+  bool boolvalue = false;
+  std::string vid, srcvid, tgtvid, vtype, srcvtype, tgtvtype, etype;
+  long checksum = 0;
+  std::string name ="action";
+  strvalue = dataRoot[name].asString();
+  checksum += strvalue.size();
+  if(os != NULL)
+    (*os) << name << ": " << strvalue << "\n";
+  name ="behavior";
+  strvalue = dataRoot[name].asString();
+  checksum += strvalue.size();
+  if(os != NULL)
+    (*os) << name << ": " << strvalue << "\n";
+  Json::Value& vertices =  dataRoot["vertices"];
+  for(int i = 0; i < (int)vertices.size(); ++i){
+    Json::Value& vertex =  vertices[i];
+    vid = vertex["id"].asString();
+    vtype = vertex["type"].asString();
+    intvalue = vertex["v0_a1"].asInt();
+    if(os != NULL)
+      (*os) << "vertex " << vid << ", " << vtype << ", " << intvalue << "\n";
+    checksum += vid.size() + vtype.size() + intvalue;
+  }
+  Json::Value& edges =  dataRoot["edges"];
+  for(int i = 0; i < (int)edges.size(); ++i){
+    Json::Value& edge =  edges[i];
+    srcvid = edge["srcid"].asString();
+    srcvtype = edge["srctype"].asString();
+    tgtvid = edge["tgtid"].asString();
+    tgtvtype = edge["tgttype"].asString();
+    etype = edge["type"].asString() ;
+    if(os != NULL)
+      (*os) << "edge " << srcvid << ", " << srcvtype  << ", " << tgtvid  << ", " << tgtvtype << ", " << etype;
+    checksum += srcvid.size() + srcvtype.size() + tgtvid.size() + tgtvtype.size() + etype.size() ;
+    if(etype == "etype0"){
+      intvalue = edge["e0_a1"].asInt();
+      strvalue =  edge["e0_a2"].asString();
+      if(os != NULL)
+        (*os) << ", " << intvalue << ", " << strvalue;
+      checksum += intvalue + strvalue.size();
+    }
+    else if(etype == "etype1"){
+      boolvalue = edge["e1_a1"].asBool();
+      doublevalue = edge["e1_a2"].asDouble();
+      if(os != NULL)
+        (*os) << ", " << boolvalue  << ", " << doublevalue;
+      checksum += boolvalue + (long)doublevalue;
+    }
+    if(os != NULL)
+      (*os) << "\n";
+  }
+  timer.Stop("JsonCPP parse " + boost::lexical_cast<std::string>(input.size()) + " bytes json string with checksum " + boost::lexical_cast<std::string>(checksum));
+}
+
+TEST(UTILTEST, JSONReader) {
+  size_t loop = 1000000;
+  std::stringstream ss;
+  ss << "{\"action\":\"insert\",\"behavior\":\"consistent\",\"vertices\":[";
+  for(size_t i = 0; i < loop; ++i)
+    ss << (i == 0 ? "" : ",") << "{\"id\":\"user1\",\"type\":\"vtype0\",\"v0_a1\":10},{\"id\":\"user2\",\"type\":\"vtype0\",\"v0_a1\":11}";
+  ss << "],\"edges\":[";
+  for(size_t i = 0; i < loop; ++i)
+    ss << (i == 0 ? "" : ",") << "{\"srcid\":\"user1\",\"srctype\":\"vtype0\",\"tgtid\":\"user2\",\"tgttype\":\"vtype0\",\"type\":\"etype0\",\"e0_a1\":10,\"e0_a2\":\"abc\"},{\"srcid\":\"user1\",\"srctype\":\"vtype0\",\"tgtid\":\"user2\",\"tgttype\":\"vtype0\",\"type\":\"etype1\",\"e1_a1\":true,\"e1_a2\":10.07}";
+  ss << "]}";
+  std::string input = ss.str();
+  ASSERT_EQ(JSONReader(input, NULL), true);
+  JSONCPP(input, NULL);
 }
 
 TEST(UTILTEST, DISABLED_TestingReadPerformance1) {
