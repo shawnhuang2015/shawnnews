@@ -1,1 +1,1 @@
-../../src/olgp/regress/drivers/end2end.sh
+../../src/utility/tools/gtest/end2end.sh
