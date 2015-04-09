@@ -49,7 +49,7 @@
  * This funtion compares two string (case sensitive), and returns true if they are equal.
  *
  * @par  Example
- *       load "source_file" to vertex v values ($0, $1) where gsql_token_is($1, "test");
+ *       load "source_file" to vertex v values ($0, $1) where gsql_token_equal($1, "test");
  */
 
 extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum);
@@ -58,7 +58,7 @@ extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[
  * This funtion compares two string (case insensitive), and returns true if they are equal.
  *
  * @par  Example
- *       load "source_file" to vertex v values ($0, $1) where gsql_token_is($1, "test");
+ *       load "source_file" to vertex v values ($0, $1) where gsql_token_ignore_case_equal($1, "Test");
  */
 
 extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[], 

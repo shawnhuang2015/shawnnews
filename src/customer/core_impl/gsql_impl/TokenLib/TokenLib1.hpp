@@ -110,21 +110,15 @@ extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen,
  * This funcion will convert timestamp to epoch seconds. 
  *
  * It only supports 3 types of input:
- *
- * "%Y-%m-%d %H:%M:%S"
- *
- * "%Y/%m/%d %H:%M:%S"
- *
- * "%Y-%m-%dT%H:%M:%S.000z" 
- *
- * e.g.
- *
- * "2014-4-17 12:22:23"
- *
- * "2014/4/17 12:22:23"
+ *  - "%Y-%m-%d %H:%M:%S"<br>
+ *  - "%Y/%m/%d %H:%M:%S"<br>
+ *  - "%Y-%m-%dT%H:%M:%S.000z"<br> 
+ * e.g.<br>
+ *  - "2014-4-17 12:22:23"<br>
+ *  - "2014/4/17 12:22:23"<br>
  *
  * @par  Example 
- *       load "source_file" to vertex v values ($0, $1, gsql_timestamp_to_epoch($2)); 
+ *       load "source_file" to vertex v values ($0, $1, gsql_ts_to_epoch_seconds($2)); 
  */
 extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen);
 
@@ -137,5 +131,16 @@ extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t 
  */
 extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLen,
          char *const oToken, uint32_t& oTokenLen);
+
+/**
+ * This function converts a string to boolean.
+ * - If the string is "true" or "t", return TRUE.
+ * - O/w return FALSE.
+ * - String is compared ignoring case considerations.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1, gsql_to_bool($2));
+ */
+extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen);
 
 #endif /* TOKENLIB1_HPP_ */

@@ -151,6 +151,23 @@ class GtimeConv {
   }
 };
 
+/* This funtion compares two strings, and returns true if they are equal */
+static inline bool compareStrIgnoreCase (std::string s1, std::string s2) {
+
+  int len = s1.length();
+  if (len != s2.length()) {
+    return false;
+  }
+
+  for (int i = 0; i < len; i++) {
+    if (tolower(s1[i]) != tolower(s2[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  * This function convert iToken char array of size iTokenLen, reverse order 
  * and put it in oToken.
@@ -187,4 +204,17 @@ extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLe
   oTokenLen = iTokenLen+1;
   
 }
+
+extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen) {
+
+  if (iTokenLen == 1 && (iToken[0] == 'T' || iToken[0] == 't')) {
+    return true;
+  }
+ 
+  std::string trueString = "true";
+  std::string token (iToken);
+  return compareStrIgnoreCase(token, trueString);
+}
+
+
 
