@@ -40,18 +40,51 @@
  * Author: Zixuan Zhuang, Mingxi Wu
  ******************************************************************************/
 
-#include <ConditionLibM.hpp>
+#include <ConditionLib1.hpp>
 
+/* This funtion compares two strings, and returns true if they are equal */
+static inline bool compareStrIgnoreCase (std::string s1, std::string s2) {
 
-extern "C"  bool gsql_is_click(const char* const iToken, uint32_t iTokenLen) {
-  char click[] = "Click";
-  return strncmp(click,iToken,iTokenLen) == 0;
+  int len = s1.length();
+  if (len != s2.length()) {
+    return false;
+  }
 
+  for (int i = 0; i < len; i++) {
+    if (tolower(s1[i]) != tolower(s2[i])) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
-extern "C"  bool gsql_is_add(const char* const iToken, uint32_t iTokenLen) {
-  char click[] = "Add";
-  return strncmp(click,iToken,iTokenLen) == 0;
+/**
+ * This function check whether the input string is "true" case insensitive;
+ * return true if it is "true" or "t".
+ */
+extern "C"  bool gsql_is_true(const char* const iToken, uint32_t iTokenLen) {
 
+  if (iTokenLen == 1 && (iToken[0] == 'T' || iToken[0] == 't')) {
+    return true;
+  }
+ 
+  std::string trueString = "true";
+  std::string token (iToken);
+  return compareStrIgnoreCase(token, trueString);
+}
+
+/**
+ * This function check whether the input string is "false" case insensitive;
+ * return true if it is "false" or "f".
+ */
+extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen) {
+
+  if (iTokenLen == 1 && (iToken[0] == 'F' || iToken[0] == 'f')) {
+    return true;
+  }
+  std::string falseString = "false";
+  std::string token (iToken);
+  return compareStrIgnoreCase(token, falseString);
 }
 

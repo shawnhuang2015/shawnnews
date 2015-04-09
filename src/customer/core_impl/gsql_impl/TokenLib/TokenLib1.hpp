@@ -98,19 +98,49 @@
 using namespace std;
 
 /**
- * This function convert iToken char array of size iTokenLen, reverse order 
+ * This function will convert iToken char array of size iTokenLen, reverse order 
  * and put it in oToken.
- *
- * @param 
- * @return 
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, gsql_reverse($2)); 
  */
-extern "C"  void gsql_reverse (const char* const, uint32_t, char *const, uint32_t&); 
+extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen, 
+    char *const oToken, uint32_t& oTokenLen);
 
 /**
  * This funcion will convert timestamp to epoch seconds. 
+ *
+ * It only supports 3 types of input:
+ *  - "%Y-%m-%d %H:%M:%S"<br>
+ *  - "%Y/%m/%d %H:%M:%S"<br>
+ *  - "%Y-%m-%dT%H:%M:%S.000z"<br> 
+ * e.g.<br>
+ *  - "2014-4-17 12:22:23"<br>
+ *  - "2014/4/17 12:22:23"<br>
+ *
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, gsql_ts_to_epoch_seconds($2)); 
  */
-extern "C" uint64_t gsql_timestamp_to_epoch (const char* const, uint32_t);
+extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen);
 
-extern "C" void gsql_split_by_space (const char* const, uint32_t, char *const, uint32_t&);
+/**
+ * This funcion will replace space with ((char)30).
+ * @par  Example 
+ *       load "source_file" to to temp_table t1(pid,pname,rating,mid) values($0, $1, flatten(gsql_split_by_space($2)));<br>
+ *       load temp_table t1 to vertex v values ($pid, $pid, $pname);<br>
+ *       load temp_table t1 to edge e values ($pid, $mid, $rating);
+ */
+extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLen,
+         char *const oToken, uint32_t& oTokenLen);
+
+/**
+ * This function converts a string to boolean.
+ * - If the string is "true" or "t", return TRUE.
+ * - O/w return FALSE.
+ * - String is compared ignoring case considerations.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1, gsql_to_bool($2));
+ */
+extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen);
 
 #endif /* TOKENLIB1_HPP_ */

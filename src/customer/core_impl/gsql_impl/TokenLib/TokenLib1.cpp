@@ -96,11 +96,6 @@ class GtimeConv {
  public:
 
   /**
-
-  TODO---SERIOUSLY!!  Talk to Mingxi about how we can build this into the build cycle.
-  this is from gtimelib.hpp, and we don't want 2 copies of it around...
-
-
    * Only support 3 types
    * "%Y-%m-%d %H:%M:%S"
    * "%Y/%m/%d %H:%M:%S"
@@ -156,6 +151,23 @@ class GtimeConv {
   }
 };
 
+/* This funtion compares two strings, and returns true if they are equal */
+static inline bool compareStrIgnoreCase (std::string s1, std::string s2) {
+
+  int len = s1.length();
+  if (len != s2.length()) {
+    return false;
+  }
+
+  for (int i = 0; i < len; i++) {
+    if (tolower(s1[i]) != tolower(s2[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  * This function convert iToken char array of size iTokenLen, reverse order 
  * and put it in oToken.
@@ -174,13 +186,13 @@ extern "C"  void gsql_reverse (const char* const iToken, uint32_t iTokenLen,
   oTokenLen = j;
 }
 
-extern "C" uint64_t gsql_timestamp_to_epoch(const char* const iToken, uint32_t iTokenLen){
+extern "C" uint64_t gsql_ts_to_epoch_seconds(const char* const iToken, uint32_t iTokenLen) {
   GtimeConv converter;
   return converter.seconds_from_epoch(iToken,iTokenLen);
 }
 
 extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLen,
-         char *const oToken, uint32_t& oTokenLen){
+         char *const oToken, uint32_t& oTokenLen) {
   for(int i = 0; i < iTokenLen; i++) {
     if(iToken[i] == ' '){
       oToken[i] = (char)30; 
@@ -192,4 +204,17 @@ extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLe
   oTokenLen = iTokenLen+1;
   
 }
+
+extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen) {
+
+  if (iTokenLen == 1 && (iToken[0] == 'T' || iToken[0] == 't')) {
+    return true;
+  }
+ 
+  std::string trueString = "true";
+  std::string token (iToken);
+  return compareStrIgnoreCase(token, trueString);
+}
+
+
 

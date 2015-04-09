@@ -84,10 +84,12 @@
 
 
  /**
-  * this function concatenate all input tokens into one big token
-  *
+  * This function concatenates all input tokens into one string.
+  * @par  Example 
+  *       load "source_file" to vertex v values ($0, $1, gsql_concat($1, $2)); 
   */
-extern "C" void gsql_concat(const char* const[], uint32_t[], uint32_t, char* const, uint32_t&);
+extern "C" void gsql_concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
+    char* const oToken, uint32_t& oTokenLen);
 
 
 

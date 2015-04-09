@@ -48,8 +48,22 @@
 #include <cstdlib>
 
 
-extern "C"  bool gsql_is_click(const char* const, uint32_t);
+/**
+ * This function checks whether the input string is "true" or "t" (case insensitive),
+ * returns true if it is "true" or "t".
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_is_true($2);
+ */
+extern "C"  bool gsql_is_true(const char* const iToken, uint32_t iTokenLen);
 
-extern "C"  bool gsql_is_add(const char* const, uint32_t);
+/**
+ * This function checks whether the input string is "false" or "f" (case insensitive),
+ * and returns true if it is "false" or "f".
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_is_false($2);
+ */
+extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen);
 
 #endif /* CONDITIONLIB1_HPP_ */

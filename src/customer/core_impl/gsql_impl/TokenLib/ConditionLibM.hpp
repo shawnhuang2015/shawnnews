@@ -46,12 +46,22 @@
 #include <cstdlib>
 
 /**
- * This funtion compares two string, and returns true if they are equal.
- *   - if there isn't two string, return false.
- *   - if two string are not equal length, return false.
- *   - if any character is not equal, return false.
+ * This funtion compares two string (case sensitive), and returns true if they are equal.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_token_equal($1, "test");
  */
 
-extern "C" bool gsql_token_is(const char* const[], uint32_t[], uint32_t);
+extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum);
+
+/**
+ * This funtion compares two string (case insensitive), and returns true if they are equal.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_token_ignore_case_equal($1, "Test");
+ */
+
+extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[], 
+    uint32_t iTokenLen[], uint32_t iTokenNum);
 
 #endif /* CONDITIONLIBM_HPP_ */

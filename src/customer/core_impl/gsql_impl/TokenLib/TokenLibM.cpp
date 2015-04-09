@@ -78,16 +78,16 @@
 
 
  /**
-  * this function concatenate all input tokens into one big token
+  * this function concatenates all input tokens into one big token
   *
   */
 extern "C" void gsql_concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
-    char* const oToken, uint32_t& oTokenLen){
+    char* const oToken, uint32_t& oTokenLen) {
       
   int k = 0;
-  for (int i=0; i < iTokenNum; i++){
+  for (int i=0; i < iTokenNum; i++) {
     for (int j =0; j < iTokenLen[i]; j++) {
-           oToken[k++]=iToken[i][j];
+           oToken[k++] = iToken[i][j];
     }
   }
   oTokenLen = k;
