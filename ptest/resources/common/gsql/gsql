@@ -1,0 +1,48 @@
+#!/bin/sh
+
+
+# donnot compile token bank for now, remember to compile it it necessary
+
+SHARED_LIB=./lib
+
+#compile  token bank
+g++ -fPIC  -I./resources/common/TokenLib -shared "./resources/common/TokenBank/TokenBank1.cpp" "./resources/common/TokenLib/TokenLib1.cpp" -o "$SHARED_LIB/TokenBank1.so"
+g++ -fPIC  -I./resources/common/TokenLib -shared "./resources/common/TokenBank/TokenBankM.cpp" "./resources/common/TokenLib/TokenLibM.cpp" -o "$SHARED_LIB/TokenBankM.so"
+g++ -fPIC  -I./resources/common/TokenLib -shared "./resources/common/TokenBank/ConditionBank1.cpp" "./resources/common/TokenLib/ConditionLib1.cpp" -o "$SHARED_LIB/ConditionBank1.so"
+g++ -fPIC  -I./resources/common/TokenLib -shared "./resources/common/TokenBank/ConditionBankM.cpp" "./resources/common/TokenLib/ConditionLibM.cpp" -o "$SHARED_LIB/ConditionBankM.so"
+
+
+#compile reducer bank
+
+g++ -fPIC -D__STDC_LIMIT_MACROS  -I./resources/common/ReducerLib -shared "./resources/common/ReducerBank/ReducerBank.cpp" "./resources/common/ReducerLib/ReducerLib.cpp" -o "$SHARED_LIB/ReducerBank.so"
+
+# generate config file
+
+if [ -f ./resources/common/gsql/config ]; then
+  rm -f ./resources/common/gsql/config
+fi
+
+touch ./resources/common/gsql/config
+
+VAL=$(echo ~/.ptest/bin_root/gse_canonnical_loader)
+echo "CanonnicalLoader="$VAL >>./resources/common/gsql/config
+
+VAL=$(echo ~/.ptest/config_root/gse_loader/gse_loader1.conf)
+echo GSELoaderConfig=$VAL >> ./resources/common/gsql/config
+
+echo OutputTokenBufferSize=50000 >> ./resources/common/gsql/config
+echo DoNotPersistCatalog=true >> ./resources/common/gsql/config
+echo TokenBankSrc=./resources/common/TokenBank >> ./resources/common/gsql/config
+echo TokenLibSrc=./resources/common/TokenLib >> ./resources/common/gsql/config
+echo ReducerBankSrc=./resources/common/ReducerBank >> ./resources/common/gsql/config
+echo ReducerLibSrc=./resources/common/ReducerLib >> ./resources/common/gsql/config
+
+
+rm ./output/load_output.log
+
+JAR="$SHARED_LIB/gsql.jar"
+
+# $1 ddl, test_case/gsql/regress1/test_case1
+java -jar "$JAR" ./resources/common/gsql/config $1
+
+cat ./output/load_output.log

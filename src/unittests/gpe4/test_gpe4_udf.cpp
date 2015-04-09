@@ -42,6 +42,10 @@ TEST(GPE4UDFTEST, Partition_UD) {
   partition.MakeDistributedCopy(output_gpe4_path_ + "partition/ud_dist/",
                                 num_worker_);
   ASSERT_EQ(partition.num_edges(), 2 * (num_gpe4_vertices_ - 1));
+  gmmnt::GlobalInstances instance(GetConfigFile());
+  topology4::TopologyGraph topology(&instance, output_gpe4_path_ + "partition/ud/");
+  topology4::TopologyPrinter topologyprinter(&instance, &topology);
+  topologyprinter.PrintEdges(topology4::EdgeBlockReaderSetting(false, false, true));
 }
 
 TEST(BLUEAPITEST, NoFilter) {

@@ -1,171 +1,42 @@
 EdgeTypes: 
-- EdgeId: 0
-  EdgeName: s2s_master2user
-  FromVertexTypeName: s_master
-  IsDirected: false
-  ToVertexTypeName: s_user
-- EdgeId: 1
-  EdgeName: s2s_master2contact
-  FromVertexTypeName: s_master
-  IsDirected: false
-  ToVertexTypeName: s_contact
-- EdgeId: 2
-  EdgeName: s2s_master2email
-  FromVertexTypeName: s_master
-  IsDirected: false
-  ToVertexTypeName: s_contact
-- EdgeId: 3
-  EdgeName: s2s_master2linkedin
-  FromVertexTypeName: s_master
-  IsDirected: false
-  ToVertexTypeName: s_email
-- EdgeId: 4
-  EdgeName: s2s_master2weibo
-  FromVertexTypeName: s_master
-  IsDirected: false
-  ToVertexTypeName: s_weibo
 - Attributes: 
-  - AttributeName: dir
+  - AttributeName: e0_a1
     AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 5
-  EdgeName: s2s_user2user
-  FromVertexTypeName: s_user
-  IsDirected: false
-  ToVertexTypeName: s_user
+  EdgeId: 0
+  EdgeName: etype0
+  FromVertexTypeName: vtype0
+  IsDirected: true
+  ToVertexTypeName: vtype0
 - Attributes: 
-  - AttributeName: dir
-    AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 6
-  EdgeName: s2s_contact2contact
-  FromVertexTypeName: s_contact
+  - AttributeName: e1_a1
+    AttributeType: BOOL
+  EdgeId: 1
+  EdgeName: etype1
+  FromVertexTypeName: vtype0
   IsDirected: false
-  ToVertexTypeName: s_contact
-- Attributes: 
-  - AttributeName: dir
-    AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 7
-  EdgeName: s2s_linkedin2linkedin
-  FromVertexTypeName: s_linkedin
-  IsDirected: false
-  ToVertexTypeName: s_linkedin
-- Attributes: 
-  - AttributeName: dir
-    AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 8
-  EdgeName: s2s_weibo2weibo
-  FromVertexTypeName: s_weibo
-  IsDirected: false
-  ToVertexTypeName: s_weibo
-- Attributes: 
-  - AttributeName: dir
-    AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 9
-  EdgeName: s2s_email2email
-  FromVertexTypeName: s_email
-  IsDirected: false
-  ToVertexTypeName: s_email
-- Attributes: 
-  - AttributeName: cnt
-    AttributeType: UINT32
-  - AttributeName: firstDate
-    AttributeType: UINT32
-  - AttributeName: lastDate
-    AttributeType: UINT32
-  EdgeId: 10
-  EdgeName: s2p_user2product_action
-  FromVertexTypeName: s_user
-  IsDirected: false
-  ToVertexTypeName: product
-- Attributes: 
-  - AttributeName: cnt
-    AttributeType: UINT32
-  - AttributeName: date
-    AttributeType: UINT32
-  EdgeId: 11
-  EdgeName: s2p_user2product_post
-  FromVertexTypeName: s_user
-  IsDirected: false
-  ToVertexTypeName: product
-- EdgeId: 12
-  EdgeName: u2t_user2prfl
-  FromVertexTypeName: s_user
-  IsDirected: false
-  ToVertexTypeName: tag
-- EdgeId: 13
-  EdgeName: p2t_product2prpt
-  FromVertexTypeName: product
-  IsDirected: false
-  ToVertexTypeName: tag
-- EdgeId: 14
-  EdgeName: s2l_user2location
-  FromVertexTypeName: s_user
-  IsDirected: false
-  ToVertexTypeName: location
-- EdgeId: 15
-  EdgeName: p2l_product2location
-  FromVertexTypeName: product
-  IsDirected: false
-  ToVertexTypeName: location
+  ToVertexTypeName: vtype0
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: recommendation
+GraphName: mvme
 SegSizeInBits: 20
 VertexTypes: 
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: STRING
-  VertexId: 0
-  VertexName: s_master
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: UINT32
-  VertexId: 1
-  VertexName: s_user
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: UINT32
-  VertexId: 2
-  VertexName: s_contact
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: STRING
-  VertexId: 3
-  VertexName: s_email
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: STRING
-  VertexId: 4
-  VertexName: s_linkedin
-- PrimaryId: 
-    AttributeName: uid
-    AttributeType: UINT32
-  VertexId: 5
-  VertexName: s_weibo
-- PrimaryId: 
-    AttributeName: tagName
-    AttributeType: STRING
-  VertexId: 6
-  VertexName: tag
 - Attributes: 
-  - AttributeName: releaseDate
+  - AttributeName: v0_a1
     AttributeType: UINT32
+    Nullable: false
   PrimaryId: 
-    AttributeName: pid
-    AttributeType: UINT32
-  VertexId: 7
-  VertexName: product
-- PrimaryId: 
-    AttributeName: coor
-    AttributeType: UINT32
-  VertexId: 8
-  VertexName: location
+    AttributeName: v0_id
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 0
+  VertexName: vtype0
+- Attributes: 
+  - AttributeName: v1_a1
+    AttributeType: BOOL
+    Nullable: false
+  PrimaryId: 
+    AttributeName: v1_id
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 1
+  VertexName: vtype1
