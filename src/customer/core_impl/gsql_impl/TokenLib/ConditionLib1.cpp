@@ -88,3 +88,26 @@ extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen) {
   return compareStrIgnoreCase(token, falseString);
 }
 
+/**
+ * This function checks whether the input string is empty 
+ * after removing white space.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_is_not_empty_string($2);
+ */
+extern "C"  bool gsql_is_not_empty_string(const char* const iToken, uint32_t iTokenLen) {
+  if (iTokenLen <= 0) {
+    return false;
+  }
+
+  for (int i = 0; i < iTokenLen; i++) {
+         if (iToken[i] != ' '){
+           return true;
+         }
+  }
+  //empty or all space, return false
+  return false;
+}
+
+
+
