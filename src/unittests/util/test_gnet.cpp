@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gnet/kafka/kafkamessagequeuefactory.hpp>
 #include <gnet/zeromq/zeromqfactory.hpp>
+#include <gnet/gsqlmessagequeuefactory.hpp>
 #include <gnet/dummymessagequeuefactory.hpp>
 #include <gutil/gtimer.hpp>
 #include <boost/thread.hpp>
@@ -28,7 +29,7 @@ size_t numofwrites_ = 10 << 20;
 
 void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t threadindex,
                 bool usingstring){
-  gnet::QueueMsgWriter* writer = queuecenter->createQueueMsgWriter(topicname);
+  gnet::QueueMsgWriter* writer = queuecenter->getQueueMsgWriter(topicname);
   gutil::GTimer timer;
   for(size_t key = 0; key < numofwrites_; ++key){
     size_t value = key * 2;
@@ -50,7 +51,7 @@ void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, s
 
 void QueueRead(gnet::MessageQueueFactory* queuecenter, std::string topicname,
                size_t threadindex, bool usingstring){
-  gnet::QueueMsgReader* reader = queuecenter->createQueueMsgReader(topicname, -2); //RD_KAFKA_OFFSET_BEGINNING
+  gnet::QueueMsgReader* reader = queuecenter->getQueueMsgReader(topicname, -2); //RD_KAFKA_OFFSET_BEGINNING
   {
     boost::mutex::scoped_lock lock(mutex_);
     ++num_read_ready_;
@@ -252,11 +253,11 @@ TEST(GNETTEST, DummyQueue) {
 }
 
 TEST(GNETTEST, ZeroMQ) {
-  gnet::ZeroMQFactory gpe1("GPE_SERVER_1", "gpe1.conf");
-  gnet::ZeroMQFactory rest1("REST_1", "gpe1.conf");
+  gnet::ZeroMQFactory gpe1(gnet::QueueTarget("GPE_1_1"), "gpe1.conf");
+  gnet::ZeroMQFactory rest1(gnet::QueueTarget("REST_1_1"), "gpe1.conf");
   std::vector<boost::thread*> threads;
-  threads.push_back(new boost::thread(boost::bind(&QueueRead, &gpe1, "requestQ", 0, false)));
-  threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "requestQ", 0, false)));
+  threads.push_back(new boost::thread(boost::bind(&QueueRead, &gpe1, "get_request_queue", 0, false)));
+  threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "get_request_queue", 0, false)));
   for(size_t i = 0; i < threads.size(); ++i){
     threads[i]->join();
     delete threads[i];
