@@ -429,6 +429,7 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
                        << DeltaRecordTypeBits) + (((uint8_t) DeltaAction_Insert));
   buffer.write((char*) &firstbyte, 1);
   buffer.writeCompressed(i);
+  buffer.writeCompressed(0); // vertex type id
   uint8_t attributeoperator =
       ((uint8_t) DeltaAttributeOperator_Overwrite);
   buffer.write((char*) &attributeoperator, 1);
@@ -439,6 +440,7 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
                  << DeltaRecordTypeBits) + (((uint8_t) DeltaAction_Insert));
     buffer.write((char*) &firstbyte, 1);
     buffer.writeCompressed(0);
+    buffer.writeCompressed(0); // vertex type id
     uint8_t attributeoperator =
         ((uint8_t) DeltaAttributeOperator_Add);
     buffer.write((char*) &attributeoperator, 1);
@@ -448,7 +450,9 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
                 + (((uint8_t) DeltaAction_Insert));
     buffer.write((char*) &firstbyte, 1);
     buffer.writeCompressed(i);
+    buffer.writeCompressed(0); // vertex type id
     buffer.writeCompressed(i - 1);
+    buffer.writeCompressed(0); // vertex type id
     buffer.writeCompressed(0); //type
     attributeoperator = ((uint8_t) DeltaAttributeOperator_Add);
     buffer.write((char*) &attributeoperator, 1);
@@ -459,7 +463,9 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
                   + (((uint8_t) DeltaAction_Insert));
       buffer.write((char*) &firstbyte, 1);
       buffer.writeCompressed(0);
+      buffer.writeCompressed(0); // vertex type id
       buffer.writeCompressed(1);
+      buffer.writeCompressed(0); // vertex type id
       buffer.writeCompressed(1); //type
       attributeoperator = ((uint8_t) DeltaAttributeOperator_Add);
       buffer.write((char*) &attributeoperator, 1);
@@ -471,7 +477,9 @@ void InsertOneDelta(gmmnt::GlobalInstances& instance, topology4::TopologyGraph& 
                   + (((uint8_t) DeltaAction_Insert));
       buffer.write((char*) &firstbyte, 1);
       buffer.writeCompressed(j);
+      buffer.writeCompressed(0); // vertex type id
       buffer.writeCompressed(i);
+      buffer.writeCompressed(0); // vertex type id
       buffer.writeCompressed(1); //type
       attributeoperator = ((uint8_t) DeltaAttributeOperator_Add);
       buffer.write((char*) &attributeoperator, 1);
@@ -699,7 +707,9 @@ TEST(GPE4DELTATEST, Topology_Large) {
                          << DeltaRecordTypeBits) + (((uint8_t) DeltaAction_Delete));
     buffer.write((char*) &firstbyte, 1);
     buffer.writeCompressed(1918);
+    buffer.writeCompressed(0); // vertex type id
     buffer.writeCompressed(1919);
+    buffer.writeCompressed(0); // vertex type id
     buffer.writeCompressed(0); //type
     buffer.write((char*) &DeltaWatermarkByte_, 1);
     TransactionId_t tid =  100000;
@@ -727,6 +737,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
                          << DeltaRecordTypeBits) + (((uint8_t) DeltaAction_Delete));
     buffer.write((char*) &firstbyte, 1);
     buffer.writeCompressed(1919);
+    buffer.writeCompressed(0); // vertex type id
     buffer.write((char*) &DeltaWatermarkByte_, 1);
     TransactionId_t tid =  100000;
     uint32_t binarysize = buffer.bufferpos_ - buffer.buffer_;
