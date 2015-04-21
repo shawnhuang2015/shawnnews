@@ -212,7 +212,7 @@ extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen) {
   }
  
   std::string trueString = "true";
-  std::string token (iToken);
+  std::string token (iToken, iTokenLen);
   return compareStrIgnoreCase(token, trueString);
 }
 
