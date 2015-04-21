@@ -66,4 +66,13 @@ extern "C"  bool gsql_is_true(const char* const iToken, uint32_t iTokenLen);
  */
 extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen);
 
+/**
+ * This function checks whether the input string is empty 
+ * after removing white space.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) where gsql_is_not_empty_string($2);
+ */
+extern "C"  bool gsql_is_not_empty_string(const char* const iToken, uint32_t iTokenLen);
+
 #endif /* CONDITIONLIB1_HPP_ */
