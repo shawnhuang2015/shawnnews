@@ -235,7 +235,7 @@ TEST(UTILTEST, Write_Read_Text) {
     }
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
-  gutil::FileLineReader::WordCount(file, ',');
+  // gutil::FileLineReader::WordCount(file, ',');
 }
 
 TEST(UTILTEST, Write_Read_Binary) {
