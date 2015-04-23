@@ -974,6 +974,8 @@ var gsqlv = function(x) {
 	}
 
 	gsqlv.highlightingNodes = function() {
+		var unhighlighting = true;
+
 		if (data.nodes.filter(function(d) { 
 				return d.selected; 
 			}).length == 0) {
@@ -983,6 +985,8 @@ var gsqlv = function(x) {
 			data.links.forEach(function(d) {
 				d.opacity = initLinkSetting.opacity;
 			})
+
+			unhighlighting = false;
 		}
 		else {
 			data.nodes.forEach(function(d) {
@@ -1011,6 +1015,8 @@ var gsqlv = function(x) {
 
 		gsqlv.updateSelectedElements()
 		gsqlv.refresh();
+
+		return unhighlighting;
 	}
 
 	gsqlv.coloringNodes = function(x) {
@@ -1104,6 +1110,9 @@ var gsqlv = function(x) {
 					jsVariable += "var "+key+"=node.attr."+key+";";
 				}
 
+				jsVariable += "var type =node.type;";
+				jsVariable += "var id =node.id;";
+
 				jsItem += jsVariable;
 				jsItem += 'try{ if ('+x+') {node.selected=true;}\
 						else{node.selected=false;}}catch(err){node.selected=false;}'
@@ -1186,6 +1195,7 @@ var gsqlv = function(x) {
 			jsVariable += "var "+key+"=node.attr."+key+";";
 		}
 
+
 		jsItem += jsVariable;
 		jsItem += 'try{ if ('+condition+') {__$$global_boolean=true;}\
 				else{__$$global_boolean=false;}}catch(err){__$$global_boolean=false;}'
@@ -1229,6 +1239,9 @@ var gsqlv = function(x) {
 		for (var key in l.attr) {
 			jsVariable += "var "+key+"=link.attr."+key+";";
 		}
+
+		jsVariable += "var type =link.type;";
+		jsVariable += "var id =link.id;";		
 
 		jsItem += jsVariable;
 		jsItem += 'try{ if ('+condition+') {__$$global_boolean=true;}\

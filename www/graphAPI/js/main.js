@@ -266,7 +266,12 @@
 	}
 
 	this.highlightingNodes = function() {
-		mygv.highlightingNodes();
+		if(mygv.highlightingNodes()) {
+			$('#b_highlightingNodes').html('Unhighlighting');	
+		}
+		else {
+			$('#b_highlightingNodes').html('Highlighting');
+		}
 	}
 
 	this.hidingNodes = function() {

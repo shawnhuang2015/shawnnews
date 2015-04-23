@@ -58,6 +58,8 @@ namespace UDIMPL {
 
       std::vector <VertexLocalId_t> vids;
       writer_->WriteStartObject();
+      writer_->WriteName("score");
+      writer_->WriteFloat(udf.getScore());
       writer_->WriteName("vertices");
       writer_->WriteStartArray();
       for(boost::unordered_set<Vertex,VertexHash> :: iterator it = vertices.begin();

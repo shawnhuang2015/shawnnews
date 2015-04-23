@@ -62,7 +62,7 @@ object EndpointDefinitions {
         },
         "initialization":{
           "coloring" : [
-              {"selection":"isFraudulent == "true"", "selectionType":"nodes", "color":"#ff00ff"}
+              {"selection":"isFraudulent == 'true'", "selectionType":"nodes", "color":"#ff00ff"}
           ]
         },
         "events" : {
