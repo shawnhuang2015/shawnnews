@@ -57,7 +57,7 @@ struct sp_message_t {
 
 class SPUDF : public gpelib4::BaseUDF {
 private:
-enum {GV_FLAG, GV_SHORTEST, GV_COUNT};
+enum {GV_FLAG, GV_SHORTEST_EVEN, GV_COUNT_EVEN, GV_SHORTEST_ODD, GV_COUNT_ODD};
 
 VertexLocalId_t m_vertex_a_;
 VertexLocalId_t m_vertex_b_;
@@ -89,8 +89,10 @@ SPUDF(int iteration_limit, VertexLocalId_t v_a = 0, VertexLocalId_t v_b = 1)
 void Initialize_GlobalVariables(
 gpelib4::GlobalVariables* globalvariables) { 
     globalvariables->Register(GV_FLAG, new gpelib4::BoolVariable(false));
-    globalvariables->Register(GV_SHORTEST, new gpelib4::LongStateVariable(INF));
-    globalvariables->Register(GV_COUNT, new gpelib4::LongSumVariable(0));
+    globalvariables->Register(GV_SHORTEST_EVEN, new gpelib4::LongStateVariable(INF));
+    globalvariables->Register(GV_COUNT_EVEN, new gpelib4::LongSumVariable(0));
+    globalvariables->Register(GV_SHORTEST_ODD, new gpelib4::LongStateVariable(INF));
+    globalvariables->Register(GV_COUNT_ODD, new gpelib4::LongSumVariable(0));
 }
 
 /**************
@@ -113,8 +115,10 @@ inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
 void StartRun(gpelib4::MasterContext* context) {
     if (m_vertex_a_ == m_vertex_b_) {
         reinterpret_cast<gpelib4::BoolVariable*>(context->GetGlobalVariable(GV_FLAG))->Set(true);
-        reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST))->Set(0);
-        reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT))->Set(1);
+        reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST_EVEN))->Set(0);
+        reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT_EVEN))->Set(1);
+        reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST_ODD))->Set(0);
+        reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT_ODD))->Set(1);
     }
 }
 
@@ -201,18 +205,34 @@ inline void Reduce(const VertexLocalId_t& vid, V_ATTR* vertexattr,
         if (new_value.da <= new_value.db) {
             unsigned long shortest = new_value.da + new_value.db;
             unsigned long count = new_value.da_n * new_value.db_n;
-            unsigned long gv_shortest = context->GlobalVariable_GetValue<unsigned long>(GV_SHORTEST);
-            unsigned long gv_count = context->GlobalVariable_GetValue<unsigned long>(GV_COUNT);
 
-            if (shortest < gv_shortest) {
-                gv_shortest = shortest;
-                gv_count = count;
-            } else if (shortest == gv_shortest) {
-                gv_count += count;
+            if (shortest % 2) {
+                unsigned long gv_shortest = context->GlobalVariable_GetValue<unsigned long>(GV_SHORTEST_ODD);
+                unsigned long gv_count = context->GlobalVariable_GetValue<unsigned long>(GV_COUNT_ODD);
+
+                if (shortest < gv_shortest) {
+                    gv_shortest = shortest;
+                    gv_count = count;
+                } else if (shortest == gv_shortest) {
+                    gv_count += count;
+                }
+
+                reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST_ODD))->Set(gv_shortest);
+                reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT_ODD))->Set(gv_count);
+            } else {
+                unsigned long gv_shortest = context->GlobalVariable_GetValue<unsigned long>(GV_SHORTEST_EVEN);
+                unsigned long gv_count = context->GlobalVariable_GetValue<unsigned long>(GV_COUNT_EVEN);
+
+                if (shortest < gv_shortest) {
+                    gv_shortest = shortest;
+                    gv_count = count;
+                } else if (shortest == gv_shortest) {
+                    gv_count += count;
+                }
+
+                reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST_EVEN))->Set(gv_shortest);
+                reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT_EVEN))->Set(gv_count);
             }
-
-            reinterpret_cast<gpelib4::LongStateVariable*>(context->GetGlobalVariable(GV_SHORTEST))->Set(gv_shortest);
-            reinterpret_cast<gpelib4::LongSumVariable*>(context->GetGlobalVariable(GV_COUNT))->Set(gv_count);
         }
     }
 
@@ -242,11 +262,22 @@ void AfterIteration(gpelib4::MasterContext* context) {
 * @param context Can be used to set active flags for vertices.
 */
 void EndRun(gpelib4::BasicContext* context) {
+    unsigned long shortest_odd = context->GlobalVariable_GetValue<unsigned long>(GV_SHORTEST_ODD);
+    unsigned long count_odd = context->GlobalVariable_GetValue<unsigned long>(GV_COUNT_ODD);
+    unsigned long shortest = context->GlobalVariable_GetValue<unsigned long>(GV_SHORTEST_EVEN);
+    unsigned long count = context->GlobalVariable_GetValue<unsigned long>(GV_COUNT_EVEN);
+
+    if (shortest_odd < shortest) {
+        shortest = shortest_odd;
+        count = count_odd;
+    }
+
     fprintf(stderr, "%u <-> %u, shortest: %lu, count: %lu\n",
             m_vertex_a_,
             m_vertex_b_,
-            context->GlobalVariable_GetValue<long>(GV_SHORTEST),
-            context->GlobalVariable_GetValue<long>(GV_COUNT));
+            shortest,
+            count);
+            
 }
 
 /**************
