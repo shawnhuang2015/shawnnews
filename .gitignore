@@ -56,6 +56,7 @@ mgnt_cli/
 # GSW generated files
 # ###################
 gsql/.history
+gsql/config
 gsql/output
 
 # GTEST generated files#

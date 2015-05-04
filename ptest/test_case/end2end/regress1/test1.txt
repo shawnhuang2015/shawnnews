@@ -14,6 +14,7 @@
 ~/.gium/gsql_admin restart -f -y
 
 # 2. Delete the samples below first. Then put your curl test cases line by line below. 
+# MUST use -s option with curl to avoid error msg or progress meter. E.g. curl -s -X GET 'xxxxx'
 curl -s -X GET 'http://localhost:9000/fromUser/0'
 curl -s -X GET 'http://localhost:9000/fromUser/4'
 curl -s -X GET 'http://localhost:9000/fromUser/5'

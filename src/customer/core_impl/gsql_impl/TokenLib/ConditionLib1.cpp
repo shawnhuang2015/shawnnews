@@ -70,7 +70,7 @@ extern "C"  bool gsql_is_true(const char* const iToken, uint32_t iTokenLen) {
   }
  
   std::string trueString = "true";
-  std::string token (iToken);
+  std::string token (iToken, iTokenLen);
   return compareStrIgnoreCase(token, trueString);
 }
 
@@ -84,7 +84,7 @@ extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen) {
     return true;
   }
   std::string falseString = "false";
-  std::string token (iToken);
+  std::string token (iToken, iTokenLen);
   return compareStrIgnoreCase(token, falseString);
 }
 

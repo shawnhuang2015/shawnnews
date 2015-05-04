@@ -259,6 +259,28 @@ void Write_Read_Text(std::string lineend, bool tofile) {
     timer.Stop("read " + boost::lexical_cast<std::string>(linenum) + " lines.");
   }
   {
+    gutil::GTimer timer;
+    size_t readsize = 0;
+    {
+      gutil::FileLineReader* reader;
+      size_t filesize = 0;
+      if(tofile){
+        reader = new gutil::FileLineReader(file, 0, true, lineend);
+        filesize = boost::filesystem::file_size(file);
+      }
+      else{
+        reader = new gutil::FileLineReader(strdata.c_str(), strdata.size(), lineend);
+        filesize = strdata.size();
+      }
+      while(reader->MoveNextLine(100000)){
+          readsize += reader->lineend() - reader->linestart() + 1;
+      }
+      ASSERT_EQ(readsize, filesize);
+      delete reader;
+    }
+    timer.Stop("read " + boost::lexical_cast<std::string>(readsize) + " bytes.");
+  }
+  {
     gutil::FileLineReader* reader;
     if(tofile)
       reader = new gutil::FileLineReader(file, 0, true, lineend);
