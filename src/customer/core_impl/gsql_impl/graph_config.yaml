@@ -30,6 +30,7 @@ VertexTypes:
     Nullable: false
   VertexId: 0
   VertexName: vtype0
+  StartId: 100
 - Attributes: 
   - AttributeName: v1_a1
     AttributeType: BOOL
