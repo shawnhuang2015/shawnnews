@@ -60,12 +60,13 @@ namespace UDIMPL {
 
     bool RunUDF_Rec(ServiceAPI& serviceapi, EngineServiceRequest& request){
       // sample to convert vid.
+      /*
       VertexLocalId_t local_start;
       if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start)) {
         return false;
       }
       // sample to run one UDF
-      typedef gperun::UDF UDF_t;
+      typedef KNeighborSize UDF_t;
       UDF_t udf(5, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
       if(udf.abortmsg_.size() > 0){
@@ -78,6 +79,7 @@ namespace UDIMPL {
            cit != udf.m_vids.end(); ++cit) {
         request.output_idservice_vids.push_back(*cit);
       }
+      */
       return true;
     }
 
