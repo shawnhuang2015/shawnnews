@@ -1,17 +1,26 @@
 EdgeTypes: 
-- EdgeId: 0
-  EdgeName: vote
-  FromVertexTypeName: person
+- Attributes: 
+  - AttributeName: time
+    AttributeType: UINT
+  EdgeId: 0
+  EdgeName: e_thru
+  FromVertexTypeName: v_ip
   IsDirected: false
-  ToVertexTypeName: person
+  ToVertexTypeName: v_session
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: wiki_vote
+GraphName: poc_graph
 SegSizeInBits: 20
 VertexTypes: 
 - PrimaryId: 
-    AttributeName: id
-    AttributeType: UINT
+    AttributeName: ip
+    AttributeType: STRING
   VertexId: 0
-  VertexName: person
+  VertexName: v_ip
+  VertexStatisticsType: 1
+- PrimaryId: 
+    AttributeName: sid
+    AttributeType: STRING
+  VertexId: 1
+  VertexName: v_session
   VertexStatisticsType: 1

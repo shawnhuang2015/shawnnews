@@ -106,6 +106,16 @@ object EndpointDefinitions {
     context.gpe.writeAndWait(request, List(uid))
   }))
 
+  Endpoints.register(Endpoint(GET(), "rec", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("rec", uid), Map())
+    context.gpe.writeAndWait(request, List(uid))
+  }))
+
+  Endpoints.register(Endpoint(GET(), "check_ip", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("rec", uid), Map())
+    context.gpe.writeAndWait(request, List(uid))
+  }))
+
   // Helper function that forces the JVM to initialize this object.
   // Must be left untouched. It is required by the RestServer object.
   def warmUp() = { }
