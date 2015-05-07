@@ -16,16 +16,18 @@
 
 /*----------------------------------------------------------------------------------------
 Instruction:  All filter code are included in this file and compiled into one object file.
+              Include your .cpp here.
 -----------------------------------------------------------------------------------------*/
-#include "aliagfilter.cpp"
-#include "aliegfilter.cpp"
+//#include "aliagfilter.cpp"
+//#include "aliegfilter.cpp"
 
 void RegisterBuiltinFilters(){
   /*--------------------------------------------------------------------------------------
   Instruction: register the function pointer of your filter with the filter name.
+  Register your filter here.
   ---------------------------------------------------------------------------------------*/
-  RESTPP_COMPONENTS::filtermanager->RegisterBuiltinFilter("AliEgFilter", (UpdateRequestFilter)&AliEgFilter);
-  RESTPP_COMPONENTS::filtermanager->RegisterBuiltinFilter("AliAgFilter", (UpdateRequestFilter)&AliAgFilter);
+  //RESTPP_COMPONENTS::filtermanager->RegisterBuiltinFilter("AliEgFilter", (UpdateRequestFilter)&AliEgFilter);
+  //RESTPP_COMPONENTS::filtermanager->RegisterBuiltinFilter("AliAgFilter", (UpdateRequestFilter)&AliAgFilter);
 }
 
 
