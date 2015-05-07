@@ -160,7 +160,7 @@ object EndpointDefinitions {
   }))
 
   Endpoints.register(Endpoint(GET(), "check_ip", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
-    val request = GpeRequest(List("check_ip", uid), Map())
+    val request = GpeRequest(List("check_ip", uid), queryString)
     context.gpe.writeAndWait(request, List(uid))
   }))
 
