@@ -4,7 +4,7 @@ var gsqlv = function(x) {
 		version : '2.0',
 	};
 	var setting; //var setting = {'divID':''divid', 'width':width, 'height':height};
-	var graphType = 'undirected'
+	var graphType = 'undirected' // eight undirected or directed. 
 	var data = {"nodes":[], "links":[]}; // graph data object.
 	var node_links = {}; // hash table for node and its linked node.
 	var link_nodes = {}; // hash table for links and its source object and target object in node_links.
