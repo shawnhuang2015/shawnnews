@@ -35,7 +35,7 @@ extern "C" {
 *
 * @return
 */
-bool AliPostResponseFilter(const std::string &response, std::string &new_response){
+bool ResponseFilterExample(const std::string &response, std::string &new_response){
   std::stringstream ss;
   ss.str(response);
   std::vector<size_t> nos;

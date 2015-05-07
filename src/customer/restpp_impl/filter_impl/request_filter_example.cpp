@@ -34,7 +34,7 @@ extern "C" {
 *
 * @return
 */
-bool YourFilterImpl(
+bool RequestFilterExample(
                const SchemaManager *schemamanager,
                const std::string &method,
                const std::string &url,
