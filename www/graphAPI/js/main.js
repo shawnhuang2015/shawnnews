@@ -794,7 +794,7 @@
 	        } else if (/null/.test(match)) {
 	            cls = 'null';
 	        }
-	        return '<span class="' + cls + '">' + match + '</span>';
+	        return '<span class="' + cls + '">' + match + '</span>'; // style="font-family: Times"
 	    });
 	}
 
@@ -810,7 +810,7 @@
 		.style("height", v_height+"px")
 
 		d3.select("#messageBox")
-		.html("JSON Message " + messageArray.length + " : \n" + syntaxHighlight(messageArray[messageArray.length-1]))
+		.html("<span> JSON Message " + messageArray.length + " :</span> \n" + syntaxHighlight(messageArray[messageArray.length-1]))
 	}
 
 	// out out the summary information for both whole graph and selected sub graph.

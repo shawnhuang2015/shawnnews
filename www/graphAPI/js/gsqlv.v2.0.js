@@ -3109,7 +3109,19 @@ var gsqlv = function(x) {
 	// update _C0 and _C1 here.
 	function curveLinkPoints(link) {
 		var a = 0.25;
-		var b = initNodeSetting.r * 4;// 20; // initNodeSetting.r * 4;
+		var b = 20; // initNodeSetting.r * 4;
+		var edgeMargin = initNodeSetting.r + 2;
+		var markMargin = 0;
+
+		if (graphType == "undirected") {
+			markMargin = 0;
+		}
+		else if (graphType == "directed") {
+			markMargin = 2;
+		}
+		else {
+			;
+		}
 
 		var C0 = [0, 0]
 		var C1 = [0, 0]
@@ -3165,19 +3177,18 @@ var gsqlv = function(x) {
 		link._C0 = C0;
 		link._C1 = C1;
 
-		var markerMargin = 7;
 		var tdc = Math.sqrt((C1[0]-x1)*(C1[0]-x1)+(C1[1]-y1)*(C1[1]-y1));
 
 
-		var tx0 = x0 - markerMargin * (x0 - C0[0]) / tdc
-		var ty0 = y0 - markerMargin * (y0 - C0[1]) / tdc;
+		var tx0 = x0 - edgeMargin * (x0 - C0[0]) / tdc
+		var ty0 = y0 - edgeMargin * (y0 - C0[1]) / tdc;
 
-		var tx1 = x1 - (markerMargin+2) * (x1 - C1[0]) / tdc
-		var ty1 = y1 - (markerMargin+2) * (y1 - C1[1]) / tdc;
+		var tx1 = x1 - (edgeMargin+markMargin) * (x1 - C1[0]) / tdc
+		var ty1 = y1 - (edgeMargin+markMargin) * (y1 - C1[1]) / tdc;
 
-		if (tdc < markerMargin) {
+		if (tdc < edgeMargin) {
 
-			if (td < markerMargin) {
+			if (td < edgeMargin) {
 				tx0 = x0;
 				ty0 = y1;
 				tx1 = x1;
