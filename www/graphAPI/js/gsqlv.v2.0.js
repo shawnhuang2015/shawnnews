@@ -4,6 +4,7 @@ var gsqlv = function(x) {
 		version : '2.0',
 	};
 	var setting; //var setting = {'divID':''divid', 'width':width, 'height':height};
+	var graphType = 'undirected'
 	var data = {"nodes":[], "links":[]}; // graph data object.
 	var node_links = {}; // hash table for node and its linked node.
 	var link_nodes = {}; // hash table for links and its source object and target object in node_links.
@@ -193,6 +194,7 @@ var gsqlv = function(x) {
 
 				// TODO : testing multiple edges.
 				// This is just using for testing.
+				/*
 				var tempNewLink = {};
 				tempNewLink.attr = clone(d.attr);
 				tempNewLink.target = targetID;
@@ -210,6 +212,7 @@ var gsqlv = function(x) {
 
 				gsqlv.initLink(tempNewLink);
 				data.links.push(tempNewLink);
+				*/
 				/*
 				var tempNewLink = {};
 				tempNewLink.attr = clone(d.attr);
@@ -494,6 +497,16 @@ var gsqlv = function(x) {
 		}
 		else {
 			;
+		}
+	}
+
+	gsqlv.graphType = function(x) {
+		if (!arguments.length) {
+			return graphType;
+		}
+		else {
+			graphType = x;
+			return gsqlv;
 		}
 	}
 
@@ -1169,6 +1182,9 @@ var gsqlv = function(x) {
 
 	gsqlv.runPreDefinition = function(nodes, links) {
 
+		if (typeof preDefinition == 'undefined') {
+			return;
+		}
 		// Have to run after gsqlv.initNodeLinks();
 		// if there is a coloring pre definition, do the coloring for the node and edges, base on the selection condition.
 		if ('coloring' in preDefinition) {
@@ -1754,6 +1770,7 @@ var gsqlv = function(x) {
 			event_handlers.node_dblclick = function(d) {
 				console.log(d)
 
+				/*
 				temp_event = myObject.events[event];
 				submit_URL = temp_event.URL_head + "?"
 
@@ -1773,22 +1790,32 @@ var gsqlv = function(x) {
 						submit_URL += name + "=" + d[attr.name] +"&";
 					}
 				}
-
-				/*
-				URL_attrs.forEach(function(a){
-					index_txtbox = a.indexOf('*')
-					if (index_txtbox != -1) {
-						attr_name = a.split("*");
-						node_dblclick_URL += attr_name[0] + "=" + d[attr_name[0]] +"&";
-					}
-
-					index_attr = a.indexOf('@')
-					if (index_attr != -1) {
-						attr_name = a.split("@");
-						node_dblclick_URL += attr_name[0] + "=" + myObject.attributes[attr_name[1]] + "&";
-					}
-				})
 				*/
+
+				temp_event = myObject.events[event]; 
+				submit_URL = temp_event.URL_head// + "?"
+				URL_attrs =  temp_event.URL_attrs
+
+				if ("id" in URL_attrs) {
+					submit_URL += "/" + d.id + "?";
+				}
+				else {
+					submit_URL += "?";
+				}
+				
+				for (var attr in URL_attrs) {
+					name = attr;
+					attr = URL_attrs[attr];
+
+					if (name == "id") continue;
+
+					if (attr.usage == "input") {
+						submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
+					}
+					else if (attr.usage == "attributes") {
+						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
+					}
+				}
 
 				$.get(submit_URL, function(message) {
 					message = JSON.parse(message);
@@ -3018,7 +3045,7 @@ var gsqlv = function(x) {
 			result.nodes.push(tempNode);
 		}) 
 
-		newData.Edges.forEach(function(e) {
+		newData.edges.forEach(function(e) {
 			// Example of a link :
 			// {"source":{"type":"newType1","id":"newKey1"},"target":{"type":"type0","id":"key45"},"attr":{"weight":"0.01","name":"name0.7"}, "type":0};
 			tempEdge = {"source":{"type":"","id":""},"target":{"type":"","id":""},"attr":""};
