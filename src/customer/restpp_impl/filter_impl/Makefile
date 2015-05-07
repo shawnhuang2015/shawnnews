@@ -25,4 +25,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 clean:
-		rm -rf *.o *.so ../vertexedgeset.o ../graphdatatype.o ../schemamanager.o ../post2binary.o ../deltawriter.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_reader.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_writer.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_value.o
+		rm -rf *.o *.so $(GSQL_PROJ_HOME)/src/realtime/restpp/vertexedgeset.o $(GSQL_PROJ_HOME)/src/realtime/restpp/graphdatatype.o $(GSQL_PROJ_HOME)/src/realtime/restpp/schemamanager.o $(GSQL_PROJ_HOME)/src/realtime/restpp/post2binary.o $(GSQL_PROJ_HOME)/src/realtime/restpp/deltawriter.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_reader.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_writer.o $(GSQL_PROJ_HOME)/src/third_party/jsoncpp/json_value.o
