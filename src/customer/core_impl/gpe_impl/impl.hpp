@@ -11,8 +11,7 @@
 
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-//#include "udf/fr.hpp"
-//#include "udf/yeepay.hpp"
+#include "udf/yeepay.hpp"
 
 using namespace gperun;
 

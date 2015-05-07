@@ -52,8 +52,8 @@ object EndpointDefinitions {
         "index": 0,
         "elements": [ { "label": { "name": "IP" } }, { "textbox": {"name" : "id", "length" : 20 } },
             { "label": { "name" : "Depth"} }, { "textbox": {"name": "depth", "length" : 10}},
-            { "label": { "name": "Start Time" } }, { "textbox": {"name" : "startTime", "length" : 20 } },
-            { "label": { "name": "End Time" } }, { "textbox": {"name" : "endTime", "length" : 20 } }
+            { "label": { "name": "Start Time" } }, { "textbox": {"name" : "starttime", "length" : 20 } },
+            { "label": { "name": "End Time" } }, { "textbox": {"name" : "endtime", "length" : 20 } }
         ],
         "attributes": {
           "depth" : 1
@@ -67,8 +67,8 @@ object EndpointDefinitions {
             "URL_attrs" : {
                 "id" : {"usage":"input", "name":"id"},
                 "depth" : {"usage":"input", "name":"depth"},
-                "startTime" : {"usage":"input", "name":"startTime"},
-                "endTime" : {"usage":"input", "name":"endTime"}
+                "starttime" : {"usage":"input", "name":"starttime"},
+                "endtime" : {"usage":"input", "name":"endtime"}
             }
           },
           "node_dblclick" : {
@@ -76,8 +76,8 @@ object EndpointDefinitions {
             "URL_attrs" : {
                 "id" : {"usage":"select", "name":"id"},
                 "depth" : {"usage":"attributes", "name":"depth"},
-                "startTime" : {"usage":"input", "name":"startTime"},
-                "endTime" : {"usage":"input", "name":"endTime"}
+                "starttime" : {"usage":"input", "name":"starttime"},
+                "endtime" : {"usage":"input", "name":"endtime"}
             }
           }
         } 

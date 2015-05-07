@@ -676,17 +676,24 @@
 			if (key == "submit") {
 				// setting URL for submit button.
 				temp_event = myObject.events[key]; 
-				submit_URL = temp_event.URL_head + "?"
-				//submit_URL = "engine/kneighborhood_full_type?";
-
+				submit_URL = temp_event.URL_head// + "?"
 				URL_attrs =  temp_event.URL_attrs
 
+				if ("id" in URL_attrs) {
+					submit_URL += "/" + document.getElementsByName(URL_attrs.id.name)[0].value + "?";
+				}
+				else {
+					submit_URL += "?";
+				}
+				
 				for (var attr in URL_attrs) {
 					name = attr;
 					attr = URL_attrs[attr];
 
+					if (name == "id") continue;
+
 					if (attr.usage == "input") {
-						submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value +"&";
+						submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
 					}
 					else if (attr.usage == "attributes") {
 						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
@@ -696,8 +703,27 @@
 				// initilize the root node as the query node.
 				//	a. create rootNode id.
 				//	b. set root node by id.
-				var initRootNode = document.getElementsByName(URL_attrs.type.name)[0].value +
+				var rootNodeType;
+				var rootNodeID;
+
+				if ("type" in URL_attrs) {
+					rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value;
+				}
+				else {
+					rootNodeType = "0"
+				}
+
+				if ("id" in URL_attrs) {
+					rootNodeID = document.getElementsByName(URL_attrs.id.name)[0].value;
+				}
+				else {
+					rootNodeID = "0";
+				}
+
+				var initRootNode = rootNodeType + "&" + rootNodeID;
+				/*document.getElementsByName(URL_attrs.type.name)[0].value +
 						 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
+						 */
 				mygv.rootNode(initRootNode);
 			}
 			else {
@@ -710,7 +736,14 @@
 		// call back function for the rest query of the submit button.
 		$.get(submit_URL, function(message) {
 			// JSON parse the message string.
-			message = JSON.parse(message);
+			try {
+				message = JSON.parse(message);
+			}
+			catch (err){
+				console.log("REST query result is not a vaild JSON string")
+				return ;
+			}
+			
 			if (!message.error) {
 				// get the json object of the result.
 				newData = message.results;
