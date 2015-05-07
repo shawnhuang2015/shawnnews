@@ -212,7 +212,7 @@
 					
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
-					mygv.graphType(UIPbject.setting.graphType)
+					mygv.graphType(UIObject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
 					window.selectionBoxLabels = mygv.label();
