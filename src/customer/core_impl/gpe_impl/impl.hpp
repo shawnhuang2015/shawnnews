@@ -11,8 +11,8 @@
 
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-//#include "udf/fr.hpp"
-//#include "udf/yeepay.hpp"
+#include "udf/yeepay.hpp"
+#include "udf/fr.hpp"
 
 using namespace gperun;
 
@@ -71,7 +71,7 @@ namespace UDIMPL {
       size_t end_time = request.jsoptions_.isMember("endtime") ? 
         strtoul(request.jsoptions_["endtime"][0].asString().c_str(), NULL, 10) : yeepay_ns::INF;
 
-      UDF_t udf(depth * 2, local_start, depth * 2, start_time, end_time, request.outputwriter_);
+      UDF_t udf(depth * 2, local_start, start_time, end_time, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
       if(udf.abortmsg_.size() > 0){
         request.error_ = true;
