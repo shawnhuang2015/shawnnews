@@ -906,7 +906,15 @@ var gsqlv = function(x) {
 			.attr("d", function(d) {
 				return curveLinkPoints(d);//line([[d.source.x, d.source.y],[d.target.x, d.target.y]])
 			})
-			.attr("style", "marker-end:url(#" + "lm_"+refineIDString(d.type+d.source.id+d.source.type+d.target.id+d.target.type) + ")")
+
+			if (graphType == "directed") {
+				d3.select(this)
+				.attr("style", "marker-end:url(#" + "lm_"+refineIDString(d.type+d.source.id+d.source.type+d.target.id+d.target.type) + ")")
+			}
+			else if (graphType == "undirected") {
+
+			}
+			
 		})
 
 		// draw nodes and binding events
@@ -3101,7 +3109,7 @@ var gsqlv = function(x) {
 	// update _C0 and _C1 here.
 	function curveLinkPoints(link) {
 		var a = 0.25;
-		var b = 20;
+		var b = initNodeSetting.r * 4;// 20; // initNodeSetting.r * 4;
 
 		var C0 = [0, 0]
 		var C1 = [0, 0]
