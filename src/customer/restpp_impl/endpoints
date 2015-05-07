@@ -1,0 +1,13 @@
+{
+   "builtins":{
+      "GET/POST":{
+         "function":"builtins",
+         "action":"query",
+         "target":"GPEAG",
+         "parameters":null,
+         "data":"JSON",
+         "request_filter":"BlueprintFilterImpl",
+         "summary":"blue print API."
+      }
+   }
+}
