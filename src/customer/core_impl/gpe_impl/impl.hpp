@@ -12,7 +12,6 @@
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 #include "udf/yeepay.hpp"
-#include "udf/fr.hpp"
 
 using namespace gperun;
 
@@ -55,6 +54,7 @@ namespace UDIMPL {
       request.output_idservice_vids.push_back(local_start);
       return true;
     }
+
 
     bool RunUDF_CheckIP(ServiceAPI& serviceapi, EngineServiceRequest& request) {
       VertexLocalId_t local_start;
