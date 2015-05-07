@@ -60,7 +60,6 @@ namespace yeepay_ns {
   class YeepaySubGraphExtractUDF : public gpelib4::BaseUDF {
     private:
       const VertexLocalId_t source_vid_;
-      const size_t depth_;
       const size_t start_time_;
       const size_t end_time_;
       std::vector<path_t> paths_;
@@ -86,9 +85,9 @@ namespace yeepay_ns {
       typedef value_t V_VALUE;
       typedef message_t MESSAGE;
 
-      YeepaySubGraphExtractUDF(int iteration_limit, VertexLocalId_t source, size_t d = 2, size_t start = 0,
+      YeepaySubGraphExtractUDF(int iteration_limit, VertexLocalId_t source, size_t start = 0,
                                size_t end = INF, gutil::JSONWriter* writer = NULL)
-        : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), depth_(d),
+        : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source),
           start_time_(start), end_time_(end), paths_(), writer_(writer), vids() {
       }
 
@@ -141,9 +140,6 @@ namespace yeepay_ns {
       }
 
       void AfterIteration(gpelib4::MasterContext* context) {
-        if (context->Iteration() >= depth_) {
-          context->Stop();
-        }
       }
 
       void EndRun(gpelib4::BasicContext* context) {
@@ -151,14 +147,6 @@ namespace yeepay_ns {
           std::cerr << "m_writer_ is NULL" << std::endl;
           return;
         }
-        writer_->WriteStartObject();
-        writer_->WriteName("debug");
-        writer_->WriteString("");
-        writer_->WriteName("message");
-        writer_->WriteString("");
-        writer_->WriteName("error");
-        writer_->WriteBool(false);
-        writer_->WriteName("results");
         writer_->WriteStartObject();
 
         // fill vertices info into json.
@@ -184,7 +172,7 @@ namespace yeepay_ns {
             writer_->WriteName("attr");
             writer_->WriteStartObject();
             writer_->WriteEndObject();
-            writer_->WriteStartObject();
+            writer_->WriteEndObject();
           }
         }
 
@@ -206,6 +194,7 @@ namespace yeepay_ns {
         for (vertex_map_t::const_iterator cit = group_by_vertex.begin();
              cit != group_by_vertex.end(); ++cit) {
           writer_->WriteStartObject();
+
           writer_->WriteName("type");
           writer_->WriteUnsignedInt<unsigned>(0);
 
@@ -234,6 +223,9 @@ namespace yeepay_ns {
             writer_->WriteMarkVId(*cit1);
           }
           writer_->WriteEndArray();
+          writer_->WriteEndObject();
+
+          writer_->WriteEndObject();
         }
 
         // end filling edges.
