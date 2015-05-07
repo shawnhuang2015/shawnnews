@@ -595,7 +595,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
       rebuilder1.Rebuild("/tmp/deltatopology_full/", &query_state);
     }
   }
-  {
+  /*{
     topology4::TopologyGraph topology2(&instance, "/tmp/deltatopology_half/",true, true);
     // std::cout << "Print /tmp/deltatopology_half/\n";
     // topology4::TopologyPrinter printer(&instance, &topology2);
@@ -649,7 +649,7 @@ TEST(GPE4DELTATEST, Topology_Small) {
   {
     // std::string cmd = "diff  -r /tmp/deltatopology_full /tmp/deltatopology_half";
     // EXPECT_EQ(system(cmd.c_str()), 0);
-  }
+  }*/
 }
 
 
@@ -697,7 +697,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     //std::string cmd = "diff  -r /tmp/deltatopology_large_half /tmp/deltatopology_large_full";
     //EXPECT_EQ(system(cmd.c_str()), 0);
   }
-  {
+   /*{
     std::cout << "Delete Edge Sample: delete 1918 to 1919 \n";
     topology4::TopologyGraph topology5(&instance, "/tmp/deltatopology_large_full/",true, true);
     topology4::TopologyPrinter printer(&instance, &topology5);
@@ -727,7 +727,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     delete[] finalbinary;
     printer.PrintOneVertexEdges(1918);
   }
-  {
+ {
     std::cout << "Delete Vertex Sample: delete 1919\n";
     topology4::TopologyGraph topology5(&instance, "/tmp/deltatopology_large_full/",true, true);
     topology4::TopologyPrinter printer(&instance, &topology5);
@@ -754,7 +754,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     delete[] finalbinary;
     printer.PrintOneVertexEdges(1918);
     printer.PrintOneVertexEdges(1919);
-  }
+  }*/
 }
 
 
