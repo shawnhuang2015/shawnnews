@@ -59,7 +59,8 @@ object EndpointDefinitions {
           "depth" : 1
         },
         "setting" : {
-          "layout" : "circle"
+          "layout" : "circle",
+          "graphType" : "undirected"
         },
         "events" : {
           "submit" : {

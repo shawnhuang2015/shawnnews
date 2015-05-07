@@ -180,6 +180,7 @@
 					// setting pre definition of the graph visualization.
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
+					mygv.graphType(UIPbject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
 					$('#layoutType').val(UIObject.setting.layout);
@@ -211,6 +212,7 @@
 					
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
+					mygv.graphType(UIObject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
 					window.selectionBoxLabels = mygv.label();

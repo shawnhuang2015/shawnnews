@@ -4,6 +4,7 @@ var gsqlv = function(x) {
 		version : '2.0',
 	};
 	var setting; //var setting = {'divID':''divid', 'width':width, 'height':height};
+	var graphType = 'undirected' // eight undirected or directed. 
 	var data = {"nodes":[], "links":[]}; // graph data object.
 	var node_links = {}; // hash table for node and its linked node.
 	var link_nodes = {}; // hash table for links and its source object and target object in node_links.
@@ -189,38 +190,27 @@ var gsqlv = function(x) {
 
 				//initialize link, then add the link
 				gsqlv.initLink(newLink);
-				data.links.push(newLink);
 
-				// TODO : testing multiple edges.
-				// This is just using for testing.
-				var tempNewLink = {};
-				tempNewLink.attr = clone(d.attr);
-				tempNewLink.target = targetID;
-				tempNewLink.source = sourceID;
-				tempNewLink.type = 0;
+				if (graphType == "directed") {
+					data.links.push(newLink);
+				}
+				else if (graphType == "undirected") {
+					var temp = data.links.filter(function(l) {
+						return (l.target == newLink.target && l.source == newLink.source && l.type == newLink.type) 
+						|| (l.target == newLink.source && l.source == newLink.target && l.type == newLink.type)
+					})
 
-				gsqlv.initLink(tempNewLink);
-				data.links.push(tempNewLink);
-
-				var tempNewLink = {};
-				tempNewLink.attr = clone(d.attr);
-				tempNewLink.target = sourceID;
-				tempNewLink.source = targetID;
-				tempNewLink.type = 0;
-
-				gsqlv.initLink(tempNewLink);
-				data.links.push(tempNewLink);
-				/*
-				var tempNewLink = {};
-				tempNewLink.attr = clone(d.attr);
-				tempNewLink.target = sourceID;
-				tempNewLink.source = targetID;
-				tempNewLink.type = 1;
-
-				gsqlv.initLink(tempNewLink);
-				data.links.push(tempNewLink);
-				*/
-				// End testing multiple edges.
+					if (temp.length) {
+						;
+					}
+					else {
+						data.links.push(newLink);
+					}
+				}
+				else {
+					concole.log("unknown graph type.")
+				}
+				
 			})
 
 			// back up the graph data in case of needs
@@ -409,18 +399,37 @@ var gsqlv = function(x) {
 	gsqlv.addLink = function(x) {
 		if (!arguments.length) return;
 
+		// if it is a self-circle, return;
 		if (x.target.type === x.source.type && x.target.id === x.source.id) return gsqlv;
 
 		// check whether the new link is exist.
-		var link = data.links.filter(function(l) {
-			return (l.source.type == x.source.type && l.target.type == x.target.type
-				&& l.source.id == x.source.id && l.target.id == x.target.id 
-				&& l.type == x.type);
-		})[0]
+		var link;
+
+		if (graphType == "directed") {
+			link = data.links.filter(function(l) {
+				return (l.source.type == x.source.type && l.target.type == x.target.type
+					&& l.source.id == x.source.id && l.target.id == x.target.id 
+					&& l.type == x.type);
+			})
+		}
+		else if (graphType == "undirected") {
+			link = data.links.filter(function(l) {
+				return (l.source.type == x.source.type && l.target.type == x.target.type
+					&& l.source.id == x.source.id && l.target.id == x.target.id 
+					&& l.type == x.type) 
+				|| (l.source.type == x.target.type && l.target.type == x.source.type
+					&& l.source.id == x.target.id && l.target.id == x.source.id 
+					&& l.type == x.type)
+			})
+		}
+		else {
+			concole.log("unknown graph type.")
+			return;
+		}
 
 		// if the link is exist, return false for setting pre definition.
 		// else added the link in the graph data, and return.
-		if (link) {
+		if (link.length) {
 			return false;
 		}
 		else {
@@ -494,6 +503,16 @@ var gsqlv = function(x) {
 		}
 		else {
 			;
+		}
+	}
+
+	gsqlv.graphType = function(x) {
+		if (!arguments.length) {
+			return graphType;
+		}
+		else {
+			graphType = x;
+			return gsqlv;
 		}
 	}
 
@@ -876,7 +895,7 @@ var gsqlv = function(x) {
 			.attr("stroke-width", d["stroke-width"])
 			.attr("stroke-linecap", "round")
 			.attr("stroke-dasharray", function(l) {
-				if (d.type == "0") {
+				if (d.type == "-1") {
 					return "5 2"
 				}
 				else {
@@ -1169,6 +1188,9 @@ var gsqlv = function(x) {
 
 	gsqlv.runPreDefinition = function(nodes, links) {
 
+		if (typeof preDefinition == 'undefined') {
+			return;
+		}
 		// Have to run after gsqlv.initNodeLinks();
 		// if there is a coloring pre definition, do the coloring for the node and edges, base on the selection condition.
 		if ('coloring' in preDefinition) {
@@ -1754,6 +1776,7 @@ var gsqlv = function(x) {
 			event_handlers.node_dblclick = function(d) {
 				console.log(d)
 
+				/*
 				temp_event = myObject.events[event];
 				submit_URL = temp_event.URL_head + "?"
 
@@ -1773,22 +1796,32 @@ var gsqlv = function(x) {
 						submit_URL += name + "=" + d[attr.name] +"&";
 					}
 				}
-
-				/*
-				URL_attrs.forEach(function(a){
-					index_txtbox = a.indexOf('*')
-					if (index_txtbox != -1) {
-						attr_name = a.split("*");
-						node_dblclick_URL += attr_name[0] + "=" + d[attr_name[0]] +"&";
-					}
-
-					index_attr = a.indexOf('@')
-					if (index_attr != -1) {
-						attr_name = a.split("@");
-						node_dblclick_URL += attr_name[0] + "=" + myObject.attributes[attr_name[1]] + "&";
-					}
-				})
 				*/
+
+				temp_event = myObject.events[event]; 
+				submit_URL = temp_event.URL_head// + "?"
+				URL_attrs =  temp_event.URL_attrs
+
+				if ("id" in URL_attrs) {
+					submit_URL += "/" + d.id + "?";
+				}
+				else {
+					submit_URL += "?";
+				}
+				
+				for (var attr in URL_attrs) {
+					name = attr;
+					attr = URL_attrs[attr];
+
+					if (name == "id") continue;
+
+					if (attr.usage == "input") {
+						submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
+					}
+					else if (attr.usage == "attributes") {
+						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
+					}
+				}
 
 				$.get(submit_URL, function(message) {
 					message = JSON.parse(message);
@@ -1955,6 +1988,9 @@ var gsqlv = function(x) {
 			// circle layout only supports the graph with 3 or more nodes.
 			// circle layout is generated by a tree layout algorith + rotation function.
 			if (data.nodes.length <= 2) {
+				if (typeof data.nodes[0] != 'undefined') {
+					data.nodes[0].x -= 50;
+				}
 				return gsqlv;
 			}
 
@@ -3018,7 +3054,7 @@ var gsqlv = function(x) {
 			result.nodes.push(tempNode);
 		}) 
 
-		newData.Edges.forEach(function(e) {
+		newData.edges.forEach(function(e) {
 			// Example of a link :
 			// {"source":{"type":"newType1","id":"newKey1"},"target":{"type":"type0","id":"key45"},"attr":{"weight":"0.01","name":"name0.7"}, "type":0};
 			tempEdge = {"source":{"type":"","id":""},"target":{"type":"","id":""},"attr":""};
