@@ -695,7 +695,13 @@
 					if (name == "id") continue;
 
 					if (attr.usage == "input") {
-						submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
+						if (document.getElementsByName(attr.name)[0].value=="") {
+							;	
+						}
+						else{
+							submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
+						} 
+						//submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
 					}
 					else if (attr.usage == "attributes") {
 						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
