@@ -715,6 +715,8 @@
 				var rootNodeType;
 				var rootNodeID;
 
+				// Get type from Input box. Sometimes, we don't use type as input for query.
+				// But type is another key for the retrieve the node in graph. Default is '0';
 				if ("type" in URL_attrs) {
 					rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value;
 				}
@@ -722,6 +724,8 @@
 					rootNodeType = "0"
 				}
 
+				// Get id from Inputbox. The 'id' usually is used as input for query.
+				// Default is '0'
 				if ("id" in URL_attrs) {
 					rootNodeID = document.getElementsByName(URL_attrs.id.name)[0].value;
 				}

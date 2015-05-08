@@ -403,6 +403,9 @@ var gsqlv = function(x) {
 		if (x.target.type === x.source.type && x.target.id === x.source.id) return gsqlv;
 
 		// check whether the new link is exist.
+		// a. directed : find a link with same target, src, and type.
+		// b. undirected : find a link with same type, and same a pair of nodes.
+		// c. other : TBD.
 		var link;
 
 		if (graphType == "directed") {
