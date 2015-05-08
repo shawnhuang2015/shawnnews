@@ -711,6 +711,7 @@
 				// initilize the root node as the query node.
 				//	a. create rootNode id.
 				//	b. set root node by id.
+				//  c. rootNode is = Type + "&" + ID;
 				var rootNodeType;
 				var rootNodeID;
 
