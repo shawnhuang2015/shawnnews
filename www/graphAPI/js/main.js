@@ -16,8 +16,10 @@
 	// The graph visualization initialization setting.
 	var setting = {'divID':'prototype1', 'width':v_width, 'height': v_height};
 
-	window.selectionBoxLabels = mygv.label();	// Initialized the multiselection list box data object.
+	// LabelFiltering initialization status;
+	var filteringStatus = {node:{type:false, id:true}, edge:{type:false, sids:true}};
 
+	window.selectionBoxLabels = mygv.label();	// Initialized the multiselection list box data object.
 
 	// Setting the setting.
 	// Then initialize the graph visualization.
@@ -185,8 +187,10 @@
 
 					$('#layoutType').val(UIObject.setting.layout);
 
-					window.selectionBoxLabels = {node:{"__key":{'type':true, 'id':true}}, edge:{"__key":{'type':true, 'id':true}} }
-
+					//window.selectionBoxLabels = {node:{"__key":{'type':filteringStatus.node.type, 'id':filteringStatus.node.id}}, edge:{"__key":{'type':filteringStatus.edge.type, 'id':filteringStatus.edge.id}} }
+					window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+												edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
+					
 					parent = $('#node_label_filtering').parent();
 					$('#node_label_filtering').next().remove();
 					$('#node_label_filtering').remove();
@@ -215,8 +219,11 @@
 					mygv.graphType(UIObject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
-					window.selectionBoxLabels = mygv.label();
-
+					//window.selectionBoxLabels = mygv.label();
+					//window.selectionBoxLabels = {node:{"__key":{'type':filteringStatus.node.type, 'id':filteringStatus.node.id}}, edge:{"__key":{'type':filteringStatus.edge.type, 'id':filteringStatus.edge.id}} }
+					window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+												edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
+					
 					$('#layoutType').val(UIObject.setting.layout);
 				}
 
@@ -480,7 +487,8 @@
 					}
 				}
 				catch (err) {
-					selectionBoxLabels.node[n.type][key] = false;
+					//selectionBoxLabels.node[n.type][key] = false;
+					selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == 'undefined') ? false : filteringStatus.node[key];
 				}		
 			}
 		})
@@ -530,7 +538,8 @@
 					}
 				}
 				catch (err) {
-					selectionBoxLabels.edge[n.type][key] = false;
+					//selectionBoxLabels.edge[n.type][key] = false;
+					selectionBoxLabels.edge[n.type][key] = (typeof filteringStatus.edge[key] == 'undefined') ? false : filteringStatus.edge[key];
 				}		
 			}
 		})
@@ -671,7 +680,8 @@
 		var myObject = window.pages_obj[index]
 
 		// Initilize the multi-selection box label for new coming data.
-		window.selectionBoxLabels = {node:{"__key":{'type':true, 'id':true}}, edge:{"__key":{'type':true, 'id':true}} }
+		window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+		edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
 
 		// for each events create coresponding URL.
 		for (var key in myObject.events) {
@@ -853,6 +863,15 @@
 		d3.select("#summaryOfSelectedNodes")
 		.style("height", v_height/2.02+"px")
 		.html(mygv.summaryInformationForSelectedNodes())
+	}
+
+	this.checkUndefinedForBool = function(x) {
+		if (typeof x == 'undefined') {
+			return false;
+		}
+		else {
+			return x;
+		}
 	}
 
 	//refer the graph visualization object.

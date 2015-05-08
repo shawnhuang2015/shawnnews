@@ -96,8 +96,8 @@ var gsqlv = function(x) {
 	var edge_label_attr_array = []//["some_int"]
 
 	// use for displaying labels of nodes and edges. __key is default as type and id.
-	var node_label_dict_type = {"__key":{'type':true, 'id':true}} // dict[node_type] = [label1, label2, ...] 
-	var edge_label_dict_type = {"__key":{'type':true, 'id':true}} // dict[edge_type] = [label1, label2, ...] 
+	var node_label_dict_type = {"__key":{'type':false, 'id':true}} // dict[node_type] = [label1, label2, ...] 
+	var edge_label_dict_type = {"__key":{'type':false, 'id':true}} // dict[edge_type] = [label1, label2, ...] 
 
 
 	// may use in layout algorithm.
@@ -1855,6 +1855,8 @@ var gsqlv = function(x) {
 						gsqlv
 						.addSubGraph(newData)
 						.run()	
+
+						updateLabelFilteringListBox(mygv.data());
 
 						// backup json message, and output the json message in JSON tabs, and output the summary information in the Summary tabs.
 						window.messageArray.push(message);
