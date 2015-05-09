@@ -38,7 +38,7 @@ bool RequestFilterExample(
                const SchemaManager *schemamanager,
                const std::string &method,
                const std::string &url,
-               const std::string &data,
+               const char *data, size_t data_length,
                const std::map<std::string, std::vector<std::string> > &params,
                Json::Value &jsoptions,
                IdSet &idset,

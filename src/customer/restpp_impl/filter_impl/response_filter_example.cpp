@@ -36,28 +36,7 @@ extern "C" {
 * @return
 */
 bool ResponseFilterExample(const std::string &response, std::string &new_response){
-  std::stringstream ss;
-  ss.str(response);
-  std::vector<size_t> nos;
-  size_t no;
-  while(ss>>no){
-    nos.push_back(no);
-  }
-  if(nos.size() == 0){
-    new_response = "Received 0 line.";
-    return true;
-  }
-  std::ostringstream convert;
-  convert<<"Received lines: "<<nos[nos.size() - 1]<<std::endl;
-  if(nos.size() > 1){
-    convert<<"Failed lines:";
-    for(int i = 0; i < nos.size() - 1; i ++){
-      //on the request filter the lines are counted from 0
-      convert<<" "<<nos[i] + 1;
-    }
-  }
-  convert<<".";
-  new_response = convert.str();
+  new_response = std::string("Add something new") + response;
   return true;
 }
 
