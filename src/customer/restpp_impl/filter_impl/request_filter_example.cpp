@@ -7,7 +7,7 @@
  * Created on: Feb 5, 2015
  *      Author: jzhong
  ******************************************************************************/
-#include <librestpp.hpp>
+#include <restpp/librestpp.hpp>
 
 #include <sstream>
 #include <cstdio>
@@ -23,15 +23,16 @@ extern "C" {
 * @param schema_manager The graph schema.
 
   Use the following four parameters to access the HTTP request:
-* @param method The HTTP method
-* @param url The URL of the request
-* @param data The post data of the request
-* @param params The query string parsed into key->vector map
-
+* @param method - The HTTP method
+* @param url - The URL of the request
+* @param data - The post data of the request
+* @param data_length  - Length of the POST data
+* @param params - The query string parsed into key->vector map
+  The following parameters are your output:
+* @param jsoptions - The jsoptions object you will access on impl.hpp
 * @param id_set The set of ids for translation
 * @param error_message if anything wrong happens, set the error_message. If error_message is set to
 *        nonempty, the request will be immediately returned without forwarding to GPE.
-*
 * @return
 */
 bool RequestFilterExample(
