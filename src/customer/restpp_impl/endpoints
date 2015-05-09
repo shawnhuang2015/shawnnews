@@ -6,7 +6,7 @@
          "target":"GPEAG",
          "parameters":null,
          "data":"JSON",
-         "request_filter":"BlueprintFilterImpl",
+         "request_filter":"BlueprintFilter",
          "summary":"blue print API."
       }
    }
