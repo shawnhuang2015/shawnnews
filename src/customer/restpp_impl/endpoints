@@ -5,9 +5,26 @@
          "action":"query",
          "target":"GPEAG",
          "parameters":null,
-         "data":"JSON",
          "request_filter":"BlueprintFilter",
          "summary":"blue print API."
+      }
+   },
+   "example":{
+      "GET/POST":{
+         "function":"example",
+         "action":"query",
+         "target":"GPEAG",
+         "parameters":{
+            "start_id":{
+               "type":"STRING",
+               "min_count":1,
+               "max_count":1,
+               "min_length":1,
+               "max_length":256
+            }
+         },
+         "response_filter":"ResponseFilterExample",
+         "summary":"This is an example UDF to demonstrate how to write endpoint configuration"
       }
    }
 }
