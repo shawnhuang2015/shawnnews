@@ -33,10 +33,11 @@ namespace UDIMPL {
         return false;
       request.outputwriter_->WriteStartObject();
       request.outputwriter_->WriteName("vertex");
-      // sample to use GraphAPI
-      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
-      graphapi->GetOneVertex(local_start)->WriteToJson(*request.outputwriter_);
-      delete graphapi;
+      {
+        // sample to use GraphAPI
+        boost::shared_ptr<GraphAPI> graphapi = serviceapi.CreateGraphAPI_Safe(&request);
+        graphapi->GetOneVertex(local_start)->WriteToJson(*request.outputwriter_);
+      }
       request.outputwriter_->WriteName("neighborsize");
       // sample to run one UDF
       typedef KNeighborSize UDF_t;

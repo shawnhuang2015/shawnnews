@@ -11,9 +11,9 @@
  *  Created on: Apr 24, 2015
  *      Author: jzhong
  ******************************************************************************/
-#include <sysinit.hpp>
-#include <filtermanager.hpp>
-#include <parse.hpp>
+#include <restpp/sysinit.hpp>
+#include <restpp/filtermanager.hpp>
+#include <restpp/parse.hpp>
 
 /*----------------------------------------------------------------------------------------
 Instruction:  All filter code are included in this file and compiled into one object file.
