@@ -28,7 +28,8 @@ namespace UDIMPL {
     bool RunUDF_KNeighborSize(ServiceAPI& serviceapi, EngineServiceRequest& request){
       // sample to convert vid.
       VertexLocalId_t local_start;
-      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start))
+      //if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start))
+      if (!serviceapi.UIdtoVId(request, request.request_data_, local_start))
         return false;
       request.outputwriter_->WriteStartObject();
       request.outputwriter_->WriteName("vertex");
