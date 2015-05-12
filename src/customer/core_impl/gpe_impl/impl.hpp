@@ -43,6 +43,7 @@ namespace UDIMPL {
     }
     bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
       VertexLocalId_t local_start;
+      std::cout << "request arg: " << request.request_argv_[1] << ", " << request.request_argv_[2] << std::endl;
       if (!serviceapi.UIdtoVId(request, "0_" + request.request_argv_[1], local_start))
         return false;
       typedef TransactionFraudScore UDF_t;

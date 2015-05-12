@@ -97,11 +97,22 @@ object EndpointDefinitions {
   }))
 
   Endpoints.register(Endpoint(GET(), "transactionfraud", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    
+    // Map of query id types, corresponds to typeId in graph_config.yaml
+    val type_mapping = Map("transaction" -> 0,
+                           "userid" -> 1,
+                           "ssn" -> 2,
+                           "bankid" -> 3,
+                           "cell" -> 4,
+                           "imei" -> 5,
+                           "ip" -> 6)
 
     if(queryString.contains("id")) {
       val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
-      val request = GpeRequest(List("transactionfraud", uid), queryString)
-      context.gpe.writeAndWait_TypedIds(request, List(uid -> 0)); 
+      val raw_type: String = queryString.getOrElse("type", Seq()).headOption.getOrElse("transaction")
+      val id_type = type_mapping.get(raw_type).getOrElse(0)
+      val request = GpeRequest(List("transactionfraud", uid, id_type.toString), queryString)
+      context.gpe.writeAndWait_TypedIds(request, List(uid -> id_type));
     } else {
       Some(Json.stringify(Json.obj("error" -> true, "message" -> "id is missing in query string")))
     }
