@@ -1,8 +1,0 @@
-log < Everything is dropped.
----
-base> 
-
-log < Job udftest could not be found.
----
-base> 
-
