@@ -17,23 +17,26 @@ extern "C" {
 #endif
 
 /**
-* This function is where you implement your filter. The name of this function does not matter.
-* You can use any function name. Just remember to update the driver function.
-*
-* @param schema_manager The graph schema.
+* This function is where you implement your request filter. The name of this function does not matter.
+* You can use any function name.
+
+  Use the following parameter to access the graph schema.
+* @param schema_manager
 
   Use the following four parameters to access the HTTP request:
 * @param method - The HTTP method
 * @param url - The URL of the request
 * @param data - The post data of the request
 * @param data_length  - Length of the POST data
-* @param params - The query string parsed into key->vector map
+* @param params - The query string parsed into (parameter name)->(values) map
+
   The following parameters are your output:
 * @param jsoptions - The jsoptions object you will access on impl.hpp
-* @param id_set The set of ids for translation
-* @param error_message if anything wrong happens, set the error_message. If error_message is set to
+* @param id_set The - set of ids for translation
+* @param error_message - if anything wrong happens, set the error_message. If error_message is set to
 *        nonempty, the request will be immediately returned without forwarding to GPE.
-* @return
+* @return - true if every is right and the request is expected to be sent to GPE, false if something wrong happen
+*         and the error_message will be returned to customer.
 */
 bool RequestFilterExample(
                const SchemaManager *schemamanager,
