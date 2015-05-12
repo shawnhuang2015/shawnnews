@@ -22,7 +22,7 @@ extern "C" {
 * You can use any function name. Just remember to update the "response_filter" filed of your endpoint configuration.
 *
 * @param response - the response sent from GPE to RESTPP
-* @param new_response - the response that actually sent back to user.
+* @param new_response - the response that actually sent back to customer.
 * @return
 */
 bool ResponseFilterExample(const std::string &response, std::string &new_response){
