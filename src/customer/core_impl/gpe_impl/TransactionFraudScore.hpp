@@ -204,7 +204,7 @@ namespace gperun{
           //first iteration, send out flag for entity
           if (context->Iteration() == 1) {
                 MESSAGE mesg(1 << (targetvertexattr->type() - 1));
-                context->Write(targetvid, mesg); 
+                context->Write(targetvid, mesg);
                 context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
           }
           else {
@@ -216,8 +216,13 @@ namespace gperun{
           }
         }
         else { // activate all other targets
-          context->Write(targetvid, srcvertexvalue);
-          context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
+          if (context->Iteration() == 1) {
+            MESSAGE mesg(1 << (srcvertexattr->type() - 1));
+            context->Write(targetvid, mesg);
+          } else {
+            context->Write(targetvid, srcvertexvalue);
+            context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
+          }
         }
     }
 
@@ -241,7 +246,8 @@ namespace gperun{
             //if fraud transaction
             if (vertexattr ->type() == TYPE_TRANSACTION && vertexattr->GetBool(0, false)) {
                 int flags = value.flags;
-                uint32_t dist = context->Iteration() / 2;
+                // it will be fine adding 1 for both transaction or non-transaction queries.
+                uint32_t dist = (context->Iteration() + 1) / 2;
                 for (int i = 0; i < TOTAL_FLAGS; ++i) {
                   if(typedistances.find(TypeDistance(i)) == typedistances.end()) {
                     if ((flags & (1 << i)) > 0) {
