@@ -1,109 +1,160 @@
 !function() {
 	console.log("<== where the code starts.")
+	this.messageArray = [];  // Record message from backend.
+	this.scaleAbilityData = [];  // Record the result for scalability testing.
 
-	window.v_width = $(window).width() - 20//1024;
-	window.v_height = $(window).height()-255//660;
+	window.v_width = $(window).width() / 1.1; // Setting the width of the visualization.
+	window.v_height = $(window).height()- 320;// Setting the height of the visualization.
 
+
+	//<div class="container-fluid" width = v_width>
+	$('#tapView').width(v_width*1.05);  // Setting the width of the tap for graph, JSON, summary, and more;
+
+	// Create the graph visualization object.
 	var mygv = new gsqlv("mygv");
+
+	// The graph visualization initialization setting.
 	var setting = {'divID':'prototype1', 'width':v_width, 'height': v_height};
 
-	window.selectionBoxLabels = {"node":{}, "edge":{}}	// each node type, selected
+	// LabelFiltering initialization status;
+	var filteringStatus = {node:{type:false, id:true}, edge:{type:false, sids:true}};
 
+	window.selectionBoxLabels = mygv.label();	// Initialized the multiselection list box data object.
+
+	// Setting the setting.
+	// Then initialize the graph visualization.
 	mygv
 	.setting(setting)
 	.init()
  
-
+	// The configure object of the node label multiselecting list box.
     var nodeLabelFiltering = {
-        onChange: function(option, checked, select) {
-            //if (checked)
-            //  alert('Changed option ' + $(option).val() + '. is checked');
-            //else
-            // alert('Changed option ' + $(option).val() + '. is unchecked');
-        },
-        maxHeight: 200,
+        maxHeight: 600,
         buttonWidth: '100%',
+        enableClickableOptGroups: true,
+        // Call back function once the selection changed.
         buttonText: function(options, select) {
 			var labels = [];
-			for (var key in selectionBoxLabels.node){
-				selectionBoxLabels.node[key].selected = false;
-			}
 
-			options.each(function() {
-			 if ($(this).attr('label') !== undefined) {
-			     labels.push($(this).attr('label'));
-			     selectionBoxLabels.node[$(this).attr('label')].selected = true;
-			 }
-			 else {
-			     labels.push($(this).html());
-			     selectionBoxLabels.node[$(this).html()].selected = true;
-			 }
+			if (mygv.data().nodes.length != 0)
+				for (var key in selectionBoxLabels.node){
+					for (var item in selectionBoxLabels.node[key]) {
+						selectionBoxLabels.node[key][item] = false;
+					}		
+				}	
+
+			options.each(function() {			 
+				var key = $(this).val();
+				var type = "";
+
+				 if ($(this).parent().is('select')) {
+				 	type = "__key"
+				 	key = key;
+				}
+				else if ($(this).parent().is('optgroup')){
+					type = $(this).parent().attr("value");
+					key = key.split('&')[0]
+				}
+				else {
+					type = "";
+				}
+
+				try {
+					selectionBoxLabels.node[type][key] = true;
+				}
+				catch (err) {
+					console.log(err);
+				}
+
+				labels.push(key);			 
 			});
 
-			mygv.nodeLabel(labels);
+			mygv.label(selectionBoxLabels);
 			mygv.redraw();
 
+			if (options.length === 0) {
+				return 'No option selected ...';
+			}
+			else if (options.length > 4) {
+				return 'More than 4 options selected!';
+			}
+			else {
+				return labels.join(', ') + '';
+			}
+		},
+			//includeSelectAllOption: true,
+			//selectAllText: 'Check all!'
+
+	}
 
 
-            if (options.length === 0) {
-                return 'No option selected ...';
-            }
-            else if (options.length > 5) {
-                return 'More than 5 options selected!';
-            }
-             else {
-                 return labels.join(', ') + '';
-             }
-        },
-        //includeSelectAllOption: true,
-        //selectAllText: 'Check all!'
-
-    }
-
+    // The configure object of the edge label multiselecting list box.
     var edgeLabelFiltering = {
-        maxHeight: 200,
+        maxHeight: 600,
         buttonWidth: '100%',
+        enableClickableOptGroups: true,
+        // Call back function once the selection changed
         buttonText: function(options, select) {
         	var labels = [];
 
-			for (var key in selectionBoxLabels.edge){
-				selectionBoxLabels.edge[key].selected = false;
-			}
+			if (mygv.data().links.length != 0)
+				for (var key in selectionBoxLabels.edge){
+					for (var item in selectionBoxLabels.edge[key]) {
+						selectionBoxLabels.edge[key][item] = false;
+					}		
+				}
 
-			options.each(function() {
-			 if ($(this).attr('label') !== undefined) {
-			     labels.push($(this).attr('label'));
-			     selectionBoxLabels.edge[$(this).attr('label')].selected = true;
-			 }
-			 else {
-			     labels.push($(this).html());
-			     selectionBoxLabels.edge[$(this).html()].selected = true;
-			 }
+			options.each(function() {			 
+				var key = $(this).val();
+				var type = "";
+
+				 if ($(this).parent().is('select')) {
+				 	type = "__key"
+				 	key = key;
+				}
+				else if ($(this).parent().is('optgroup')){
+					type = $(this).parent().attr("value");
+					key = key.split('&')[0]
+				}
+				else {
+					type = "";
+				}
+
+				try {
+					selectionBoxLabels.edge[type][key] = true;
+				}
+				catch (err) {
+					console.log(err);
+				}
+
+				labels.push(key);			 
 			});
 
-			mygv.edgeLabel(labels);
+			mygv.label(selectionBoxLabels);
 			mygv.redraw();
 
-            if (options.length === 0) {
-                return 'No option selected ...';
-            }
-            else if (options.length > 5) {
-                return 'More than 5 options selected!';
-            }
-             else {
-      
-                 return labels.join(', ') + '';
-             }
-        },
-        //includeSelectAllOption: true,
-        //selectAllText: 'Check all!'
+			if (options.length === 0) {
+				return 'No option selected ...';
+			}
+			else if (options.length > 4) {
+				return 'More than 4 options selected!';
+			}
+			else {	
+				return labels.join(', ') + '';
+			}
+		},
+		//includeSelectAllOption: true,
+		//selectAllText: 'Check all!'
 
-    }
- 	// Initialize main menu
+	}
+
+ 	// Initialize main menu, base on the message from endpoint.
 	$(document).ready(function() {
 		//Query the engine to get tab layout information
 		$.get( "engine/UIpages", function( data ) {
 			//console.log("Received engine/UIpages " + data);
+
+
 			window.pages_obj = JSON.parse(data); 
 			//sort on index
 			window.pages_obj.sort(function(a,b) {return (a.index - b.index);});
@@ -116,6 +167,8 @@
 				//console.log(window.pages_obj[removedSpaces]);
 				//console.log("Registering event for " + "#" + removedSpaces);
 
+
+				// onclick on main menu will clean everything.
 				$(document).on('click', '#'+removedSpaces, function(event){ 
 					//console.log("click" + event.target.id);
 					//console.log("form data is " + window.pages_obj[event.target.id]);
@@ -124,14 +177,20 @@
 
 					UIObject = window.pages_obj[event.target.name.split("_")[1]]
 					
+					// Clean graph visualization object.
+					// initialize layout
+					// setting pre definition of the graph visualization.
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
+					mygv.graphType(UIPbject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
 					$('#layoutType').val(UIObject.setting.layout);
 
-					window.selectionBoxLabels = {"node":{}, "edge":{}}
-
+					//window.selectionBoxLabels = {node:{"__key":{'type':filteringStatus.node.type, 'id':filteringStatus.node.id}}, edge:{"__key":{'type':filteringStatus.edge.type, 'id':filteringStatus.edge.id}} }
+					window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+												edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
+					
 					parent = $('#node_label_filtering').parent();
 					$('#node_label_filtering').next().remove();
 					$('#node_label_filtering').remove();
@@ -147,6 +206,7 @@
 					$('#edge_label_filtering').multiselect(edgeLabelFiltering);
 				});
 
+				// the first item of main menu is activated by default.
 				if (i == 0) {
 					//Index 0 is activated
 					$('#content-page').empty();
@@ -156,8 +216,14 @@
 					
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
+					mygv.graphType(UIObject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
+					//window.selectionBoxLabels = mygv.label();
+					//window.selectionBoxLabels = {node:{"__key":{'type':filteringStatus.node.type, 'id':filteringStatus.node.id}}, edge:{"__key":{'type':filteringStatus.edge.type, 'id':filteringStatus.edge.id}} }
+					window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+												edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
+					
 					$('#layoutType').val(UIObject.setting.layout);
 				}
 
@@ -165,35 +231,54 @@
 				$("#navbar ul").append(tabline); 				
 			}
 
-
+			
+			// added the key press event of the selection condition.
+			$('#selectionCondition').keypress(function(e){
+				// enter key is pressed
+				if(e.keyCode==13) {
+					selectingByConditions();
+				}
+			});
+			
 
 			$('#content-page').append(window.pages_obj["ExploreNeighborhood"]);
+
+			// stroe the JSON message.
+			// out the json message in the JSON tab.
+			// out the summary information of graph, and selected sub graph in the summary tab.
+			messageArray.push(window.pages_obj)
+			JSONMessageOutput();
+			summaryInformationOutput();
 
 		});
 		
 		//*******************
 		//initilize graph visualization menu
 
-        //var bodyStyle = $('body')[0].style;
+        //initilize the color picker.
+        // set the colorchange event for changing the color of selected nodes and edges.
         $('#colorpicker').colorpicker({
-            color: "#ff0000"  //bodyStyle.backgroundColor
+            color: "#1f77b4"  //bodyStyle.backgroundColor
         }).on('changeColor', function(ev) {
             //bodyStyle.backgroundColor = ev.color.toHex();
             mygv.coloringNodes(ev.color.toHex())
+            mygv.coloringEdges(ev.color.toHex())
         });
 
-
+        // initilize the multi selection list box for displaying labels of nodes and edges.
         $('#node_label_filtering').multiselect(nodeLabelFiltering);
         $('#edge_label_filtering').multiselect(edgeLabelFiltering);
+
+
     });
 
-
-	//.layout("force")	
-
+	// remove space function.
 	this.removeSpaces = function(s) {
 		return s.replace(/\s/g, '');
 	}
 
+	// Generate the data object for creating the main menu.
+	// Specifiy the onclick event for submit button as onclick_submit(index).
 	this.generateForm = function(pagesObject){
 
 		elements = pagesObject.elements;
@@ -215,159 +300,272 @@
 		return s; 
 	}
 
+	// Not in use.
 	this.labelFilter = function() {
+		// get the label string from multiselection list box.
 		var node_label_string = document.getElementById("node_label").value;
 		var edge_label_string = document.getElementById("edge_label").value;
 
+		// parse the label array from label string.
 		var node_label_array = node_label_string.split(';').map(function(d){return d.trim();})
 		var edge_label_array = edge_label_string.split(';').map(function(d){return d.trim();})
 
+		// Setting the label array for node label displaying and edge label displaying.
 		mygv.nodeLabel(node_label_array);
 		mygv.edgeLabel(edge_label_array);
+
+		// redraw everyting on the main stage
 		mygv.redraw();
 	}	
 
+	// Not in use.
 	this.selectingNodesByConditions = function() {
+		//get the condition string from the input box for node.
 		var conditionString = $("#temp_node_conditions").val();
+
+		// setting the condition string to the gsqlv.
+		// doing the selecting nodes by condition string.
 		mygv.selectingNodesByConditions(conditionString);
 	}
 
+	// Not in use.
 	this.selectingEdgesByConditions = function() {
+
+		//get the condition string from the input box for edge
 		var conditionString = $("#temp_edge_conditions").val();
+
+		//setting the condition string to the gsqlv.
+		// doing the selecting edges by condition string.
 		mygv.selectingEdgesByConditions(conditionString);
 	}
 
+	// Newest version for selecting by conditions
 	this.selectingByConditions = function() {
-		var conditionString = $("#selectionCriterion").val();
+
+		// get the condition string from input box.
+		// get the condition type from the list box.
+		var conditionString = $("#selectionCondition").val();
 		var conditionType = $("#selectionType").val();
 
+		// Unselect everything in the graph visualization.
 		mygv.unselectingEverything();
 
+		// doing selecting base on condition type and condition string.
 		if (conditionType == "nodes") {
 			mygv.selectingNodesByConditions(conditionString);
 		}
 		else if (conditionType == "edges") {
 			mygv.selectingEdgesByConditions(conditionString);
 		}
+		
 	}
 
+	// call back function for the layout list box.
 	this.layoutChanged = function() {
+
+		// get the new layout name.
 		var layoutType = $("#layoutType").val();
-		//mygv.layout(layoutType).run().center_view();
+		
+		// set the new layout for gsqlv
+		// start the layout process
+		// refresh as animation in 500 milliseconds.
+
 		mygv
 		.layout(layoutType)
 		.startLayout()
 		.refreshAnimation(500)
 
+		// set to center view after 500 milliseconds.
 		setTimeout(
 		function() {
 			mygv.center_view();
 		}, 500)
 	}
 
+	// call back function for set root node button.
+	this.setTheRootNode = function() {
+
+		// set the selected node as the root node.
+		mygv.setSelectedNodeToBerootNode();
+
+		// redo the start layout.
+		layoutChanged();
+	}
+
+	// call back function for the highlight button
 	this.highlightingNodes = function() {
+
+		// check whether or not there is a node has been selected.
+		// if it is true, change the label of the button as unhighlighting.
+		// else change the label of the button as highlighting.
 		if(mygv.highlightingNodes()) {
-			$('#b_highlightingNodes').html('Unhighlighting');	
+			$('#b_highlightingNodes').html('unhighlighting');	
 		}
 		else {
-			$('#b_highlightingNodes').html('Highlighting');
+			$('#b_highlightingNodes').html('highlighting');
 		}
 	}
 
+	// call back function for hiding nodes.
+	// hide the selected node from the graph.
 	this.hidingNodes = function() {
 		mygv.hidingNodes();
 	}
 
+	// coloring the nodes.
+	// get color from color picker
+	// set color for selected nodes and corelated edges.
+	// then unselected everything.
 	this.coloringNodes = function() {		
 		var highlightingColor = document.getElementById("highlightingColorPicker").value.toLowerCase()
 		mygv.coloringNodes(highlightingColor);
 		mygv.unselectingEverything();
 	}
 
+	// call back function for onchange event of the color picker.
+	// change the color of the selected ndoes and edges on the fly.
 	this.coloringNodesOnChange = function() {
 		var highlightingColor = document.getElementById("highlightingColorPicker").value.toLowerCase()
 		mygv.coloringNodes(highlightingColor);
 	}
 
+	// use for update the label of the multi selection list box for the labels displaying of nodes and edges.
+	// Input : graph data.
+	//		1. Store the previous status of the selection.
+	//  	2. Parsing the graph data, get what attributes each type has.
+	//		3. Recreate the mutli selection list box base on types, attribtues, and status.
 	this.updateLabelFilteringListBox = function(d) {
-		//console.log("updatelabelFilteringListBox.")
+		// if graph data is empty return.
+		if (Object.keys(d).length ===0) {
+			return;
+		}
 
-		// generate selectionBoxLabels
+
+		// if there is not a node in graph return;
+		if (d.nodes.length === 0) {
+			return;
+		}
+
+		// store the previous status of the selectionBoxLabels. The status is like whether a label is selected or not.
 		nodelabels = selectionBoxLabels.node;
-		selectionBoxLabels.node = {};
 
-		d.vertices.forEach(function(n){
+		// initilize the selectionBoxLabels of node.
+		// "__key" is the type for "type" and "id", which is the key of a node and edge.
+		selectionBoxLabels.node = {"__key":{}};
 
-			if ('type' in n) {
-				if ('type' in nodelabels) {
-					selectionBoxLabels.node.type = nodelabels.type;
+		// for each nodes 'type','id' are default for every nodes.
+		// Then get what attribtues each type of node has.
+		d.nodes.forEach(function(n){
+			['type', 'id'].forEach(function(d, i) {
+				if (d in n) {
+					if (d in nodelabels["__key"]) {
+						selectionBoxLabels.node["__key"][d] = nodelabels["__key"][d];
+					}
+					else {
+						selectionBoxLabels.node["__key"][d] = false;
+					}
 				}
 				else {
-					selectionBoxLabels.node.type = {"type":"key", "selected":true}
+					;
 				}
+			})
+
+			if (n.type in selectionBoxLabels.node) {
+				;
 			}
-			if ('id' in n) {
-				if ('id' in nodelabels) {
-					selectionBoxLabels.node.id = nodelabels.id;
-				}
-				else {
-					selectionBoxLabels.node.id = {"type":"key", "selected":true}
-				}
+			else {
+				selectionBoxLabels.node[n.type] = {};
 			}
 
 			for (var key in n.attr) {
-				if (key in nodelabels) {
-					selectionBoxLabels.node[key] = nodelabels[key];
+				try {
+					if (key in nodelabels[n.type]) {
+						selectionBoxLabels.node[n.type][key] = nodelabels[n.type][key];
+					}
+					else {
+						selectionBoxLabels.node[n.type][key] = false;
+					}
 				}
-				else {
-					selectionBoxLabels.node[key] = {"type":"attr", "selected":false}
-				}
+				catch (err) {
+					//selectionBoxLabels.node[n.type][key] = false;
+					selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == 'undefined') ? false : filteringStatus.node[key];
+				}		
 			}
 		})
 
+		// if there is not a links in the graph, skip the labels generation process for links
+		if (d.links.length === 0) {
+			return;
+		}
+
+		// store the previous status of the selectionBoxLabels of edge. The status is like whether a label is selected or not.
 		edgelabels = selectionBoxLabels.edge;
-		selectionBoxLabels.edge = {};
+		selectionBoxLabels.edge = {"__key":{}};
 
-		d.Edges.forEach(function(n){
-
-			if ('type' in n) {
-				if ('type' in edgelabels) {
-					selectionBoxLabels.edge.type = edgelabels.type;
+		// initilize the selectionBoxLabels of edge.
+		// "__key" is the type for "type" and "id", which is the key of a edge.
+		// for each nodes 'type','id' are default for every edges.
+		// Then get what attribtues each type of edge has.
+		d.links.forEach(function(n){
+			['type', 'id'].forEach(function(d, i) {
+				if (d in n) {
+					if (d in edgelabels["__key"]) {
+						selectionBoxLabels.edge["__key"][d] = edgelabels["__key"][d];
+					}
+					else {
+						selectionBoxLabels.edge["__key"][d] = false;
+					}
 				}
 				else {
-					selectionBoxLabels.edge.type = {"type":"key", "selected":true}
+					;
 				}
+			})
+
+			if (n.type in selectionBoxLabels.edge) {
+				;
 			}
-			if ('id' in n) {
-				if ('id' in edgelabels) {
-					selectionBoxLabels.edge.id = edgelabels.id;
-				}
-				else {
-					selectionBoxLabels.edge.id = {"type":"key", "selected":true}
-				}
+			else {
+				selectionBoxLabels.edge[n.type] = {};
 			}
 
 			for (var key in n.attr) {
-				if (key in edgelabels) {
-					selectionBoxLabels.edge[key] = edgelabels[key];
+				try {
+					if (key in edgelabels[n.type]) {
+						selectionBoxLabels.edge[n.type][key] = edgelabels[n.type][key];
+					}
+					else {
+						selectionBoxLabels.edge[n.type][key] = false;
+					}
 				}
-				else {
-					selectionBoxLabels.edge[key] = {"type":"attr", "selected":true}
-				}
+				catch (err) {
+					//selectionBoxLabels.edge[n.type][key] = false;
+					selectionBoxLabels.edge[n.type][key] = (typeof filteringStatus.edge[key] == 'undefined') ? false : filteringStatus.edge[key];
+				}		
 			}
 		})
-
 
 		// update node label list box.
+		// 1. Get the multi-selection list box container (.parent());
+		// 2. Remove the next sibling of multi-selection list box.
+		// 3. Remove the multi-selection list box itself.
+		// 4. Append a new multi-selection list box.
+		// 5. Append keys in the begin of the list box.
+		// 6. Append attribute for each type in the list box.
+		// 7. call the multi-selection box initialization.
+
+		//1.2.3
 		parent = $('#node_label_filtering').parent();
 		$('#node_label_filtering').next().remove();
 		$('#node_label_filtering').remove();
 
-		parent.append('<select id="node_label_filtering" multiple="multiple">')	
+		//4.
+		parent.append('<select id="node_label_filtering" multiple="multiple">')
 
-		for (var key in selectionBoxLabels.node) {
+
+		//5.
+		for (var key in selectionBoxLabels.node.__key) {
 			var tempOptionHTML = '<option value="' + key + '"';
-			if (selectionBoxLabels.node[key].selected) {
+			if (selectionBoxLabels.node.__key[key]) {
 				tempOptionHTML += 'selected="selected">'
 			}
 			else {
@@ -375,30 +573,62 @@
 			}
 
 			tempOptionHTML += key + '</option>'
-
 			$('#node_label_filtering').append(tempOptionHTML)
+		} 
+
+		//6.
+		for (var type in selectionBoxLabels.node) {
+
+			var groupList;
+
+			if (type == "__key") {
+				continue;
+			} 
+			else {
+				groupList = $('<optgroup value="'+type+'" label="Type ' + type + '"></optgroup>')
+				$('#node_label_filtering').append(groupList);
+			}
+
+			for (var key in selectionBoxLabels.node[type]) {
+				var tempOptionHTML = '<option value="' + key +'&'+type + '"';
+				if (selectionBoxLabels.node[type][key]) {
+					tempOptionHTML += 'selected="selected">'
+				}
+				else {
+					tempOptionHTML += '>'
+				}
+
+				tempOptionHTML += key + '</option>'
+				groupList.append(tempOptionHTML)
+			}	
+
+
 		}
 
-		/*
-		$('#node_label_filtering').append('<option value="type" selected="selected">type</option>')
-		$('#node_label_filtering').append('<option value="id" selected="selected">id</option>')
-		$('#node_label_filtering').append('<option value="some_int" selected="selected">some_int</option>')
-		$('#node_label_filtering').append('<option value="some_float" selected="selected">some_float</option>')
-		*/
-
+		//7.
         $('#node_label_filtering').multiselect(nodeLabelFiltering);
 
-        //Edge labels
+		// update edge label list box.
+		// 1. Get the multi-selection list box container (.parent());
+		// 2. Remove the next sibling of multi-selection list box.
+		// 3. Remove the multi-selection list box itself.
+		// 4. Append a new multi-selection list box.
+		// 5. Append keys in the begin of the list box.
+		// 6. Append attribute for each type in the list box.
+		// 7. call the multi-selection box initialization.
 
+		//1.2.3
 		parent = $('#edge_label_filtering').parent();
 		$('#edge_label_filtering').next().remove();
 		$('#edge_label_filtering').remove();
 
+		//4.
 		parent.append('<select id="edge_label_filtering" multiple="multiple">')	
 
-		for (var key in selectionBoxLabels.edge) {
+		//5.
+		for (var key in selectionBoxLabels.edge.__key) {
 			var tempOptionHTML = '<option value="' + key + '"';
-			if (selectionBoxLabels.edge[key].selected) {
+			if (selectionBoxLabels.edge.__key[key]) {
 				tempOptionHTML += 'selected="selected">'
 			}
 			else {
@@ -406,252 +636,245 @@
 			}
 
 			tempOptionHTML += key + '</option>'
-
 			$('#edge_label_filtering').append(tempOptionHTML)
+		} 
+
+		//6.
+		for (var type in selectionBoxLabels.edge) {
+
+			var groupList;
+
+			if (type == "__key") {
+				continue;
+			} 
+			else {
+				groupList = $('<optgroup value="'+type+'" label="Type ' + type + '"></optgroup>')
+				$('#edge_label_filtering').append(groupList);
+			}
+
+			for (var key in selectionBoxLabels.edge[type]) {
+				var tempOptionHTML = '<option value="' + key +'&'+type + '"';
+				if (selectionBoxLabels.edge[type][key]) {
+					tempOptionHTML += 'selected="selected">'
+				}
+				else {
+					tempOptionHTML += '>'
+				}
+
+				tempOptionHTML += key + '</option>'
+				groupList.append(tempOptionHTML)
+			}		
 		}
 
+		//7.
         $('#edge_label_filtering').multiselect(edgeLabelFiltering);
 	}
 
+	// call back function for the submit button. 
+	// Input : index of the menu in of the main menu.
+	//	1. Get the pages object base on the index.
+	//	2. Parse the pages object, and generate the URL for submit button.
+	//	3. Parse the pages object, and set the URL for visualization by calling setURL().
+	//	4. Call back function for the rest request of submit button.
 	this.onclick_submit = function(index) {
 		var myObject = window.pages_obj[index]
 
-		if (index == 0) {
-			//http://uitest.graphsql.com:8080/engine/kneighborhood_full_type?id*primeryKey&type*type&depth@depth
+		// Initilize the multi-selection box label for new coming data.
+		window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}}, 
+		edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
 
-			for (var key in myObject.events) {
-				if (key == "submit") {
-					temp_event = myObject.events[key]; 
-					submit_URL = temp_event.URL_head + "?"
+		// for each events create coresponding URL.
+		for (var key in myObject.events) {
+			if (key == "submit") {
+				// setting URL for submit button.
+				temp_event = myObject.events[key]; 
+				submit_URL = temp_event.URL_head// + "?"
+				URL_attrs =  temp_event.URL_attrs
 
-					URL_attrs =  temp_event.URL_attrs
+				if ("id" in URL_attrs) {
+					submit_URL += "/" + document.getElementsByName(URL_attrs.id.name)[0].value + "?";
+				}
+				else {
+					submit_URL += "?";
+				}
+				
+				for (var attr in URL_attrs) {
+					name = attr;
+					attr = URL_attrs[attr];
 
-					for (var attr in URL_attrs) {
-						name = attr;
-						attr = URL_attrs[attr];
+					if (name == "id") continue;
 
-						if (attr.usage == "input") {
+					if (attr.usage == "input") {
+						if (document.getElementsByName(attr.name)[0].value=="") {
+							;	
+						}
+						else{
 							submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value +"&";
-						}
-						else if (attr.usage == "attributes") {
-							submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
-						}
+						} 
+						//submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
 					}
-
-					var initRootNode = //document.getElementsByName(URL_attrs.type.name)[0].value +
-							 "0&" + document.getElementsByName(URL_attrs.id.name)[0].value;
-					mygv.rootNode(initRootNode);
-				}
-				else {
-					mygv.setURL(myObject, key);
-				}
-			}
-
-			//URL += URL_attrs[0] + "=" + document.getElementsByName(myObject.elements[3]["textbox"]["name"])[0].value +"&";
-			//URL += URL_attrs[1] + "=" + document.getElementsByName(myObject.elements[1]["textbox"]["name"])[0].value +"&";
-			//URL += URL_attrs[2] + "=1";
-
-
-			$.get(submit_URL, function(message) {
-				message = JSON.parse(message);
-				if (!message.error) {
-					newData = message.results;
-
-					updateLabelFilteringListBox(newData);
-
-					mygv
-					.data(newData)
-					.run()
-
-				}
-				else {
-					mygv.clean();
-				}
-			})
-		}
-		else if (index == 1){
-			for (var key in myObject.events) {
-				if (key == "submit") {
-					temp_event = myObject.events[key]; 
-					submit_URL = temp_event.URL_head + "?"
-
-					URL_attrs =  temp_event.URL_attrs
-
-					for (var attr in URL_attrs) {
-						name = attr;
-						attr = URL_attrs[attr];
-
-						if (attr.usage == "input") {
-							submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value +"&";
-						}
-						else if (attr.usage == "attributes") {
-							submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
-						}
-
-						
+					else if (attr.usage == "attributes") {
+						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
 					}
+				}
 
-					var initRootNode = document.getElementsByName(URL_attrs.type.name)[0].value +
-									 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
-					mygv.rootNode(initRootNode);
+				// initilize the root node as the query node.
+				//	a. create rootNode id.
+				//	b. set root node by id.
+				//  c. rootNode is = Type + "&" + ID;
+				var rootNodeType;
+				var rootNodeID;
+
+				// Get type from Input box. Sometimes, we don't use type as input for query.
+				// But type is another key for the retrieve the node in graph. Default is '0';
+				if ("type" in URL_attrs) {
+					rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value;
 				}
 				else {
-					mygv.setURL(myObject, key);
+					rootNodeType = "0"
 				}
+
+				// Get id from Inputbox. The 'id' usually is used as input for query.
+				// Default is '0'
+				if ("id" in URL_attrs) {
+					rootNodeID = document.getElementsByName(URL_attrs.id.name)[0].value;
+				}
+				else {
+					rootNodeID = "0";
+				}
+
+				var initRootNode = rootNodeType + "&" + rootNodeID;
+				/*document.getElementsByName(URL_attrs.type.name)[0].value +
+						 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
+						 */
+				mygv.rootNode(initRootNode);
 			}
+			else {
 
-			$.get(submit_URL, function(message, initRootNode) {
-				message = JSON.parse(message);
-				if (!message.error) {
-					newData = message.results;
-
-					updateLabelFilteringListBox(newData);
-
-					mygv
-					.data(newData)
-					.run()
-
-				}
-				else {
-					mygv.clean();
-				}
-			})
-		}
-		else if (index == 2){
-			for (var key in myObject.events) {
-				if (key == "submit") {
-					temp_event = myObject.events[key]; 
-					submit_URL = temp_event.URL_head + "?"
-
-					URL_attrs =  temp_event.URL_attrs
-
-					for (var attr in URL_attrs) {
-						name = attr;
-						attr = URL_attrs[attr];
-
-						if (attr.usage == "input") {
-							submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value +"&";
-						}
-						else if (attr.usage == "attributes") {
-							submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
-						}		
-					}
-
-					var initRootNode = document.getElementsByName(URL_attrs.type.name)[0].value +
-									 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
-					mygv.rootNode(initRootNode);
-				}
-				else {
-					mygv.setURL(myObject, key);
-				}
+				// setting URL for other events, such as double left click on nodes.
+				mygv.setURL(myObject, key);
 			}
-
-			$.get(submit_URL, function(message, initRootNode) {
-				message = JSON.parse(message);
-				if (!message.error) {
-					newData = message.results;
-
-					updateLabelFilteringListBox(newData);
-
-					mygv
-					.data(newData)
-					.run()
-
-				}
-				else {
-					mygv.clean();
-				}
-			})
 		}
-		else if (index == 3) {
-			for (var key in myObject.events) {
-				if (key == "submit") {
-					temp_event = myObject.events[key]; 
-					submit_URL = temp_event.URL_head + "?"
 
-					URL_attrs =  temp_event.URL_attrs
-
-					for (var attr in URL_attrs) {
-						name = attr;
-						attr = URL_attrs[attr];
-
-						if (attr.usage == "input") {
-							submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value +"&";
-						}
-						else if (attr.usage == "attributes") {
-							submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
-						}
-
-						
-					}
-
-					var initRootNode = document.getElementsByName(URL_attrs.type.name)[0].value +
-									 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
-					mygv.rootNode(initRootNode);
-				}
-				else {
-					mygv.setURL(myObject, key);
-				}
+		// call back function for the rest query of the submit button.
+		$.get(submit_URL, function(message) {
+			// JSON parse the message string.
+			try {
+				message = JSON.parse(message);
 			}
+			catch (err){
+				console.log("REST query result is not a vaild JSON string")
+				return ;
+			}
+			
+			if (!message.error) {
+				// get the json object of the result.
+				newData = message.results;
 
-			$.get(submit_URL, function(message, initRootNode) {
-				message = JSON.parse(message);
-				if (!message.error) {
-					newData = message.results;
+				// initilize the graph visualization by using the new data.
+				// run the visualization.
+				mygv
+				.data(newData)
+				.run()
 
-					updateLabelFilteringListBox(newData);
+				// update the multi-selection lable box base on the graph data.
+				updateLabelFilteringListBox(mygv.data());
 
-					mygv
-					.data(newData)
-					.run()
+				// store the new message in the messageArray.
+				messageArray.push(message);
 
-				}
-				else {
-					mygv.clean();
-				}
-			})
-		}
-		else {
-			;
-		}
+				// out put the JSON message in the json tab.
+				JSONMessageOutput()
+			}
+			else {
 
+				// clean everything of the graph visualization.
+				mygv.clean();
+			}
+		})
 		//console.log(index)
 	}
 
-	function old_example() {
-		var width = 1366;
-		var height = 768;
-
-		var mygv = new gsqlv();
-		var setting = {'divID':'prototype1', 'width':width, 'height': height};
-
-		mygv
-		.setting(setting)
-		.data(data)
-
-		var newNode1 = {"type":"newType1","key":"newKey1","attr":{"weight":"0.2","name":"newNode1newNode1newNode1"}};
-		var newNode2 = {"type":"newType2","key":"newKey2","attr":{"weight":"0.2","name":"newNode1newNode1newNode1"}};
-		var newLink1 = {"source":{"type":"newType1","key":"newKey1"},"target":{"type":"newType2","key":"newKey2"},"attr":{"weight":"1.0","name":"name0.7"}};
-		var newLink2 = {"source":{"type":"newType1","key":"newKey1"},"target":{"type":"type0","key":"key45"},"attr":{"weight":"0.01","name":"name0.7"}};
-
-		mygv.addNode(newNode1);
-		mygv.addNode(newNode2);
-		mygv.addLink(newLink1);
-		mygv.addLink(newLink2);
-
-		mygv
-		.layout("force")
-		.init()
-		.run();
-
-		setTimeout(mygv.center_view, 5000);
-		window.mygv = mygv;
+	// use for syntax high lighting for the JSON object.
+	// In the <pre> tage, <span> tage with class will be use for the syntax highlighting.
+	this.syntaxHighlight = function (json) {
+	    if (typeof json != 'string') {
+	         json = JSON.stringify(json, undefined, 2);
+	    }
+	    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+	        var cls = 'number';
+	        if (/^"/.test(match)) {
+	            if (/:$/.test(match)) {
+	                cls = 'key';
+	            } else {
+	                cls = 'string';
+	            }
+	        } else if (/true|false/.test(match)) {
+	            cls = 'boolean';
+	        } else if (/null/.test(match)) {
+	            cls = 'null';
+	        }
+	        return '<span class="' + cls + '">' + match + '</span>'; // style="font-family: Times"
+	    });
 	}
 
-	this.test = function() {
-		console.log("test event handler.")
+	// out put the json message in the json tab, of which id is 'messageBox'.
+	this.JSONMessageOutput = function() {
+
+
+		// remove the previous json message 
+		d3.select("#messageBox").selectAll("*").remove();
+
+		d3.select("#messageBox")
+		.style("width", v_width + "px ")
+		.style("height", v_height+"px")
+
+		d3.select("#messageBox")
+		.html("<span> JSON Message " + messageArray.length + " :</span> \n" + syntaxHighlight(messageArray[messageArray.length-1]))
 	}
 
+	// out out the summary information for both whole graph and selected sub graph.
+	this.summaryInformationOutput = function () {
+		// remove previous summary information display.
+		d3.select("#summaryOfAllNodes").selectAll("*").remove();
+		d3.select("#summaryOfSelectedNodes").selectAll("*").remove();
+
+		// output the summary information for the whole graph.
+		d3.select("#summaryOfAllNodes")
+		.style("width", v_width + "px ")
+		.style("height", v_height/2.02+"px")
+		.html(mygv.summaryInformationForAllNodes())
+
+		// output the summary information for the selected sub graph.
+		d3.select("#summaryOfSelectedNodes")
+		.style("width", v_width + "px ")
+		.style("height", v_height/2.02+"px")
+		.html(mygv.summaryInformationForSelectedNodes())
+	}
+
+	// Just output the summary information for the selected sub graph.
+	this.updateSummaryInformationForSelectedNodes = function() {
+
+		// remove previous summary information.
+		d3.select("#summaryOfSelectedNodes").selectAll("*").remove();
+
+		// out the new summary information.
+		d3.select("#summaryOfSelectedNodes")
+		.style("height", v_height/2.02+"px")
+		.html(mygv.summaryInformationForSelectedNodes())
+	}
+
+	this.checkUndefinedForBool = function(x) {
+		if (typeof x == 'undefined') {
+			return false;
+		}
+		else {
+			return x;
+		}
+	}
+
+	//refer the graph visualization object.
 	window.mygv = mygv;
 	console.log("<== where the code ends.")
 }()
