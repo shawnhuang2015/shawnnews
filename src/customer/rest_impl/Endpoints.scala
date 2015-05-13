@@ -51,9 +51,11 @@ object EndpointDefinitions {
     val formElements: JsValue = Json.parse("""
     [ 
       {
-        "tabname": "Explore Fraud Neighborhood",
+        "tabname": "LLT Visualization Demo",
         "index": 0,
-        "elements": [{ "label": { "name" : "ID"} }, { "textbox": {"name": "primaryKey", "length" : 10}}],
+        "elements": [{ "label": { "name" : "ID"} }, { "textbox": {"name": "primaryKey", "length" : 20}},
+        { "label": { "name": "Type" } }, { "textbox": {"name" : "type", "length" : 20 } }
+        ],
         "attributes": {
           "depth" : 1
         },
@@ -69,21 +71,22 @@ object EndpointDefinitions {
           "submit" : {
             "URL_head" : "engine/transactionfraud",
             "URL_attrs" : {
-                "id" : {"usage":"input", "name":"primaryKey"}
+                "id" : {"usage":"input", "name":"primaryKey"},
+                "type" : {"usage":"input", "name":"type"}
             }
           },
           "node_dblclick" : {
             "URL_head" : "engine/transactionfraud",
             "URL_attrs" : {
-                "id" : {"usage":"select", "name":"id"}
+                "id" : {"usage":"select", "name":"id"},
+                "type" : {"usage":"select", "name":"type"},
+                "depth" : {"usage":"attributes", "name":"depth"}
             }
           }
         }  
       }
     ]
     """); 
-
-    ////"http://uitest.graphsql.com:8080/engine/kneighborhood_full_type?id*primaryKey&type*type&depth@depth",
  
     Some(Json.stringify(formElements));
     //Some(Json.stringify(Json.obj("results" -> Json.stringify(formElements), "error" -> false, "message" -> ""))) 
