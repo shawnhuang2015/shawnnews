@@ -1,81 +1,81 @@
 EdgeTypes: 
 - EdgeId: 0
-  EdgeName: transtoentity
   FromVertexTypeName: '*'
   IsDirected: false
+  Name: transtoentity
   ToVertexTypeName: '*'
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: lianlian
+GraphName: poc_graph
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: transaction
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 0
-  VertexName: transaction
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: userid
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 1
-  VertexName: userid
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: ssn
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 2
-  VertexName: ssn
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: bankid
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 3
-  VertexName: bankid
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: cell
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 4
-  VertexName: cell
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: imei
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 5
-  VertexName: imei
   VertexStatisticsType: 1
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  Name: ip
   PrimaryId: 
     AttributeName: value
     AttributeType: STRING
     Nullable: false
   VertexId: 6
-  VertexName: ip
   VertexStatisticsType: 1

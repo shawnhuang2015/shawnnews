@@ -1810,18 +1810,18 @@ var gsqlv = function(x) {
 				*/
 
 				temp_event = myObject.events[event]; 
-				submit_URL = temp_event.URL_head// + "?"
+				submit_URL = temp_event.URL_head + "?"
 				URL_attrs =  temp_event.URL_attrs
 
-				// the URL will be the format as /check_id/:id?attr1=0&attr2=1..
-				// The 'id' will be formed as /:id, rather than id=:id.
-				// if there is not 'id' attr, leave it as blank
+				// the URL will be the format as transactionfraud?id=370781****277X&type=ssn"
+				/*
 				if ("id" in URL_attrs) {
 					submit_URL += "/" + d.id + "?";
 				}
 				else {
 					submit_URL += "?";
 				}
+				*/
 				
 				for (var attr in URL_attrs) {
 					name = attr;
@@ -1829,7 +1829,7 @@ var gsqlv = function(x) {
 
 					// If the attr is 'id' don't do the same as other attribtues.
 					// This part should be imporved as defined by the UIpage setting message.
-					if (name == "id") continue;
+					//if (name == "id") continue;
 
 					if (attr.usage == "input") {
 						if (document.getElementsByName(attr.name)[0].value=="") {

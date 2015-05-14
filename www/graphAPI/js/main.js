@@ -182,7 +182,7 @@
 					// setting pre definition of the graph visualization.
 					mygv.clean()
 					mygv.layout(UIObject.setting.layout)
-					mygv.graphType(UIPbject.setting.graphType)
+					mygv.graphType(UIObject.setting.graphType)
 					mygv.preDefinition(UIObject.initialization)
 
 					$('#layoutType').val(UIObject.setting.layout);
@@ -688,21 +688,23 @@
 			if (key == "submit") {
 				// setting URL for submit button.
 				temp_event = myObject.events[key]; 
-				submit_URL = temp_event.URL_head// + "?"
+				submit_URL = temp_event.URL_head + "?"
 				URL_attrs =  temp_event.URL_attrs
 
+				/*
 				if ("id" in URL_attrs) {
 					submit_URL += "/" + document.getElementsByName(URL_attrs.id.name)[0].value + "?";
 				}
 				else {
 					submit_URL += "?";
 				}
+				*/
 				
 				for (var attr in URL_attrs) {
 					name = attr;
 					attr = URL_attrs[attr];
 
-					if (name == "id") continue;
+					//if (name == "id") continue;
 
 					if (attr.usage == "input") {
 						if (document.getElementsByName(attr.name)[0].value=="") {

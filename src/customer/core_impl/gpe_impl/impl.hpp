@@ -85,7 +85,7 @@ namespace UDIMPL {
           writer_ ->WriteEndObject();
       }
       writer_->WriteEndArray();
-      writer_->WriteName("Edges");
+      writer_->WriteName("edges");
       writer_->WriteStartArray();
 
       gapi4::EdgesCollection results;
