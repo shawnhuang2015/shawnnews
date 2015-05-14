@@ -23,9 +23,13 @@ extern "C" {
 *
 * @param response - the response sent from GPE to RESTPP
 * @param new_response - the response that actually sent back to customer.
-* @return
+* @return - (1) If you want to initiate a cascaded request, return a pointer to a ResponseRequest object. In this case
+*               new_response won't be sent back to customer.
+*               The ResponseRequest must be allocated on heap using new operation; otherwise it would deallocate
+*               when the filter function returns.
+*           (2) Return NULL to return new_response to customer.
 */
-bool ResponseFilterExample(const std::string &response, std::string &new_response){
+RequestObject* ResponseFilterExample(const std::string &response, std::string &new_response){
   new_response = std::string("Add something new") + response;
   return true;
 }
