@@ -4,7 +4,7 @@ var gsqlv = function(x) {
 		version : '2.0',
 	};
 	var setting; //var setting = {'divID':''divid', 'width':width, 'height':height};
-	var graphType = 'undirected' // eight undirected or directed. 
+	var graphType = 'undirected' // undirected or directed. 
 	var data = {"nodes":[], "links":[]}; // graph data object.
 	var node_links = {}; // hash table for node and its linked node.
 	var link_nodes = {}; // hash table for links and its source object and target object in node_links.
@@ -208,7 +208,7 @@ var gsqlv = function(x) {
 					}
 				}
 				else {
-					concole.log("unknown graph type.")
+					console.log("unknown graph type.")
 				}
 				
 			})
@@ -285,7 +285,9 @@ var gsqlv = function(x) {
 		})
 
 		// if root node is deleted in some case, set the first node of the node array as the root node.
-		if (rootNode in node_links) {
+		// check root node base on Uppercase.
+		//if (rootNode in node_links) {
+		if (Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(rootNode.toUpperCase()) != -1) {
 			;
 		}
 		else {
@@ -514,7 +516,7 @@ var gsqlv = function(x) {
 			return graphType;
 		}
 		else {
-			graphType = x;
+			graphType = x==undefined?'undirected':x;
 			return gsqlv;
 		}
 	}
@@ -1827,7 +1829,7 @@ var gsqlv = function(x) {
 					name = attr;
 					attr = URL_attrs[attr];
 
-					// If the attr is 'id' don't do the same as other attribtues.
+					// If the attr is 'id', don't do the same as other attribtues.
 					// This part should be imporved as defined by the UIpage setting message.
 					//if (name == "id") continue;
 
@@ -1837,10 +1839,14 @@ var gsqlv = function(x) {
 						}
 						else{
 							submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
-						} 	
+						}
+
 					}
 					else if (attr.usage == "attributes") {
 						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
+					}
+					else if (attr.usage == "select") {
+						submit_URL += name + "=" + d[attr.name] +"&";
 					}
 				}
 

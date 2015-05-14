@@ -60,7 +60,8 @@ object EndpointDefinitions {
           "depth" : 1
         },
         "setting" : {
-          "layout" : "tree"
+          "layout" : "tree",
+	 "graphType" : "undirected"
         },
         "initialization":{
           "coloring" : [
