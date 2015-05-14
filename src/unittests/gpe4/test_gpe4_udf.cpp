@@ -68,8 +68,9 @@ TEST(BLUEAPITEST, NoFilter) {
   }
   ASSERT_EQ(totalcount, api.GetVertexCount());
   for (size_t i = 0; i < totalcount; i += 10) {
-    topology4::VertexAttribute* v1 = api.GetOneVertex(i);
-    ASSERT_EQ(v1->GetUInt(1, -1), i);
+    topology4::VertexAttribute v1;
+    api.GetOneVertex(i, v1);
+    ASSERT_EQ(v1.GetUInt(1, -1), i);
   }
   std::vector<VertexLocalId_t> vidlist;
   vidlist.push_back(totalcount - 1);
@@ -197,7 +198,7 @@ void GPE4UDFTEST_UDF_DenseD(std::string  partitionpath, std::string output, bool
 }
 
 void GPE4UDFTEST_UDF_DenseD_TypeFilter(std::string  partitionpath,
-                            bool edgedata_inmemory) {
+                                       bool edgedata_inmemory) {
   std::cout << "GPE4UDFTEST_UDF_DenseD_TypeFilter edgedata_inmemory " << edgedata_inmemory << "\n\n\n";
   typedef unittest_gpe4::UDF_DenseD_TypeFilter UDF_t;
   UDF_t udf;

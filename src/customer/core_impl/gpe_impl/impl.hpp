@@ -35,8 +35,10 @@ namespace UDIMPL {
       request.outputwriter_->WriteName("vertex");
       {
         // sample to use GraphAPI
-        boost::shared_ptr<GraphAPI> graphapi = serviceapi.CreateGraphAPI_Safe(&request);
-        graphapi->GetOneVertex(local_start)->WriteToJson(*request.outputwriter_);
+        boost::shared_ptr<GraphAPI> graphapi = serviceapi.CreateGraphAPI(&request);
+        VertexAttribute v1;
+        graphapi->GetOneVertex(local_start, v1);
+        v1.WriteToJson(*request.outputwriter_);
       }
       request.outputwriter_->WriteName("neighborsize");
       // sample to run one UDF

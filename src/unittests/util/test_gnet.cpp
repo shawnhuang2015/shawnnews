@@ -29,7 +29,7 @@ size_t numofwrites_ = 10 << 20;
 
 void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t threadindex,
                 bool usingstring){
-  gnet::QueueMsgWriter* writer = queuecenter->getQueueMsgWriter(topicname);
+  gnet::QueueMsgWriter* writer = queuecenter->getQueueMsgWriter(topicname, gnet::QueueTarget());
   gutil::GTimer timer;
   for(size_t key = 0; key < numofwrites_; ++key){
     size_t value = key * 2;
