@@ -32,7 +32,7 @@ namespace UDIMPL {
     std::string typestring(int i) {
       switch(i) {
         case 0: return "TXN";
-        case 1: return "UID";
+        case 1: return "USERID";
         case 2: return "SSN";
         case 3: return "BANKID";
         case 4: return "CELL";
@@ -126,7 +126,7 @@ namespace UDIMPL {
             writer_ ->WriteName("attr");
             writer_ ->WriteStartObject();
             writer_ ->WriteEndObject();
-            
+
             writer_ ->WriteEndObject();
           }
       }
