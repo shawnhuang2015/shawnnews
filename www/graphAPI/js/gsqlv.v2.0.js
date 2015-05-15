@@ -1848,7 +1848,7 @@ var gsqlv = function(x) {
 						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
 					}
 					else if (attr.usage == "select") {
-						submit_URL += name + "=" + d[attr.name] +"&";
+						submit_URL += name + "=" + d[attr.name].toLowerCase() +"&";
 					}
 				}
 
