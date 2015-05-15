@@ -61,7 +61,7 @@ object EndpointDefinitions {
         },
         "setting" : {
           "layout" : "tree",
-	 "graphType" : "undirected"
+	        "graphType" : "undirected"
         },
         "initialization":{
           "coloring" : [
@@ -80,8 +80,7 @@ object EndpointDefinitions {
             "URL_head" : "engine/transactionfraud",
             "URL_attrs" : {
                 "id" : {"usage":"select", "name":"id"},
-                "type" : {"usage":"select", "name":"type"},
-                "depth" : {"usage":"attributes", "name":"depth"}
+                "type" : {"usage":"select", "name":"type"}
             }
           }
         }  
@@ -103,7 +102,7 @@ object EndpointDefinitions {
   Endpoints.register(Endpoint(GET(), "transactionfraud", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
     
     // Map of query id types, corresponds to typeId in graph_config.yaml
-    val type_mapping = Map("transaction" -> 0,
+    val type_mapping = Map("txn" -> 0,
                            "userid" -> 1,
                            "ssn" -> 2,
                            "bankid" -> 3,
@@ -113,7 +112,7 @@ object EndpointDefinitions {
 
     if(queryString.contains("id")) {
       val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
-      val raw_type: String = queryString.getOrElse("type", Seq()).headOption.getOrElse("transaction")
+      val raw_type: String = queryString.getOrElse("type", Seq()).headOption.getOrElse("txn")
       val id_type = type_mapping.get(raw_type).getOrElse(0)
       val request = GpeRequest(List("transactionfraud", uid, id_type.toString), queryString)
       context.gpe.writeAndWait_TypedIds(request, List(uid -> id_type));

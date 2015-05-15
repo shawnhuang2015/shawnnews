@@ -8,12 +8,10 @@ DotDir=/usr/bin/
 
 
 # IUM will create this
-#CanonnicalLoader=../build/release/olgp/gse/gse_canonnical_loader 
-CanonnicalLoader=../deploy_pkg/bin/gse_canonnical_loader
+CanonnicalLoader=../build/release/olgp/gse/gse_canonnical_loader 
 
 #IUM will create this
-#BatchDeltaBinary=../build/release/olgp/tools/batchdelta
-BatchDeltaBinary=../deploy_pkg/bin/batchdelta
+BatchDeltaBinary=../build/release/olgp/tools/batchdelta
 
 # IUM will create this
 GSELoaderConfig=/home/shawn.huang/graphsql/config/gse_loader/gse_loader1.conf

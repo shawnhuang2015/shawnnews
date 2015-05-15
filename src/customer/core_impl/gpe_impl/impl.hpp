@@ -88,11 +88,13 @@ namespace UDIMPL {
       writer_->WriteName("edges");
       writer_->WriteStartArray();
 
-      gapi4::EdgesCollection results;
+      
 
       for(boost::unordered_set<EdgePair,EdgePairHash> ::iterator it = edges.begin();
             it != edges.end();
             ++it){
+
+          gapi4::EdgesCollection results;
 
           graphapi ->GetSpecifiedEdges(it->src, it->tgt, results);
           while(results.NextEdge()) {

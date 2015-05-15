@@ -286,8 +286,8 @@ var gsqlv = function(x) {
 
 		// if root node is deleted in some case, set the first node of the node array as the root node.
 		// check root node base on Uppercase.
-		//if (rootNode in node_links) {
-		if (Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(rootNode.toUpperCase()) != -1) {
+		if (rootNode in node_links) {
+		//if (Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(rootNode.toUpperCase()) != -1) {
 			;
 		}
 		else {
@@ -1304,6 +1304,8 @@ var gsqlv = function(x) {
 				tempRootNode = d.type + "&" + d.id
 			})
 
+			//tempRootNode = Object.keys(node_links)[Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(tempRootNode.toUpperCase())];
+
 			gsqlv.rootNode(tempRootNode);
 		}
 		else {
@@ -1906,6 +1908,13 @@ var gsqlv = function(x) {
 
 	gsqlv.startLayout = function() {
 		layouts["force"].stop();
+
+		// Get the right rootNode key;
+		var tempRootNode = Object.keys(node_links).filter(function(d) {
+			return d.toUpperCase() == rootNode.toUpperCase();
+		})
+
+		rootNode = tempRootNode[0] == undefined ? Object.keys(node_links)[0] : tempRootNode[0];
 
 		if (layout == "force") {
 			// deep copy nodes. Since we need to append a node between two node for a nice looking force layout.
