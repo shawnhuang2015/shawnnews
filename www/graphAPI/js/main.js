@@ -17,7 +17,7 @@
 	var setting = {'divID':'prototype1', 'width':v_width, 'height': v_height};
 
 	// LabelFiltering initialization status;
-	var filteringStatus = {node:{type:false, id:true}, edge:{type:false, sids:true}};
+	var filteringStatus = {node:{type:true, id:true, score:true}, edge:{type:false}}; // node:{type:boolean, attr1:boolean, attr2:boolean ...}
 
 	window.selectionBoxLabels = mygv.label();	// Initialized the multiselection list box data object.
 

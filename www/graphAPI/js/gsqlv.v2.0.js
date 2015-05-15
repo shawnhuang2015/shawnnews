@@ -286,9 +286,11 @@ var gsqlv = function(x) {
 
 		// if root node is deleted in some case, set the first node of the node array as the root node.
 		// check root node base on Uppercase.
-		if (rootNode in node_links) {
-		//if (Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(rootNode.toUpperCase()) != -1) {
-			;
+
+		var tempRootNodeIndex = Object.keys(node_links).map(function(d) {return d.toUpperCase()}).indexOf(rootNode.toUpperCase());
+		//if (rootNode in node_links) {
+		if (tempRootNodeIndex != -1) {
+			rootNode = Object.keys(node_links)[tempRootNodeIndex];
 		}
 		else {
 			rootNode = Object.keys(node_links)[0];
