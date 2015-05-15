@@ -219,6 +219,7 @@ namespace gperun{
           if (context->Iteration() == 1) {
             MESSAGE mesg(1 << (srcvertexattr->type() - 1));
             context->Write(targetvid, mesg);
+            context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
           } else {
             context->Write(targetvid, srcvertexvalue);
             context->GlobalVariable_Reduce<EdgePair>(GV_EDGELIST, EdgePair(srcvid, targetvid));
