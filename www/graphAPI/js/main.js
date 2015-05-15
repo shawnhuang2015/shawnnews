@@ -730,7 +730,10 @@
 				// Get type from Input box. Sometimes, we don't use type as input for query.
 				// But type is another key for the retrieve the node in graph. Default is '0';
 				if ("type" in URL_attrs) {
-					rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value;
+					//rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value;
+
+					// type default is txn;
+					rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value==""?"txn":document.getElementsByName(URL_attrs.type.name)[0].value;
 				}
 				else {
 					rootNodeType = "0"
