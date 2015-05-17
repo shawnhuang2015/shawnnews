@@ -12,6 +12,7 @@
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 #include "TransactionFraudScore.hpp"
+#include "fraud_score.hpp"
 
 using namespace gperun;
 
@@ -43,14 +44,15 @@ namespace UDIMPL {
     }
     bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
       VertexLocalId_t local_start;
-//      if (!serviceapi.UIdtoVId(request, "0_" + request.request_argv_[1], local_start))
       if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
         return false;
       }
-      typedef TransactionFraudScore UDF_t;
-      UDF_t udf(3, local_start, request.outputwriter_);
+//      typedef TransactionFraudScore UDF_t;
+      typedef lianlian_ns::FraudScoreUDF UDF_t;
+      UDF_t udf(6, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
+      /*
       boost::unordered_set<EdgePair,EdgePairHash> edges = udf.getEdges();
       boost::unordered_set<Vertex,VertexHash> vertices = udf.getVertices();
       
@@ -134,6 +136,7 @@ namespace UDIMPL {
       writer_->WriteEndObject();
       delete(graphapi);
       request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+      */
       return true;
     }
 

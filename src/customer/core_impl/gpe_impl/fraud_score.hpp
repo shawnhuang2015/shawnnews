@@ -6,16 +6,17 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include "../base/global_vector.hpp"
+#include "../base/global_set.hpp"
 
 namespace lianlian_ns {
 
   // flag for non-transaction type.
-  const size_t flag_map[] = {0, 1, 2, 4, 8, 16, 32};
-  const size_t all_flag = 63;
+  const size_t N_FLAG = 7;
+  const size_t FLAG_MAP[] = {0, 1, 2, 4, 8, 16, 32};
+  const size_t ALL_FLAG = 63;
 
   // weights for each intermediate nodes on hop 1/2/3.
-  const double weight_map[][4] = {
+  const double WEIGHT_MAP[][4] = {
     // transaction nodes need no weights, cuz they're not considered in score calculation.
     {0},
     // T_USERID.
@@ -125,7 +126,7 @@ namespace lianlian_ns {
 
       inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
         context->WriteAll(value_t(), false);
-        context->Write(source_vid_, value_t(all_flag));
+        context->Write(source_vid_, value_t(ALL_FLAG));
         is_backtracking_ = false;
       }
 
@@ -140,9 +141,9 @@ namespace lianlian_ns {
         if (! is_backtracking_) {
           if (context->Iteration() == 1) {
             if (srcvertexattr->type() == T_TXN) {
-              context->Write(targetvid, MESSAGE(flag_map[targetvertexattr->type()], srcvid));
+              context->Write(targetvid, MESSAGE(FLAG_MAP[targetvertexattr->type()], srcvid));
             } else {
-              context->Write(targetvid, MESSAGE(flag_map[srcvertexattr->type()], srcvid));
+              context->Write(targetvid, MESSAGE(FLAG_MAP[srcvertexattr->type()], srcvid));
             }
           } else {
             if (srcvertexattr->type() != T_TXN || ! srcvertexattr->GetBool(A_ISFRAUD, false)) {
@@ -188,9 +189,16 @@ namespace lianlian_ns {
               continue;
             }
             val.flags |= it->flags;
-            if (vertexattr->type() == T_TXN && is_fraud) {
-              // TODO: contibute score.
-              context->GlobalVariable_Reduce(GV_SCORE, 
+          }
+          if (vertexattr->type() == T_TXN && is_fraud) {
+            // adding 1 is actually for the case where start vid is non-transaction,
+            // but it doesn't hurt the case with start vid being transaction.
+            size_t hop = (context->Iteration() + 1) / 2;
+            size_t flag_diff = val.flags & (~ vertexvalue.flags);
+            for (int i = 0; i < N_FLAG; ++i) {
+              if (FLAG_MAP[i] & flag_diff) {
+                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[FLAG_MAP[i]][hop]);
+              }
             }
           }
           // TODO: need to write value every time?
@@ -201,12 +209,19 @@ namespace lianlian_ns {
 
       void AfterIteration(gpelib4::MasterContext* context) {
         if (context->Iteration() == 6 && is_backtracking_ == false) {
-          // TODO: set all fraud vertices active
+          // set all fraud vertices active, start backtracking.
+          const boost::unordered_set<VertexLocalId_t>& fraud_txn = 
+            context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_FRAUD_TXN);
+          for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = fraud_txn.begin();
+               cit != fraud_tx.end(); ++ cit) {
+            context->SetActiveFlag(*cit);
+          }
           is_backtracking_ = true;
         }
       }
 
       void EndRun(gpelib4::BasicContext* context) {
+        /*
         if (writer_ == NULL) {
           std::cerr << "m_writer_ is NULL" << std::endl;
           return;
@@ -297,6 +312,7 @@ namespace lianlian_ns {
 
         // end writing json.
         writer_->WriteEndObject();
+        */
       }
 
       inline void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid,
@@ -305,23 +321,6 @@ namespace lianlian_ns {
 
       std::string Output(gpelib4::BasicContext* context) {
         return "";
-      }
-
-    private:
-      void two_way_connect(VertexLocalId_t session_id, 
-                           const boost::unordered_set<VertexLocalId_t>& vertices,
-                           vertex_map_t& group_by_vertex) {
-        for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = vertices.begin();
-             cit != vertices.end(); ++cit) {
-          boost::unordered_set<VertexLocalId_t>::const_iterator cit_a = cit;
-          boost::unordered_set<VertexLocalId_t>::const_iterator cit_b = boost::next(cit_a);
-          for (; cit_b != vertices.end(); ++cit_b) {
-            std::pair<vertex_map_t::iterator, bool> ret = group_by_vertex.insert(
-              std::make_pair(std::make_pair(*cit_a, *cit_b), 1));
-            vertex_map_t::iterator it = ret.first;
-            it->second.insert(session_id);
-          }
-        }
       }
   };
 }
