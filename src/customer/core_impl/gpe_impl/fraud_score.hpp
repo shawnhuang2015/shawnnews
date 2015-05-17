@@ -10,21 +10,53 @@
 
 namespace lianlian_ns {
 
-  enum {F_USERID = 1,
-        F_SSN = 2,
-        F_BANKID = 4,
-        F_CELL = 8,
-        F_IMEI = 16,
-        F_IP = 32,
-        F_ALL = 63
-      };
+  // flag for non-transaction type.
+  const size_t flag_map[] = {0, 1, 2, 4, 8, 16, 32};
+  const size_t all_flag = 63;
+
+  // weights for each intermediate nodes on hop 1/2/3.
+  const double weight_map[][4] = {
+    // transaction nodes need no weights, cuz they're not considered in score calculation.
+    {0},
+    // T_USERID.
+    {0, 1000, 500, 100},
+    // T_SSN.
+    {0, 1000, 500, 100},
+    // T_BANKID.
+    {0, 1000, 500, 100},
+    // T_CELL.
+    {0, 1000, 500, 100},
+    // T_IMEI.
+    {0, 1000, 500, 100},
+    // T_IP
+    {0, 100, 10, 1},
+  }
+
+  // type id corresponding to the graph_config.yaml.
+  enum {
+    T_TXN = 0,
+    T_USERID = 1,
+    T_SSN = 2,
+    T_BANKID = 3,
+    T_CELL = 4,
+    T_IMEI = 5,
+    T_IP = 6
+  };
+
+  // attribute index
+  enum {
+    A_ISFRAUD = 0
+  };
 
   struct value_t {
     size_t flags;
-    std::vector<VertexLocalId_t> parents;
+    boost::unordered_set<VertexLocalId_t> parents;
 
     value_t(size_t f = 0)
       : flags(f), parents() {}
+
+    value_t(const value_t& other)
+      : flags(other.flags), parents(other.parents) {}
   };
 
   struct message_t {
@@ -40,6 +72,16 @@ namespace lianlian_ns {
 
   typedef std::pair<VertexLocalId_t, VertexLocalId_t> edge_t;
 
+  std::istream& operator>>(std::istream& is, const edge_t& e) {
+    is >> p.first >> p.second;
+    return is;
+  }
+
+  std::ostream& operator<<(std::ostream& os, const edge_t& e) {
+    os << e.first << e.second;
+    return os;
+  }
+
   // UDF definition
   class FraudScoreUDF : public gpelib4::BaseUDF {
     private:
@@ -48,6 +90,9 @@ namespace lianlian_ns {
       boost::unordered_set<edge_t> edges_;
       bool is_backtracking_;
       gutil::JSONWriter* writer_;
+
+    public:
+      enum {GV_FRAUD_TXN, GV_VERTICES, GV_EDGES, GV_SCORE};
 
     public:
       // YeepaySubGraphExtractUDF Settings: Computation Modes
@@ -72,11 +117,15 @@ namespace lianlian_ns {
       ~FraudScoreUDF() {}
 
       void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
+        globalvariables->Register(GV_FRAUD_TXN, new UDIMPL::SetVariable<VertexLocalId_t>());
+        globalvariables->Register(GV_VERTICES, new UDIMPL::SetVariable<VertexLocalId_t>());
+        globalvariables->Register(GV_EDGES, new UDIMPL::SetVariable<edge_t>());
+        globalvariables->Register(GV_SCORE, new gpelib4::DoubleStateVariable(0));
       }
 
       inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
         context->WriteAll(value_t(), false);
-        context->Write(source_vid_, value_t(F_ALL));
+        context->Write(source_vid_, value_t(all_flag));
         is_backtracking_ = false;
       }
 
@@ -88,22 +137,73 @@ namespace lianlian_ns {
       inline void EdgeMap(const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
                           const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr, const V_VALUE& targetvertexvalue,
                           E_ATTR* edgeattr, gpelib4::SingleValueMapContext<MESSAGE> * context) {
+        if (! is_backtracking_) {
+          if (context->Iteration() == 1) {
+            if (srcvertexattr->type() == T_TXN) {
+              context->Write(targetvid, MESSAGE(flag_map[targetvertexattr->type()], srcvid));
+            } else {
+              context->Write(targetvid, MESSAGE(flag_map[srcvertexattr->type()], srcvid));
+            }
+          } else {
+            if (srcvertexattr->type() != T_TXN || ! srcvertexattr->GetBool(A_ISFRAUD, false)) {
+              context->Write(targetvid, MESSAGE(srcvertexvalue.flags));
+            }
+          }
+        }
       }
 
       inline void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
           const V_VALUE& singlevalue, gpelib4::SingleValueMapContext<MESSAGE> * context) {
+        if (is_backtracking_) {
+          context->GlobalVariable_Reduce(GV_VERTICES, vid);
+          for (std::vector<VertexLocalId_t>::const_iterator cit = singlevalue.parents.begin();
+               cit != singlevalue.parents.end(); ++cit) {
+            // add edges & nodes
+            context->GlobalVariable_Reduce(GV_VERTICES, *cit);
+            context->GlobalVariable_Reduce(GV_EDGES, edge_t(vid, *cit));
+            context->SetActiveFlag(*cit);
+          }
+        }
       }
 
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {}
 
       inline void Reduce(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
                          const V_VALUE& vertexvalue,
-                         const MESSAGE& accumulator,
+                         const gutil::Const_Iterator<MESSAGE>& msgvaluebegin,
+                         const gutil::Const_Iterator<MESSAGE>& msgvalueend,
                          gpelib4::SingleValueContext<V_VALUE>* context) {
-        context->Write(vid, accumulator.value);
+        if (is_backtracking_) {
+          bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
+          if (vertexattr->type() == T_TXN && is_fraud) {
+            // update gv_fraud_vid list.
+            context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
+          }
+          // copy the value.
+          V_VALUE val(vertexvalue);
+          for (gutil::Const_Iterator<MESSAGE>& it = msgvaluebegin;
+               it != msgvalueend; ++it) {
+            val.parents.push_back(it->parent);
+            if (val.flags & it->flags) {
+              continue;
+            }
+            val.flags |= it->flags;
+            if (vertexattr->type() == T_TXN && is_fraud) {
+              // TODO: contibute score.
+              context->GlobalVariable_Reduce(GV_SCORE, 
+            }
+          }
+          // TODO: need to write value every time?
+          // if flags and parents not updated, no need to write value.
+          context->Write(vid, val);
+        }
       }
 
       void AfterIteration(gpelib4::MasterContext* context) {
+        if (context->Iteration() == 6 && is_backtracking_ == false) {
+          // TODO: set all fraud vertices active
+          is_backtracking_ = true;
+        }
       }
 
       void EndRun(gpelib4::BasicContext* context) {
