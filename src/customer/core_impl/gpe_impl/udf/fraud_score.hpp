@@ -16,7 +16,7 @@ namespace lianlian_ns {
   const size_t ALL_FLAG = 63;
 
   // weights for each intermediate nodes on hop 1/2/3.
-  const double WEIGHT_MAP[][4] = {
+  const float WEIGHT_MAP[][4] = {
     // transaction nodes need no weights, cuz they're not considered in score calculation.
     {0},
     // T_USERID.
@@ -31,7 +31,7 @@ namespace lianlian_ns {
     {0, 1000, 500, 100},
     // T_IP
     {0, 100, 10, 1},
-  }
+  };
 
   // type id corresponding to the graph_config.yaml.
   enum {
@@ -69,20 +69,41 @@ namespace lianlian_ns {
 
     message_t(size_t f, VertexLocalId_t p)
       : flags(f), parent(p) {}
+
+    message_t& operator+=(const message_t& other) {
+      return *this;
+    }
   };
 
-  typedef std::pair<VertexLocalId_t, VertexLocalId_t> edge_t;
+  struct edge_t {
+    VertexLocalId_t src_vid;
+    VertexLocalId_t tgt_vid;
 
-  std::istream& operator>>(std::istream& is, const edge_t& e) {
-    is >> p.first >> p.second;
-    return is;
-  }
+    edge_t(VertexLocalId_t sid = 0, VertexLocalId_t tid = 0)
+      : src_vid(sid), tgt_vid(tid) {}
 
-  std::ostream& operator<<(std::ostream& os, const edge_t& e) {
-    os << e.first << e.second;
-    return os;
-  }
+    bool operator==(const edge_t& rhs) {
+      return src_vid == rhs.src_vid && tgt_vid == rhs.tgt_vid;
+    }
 
+    friend std::istream& operator>>(std::istream& is, edge_t& e) {
+      is >> e.src_vid >> e.tgt_vid;
+      return is;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const edge_t& e) {
+      os << e.src_vid << e.tgt_vid;
+      return os;
+    }
+
+    friend size_t hash_value(const edge_t& e) {
+      size_t seed = 0;
+      boost::hash_combine(seed, e.src_vid);
+      boost::hash_combine(seed, e.tgt_vid);
+      return seed;
+    }
+  };
+  
   // UDF definition
   class FraudScoreUDF : public gpelib4::BaseUDF {
     private:
@@ -90,6 +111,8 @@ namespace lianlian_ns {
       boost::unordered_set<VertexLocalId_t> vertices_;
       boost::unordered_set<edge_t> edges_;
       bool is_backtracking_;
+      float score_;
+
       gutil::JSONWriter* writer_;
 
     public:
@@ -112,7 +135,7 @@ namespace lianlian_ns {
 
       FraudScoreUDF(int iteration_limit, VertexLocalId_t source, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), vertices_(),
-          edges_(), is_backtracking_(false), writer_(writer) {
+          edges_(), is_backtracking_(false), score_(0), writer_(writer) {
       }
 
       ~FraudScoreUDF() {}
@@ -137,7 +160,7 @@ namespace lianlian_ns {
 
       inline void EdgeMap(const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
                           const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr, const V_VALUE& targetvertexvalue,
-                          E_ATTR* edgeattr, gpelib4::SingleValueMapContext<MESSAGE> * context) {
+                          E_ATTR* edgeattr, gpelib4::MultipleValueMapContext<MESSAGE> * context) {
         if (! is_backtracking_) {
           if (context->Iteration() == 1) {
             if (srcvertexattr->type() == T_TXN) {
@@ -147,17 +170,17 @@ namespace lianlian_ns {
             }
           } else {
             if (srcvertexattr->type() != T_TXN || ! srcvertexattr->GetBool(A_ISFRAUD, false)) {
-              context->Write(targetvid, MESSAGE(srcvertexvalue.flags));
+              context->Write(targetvid, MESSAGE(srcvertexvalue.flags, srcvid));
             }
           }
         }
       }
 
       inline void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
-          const V_VALUE& singlevalue, gpelib4::SingleValueMapContext<MESSAGE> * context) {
+          const V_VALUE& singlevalue, gpelib4::MultipleValueMapContext<MESSAGE> * context) {
         if (is_backtracking_) {
           context->GlobalVariable_Reduce(GV_VERTICES, vid);
-          for (std::vector<VertexLocalId_t>::const_iterator cit = singlevalue.parents.begin();
+          for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = singlevalue.parents.begin();
                cit != singlevalue.parents.end(); ++cit) {
             // add edges & nodes
             context->GlobalVariable_Reduce(GV_VERTICES, *cit);
@@ -182,9 +205,9 @@ namespace lianlian_ns {
           }
           // copy the value.
           V_VALUE val(vertexvalue);
-          for (gutil::Const_Iterator<MESSAGE>& it = msgvaluebegin;
+          for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            val.parents.push_back(it->parent);
+            val.parents.insert(it->parent);
             if (val.flags & it->flags) {
               continue;
             }
@@ -195,7 +218,7 @@ namespace lianlian_ns {
             // but it doesn't hurt the case with start vid being transaction.
             size_t hop = (context->Iteration() + 1) / 2;
             size_t flag_diff = val.flags & (~ vertexvalue.flags);
-            for (int i = 0; i < N_FLAG; ++i) {
+            for (size_t i = 0; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
                 context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[FLAG_MAP[i]][hop]);
               }
@@ -213,7 +236,7 @@ namespace lianlian_ns {
           const boost::unordered_set<VertexLocalId_t>& fraud_txn = 
             context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_FRAUD_TXN);
           for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = fraud_txn.begin();
-               cit != fraud_tx.end(); ++ cit) {
+               cit != fraud_txn.end(); ++ cit) {
             context->SetActiveFlag(*cit);
           }
           is_backtracking_ = true;
@@ -221,98 +244,9 @@ namespace lianlian_ns {
       }
 
       void EndRun(gpelib4::BasicContext* context) {
-        /*
-        if (writer_ == NULL) {
-          std::cerr << "m_writer_ is NULL" << std::endl;
-          return;
-        }
-        writer_->WriteStartObject();
-
-        // fill vertices info into json.
-        writer_->WriteName("vertices");
-        writer_->WriteStartArray();
-
-        const std::vector<path_t>& path = context->GlobalVariable_GetValue<std::vector<path_t> >(GV_PATHS);
-        session_map_t group_by_session(HASHSIZE_FACTOR * path.size());
-        for (std::vector<path_t>::const_iterator cit = path.begin(); cit != path.end(); ++cit) {
-          std::pair<session_map_t::iterator, bool> ret = group_by_session.insert(
-            std::make_pair(cit->session_vid, 1));
-          session_map_t::iterator it = ret.first;
-          it->second.insert(cit->ip_vid);
-          vids.insert(cit->session_vid);
-
-          std::pair<boost::unordered_set<VertexLocalId_t>::iterator, bool> ret1 = vids.insert(cit->ip_vid);
-          if (ret1.second) {
-            writer_->WriteStartObject();
-            writer_->WriteName("id");
-            writer_->WriteMarkVId(cit->ip_vid);
-            writer_->WriteName("type");
-            writer_->WriteUnsignedInt<unsigned>(0);
-            writer_->WriteName("attr");
-            writer_->WriteStartObject();
-            writer_->WriteEndObject();
-            writer_->WriteEndObject();
-          }
-        }
-
-        // end filling vertices.
-        writer_->WriteEndArray();
-
-        size_t vid_count = vids.size();
-        // just a rough estimate of the bucket size.
-        vertex_map_t group_by_vertex(HASHSIZE_FACTOR * vid_count * (vid_count - 1) / 2);
-        for (session_map_t::const_iterator cit = group_by_session.begin();
-             cit != group_by_session.end(); ++cit) {
-          two_way_connect(cit->first, cit->second, group_by_vertex);
-        }
-
-        // fill edges info into json.
-        writer_->WriteName("edges");
-        writer_->WriteStartArray();
-
-        for (vertex_map_t::const_iterator cit = group_by_vertex.begin();
-             cit != group_by_vertex.end(); ++cit) {
-          writer_->WriteStartObject();
-
-          writer_->WriteName("type");
-          writer_->WriteUnsignedInt<unsigned>(0);
-
-          writer_->WriteName("src");
-          writer_->WriteStartObject();
-          writer_->WriteName("id");
-          writer_->WriteMarkVId(cit->first.first);
-          writer_->WriteName("type");
-          writer_->WriteUnsignedInt<unsigned>(0);
-          writer_->WriteEndObject();
-
-          writer_->WriteName("tgt");
-          writer_->WriteStartObject();
-          writer_->WriteName("id");
-          writer_->WriteMarkVId(cit->first.second);
-          writer_->WriteName("type");
-          writer_->WriteUnsignedInt<unsigned>(0);
-          writer_->WriteEndObject();
-
-          writer_->WriteName("attr");
-          writer_->WriteStartObject();
-          writer_->WriteName("sids");
-          writer_->WriteStartArray();
-          for (boost::unordered_set<VertexLocalId_t>::const_iterator cit1 = cit->second.begin();
-               cit1 != cit->second.end(); ++cit1) {
-            writer_->WriteMarkVId(*cit1);
-          }
-          writer_->WriteEndArray();
-          writer_->WriteEndObject();
-
-          writer_->WriteEndObject();
-        }
-
-        // end filling edges.
-        writer_->WriteEndArray();
-
-        // end writing json.
-        writer_->WriteEndObject();
-        */
+        score_ = context->GlobalVariable_GetValue<float>(GV_SCORE);
+        vertices_ = context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_VERTICES);
+        edges_ = context->GlobalVariable_GetValue<boost::unordered_set<edge_t> >(GV_EDGES);
       }
 
       inline void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid,
@@ -321,6 +255,19 @@ namespace lianlian_ns {
 
       std::string Output(gpelib4::BasicContext* context) {
         return "";
+      }
+
+    public:
+      float get_score() const {
+        return score_;
+      }
+
+      const boost::unordered_set<VertexLocalId_t>& get_vertices() const {
+        return vertices_;
+      }
+
+      const boost::unordered_set<edge_t>& get_edges() const {
+        return edges_;
       }
   };
 }
