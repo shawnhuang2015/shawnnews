@@ -278,22 +278,21 @@ namespace gperun{
                 case 2:
                 case 3:
                 case 4: 
-			switch (distance) {
-				case 1: score += 1000; break;
-				case 2: score += 500;  break;
-				case 3: score += 100;  break;
-			}
+                  			switch (distance) {
+                  				case 1: score += 1000; break;
+                  				case 2: score += 500;  break;
+                  				case 3: score += 100;  break;
+                  			}
                         break;
                 case 5:
-			switch (distance) {
-				case 1: score += 100; break;
-				case 2: score += 10;  break;
-				case 3: score += 1;  break;
-			}
+                  			switch (distance) {
+                  				case 1: score += 100; break;
+                  				case 2: score += 10;  break;
+                  				case 3: score += 1;  break;
+                  			}
                         break;
 
               }
-
           }
           boost::unordered_set<EdgePair,EdgePairHash> edges = context->GlobalVariable_GetValue<boost::unordered_set<EdgePair,EdgePairHash> >(GV_EDGELIST);
           boost::unordered_set<Vertex,VertexHash> vertices = context->GlobalVariable_GetValue<boost::unordered_set<Vertex,VertexHash> >(GV_VERTLIST);
