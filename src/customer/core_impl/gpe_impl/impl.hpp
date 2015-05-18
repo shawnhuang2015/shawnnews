@@ -47,7 +47,7 @@ namespace UDIMPL {
         return false;
       }
       typedef lianlian_ns::FraudScoreUDF UDF_t;
-      UDF_t udf(60, local_start, request.outputwriter_);
+      UDF_t udf(12, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
       const boost::unordered_set<VertexLocalId_t>& vertices = udf.get_vertices();
@@ -129,91 +129,6 @@ namespace UDIMPL {
       delete graphapi;
       request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
 
-      /*
-      boost::unordered_set<EdgePair,EdgePairHash> edges = udf.getEdges();
-      boost::unordered_set<Vertex,VertexHash> vertices = udf.getVertices();
-      
-      gutil::JSONWriter* writer_ = request.outputwriter_; 
-
-      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
-
-      std::vector <VertexLocalId_t> vids;
-      writer_->WriteStartObject();
-      writer_->WriteName("score");
-      writer_->WriteFloat(udf.getScore());
-      writer_->WriteName("vertices");
-      writer_->WriteStartArray();
-      for(boost::unordered_set<Vertex,VertexHash> :: iterator it = vertices.begin();
-            it != vertices.end();
-            ++it){
-          vids.push_back(it ->vid);
-          writer_ ->WriteStartObject();
-          writer_ ->WriteName("id");
-          writer_ ->WriteMarkVId(it->vid);
-          writer_ ->WriteName("type");
-          std::string tmp = typestring(graphapi->GetOneVertex(it ->vid)->type());
-          writer_ ->WriteString(tmp);
-          writer_ ->WriteName("attr");
-          writer_ ->WriteStartObject();
-          if(it -> vid == local_start) {
-            writer_ ->WriteName("score");
-            writer_ ->WriteFloat(udf.getScore()); 
-          }
-          graphapi->GetOneVertex(it ->vid)->WriteAttributeToJson(*request.outputwriter_);
-          writer_ ->WriteEndObject();
-          writer_ ->WriteEndObject();
-      }
-      writer_->WriteEndArray();
-      writer_->WriteName("edges");
-      writer_->WriteStartArray();
-
-      
-
-      for(boost::unordered_set<EdgePair,EdgePairHash> ::iterator it = edges.begin();
-            it != edges.end();
-            ++it){
-
-          gapi4::EdgesCollection results;
-          graphapi ->GetSpecifiedEdges(it->src, it->tgt, results);
-
-          while(results.NextEdge()) {
-            writer_->WriteStartObject();
-
-            writer_->WriteName("src");
-            writer_->WriteStartObject();
-            writer_->WriteName("id");
-            writer_->WriteMarkVId(it->src);
-            writer_ ->WriteName("type");
-            std::string tmp =  typestring(graphapi->GetOneVertex(it ->src) ->type());
-            writer_ ->WriteString(tmp);
-            writer_->WriteEndObject();
-
-            writer_->WriteName("tgt");
-            writer_->WriteStartObject();
-            writer_->WriteName("id");
-            writer_->WriteMarkVId(it->tgt);
-            writer_ ->WriteName("type");
-            tmp = typestring( graphapi->GetOneVertex(it ->tgt) ->type());
-            writer_ ->WriteString(tmp);
-            writer_->WriteEndObject();
-
-            writer_ ->WriteName("type");
-            tmp = typestring(results.GetCurrentEdgeAttribute() ->type());
-            writer_ ->WriteString(tmp);
-            results.GetCurrentEdgeAttribute()->WriteAttributeToJson(*request.outputwriter_);
-
-            writer_ ->WriteName("attr");
-            writer_ ->WriteStartObject();
-            writer_ ->WriteEndObject();
-
-            writer_ ->WriteEndObject();
-          }
-      }
-      writer_->WriteEndArray();
-      writer_->WriteEndObject();
-      delete(graphapi);
-      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
-      */
       return true;
     }
 

@@ -80,7 +80,11 @@ namespace lianlian_ns {
     VertexLocalId_t tgt_vid;
 
     edge_t(VertexLocalId_t sid = 0, VertexLocalId_t tid = 0)
-      : src_vid(sid), tgt_vid(tid) {}
+      : src_vid(sid), tgt_vid(tid) {
+        if (src_vid > tgt_vid) {
+          std::swap(src_vid, tgt_vid);
+        }
+    }
 
     bool operator==(const edge_t& rhs) {
       return src_vid == rhs.src_vid && tgt_vid == rhs.tgt_vid;
@@ -136,7 +140,6 @@ namespace lianlian_ns {
       FraudScoreUDF(int iteration_limit, VertexLocalId_t source, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), vertices_(),
           edges_(), is_backtracking_(false), score_(0), writer_(writer) {
-        printf("ctor: limit = %d, start = %u\n", iteration_limit, source);
       }
 
       ~FraudScoreUDF() {}
@@ -145,7 +148,7 @@ namespace lianlian_ns {
         globalvariables->Register(GV_FRAUD_TXN, new UDIMPL::SetVariable<VertexLocalId_t>());
         globalvariables->Register(GV_VERTICES, new UDIMPL::SetVariable<VertexLocalId_t>());
         globalvariables->Register(GV_EDGES, new UDIMPL::SetVariable<edge_t>());
-        globalvariables->Register(GV_SCORE, new gpelib4::DoubleStateVariable(0));
+        globalvariables->Register(GV_SCORE, new gpelib4::FloatSumVariable(0));
       }
 
       inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
@@ -204,14 +207,16 @@ namespace lianlian_ns {
             // update gv_fraud_vid list.
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
           }
-          // copy the value.
+          // TODO: copy the value and see if current vertex needs updating.
+          // only if flags is updated, we need current vertex to be active in next iteration,
+          // otherwise, just update its parents.
           V_VALUE val(vertexvalue);
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            val.parents.insert(it->parent);
             if (val.flags & it->flags) {
               continue;
             }
+            val.parents.insert(it->parent);
             val.flags |= it->flags;
           }
           if (vertexattr->type() == T_TXN && is_fraud) {
@@ -221,13 +226,15 @@ namespace lianlian_ns {
             size_t flag_diff = val.flags & (~ vertexvalue.flags);
             for (size_t i = 0; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
-                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[FLAG_MAP[i]][hop]);
+                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
               }
             }
           }
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
           context->Write(vid, val);
+        } else {
+            context->SetActiveFlag(vid);
         }
       }
 
