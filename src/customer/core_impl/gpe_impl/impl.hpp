@@ -47,7 +47,7 @@ namespace UDIMPL {
         return false;
       }
       typedef lianlian_ns::FraudScoreUDF UDF_t;
-      UDF_t udf(60, local_start, request.outputwriter_);
+      UDF_t udf(13, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
       const boost::unordered_set<VertexLocalId_t>& vertices = udf.get_vertices();

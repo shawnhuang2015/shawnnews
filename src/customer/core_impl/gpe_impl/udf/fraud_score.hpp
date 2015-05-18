@@ -15,6 +15,8 @@ namespace lianlian_ns {
   const size_t FLAG_MAP[] = {0, 1, 2, 4, 8, 16, 32};
   const size_t ALL_FLAG = 63;
 
+  size_t check_FLAG = 63;
+
   // weights for each intermediate nodes on hop 1/2/3.
   const float WEIGHT_MAP[][4] = {
     // transaction nodes need no weights, cuz they're not considered in score calculation.
@@ -145,7 +147,7 @@ namespace lianlian_ns {
         globalvariables->Register(GV_FRAUD_TXN, new UDIMPL::SetVariable<VertexLocalId_t>());
         globalvariables->Register(GV_VERTICES, new UDIMPL::SetVariable<VertexLocalId_t>());
         globalvariables->Register(GV_EDGES, new UDIMPL::SetVariable<edge_t>());
-        globalvariables->Register(GV_SCORE, new gpelib4::DoubleStateVariable(0));
+        globalvariables->Register(GV_SCORE, new gpelib4::FloatSumVariable(0));
       }
 
       inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
@@ -181,13 +183,17 @@ namespace lianlian_ns {
           const V_VALUE& singlevalue, gpelib4::MultipleValueMapContext<MESSAGE> * context) {
         if (is_backtracking_) {
           context->GlobalVariable_Reduce(GV_VERTICES, vid);
+          std::cout << "ID " << vid << " : ";
           for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = singlevalue.parents.begin();
                cit != singlevalue.parents.end(); ++cit) {
             // add edges & nodes
             context->GlobalVariable_Reduce(GV_VERTICES, *cit);
             context->GlobalVariable_Reduce(GV_EDGES, edge_t(vid, *cit));
             context->SetActiveFlag(*cit);
+
+            std::cout << *cit << " ";
           }
+          std::cout << std::endl;
         }
       }
 
@@ -205,15 +211,30 @@ namespace lianlian_ns {
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
           }
           // copy the value.
+          std::cout << "Parents " << vid << " : ";
           V_VALUE val(vertexvalue);
+          size_t temp_flag = val.flags;
+
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            val.parents.insert(it->parent);
-            if (val.flags & it->flags) {
+
+            if (temp_flag ^ it->flags && temp_flag != ALL_FLAG) {
+              val.parents.insert(it->parent);
+              std::cout << " " << it->parent; 
+            }
+            else {
+
+            }
+
+            
+            if (val.flags == it->flags) {
               continue;
             }
+
             val.flags |= it->flags;
           }
+
+          std::cout << std::endl;
           if (vertexattr->type() == T_TXN && is_fraud) {
             // adding 1 is actually for the case where start vid is non-transaction,
             // but it doesn't hurt the case with start vid being transaction.
@@ -221,13 +242,18 @@ namespace lianlian_ns {
             size_t flag_diff = val.flags & (~ vertexvalue.flags);
             for (size_t i = 0; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
-                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[FLAG_MAP[i]][hop]);
+                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
+                std::cout << "SCORE : " <<  WEIGHT_MAP[i][hop] << std::endl;
               }
             }
           }
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
           context->Write(vid, val);
+        }
+        else {
+          context->SetActiveFlag(vid);
+          std::cout << "Reduce " << vid << std::endl;
         }
       }
 
