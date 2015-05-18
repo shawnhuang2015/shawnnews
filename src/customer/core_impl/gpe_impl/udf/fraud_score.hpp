@@ -136,6 +136,7 @@ namespace lianlian_ns {
       FraudScoreUDF(int iteration_limit, VertexLocalId_t source, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), vertices_(),
           edges_(), is_backtracking_(false), score_(0), writer_(writer) {
+        printf("ctor: limit = %d, start = %u\n", iteration_limit, source);
       }
 
       ~FraudScoreUDF() {}
@@ -197,7 +198,7 @@ namespace lianlian_ns {
                          const gutil::Const_Iterator<MESSAGE>& msgvaluebegin,
                          const gutil::Const_Iterator<MESSAGE>& msgvalueend,
                          gpelib4::SingleValueContext<V_VALUE>* context) {
-        if (is_backtracking_) {
+        if (! is_backtracking_) {
           bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
           if (vertexattr->type() == T_TXN && is_fraud) {
             // update gv_fraud_vid list.
@@ -232,6 +233,7 @@ namespace lianlian_ns {
 
       void AfterIteration(gpelib4::MasterContext* context) {
         if (context->Iteration() == 6 && is_backtracking_ == false) {
+          context->SetAllActiveFlag(false);
           // set all fraud vertices active, start backtracking.
           const boost::unordered_set<VertexLocalId_t>& fraud_txn = 
             context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_FRAUD_TXN);
