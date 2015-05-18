@@ -82,7 +82,11 @@ namespace lianlian_ns {
     VertexLocalId_t tgt_vid;
 
     edge_t(VertexLocalId_t sid = 0, VertexLocalId_t tid = 0)
-      : src_vid(sid), tgt_vid(tid) {}
+      : src_vid(sid), tgt_vid(tid) {
+        if (src_vid > tgt_vid) {
+          std::swap(src_vid, tgt_vid);
+        }
+    }
 
     bool operator==(const edge_t& rhs) {
       return src_vid == rhs.src_vid && tgt_vid == rhs.tgt_vid;
@@ -210,13 +214,21 @@ namespace lianlian_ns {
             // update gv_fraud_vid list.
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
           }
+
           // copy the value.
           std::cout << "Parents " << vid << " : ";
+
+          // TODO: copy the value and see if current vertex needs updating.
+          // only if flags is updated, we need current vertex to be active in next iteration,
+          // otherwise, just update its parents.
+
           V_VALUE val(vertexvalue);
           size_t temp_flag = val.flags;
 
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
+            /*
+<<<<<<< HEAD
 
             if (temp_flag ^ it->flags && temp_flag != ALL_FLAG) {
               val.parents.insert(it->parent);
@@ -231,6 +243,13 @@ namespace lianlian_ns {
               continue;
             }
 
+=======
+*/
+            if (val.flags & it->flags) {
+              continue;
+            }
+            val.parents.insert(it->parent);
+/*>>>>>>> origin/poc4_lianlian_fraud */
             val.flags |= it->flags;
           }
 
@@ -250,6 +269,8 @@ namespace lianlian_ns {
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
           context->Write(vid, val);
+        } else {
+            context->SetActiveFlag(vid);
         }
         else {
           context->SetActiveFlag(vid);
@@ -258,7 +279,9 @@ namespace lianlian_ns {
       }
 
       void AfterIteration(gpelib4::MasterContext* context) {
-        if (context->Iteration() == 6 && is_backtracking_ == false) {
+        if (is_backtracking_ == false && (
+            context->Iteration() == 6 ||
+            context->GetActiveVertexCount() == 0)) {
           context->SetAllActiveFlag(false);
           // set all fraud vertices active, start backtracking.
           const boost::unordered_set<VertexLocalId_t>& fraud_txn = 
@@ -275,6 +298,9 @@ namespace lianlian_ns {
         score_ = context->GlobalVariable_GetValue<float>(GV_SCORE);
         vertices_ = context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_VERTICES);
         edges_ = context->GlobalVariable_GetValue<boost::unordered_set<edge_t> >(GV_EDGES);
+
+        // just make sure the source vertex is returned in json result.
+        vertices_.insert(source_vid_);
       }
 
       inline void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid,
