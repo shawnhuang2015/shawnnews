@@ -140,6 +140,7 @@ namespace lianlian_ns {
       FraudScoreUDF(int iteration_limit, VertexLocalId_t source, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), vertices_(),
           edges_(), is_backtracking_(false), score_(0), writer_(writer) {
+        printf("ctor: limit = %d, start = %u\n", iteration_limit, source);
       }
 
       ~FraudScoreUDF() {}
