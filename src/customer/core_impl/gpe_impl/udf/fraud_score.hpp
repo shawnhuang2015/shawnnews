@@ -140,7 +140,6 @@ namespace lianlian_ns {
       FraudScoreUDF(int iteration_limit, VertexLocalId_t source, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source), vertices_(),
           edges_(), is_backtracking_(false), score_(0), writer_(writer) {
-        printf("ctor: limit = %d, start = %u\n", iteration_limit, source);
       }
 
       ~FraudScoreUDF() {}
@@ -208,19 +207,21 @@ namespace lianlian_ns {
             // update gv_fraud_vid list.
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
           }
+
           // TODO: copy the value and see if current vertex needs updating.
           // only if flags is updated, we need current vertex to be active in next iteration,
           // otherwise, just update its parents.
+
           V_VALUE val(vertexvalue);
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            //if (val.flags & it->flags) {
             if (vertexvalue.flags & it->flags) {
               continue;
             }
             val.parents.insert(it->parent);
             val.flags |= it->flags;
           }
+
           if (vertexattr->type() == T_TXN && is_fraud) {
             // adding 1 is actually for the case where start vid is non-transaction,
             // but it doesn't hurt the case with start vid being transaction.

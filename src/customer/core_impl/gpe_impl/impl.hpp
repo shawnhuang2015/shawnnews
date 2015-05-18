@@ -47,6 +47,7 @@ namespace UDIMPL {
         return false;
       }
       typedef lianlian_ns::FraudScoreUDF UDF_t;
+
       UDF_t udf(12, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
