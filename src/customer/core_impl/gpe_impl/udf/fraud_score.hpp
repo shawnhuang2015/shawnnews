@@ -240,7 +240,9 @@ namespace lianlian_ns {
       }
 
       void AfterIteration(gpelib4::MasterContext* context) {
-        if (context->Iteration() == 6 && is_backtracking_ == false) {
+        if (is_backtracking_ == false && (
+            context->Iteration() == 6 ||
+            context->GetActiveVertexCount() == 0)) {
           context->SetAllActiveFlag(false);
           // set all fraud vertices active, start backtracking.
           const boost::unordered_set<VertexLocalId_t>& fraud_txn = 
@@ -257,6 +259,9 @@ namespace lianlian_ns {
         score_ = context->GlobalVariable_GetValue<float>(GV_SCORE);
         vertices_ = context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_VERTICES);
         edges_ = context->GlobalVariable_GetValue<boost::unordered_set<edge_t> >(GV_EDGES);
+
+        // just make sure the source vertex is returned in json result.
+        vertices_.insert(source_vid_);
       }
 
       inline void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid,
