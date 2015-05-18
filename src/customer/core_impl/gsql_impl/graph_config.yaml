@@ -6,12 +6,14 @@ EdgeTypes:
   ToVertexTypeName: '*'
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: poc_graph
+GraphName: lianlian
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: transaction
   PrimaryId: 
     AttributeName: value
@@ -22,6 +24,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: userid
   PrimaryId: 
     AttributeName: value
@@ -32,6 +36,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: ssn
   PrimaryId: 
     AttributeName: value
@@ -42,6 +48,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: bankid
   PrimaryId: 
     AttributeName: value
@@ -52,6 +60,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: cell
   PrimaryId: 
     AttributeName: value
@@ -62,6 +72,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: imei
   PrimaryId: 
     AttributeName: value
@@ -72,6 +84,8 @@ VertexTypes:
 - Attributes: 
   - AttributeName: isFraudulent
     AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
   Name: ip
   PrimaryId: 
     AttributeName: value

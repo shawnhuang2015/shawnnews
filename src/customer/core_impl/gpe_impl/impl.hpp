@@ -11,7 +11,7 @@
 
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-#include "TransactionFraudScore.hpp"
+#include "udf/fraud_score.hpp"
 
 using namespace gperun;
 
@@ -43,14 +43,93 @@ namespace UDIMPL {
     }
     bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
       VertexLocalId_t local_start;
-//      if (!serviceapi.UIdtoVId(request, "0_" + request.request_argv_[1], local_start))
       if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
         return false;
       }
-      typedef TransactionFraudScore UDF_t;
-      UDF_t udf(3, local_start, request.outputwriter_);
+      typedef lianlian_ns::FraudScoreUDF UDF_t;
+      UDF_t udf(60, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
+      const boost::unordered_set<VertexLocalId_t>& vertices = udf.get_vertices();
+      const boost::unordered_set<lianlian_ns::edge_t>& edges = udf.get_edges();
+
+      gutil::JSONWriter* writer = request.outputwriter_; 
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
+
+      writer->WriteStartObject();
+
+      writer->WriteName("score");
+      writer->WriteFloat(udf.get_score());
+
+      std::vector <VertexLocalId_t> vids;
+      writer->WriteName("vertices");
+      writer->WriteStartArray();
+      for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = vertices.begin();
+           cit != vertices.end(); ++cit) {
+        vids.push_back(*cit);
+        writer->WriteStartObject();
+        writer->WriteName("id");
+        writer->WriteMarkVId(*cit);
+        writer->WriteName("type");
+        std::string tmp = typestring(graphapi->GetOneVertex(*cit)->type());
+        writer->WriteString(tmp);
+        writer->WriteName("attr");
+        writer->WriteStartObject();
+        if (*cit == local_start) {
+          writer->WriteName("score");
+          writer->WriteFloat(udf.get_score()); 
+        }
+        graphapi->GetOneVertex(*cit)->WriteAttributeToJson(*request.outputwriter_);
+        writer->WriteEndObject();
+        writer->WriteEndObject();
+      }
+      writer->WriteEndArray();
+
+      writer->WriteName("edges");
+      writer->WriteStartArray();
+      for (boost::unordered_set<lianlian_ns::edge_t>::const_iterator cit = edges.begin();
+           cit != edges.end(); ++cit) {
+        gapi4::EdgesCollection results;
+        graphapi->GetSpecifiedEdges(cit->src_vid, cit->tgt_vid, results);
+        while(results.NextEdge()) {
+          writer->WriteStartObject();
+          writer->WriteName("src");
+          writer->WriteStartObject();
+          writer->WriteName("id");
+          writer->WriteMarkVId(cit->src_vid);
+          writer->WriteName("type");
+          std::string tmp =  typestring(graphapi->GetOneVertex(cit->src_vid)->type());
+          writer->WriteString(tmp);
+          writer->WriteEndObject();
+
+          writer->WriteName("tgt");
+          writer->WriteStartObject();
+          writer->WriteName("id");
+          writer->WriteMarkVId(cit->tgt_vid);
+          writer->WriteName("type");
+          tmp = typestring(graphapi->GetOneVertex(cit->tgt_vid)->type());
+          writer->WriteString(tmp);
+          writer->WriteEndObject();
+
+          writer->WriteName("type");
+          tmp = typestring(results.GetCurrentEdgeAttribute()->type());
+          writer->WriteString(tmp);
+          results.GetCurrentEdgeAttribute()->WriteAttributeToJson(*request.outputwriter_);
+
+          writer->WriteName("attr");
+          writer->WriteStartObject();
+          writer->WriteEndObject();
+
+          writer->WriteEndObject();
+        }
+      }
+      writer->WriteEndArray();
+      writer->WriteEndObject();
+
+      delete graphapi;
+      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+
+      /*
       boost::unordered_set<EdgePair,EdgePairHash> edges = udf.getEdges();
       boost::unordered_set<Vertex,VertexHash> vertices = udf.getVertices();
       
@@ -134,6 +213,7 @@ namespace UDIMPL {
       writer_->WriteEndObject();
       delete(graphapi);
       request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+      */
       return true;
     }
 
