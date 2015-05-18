@@ -214,7 +214,8 @@ namespace lianlian_ns {
           V_VALUE val(vertexvalue);
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            if (val.flags & it->flags) {
+            //if (val.flags & it->flags) {
+            if (vertexvalue.flags & it->flags) {
               continue;
             }
             val.parents.insert(it->parent);
