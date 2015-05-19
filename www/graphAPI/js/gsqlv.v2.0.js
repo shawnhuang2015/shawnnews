@@ -2876,11 +2876,6 @@ var gsqlv = function(x) {
 					target.append("tspan")
 					.attr("x", d.x)
 					.attr("dy", 3)
-					.text(attr+":"+d.attr[attr].toFixed(20))
-
-   					target.append("tspan")
-					.attr("x", d.x)
-					.attr("dy", 3)
 					.text(attr+":"+d.attr[attr])
 
 					lines += 1;
