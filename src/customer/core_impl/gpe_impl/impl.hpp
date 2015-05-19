@@ -60,7 +60,7 @@ namespace UDIMPL {
       writer->WriteStartObject();
 
       writer->WriteName("score");
-      writer->WriteFloat(udf.get_score());
+      writer->WriteUnsignedInt(udf.get_score());
 
       std::vector <VertexLocalId_t> vids;
       writer->WriteName("vertices");

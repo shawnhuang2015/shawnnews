@@ -115,7 +115,7 @@ namespace lianlian_ns {
       boost::unordered_set<VertexLocalId_t> vertices_;
       boost::unordered_set<edge_t> edges_;
       bool is_backtracking_;
-      float score_;
+      size_t score_;
 
       gutil::JSONWriter* writer_;
 
@@ -264,7 +264,7 @@ namespace lianlian_ns {
       }
 
       void EndRun(gpelib4::BasicContext* context) {
-        score_ = context->GlobalVariable_GetValue<float>(GV_SCORE);
+        score_ = (size_t)context->GlobalVariable_GetValue<float>(GV_SCORE);
         vertices_ = context->GlobalVariable_GetValue<boost::unordered_set<VertexLocalId_t> >(GV_VERTICES);
         edges_ = context->GlobalVariable_GetValue<boost::unordered_set<edge_t> >(GV_EDGES);
 
@@ -281,7 +281,7 @@ namespace lianlian_ns {
       }
 
     public:
-      float get_score() const {
+      size_t get_score() const {
         return score_;
       }
 
