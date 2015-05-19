@@ -65,7 +65,11 @@ object EndpointDefinitions {
         },
         "initialization":{
           "coloring" : [
-              {"selection":"isFraudulent == 'true'", "selectionType":"nodes", "color":"#ff00ff"}
+            {"selection":"isFraudulent == 'true'", "selectionType":"nodes", "color":"#fdd0a2"},
+            {"selection":"isFraudulent == 'true' && type == 'IP'", "selectionType":"nodes", "color":"#fdd0a2"},
+            {"selection":"isFraudulent == 'true' && type == 'BANKID'", "selectionType":"nodes", "color":"#fdae6b"},
+            {"selection":"isFraudulent == 'true' && type == 'SSN'", "selectionType":"nodes", "color":"#fd8d3c"},
+            {"selection":"isFraudulent == 'true' && type == 'TXN'", "selectionType":"nodes", "color":"#e6550d"}
           ]
         },
         "events" : {

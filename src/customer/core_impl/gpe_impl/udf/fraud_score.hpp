@@ -228,14 +228,14 @@ namespace lianlian_ns {
             // adding 1 is actually for the case where start vid is non-transaction,
             // but it doesn't hurt the case with start vid being transaction.
             size_t hop = (context->Iteration() + 1) / 2;
-            printf("vid = %u, score: ", vid);
+            //printf("vid = %u, score: ", vid);
             for (size_t i = 0; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
                 context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
-                printf("(%u, %f, %u), ", i, WEIGHT_MAP[i][hop], hop);
+                //printf("(%u, %f, %u), ", i, WEIGHT_MAP[i][hop], hop);
               }
             }
-            printf("\n");
+            //printf("\n");
           }
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
