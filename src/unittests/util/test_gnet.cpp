@@ -28,8 +28,8 @@ size_t num_read_ready_;
 size_t numofwrites_ = 10 << 20;
 
 void QueueWrite(gnet::MessageQueueFactory* queuecenter, std::string topicname, size_t threadindex,
-                bool usingstring){
-  gnet::QueueMsgWriter* writer = queuecenter->getQueueMsgWriter(topicname, gnet::QueueTarget());
+                bool usingstring, std::string target){
+  gnet::QueueMsgWriter* writer = queuecenter->getQueueMsgWriter(topicname, gnet::QueueTarget(target, 1));
   gutil::GTimer timer;
   for(size_t key = 0; key < numofwrites_; ++key){
     size_t value = key * 2;
@@ -96,7 +96,7 @@ void TestQueue_Batch(gnet::MessageQueueFactory* queuecenter, std::string topicna
                      bool usingstring = false) {
   std::vector<boost::thread*> threads;
   for(size_t i = 0; i < num_threads; ++i)
-    threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname + boost::lexical_cast<std::string>(i), i, usingstring)));
+    threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname + boost::lexical_cast<std::string>(i), i, usingstring, "")));
   for(size_t i = 0; i < threads.size(); ++i){
     threads[i]->join();
     delete threads[i];
@@ -115,7 +115,7 @@ void TestQueue_ReadWrite(gnet::MessageQueueFactory* queuecenter, std::string top
                          bool usingstring = false) {
   std::vector<boost::thread*> threads;
   threads.push_back(new boost::thread(boost::bind(&QueueRead, queuecenter, topicname, 0, usingstring)));
-  threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname, 0, usingstring)));
+  threads.push_back(new boost::thread(boost::bind(&QueueWrite, queuecenter, topicname, 0, usingstring, "")));
   for(size_t i = 0; i < threads.size(); ++i){
     threads[i]->join();
     delete threads[i];
@@ -248,7 +248,7 @@ TEST(GNETTEST, KAFKA_REQUESTRESPONSE) {
 
 TEST(GNETTEST, DummyQueue) {
   gnet::DummyMessageQueueFactory messagequeuefactory;
-  QueueWrite(&messagequeuefactory, "test", 0, true);
+  QueueWrite(&messagequeuefactory, "test", 0, true, "");
   QueueRead(&messagequeuefactory, "test", 0, true);
 }
 
@@ -257,7 +257,7 @@ TEST(GNETTEST, ZeroMQ) {
   gnet::ZeroMQFactory rest1(gnet::QueueTarget("REST_1_1"), "gpe1.conf");
   std::vector<boost::thread*> threads;
   threads.push_back(new boost::thread(boost::bind(&QueueRead, &gpe1, "get_request_queue", 0, false)));
-  threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "get_request_queue", 0, false)));
+  threads.push_back(new boost::thread(boost::bind(&QueueWrite, &rest1, "get_request_queue", 0, false, "GPE")));
   for(size_t i = 0; i < threads.size(); ++i){
     threads[i]->join();
     delete threads[i];
