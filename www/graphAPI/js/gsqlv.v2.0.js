@@ -1214,14 +1214,14 @@ var gsqlv = function(x) {
 				if (c.selectionType == "nodes") {
 					nodes.forEach(function(n){
 						if (gsqlv.checkConditionForNode(n, c.selection)) {
-							n.fill = color(c.color)
+							n.fill = c.color;//color(c.color)
 						}
 					})
 				}
 				else if (c.selectionType == "edges") {
 					links.forEach(function(l){
 						if (gsqlv.checkConditionForEdge(l, c.selection)) {
-							l.stroke = color(c.color)
+							l.stroke = c.color;//color(c.color)
 						}
 					})
 				}
