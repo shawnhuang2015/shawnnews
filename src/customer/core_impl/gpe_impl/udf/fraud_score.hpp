@@ -215,27 +215,33 @@ namespace lianlian_ns {
           V_VALUE val(vertexvalue);
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
-            if (vertexvalue.flags & it->flags) {
+            // no new flags, skip this msg.
+            if ((~ vertexvalue.flags & it->flags) == 0) {
               continue;
             }
             val.parents.insert(it->parent);
             val.flags |= it->flags;
           }
 
+          size_t flag_diff = val.flags & (~ vertexvalue.flags);
           if (vertexattr->type() == T_TXN && is_fraud) {
             // adding 1 is actually for the case where start vid is non-transaction,
             // but it doesn't hurt the case with start vid being transaction.
             size_t hop = (context->Iteration() + 1) / 2;
-            size_t flag_diff = val.flags & (~ vertexvalue.flags);
+            printf("vid = %u, score: ", vid);
             for (size_t i = 0; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
                 context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
+                printf("(%u, %f, %u), ", i, WEIGHT_MAP[i][hop], hop);
               }
             }
+            printf("\n");
           }
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
-          context->Write(vid, val);
+          if (flag_diff) {
+            context->Write(vid, val);
+          }
         } else {
             context->SetActiveFlag(vid);
         }
