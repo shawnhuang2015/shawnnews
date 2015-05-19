@@ -1215,6 +1215,13 @@ var gsqlv = function(x) {
 					nodes.forEach(function(n){
 						if (gsqlv.checkConditionForNode(n, c.selection)) {
 							n.fill = c.color;//color(c.color)
+							
+							if (n.type == "TXN") {
+								n.stroke = "#101010";
+							}
+							else {
+								n.stroke = "#636363";
+							}
 						}
 					})
 				}
