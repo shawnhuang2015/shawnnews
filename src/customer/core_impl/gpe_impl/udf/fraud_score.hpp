@@ -260,12 +260,12 @@ namespace lianlian_ns {
               //if there is not a new flag.
             }
 
-            printf("For Each Message : %zu, %zu, %zu, %zu, \n", val.flags, vertexvalue.flags, it->flags, newFlags);
+            //printf("For Each Message : %zu, %zu, %zu, %zu, \n", val.flags, vertexvalue.flags, it->flags, newFlags);
           }
 
           size_t flag_diff = ~vertexvalue.flags & val.flags;
 
-          printf ("For a reduce, %zu, %zu, %zu \n", flag_diff, vertexvalue.flags, val.flags);
+          //printf ("For a reduce, %zu, %zu, %zu \n", flag_diff, vertexvalue.flags, val.flags);
 
           bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
 
