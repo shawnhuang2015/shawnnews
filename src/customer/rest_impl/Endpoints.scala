@@ -126,10 +126,10 @@ object EndpointDefinitions {
   }))
 
   Endpoints.register(Endpoint(POST(), "transaction", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
-    val trans_str = "transactionId";
-    val user_str = "userId";
+    val trans_str = "transactionid";
+    val user_str = "userid";
     val ssn_str = "ssn";
-    val bank_str = "bankId";
+    val bank_str = "bankid";
     val cell_str = "cell";
     val imei_str = "imei";
     val ip_str = "ip";
@@ -178,17 +178,7 @@ object EndpointDefinitions {
     {
         if(idSeq(i)!="")
         {
-            verSeq +:= Vertex(idSeq(i),Map("vertype" -> i, "isFraud" -> isFraud), Some(i.toString));
-        }
-    }
-    for(i<-0 to (idSeq.length - 2))
-    {
-        for(j<-i+1 to (idSeq.length - 1))
-        {
-            if(idSeq(i) != "" && idSeq(j) != "")
-            {
-                edgeSeq +:= Edge(idSeq(i),idSeq(j), Map("etype" -> 0),Some(i.toString),Some(j.toString))
-            }
+            verSeq +:= Vertex(idSeq(i),Map("typeid" -> i, "isFraudulent" -> isFraud, "label" -> idSeq(i)), Some(i.toString));
         }
     }
     val gseRequest = GseRequest(verSeq)
