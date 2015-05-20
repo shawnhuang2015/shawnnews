@@ -126,7 +126,7 @@ object EndpointDefinitions {
   }))
 
   Endpoints.register(Endpoint(POST(), "transaction", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
-    val trans_str = "transactionid";
+    val trans_str = "txn";
     val user_str = "userid";
     val ssn_str = "ssn";
     val bank_str = "bankid";
@@ -135,26 +135,26 @@ object EndpointDefinitions {
     val ip_str = "ip";
     val fraud_str = "fraud";
 
-    var transId = "";
-    var userId = "";
+    var txn = "";
+    var userid = "";
     var ssn = "";
-    var bankId = "";
+    var bankid = "";
     var cell = "";
     var imei = "";
     var ip = "";
-    var isFraud = false;
+    var isfraud = false;
 
     if (dataPayload.keys.contains(trans_str)) {
-      transId = (dataPayload \ trans_str).as[String];
+      txn = (dataPayload \ trans_str).as[String];
     }
     if (dataPayload.keys.contains(user_str)) {
-      userId = (dataPayload \ user_str).as[String];
+      userid = (dataPayload \ user_str).as[String];
     }
     if (dataPayload.keys.contains(ssn_str)) {
       ssn = (dataPayload \ ssn_str).as[String];
     }
     if (dataPayload.keys.contains(bank_str)) {
-      bankId = (dataPayload \ bank_str).as[String];
+      bankid = (dataPayload \ bank_str).as[String];
     }
     if (dataPayload.keys.contains(cell_str)) {
       cell = (dataPayload \ cell_str).as[String];
@@ -166,21 +166,26 @@ object EndpointDefinitions {
       ip = (dataPayload \ ip_str).as[String];
     }
     if (dataPayload.keys.contains(fraud_str)) {
-      isFraud = (dataPayload \ fraud_str).as[String].toBoolean;
+      isfraud = (dataPayload \ fraud_str).as[String].toBoolean;
     }
 
     var verSeq : Seq[Vertex] = List();
-
-
-    var edgeSeq : Seq[Edge] = List();
-    var idSeq : Seq[String] = List(transId,userId,ssn,bankId,cell,imei,ip);
+//    var edgeSeq : Seq[Edge] = List();
+    var idSeq : Seq[String] = List(txn,userid,ssn,bankid,cell,imei,ip);
     for(i<-0 to (idSeq.length - 1))
     {
         if(idSeq(i)!="")
         {
-            verSeq +:= Vertex(idSeq(i),Map("typeid" -> i, "isFraudulent" -> isFraud, "label" -> idSeq(i)), Some(i.toString));
+            verSeq +:= Vertex(idSeq(i),Map("typeid" -> i, "isFraudulent" -> isfraud, "label" -> idSeq(i)), Some(i.toString));
         }
     }
+//    if (txn != "") {
+//      for (i<-1 to (idSeq.length - 1)) {
+//        if (idSeq(i) != "") {
+//          edgeSeq +:= Edge(txn, idSeq(i), Map("typeid" -> 0), Some(""), Some(""))
+//        }
+//      }
+//    }
     val gseRequest = GseRequest(verSeq)
     context.gse.writeAndWait(gseRequest)
   }))
