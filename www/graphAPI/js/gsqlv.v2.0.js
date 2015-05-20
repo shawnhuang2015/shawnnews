@@ -1040,6 +1040,7 @@ var gsqlv = function(x) {
 			.attr("opacity", d["opacity"])
 			.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; })
+			.attr("r", function(d) { return d.r; })
 
 			/*
 				var initNodeSetting = {
@@ -1153,6 +1154,7 @@ var gsqlv = function(x) {
 			.attr("opacity", d["opacity"])
 			.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; })
+			.attr("r", function(d) { return d.r; })
 		})
 
 		temp_links
