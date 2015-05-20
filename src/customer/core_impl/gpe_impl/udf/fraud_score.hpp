@@ -1,3 +1,15 @@
+/***************************************************************
+*  fraud_score.hpp
+*    User defined function that computes score and retrun all subgraph for all
+*    fraud nodes
+*
+*    Created by Alan Lee on 5/18/15.
+*
+*    Modifed by Shawn Huang on 5/20/15.
+*
+*    Copyright (c) 2013 GraphSQL. All rights reserved.
+****************************************************************/
+
 // put additional includes that you require here.
 #include <topology4/edgeattribute.hpp>
 #include <topology4/vertexattribute.hpp>
@@ -213,7 +225,7 @@ namespace lianlian_ns {
       }
 
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
-        
+
       }
 
       inline void Reduce(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
@@ -222,41 +234,47 @@ namespace lianlian_ns {
                          const gutil::Const_Iterator<MESSAGE>& msgvalueend,
                          gpelib4::SingleValueContext<V_VALUE>* context) {
         if (! is_backtracking_) {
+
+          V_VALUE val(vertexvalue);
+
+          for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
+               it != msgvalueend; ++it) {
+            size_t newFlags = ~vertexvalue.flags & it->flags;
+            if (newFlags) {
+              continue;
+            }
+            else {
+              for (size_t i = 1; i < N_FLAG; ++i) {
+                if (FLAG_MAP[i] & newFlags) {
+                  val.parents[i-1].insert(it->parent);
+                }
+              }
+              
+              val.flags |= newFlags
+            }
+          }
+
+          size_t flag_diff = ~vertexvalue.flags & val.flags;
+
           bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
+
           if (vertexattr->type() == T_TXN && is_fraud) {
             // update gv_fraud_vid list.
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
+            size_t hop = (context->Iteration() + 1) / 2;
+            //printf("vid = %u, score: ", vid);
+            for (size_t i = 0; i < N_FLAG; ++i) {
+              if (FLAG_MAP[i] & flag_diff) {
+                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
+              }
+            }
+            s
           }
 
           // TODO: copy the value and see if current vertex needs updating.
           // only if flags is updated, we need current vertex to be active in next iteration,
           // otherwise, just update its parents.
 
-          V_VALUE val(vertexvalue);
-          for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
-               it != msgvalueend; ++it) {
-            // no new flags, skip this msg.
-            if ((~ vertexvalue.flags & it->flags) == 0) {
-              continue;
-            }
-            val.parents.insert(it->parent);
-            val.flags |= it->flags;
-          }
-
-          size_t flag_diff = val.flags & (~ vertexvalue.flags);
-          if (vertexattr->type() == T_TXN && is_fraud) {
-            // adding 1 is actually for the case where start vid is non-transaction,
-            // but it doesn't hurt the case with start vid being transaction.
-            size_t hop = (context->Iteration() + 1) / 2;
-            //printf("vid = %u, score: ", vid);
-            for (size_t i = 0; i < N_FLAG; ++i) {
-              if (FLAG_MAP[i] & flag_diff) {
-                context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
-                //printf("(%u, %f, %u), ", i, WEIGHT_MAP[i][hop], hop);
-              }
-            }
-            //printf("\n");
-          }
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
           if (flag_diff) {
