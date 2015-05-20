@@ -63,7 +63,7 @@ namespace lianlian_ns {
 
   struct value_t {
     size_t flags;
-    std::vector<boost::unordered_set<VertexLocalId_t>> parents;
+    std::vector<boost::unordered_set<VertexLocalId_t> > parents;
 
     value_t(size_t f = 0)
       : flags(f), parents() {
@@ -213,14 +213,14 @@ namespace lianlian_ns {
           context->GlobalVariable_Reduce(GV_VERTICES, vid);
 
           for (size_t i = 1; i < N_FLAG; ++i) {
-            if (FLAG_MAP[i] & flag_diff) {
+            if (FLAG_MAP[i] & singlevalue.flags) {
                 for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = singlevalue.parents[i-1].begin();
                cit != singlevalue.parents[i-1].end(); ++cit) {
                   // add edges & nodes
                   context->GlobalVariable_Reduce(GV_VERTICES, *cit);
                   context->GlobalVariable_Reduce(GV_EDGES, edge_t(vid, *cit));
 
-                  context->write(*cit, message(FLAG_MAP[i], vid));
+                  context->Write(*cit, MESSAGE(FLAG_MAP[i], vid));
                 }
             }
           }
@@ -246,21 +246,26 @@ namespace lianlian_ns {
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {
             size_t newFlags = ~vertexvalue.flags & it->flags;
+
             if (newFlags) {
-              continue;
-            }
-            else {
               for (size_t i = 1; i < N_FLAG; ++i) {
                 if (FLAG_MAP[i] & newFlags) {
-                  val.parents[i-1].push_back(it->parent);
+                  val.parents[i-1].insert(it->parent);
                 }
               }
               
-              val.flags |= newFlags
+              val.flags |= newFlags;
             }
+            else {
+              //if there is not a new flag.
+            }
+
+            printf("For Each Message : %zu, %zu, %zu, %zu, \n", val.flags, vertexvalue.flags, it->flags, newFlags);
           }
 
           size_t flag_diff = ~vertexvalue.flags & val.flags;
+
+          printf ("For a reduce, %zu, %zu, %zu \n", flag_diff, vertexvalue.flags, val.flags);
 
           bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
 
@@ -277,6 +282,8 @@ namespace lianlian_ns {
 
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
+          
+
           if (flag_diff) {
             context->Write(vid, val);
           }
@@ -289,7 +296,7 @@ namespace lianlian_ns {
 
           for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
                it != msgvalueend; ++it) {             
-              newFlags |= it->flags
+              newFlags |= it->flags;
           }
 
           V_VALUE val(vertexvalue);
