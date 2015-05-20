@@ -116,6 +116,19 @@ var gsqlv = function(x) {
 	window.__$$global_string = x;
 	window.__$$global_real = 0.0;
 
+	var rootNodeSetting = {
+		'stroke': '#ff0000',//'#777',
+		'stroke-width': '1',
+		'fill': '#74c476',
+		'opacity':1,
+		'r':9,
+		'selected' : false,
+		'previouslySelected' : false,
+		'hierarchied' : false, // for hierarchical layout
+		'x':window.v_width / 2,
+		'y':window.v_height / 2,
+	}
+
 	// initialization of node visualization, and node label visualization.
 	var initNodeSetting = {
 		'stroke': 'transparent',//'#777',
@@ -375,6 +388,7 @@ var gsqlv = function(x) {
 		// if true, return false for setting pre definition.
 		// else add the new nodes and return.
 		if (node) {
+			for (var attrname in x.attr) { node.attr[attrname] = x.attr[attrname]; }
 			return false;
 		}
 		else {
@@ -404,7 +418,9 @@ var gsqlv = function(x) {
 		if (!arguments.length) return;
 
 		// if it is a self-circle, return;
-		if (x.target.type === x.source.type && x.target.id === x.source.id) return gsqlv;
+		if (x.target.type === x.source.type && x.target.id === x.source.id) {
+			return gsqlv;
+		} 
 
 		// check whether the new link is exist.
 		// a. directed : find a link with same target, src, and type.
@@ -1024,6 +1040,21 @@ var gsqlv = function(x) {
 			.attr("opacity", d["opacity"])
 			.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; })
+
+			/*
+				var initNodeSetting = {
+					'stroke': 'transparent',//'#777',
+					'stroke-width': '1',
+					'fill': '#aec7e8',
+					'opacity':1,
+					'r':6,
+					'selected' : false,
+					'previouslySelected' : false,
+					'hierarchied' : false, // for hierarchical layout
+					'x':window.v_width / 2,
+					'y':window.v_height / 2,
+				}
+			*/
 		})
 		/*
 		temp_links
@@ -1203,6 +1234,19 @@ var gsqlv = function(x) {
 
 	gsqlv.runPreDefinition = function(nodes, links) {
 
+		//update rootNode preDefinition
+		try {
+			var tempNode = node_links[rootNode].node;
+
+			for (var key in rootNodeSetting) {
+				tempNode[key] = rootNodeSetting[key];
+			}
+		}
+		catch (err) {
+			console.log("Root Node is not found. in function runPreDefinition. " + err);
+		}
+
+
 		if (typeof preDefinition == 'undefined') {
 			return;
 		}
@@ -1297,6 +1341,17 @@ var gsqlv = function(x) {
 		}
 		else {
 			rootNode = x;
+
+			try {
+				var tempNode = node_links[rootNode].node;
+
+				for (var key in rootNodeSetting) {
+					tempNode[key] = rootNodeSetting[key];
+				}
+			}
+			catch (err) {
+				console.log("Root Node is not found. in function rootNode. " + err);
+			}
 			return gsqlv;
 		}
 	}

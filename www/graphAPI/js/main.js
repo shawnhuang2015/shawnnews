@@ -483,7 +483,7 @@
 						selectionBoxLabels.node[n.type][key] = nodelabels[n.type][key];
 					}
 					else {
-						selectionBoxLabels.node[n.type][key] = false;
+						selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == 'undefined') ? false : filteringStatus.node[key];
 					}
 				}
 				catch (err) {
