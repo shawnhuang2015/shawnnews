@@ -170,7 +170,7 @@ object EndpointDefinitions {
     }
 
     var verSeq : Seq[Vertex] = List();
-//    var edgeSeq : Seq[Edge] = List();
+    var edgeSeq : Seq[Edge] = List();
     var idSeq : Seq[String] = List(txn,userid,ssn,bankid,cell,imei,ip);
     for(i<-0 to (idSeq.length - 1))
     {
@@ -179,14 +179,14 @@ object EndpointDefinitions {
             verSeq +:= Vertex(idSeq(i),Map("typeid" -> i, "isFraudulent" -> isfraud, "label" -> idSeq(i)), Some(i.toString));
         }
     }
-//    if (txn != "") {
-//      for (i<-1 to (idSeq.length - 1)) {
-//        if (idSeq(i) != "") {
-//          edgeSeq +:= Edge(txn, idSeq(i), Map("typeid" -> 0), Some(""), Some(""))
-//        }
-//      }
-//    }
-    val gseRequest = GseRequest(verSeq)
+    if (txn != "") {
+      for (i<-1 to (idSeq.length - 1)) {
+        if (idSeq(i) != "") {
+          edgeSeq +:= Edge(0.toString + '_' + txn, i.toString + '_' + idSeq(i), Map("typeid" -> 0), Some(0.toString), Some(i.toString))
+        }
+      }
+    }
+    val gseRequest = GseRequest(verSeq++edgeSeq)
     context.gse.writeAndWait(gseRequest)
   }))
 
