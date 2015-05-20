@@ -51,10 +51,12 @@ namespace lianlian_ns {
 
   struct value_t {
     size_t flags;
-    boost::unordered_set<VertexLocalId_t> parents;
+    std::vector<boost::unordered_set<VertexLocalId_t>> parents;
 
     value_t(size_t f = 0)
-      : flags(f), parents() {}
+      : flags(f), parents() {
+        parents.resize(6);
+      }
 
     value_t(const value_t& other)
       : flags(other.flags), parents(other.parents) {}
@@ -152,20 +154,27 @@ namespace lianlian_ns {
       }
 
       inline void Initialize(gpelib4::GlobalSingleValueContext<V_VALUE> * context) {
-        context->WriteAll(value_t(), false);
-        context->Write(source_vid_, value_t(ALL_FLAG));
+
         is_backtracking_ = false;
+
+        context->WriteAll(value_t(), false);
+
+        context->Write(source_vid_, value_t(ALL_FLAG));
+        
       }
 
       void StartRun(gpelib4::MasterContext* context) {
+
       }
 
-      void BeforeIteration(gpelib4::MasterContext* context) {}
+      void BeforeIteration(gpelib4::MasterContext* context) {
+
+      }
 
       inline void EdgeMap(const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
                           const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr, const V_VALUE& targetvertexvalue,
                           E_ATTR* edgeattr, gpelib4::MultipleValueMapContext<MESSAGE> * context) {
-        if (! is_backtracking_) {
+        if (!is_backtracking_) {
           if (context->Iteration() == 1) {
             if (srcvertexattr->type() == T_TXN) {
               context->Write(targetvid, MESSAGE(FLAG_MAP[targetvertexattr->type()], srcvid));
@@ -173,10 +182,16 @@ namespace lianlian_ns {
               context->Write(targetvid, MESSAGE(FLAG_MAP[srcvertexattr->type()], srcvid));
             }
           } else {
-            if (srcvertexattr->type() != T_TXN || ! srcvertexattr->GetBool(A_ISFRAUD, false)) {
+            if (srcvertexattr->type() == T_TXN && srcvertexattr->GetBool(A_ISFRAUD, false)) {
+              // It is Black Transaction. And Stop.
+            }
+            else {
               context->Write(targetvid, MESSAGE(srcvertexvalue.flags, srcvid));
             }
           }
+        }
+        else {
+          // it is back tracing process. Do nothing in Edge Map.
         }
       }
 
@@ -192,9 +207,14 @@ namespace lianlian_ns {
             context->SetActiveFlag(*cit);
           }
         }
+        else {
+          // It is not back tracing. Do nothing for Vertex Map.
+        }
       }
 
-      void BetweenMapAndReduce(gpelib4::MasterContext* context) {}
+      void BetweenMapAndReduce(gpelib4::MasterContext* context) {
+        
+      }
 
       inline void Reduce(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
                          const V_VALUE& vertexvalue,
