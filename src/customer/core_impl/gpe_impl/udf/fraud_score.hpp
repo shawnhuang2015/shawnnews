@@ -246,7 +246,7 @@ namespace lianlian_ns {
             else {
               for (size_t i = 1; i < N_FLAG; ++i) {
                 if (FLAG_MAP[i] & newFlags) {
-                  val.parents[i-1].insert(it->parent);
+                  val.parents[i-1].push_back(it->parent);
                 }
               }
               
@@ -262,25 +262,23 @@ namespace lianlian_ns {
             // update gv_fraud_vid list.
             context->GlobalVariable_Reduce(GV_FRAUD_TXN, vid);
             size_t hop = (context->Iteration() + 1) / 2;
-            //printf("vid = %u, score: ", vid);
-            for (size_t i = 0; i < N_FLAG; ++i) {
+            for (size_t i = 1; i < N_FLAG; ++i) {
               if (FLAG_MAP[i] & flag_diff) {
                 context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
               }
             }
-            s
           }
-
-          // TODO: copy the value and see if current vertex needs updating.
-          // only if flags is updated, we need current vertex to be active in next iteration,
-          // otherwise, just update its parents.
 
           // TODO: need to write value every time?
           // if flags and parents not updated, no need to write value.
           if (flag_diff) {
             context->Write(vid, val);
           }
-        } else {
+          else {
+            //No New Added Flag. Do Nothing.
+          }
+        } 
+        else {
             context->SetActiveFlag(vid);
         }
       }
