@@ -31,7 +31,7 @@ extern "C" {
 */
 RequestObject* ResponseFilterExample(const std::string &response, std::string &new_response){
   new_response = std::string("Add something new") + response;
-  return true;
+  return NULL;
 }
 
 
