@@ -119,7 +119,7 @@ var gsqlv = function(x) {
 	var rootNodeSetting = {
 		'stroke': '#ff0000',//'#777',
 		'stroke-width': '1',
-		'fill': '#74c476',
+		//'fill': '#74c476',
 		'opacity':1,
 		'r':9,
 		'selected' : false,
@@ -1914,7 +1914,10 @@ var gsqlv = function(x) {
 						submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
 					}
 					else if (attr.usage == "select") {
-						submit_URL += name + "=" + d[attr.name].toLowerCase() +"&";
+						if (name == 'type')
+							submit_URL += name + "=" + d[attr.name].toLowerCase() +"&";
+						else
+							submit_URL += name + "=" + d[attr.name] +"&";
 					}
 				}
 

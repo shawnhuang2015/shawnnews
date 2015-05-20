@@ -711,7 +711,13 @@
 							;	
 						}
 						else{
-							submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value.toLowerCase() +"&";
+							if (name == "type") {
+								submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value.toLowerCase() +"&";
+							}
+							else {
+								submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value/*.toLowerCase()*/ +"&";
+							}
+							
 						} 
 						//submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
 					}
