@@ -279,7 +279,16 @@ namespace lianlian_ns {
           }
         } 
         else {
-            context->SetActiveFlag(vid);
+          size_t newFlags = 0;
+
+          for (gutil::Const_Iterator<MESSAGE> it = msgvaluebegin;
+               it != msgvalueend; ++it) {             
+              newFlags |= it->flags
+          }
+
+          V_VALUE val(vertexvalue);
+          val.flags = newFlags;
+          context->Write(vid, val);
         }
       }
 
