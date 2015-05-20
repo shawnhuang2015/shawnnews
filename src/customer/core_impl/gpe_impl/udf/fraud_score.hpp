@@ -203,7 +203,7 @@ namespace lianlian_ns {
           }
         }
         else {
-          // it is back tracing process. Do nothing in Edge Map.
+          //if it is back tracing process. Do nothing in Edge Map.
         }
       }
 
@@ -211,12 +211,18 @@ namespace lianlian_ns {
           const V_VALUE& singlevalue, gpelib4::MultipleValueMapContext<MESSAGE> * context) {
         if (is_backtracking_) {
           context->GlobalVariable_Reduce(GV_VERTICES, vid);
-          for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = singlevalue.parents.begin();
-               cit != singlevalue.parents.end(); ++cit) {
-            // add edges & nodes
-            context->GlobalVariable_Reduce(GV_VERTICES, *cit);
-            context->GlobalVariable_Reduce(GV_EDGES, edge_t(vid, *cit));
-            context->SetActiveFlag(*cit);
+
+          for (size_t i = 1; i < N_FLAG; ++i) {
+            if (FLAG_MAP[i] & flag_diff) {
+                for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = singlevalue.parents[i-1].begin();
+               cit != singlevalue.parents[i-1].end(); ++cit) {
+                  // add edges & nodes
+                  context->GlobalVariable_Reduce(GV_VERTICES, *cit);
+                  context->GlobalVariable_Reduce(GV_EDGES, edge_t(vid, *cit));
+
+                  context->write(*cit, message(FLAG_MAP[i], vid));
+                }
+            }
           }
         }
         else {
