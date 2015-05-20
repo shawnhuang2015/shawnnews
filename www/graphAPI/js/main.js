@@ -495,7 +495,7 @@
 
 		// if there is not a links in the graph, skip the labels generation process for links
 		if (d.links.length === 0) {
-			return;
+			;
 		}
 
 		// store the previous status of the selectionBoxLabels of edge. The status is like whether a label is selected or not.
