@@ -680,7 +680,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
       rebuilder2.Rebuild("/tmp/deltatopology_large_full/", &query_state);
     }
   }
-  {
+  /*{
     topology4::TopologyGraph topology4(&instance, "/tmp/deltatopology_large_half/",true, true);
     MPIIDImpl mpiidimpl;
     DeltaRebuilder rebuilder4(&instance, &topology4, &mpiidimpl);
@@ -697,7 +697,7 @@ TEST(GPE4DELTATEST, Topology_Large) {
     //std::string cmd = "diff  -r /tmp/deltatopology_large_half /tmp/deltatopology_large_full";
     //EXPECT_EQ(system(cmd.c_str()), 0);
   }
-   /*{
+  {
     std::cout << "Delete Edge Sample: delete 1918 to 1919 \n";
     topology4::TopologyGraph topology5(&instance, "/tmp/deltatopology_large_full/",true, true);
     topology4::TopologyPrinter printer(&instance, &topology5);
