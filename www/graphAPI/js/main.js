@@ -6,7 +6,6 @@
 	window.v_width = $(window).width() / 1.1; // Setting the width of the visualization.
 	window.v_height = $(window).height()- 320;// Setting the height of the visualization.
 
-
 	//<div class="container-fluid" width = v_width>
 	$('#tapView').width(v_width*1.05);  // Setting the width of the tap for graph, JSON, summary, and more;
 
@@ -330,13 +329,15 @@
 					" <label for='typeSel'>Type</label> " +
 					" <select id='typeSel'> " +
 					  "<option value='TXN'>TXN</option> " +
-					  "<option value='USERID'>USERID</option> " +
+					 // "<option value='USERID'>USERID</option> " +
 
 					"</select>" ;
-		tmp += '   <input type = "submit" value = "Submit"'
+		tmp += '&nbsp; <input type = "submit" value = "Submit"';
+
 
 		tmp += 'onclick = onclick_submit_dropdown('+ pagesObject.index + ')';
 		tmp +='>  ';
+		tmp += '<input type = "text" id="urlLab" value=" " size = 80>';
 		return tmp;
 	}
 
@@ -969,6 +970,8 @@
 				// clean everything of the graph visualization.
 				mygv.clean();
 			}
+
+			$('#urlLab').val(submit_URL);
 		})
 		//console.log(index)
 	}
