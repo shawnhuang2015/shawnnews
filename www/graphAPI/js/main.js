@@ -163,7 +163,8 @@
 				var tabname = window.pages_obj[i].tabname;
 				var removedSpaces = removeSpaces(tabname);
 				tabline = '<li><a href="#" id="' + removedSpaces  + '" name="'+removedSpaces+'_'+ i + '">' + tabname + '</a></li>';
-				window.pages_obj[removedSpaces] = '<div>' + generateForm(window.pages_obj[i]) + '</div>';
+				// changed from generateForm to generateDropdown by Chong
+				window.pages_obj[removedSpaces] = '<div>' + generateDropdown(window.pages_obj[i]) + '</div>';
 				//console.log(window.pages_obj[removedSpaces]);
 				//console.log("Registering event for " + "#" + removedSpaces);
 
@@ -250,6 +251,14 @@
 			JSONMessageOutput();
 			summaryInformationOutput();
 
+			// added by Chong
+			$(function () {
+				var select = $('#idSel, #typeSel');
+				select.change(function () {
+					select.not(this).val(this.value);
+				});
+			});
+
 		});
 		
 		//*******************
@@ -298,6 +307,37 @@
 		s += 'onclick = onclick_submit('+ pagesObject.index + ')';
 		s +='>  '; 
 		return s; 
+	}
+
+	// generate Select tag
+	// NOTE: This is just a temporary function for fitting the js
+	// I would not generate HTML representation with JavaScript
+
+	// @author Chong
+	var tmpSelItm = [['2015031032321674', 'TXN'], ['2015031096207853', 'USERID'], ['2015031032327031', 'TXN'], ['2015031032326233', 'TXN']];
+	this.generateDropdown = function(pagesObject){
+
+		elements = pagesObject.elements;
+		URL = pagesObject.URL
+
+		var tmp = "<label for='idSel'>ID</label>" +
+					"<select id='idSel'>" +
+					  "<option value='TXN'>" + tmpSelItm[0][0] + "</option> " +
+					  "<option value='USERID'>" + tmpSelItm[1][0] + "</option> " +
+					  "<option value='TXN'>" + tmpSelItm[2][0] + "</option> " +
+					  "<option value='TXN'>" + tmpSelItm[3][0] + "</option> " +
+					"</select>" +
+					" <label for='typeSel'>Type</label> " +
+					" <select id='typeSel'> " +
+					  "<option value='TXN'>TXN</option> " +
+					  "<option value='USERID'>USERID</option> " +
+
+					"</select>" ;
+		tmp += '   <input type = "submit" value = "Submit"'
+
+		tmp += 'onclick = onclick_submit_dropdown('+ pagesObject.index + ')';
+		tmp +='>  ';
+		return tmp;
 	}
 
 	// Not in use.
@@ -778,6 +818,133 @@
 				return ;
 			}
 			
+			if (!message.error) {
+				// get the json object of the result.
+				newData = message.results;
+
+				// initilize the graph visualization by using the new data.
+				// run the visualization.
+				mygv
+				.data(newData)
+				.run()
+
+				// update the multi-selection lable box base on the graph data.
+				updateLabelFilteringListBox(mygv.data());
+
+				// store the new message in the messageArray.
+				messageArray.push(message);
+
+				// out put the JSON message in the json tab.
+				JSONMessageOutput()
+			}
+			else {
+
+				// clean everything of the graph visualization.
+				mygv.clean();
+			}
+		})
+		//console.log(index)
+	}
+
+	// for Dropdown list
+	// by Chong
+	this.onclick_submit_dropdown = function(index) {
+		var myObject = window.pages_obj[index]
+
+		// Initilize the multi-selection box label for new coming data.
+		window.selectionBoxLabels = {node:{"__key":{'type':checkUndefinedForBool(filteringStatus.node.type), 'id':checkUndefinedForBool(filteringStatus.node.id)}},
+		edge:{"__key":{'type':checkUndefinedForBool(filteringStatus.edge.type), 'id':checkUndefinedForBool(filteringStatus.edge.id)}} }
+
+		// for each events create coresponding URL.
+		for (var key in myObject.events) {
+			if (key == "submit") {
+				// setting URL for submit button.
+				temp_event = myObject.events[key];
+				submit_URL = temp_event.URL_head + "?"
+				URL_attrs =  temp_event.URL_attrs
+
+				/*
+				if ("id" in URL_attrs) {
+					submit_URL += "/" + document.getElementsByName(URL_attrs.id.name)[0].value + "?";
+				}
+				else {
+					submit_URL += "?";
+				}
+				*/
+
+				for (var attr in URL_attrs) {
+					name = attr;
+					attr = URL_attrs[attr];
+
+					// submit_URL += "id=" + $('#typeSel option:selected').text() + "&type" + $('#typeSel option:selected').text().toLowerCase();
+					//if (name == "id") continue;
+
+					if (attr.usage == "input") {
+
+							if (name == "type") {
+								submit_URL += name + "=" + $('#typeSel option:selected').text().toLowerCase() +"&";
+							}
+							else {
+								submit_URL += name + "=" + $('#idSel option:selected').text()/*.toLowerCase()*/ +"&";
+							}
+
+						//submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
+					}
+
+				}
+
+				// initilize the root node as the query node.
+				//	a. create rootNode id.
+				//	b. set root node by id.
+				//  c. rootNode is = Type + "&" + ID;
+				var rootNodeType;
+				var rootNodeID;
+
+				// Get type from Input box. Sometimes, we don't use type as input for query.
+				// But type is another key for the retrieve the node in grap              h. Default is '0';
+				if ("type" in URL_attrs) {
+
+					// type default is txn;
+					//rootNodeType = document.getElementsByName(URL_attrs.type.name)[0].value==""?"txn":document.getElementsByName(URL_attrs.type.name)[0].value;
+					rootNodeType = $('#typeSel option:selected').text();
+				}
+				else {
+					rootNodeType = "0"
+				}
+
+				// Get id from Inputbox. The 'id' usually is used as input for query.
+				// Default is '0'
+				if ("id" in URL_attrs) {
+					rootNodeID = $('#idSel option:selected').text();
+				}
+				else {
+					rootNodeID = "0";
+				}
+
+				var initRootNode = rootNodeType + "&" + rootNodeID;
+				/*document.getElementsByName(URL_attrs.type.name)[0].value +
+						 "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
+						 */
+				mygv.rootNode(initRootNode);
+			}
+			else {
+
+				// setting URL for other events, such as double left click on nodes.
+				mygv.setURL(myObject, key);
+			}
+		}
+
+		// call back function for the rest query of the submit button.
+		$.get(submit_URL, function(message) {
+			// JSON parse the message string.
+			try {
+				message = JSON.parse(message);
+			}
+			catch (err){
+				console.log("REST query result is not a vaild JSON string")
+				return ;
+			}
+
 			if (!message.error) {
 				// get the json object of the result.
 				newData = message.results;
