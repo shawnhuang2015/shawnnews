@@ -3,7 +3,7 @@
       "GET/POST":{
          "function":"builtins",
          "action":"query",
-         "target":"GPEAG",
+         "target":"GPE",
          "parameters":null,
          "request_filter":"BlueprintFilter",
          "summary":"Blueprint API endpoint."
@@ -13,7 +13,7 @@
       "GET/POST":{
          "function":"example",
          "action":"query",
-         "target":"GPEAG",
+         "target":"GPE",
          "parameters":{
             "start_id":{
                "type":"STRING",
