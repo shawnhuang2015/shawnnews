@@ -12,6 +12,7 @@
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 #include "udf/fraud_score.hpp"
+#include "udf/fraud_score_viz.hpp"
 
 using namespace gperun;
 
@@ -24,6 +25,8 @@ namespace UDIMPL {
         return RunUDF_KNeighborSize(serviceapi, request);
       else if(request.request_function_ == "transactionfraud") {
         return RunUDF_TransactionFraud(serviceapi, request);
+      } else if(request.request_function_ == "transactionfraudviz") {
+        return RunUDF_TransactionFraudViz(serviceapi, request);
       }
       return false; /// not a valid request
     }
@@ -46,13 +49,47 @@ namespace UDIMPL {
       if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
         return false;
       }
-      typedef lianlian_ns::FraudScoreUDF UDF_t;
+      typedef lianlian_score_ns::FraudScoreUDF UDF_t;
+
+      UDF_t udf(6, local_start, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
+
+      gutil::JSONWriter* writer = request.outputwriter_; 
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
+
+      writer->WriteStartObject();
+
+      writer->WriteName("score");
+      writer->WriteUnsignedInt(udf.get_score());
+
+      std::vector <VertexLocalId_t> vids;
+      writer->WriteName("vertices");
+      writer->WriteStartArray();
+      writer->WriteEndArray();
+
+      writer->WriteName("edges");
+      writer->WriteStartArray();
+      writer->WriteEndArray();
+      writer->WriteEndObject();
+
+      delete graphapi;
+      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+
+      return true;
+    }
+
+    bool RunUDF_TransactionFraudViz(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
+        return false;
+      }
+      typedef lianlian_score_viz_ns::FraudScoreVizUDF UDF_t;
 
       UDF_t udf(12, local_start, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
 
       const boost::unordered_set<VertexLocalId_t>& vertices = udf.get_vertices();
-      const boost::unordered_set<lianlian_ns::edge_t>& edges = udf.get_edges();
+      const boost::unordered_set<lianlian_score_viz_ns::edge_t>& edges = udf.get_edges();
 
       gutil::JSONWriter* writer = request.outputwriter_; 
       GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
@@ -88,7 +125,7 @@ namespace UDIMPL {
 
       writer->WriteName("edges");
       writer->WriteStartArray();
-      for (boost::unordered_set<lianlian_ns::edge_t>::const_iterator cit = edges.begin();
+      for (boost::unordered_set<lianlian_score_viz_ns::edge_t>::const_iterator cit = edges.begin();
            cit != edges.end(); ++cit) {
         gapi4::EdgesCollection results;
         graphapi->GetSpecifiedEdges(cit->src_vid, cit->tgt_vid, results);
