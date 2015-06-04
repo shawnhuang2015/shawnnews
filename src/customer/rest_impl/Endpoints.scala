@@ -74,14 +74,14 @@ object EndpointDefinitions {
         },
         "events" : {
           "submit" : {
-            "URL_head" : "engine/transactionfraud",
+            "URL_head" : "engine/transactionfraudviz",
             "URL_attrs" : {
                 "id" : {"usage":"input", "name":"primaryKey"},
                 "type" : {"usage":"input", "name":"type"}
             }
           },
           "node_dblclick" : {
-            "URL_head" : "engine/transactionfraud",
+            "URL_head" : "engine/transactionfraudviz",
             "URL_attrs" : {
                 "id" : {"usage":"select", "name":"id"},
                 "type" : {"usage":"select", "name":"type"}
