@@ -26,6 +26,7 @@ namespace lianlian_score_ns {
   const uint16_t N_FLAG = 7;
   const uint16_t FLAG_MAP[] = {0, 1, 2, 4, 8, 16, 32};
   const uint16_t ALL_FLAG = 63;
+  const uint16_t FLAG_MAX = 64;
 
   // weights for each intermediate nodes on hop 1/2/3.
   const float WEIGHT_MAP[][4] = {
@@ -142,8 +143,7 @@ namespace lianlian_score_ns {
                           E_ATTR* edgeattr, gpelib4::SingleValueMapContext<MESSAGE> * context) {
         if (context->Iteration() == 1) {
           if (srcvertexattr->type() == T_TXN) {
-//            context->Write(targetvid, MESSAGE(FLAG_MAP[targetvertexattr->type()]));
-            context->Write(targetvid, MESSAGE(64));  // magic number.
+            context->Write(targetvid, MESSAGE(FLAG_MAX));
           } else {
             context->Write(targetvid, MESSAGE(FLAG_MAP[srcvertexattr->type()]));
           }
@@ -157,10 +157,6 @@ namespace lianlian_score_ns {
         }
       }
 
-//      inline void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
-//          const V_VALUE& singlevalue, gpelib4::SingleValueMapContext<MESSAGE> * context) {
-//      }
-
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
 
       }
@@ -170,8 +166,8 @@ namespace lianlian_score_ns {
                          const MESSAGE& accumulator,
                          gpelib4::SingleValueContext<V_VALUE>* context) {
         uint16_t accumulator_flags = accumulator.flags;
-        if (accumulator_flags >= 64) {  // magic number.
-          accumulator_flags = (accumulator_flags - 64) | FLAG_MAP[vertexattr->type()];
+        if (accumulator_flags >= FLAG_MAX) {
+          accumulator_flags = (accumulator_flags - FLAG_MAX) | FLAG_MAP[vertexattr->type()];
         }
 
         V_VALUE val(vertexvalue);
