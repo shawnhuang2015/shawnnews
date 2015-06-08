@@ -23,9 +23,9 @@
 namespace lianlian_score_ns {
 
   // flag for non-transaction type.
-  const size_t N_FLAG = 7;
-  const size_t FLAG_MAP[] = {0, 1, 2, 4, 8, 16, 32};
-  const size_t ALL_FLAG = 63;
+  const uint16_t N_FLAG = 7;
+  const uint16_t FLAG_MAP[] = {0, 1, 2, 4, 8, 16, 32};
+  const uint16_t ALL_FLAG = 63;
 
   // weights for each intermediate nodes on hop 1/2/3.
   const float WEIGHT_MAP[][4] = {
@@ -62,9 +62,9 @@ namespace lianlian_score_ns {
   };
 
   struct value_t {
-    size_t flags;
+    uint16_t flags;
 
-    value_t(size_t f = 0)
+    value_t(uint16_t f = 0)
       : flags(f) {
       }
 
@@ -73,12 +73,12 @@ namespace lianlian_score_ns {
   };
 
   struct message_t {
-    size_t flags;
+    uint16_t flags;
 
     message_t()
       : flags(0) {}
 
-    message_t(size_t f)
+    message_t(uint16_t f)
       : flags(f) {}
 
     message_t& operator+=(const message_t& other) {
@@ -105,7 +105,7 @@ namespace lianlian_score_ns {
       static const gpelib4::UDFDefineInitializeFlag InitializeMode_ = gpelib4::Mode_Initialize_Globally; // options are gpelib4::Mode_Initialize_Globally gpelib4::Mode_Initialize_Individually and gpelib4::Mode_Initialize_FromBucket
       static const gpelib4::UDFDefineFlag AggregateReduceMode_ = gpelib4::Mode_Defined; // gpelib4::Mode_Defined or gpelib4::Mode_NotDefined. If Not Defined, then multi-value messages are used.
       static const gpelib4::UDFDefineFlag CombineReduceMode_ = gpelib4::Mode_NotDefined; // gpelib4::Mode_Defined or gpelib4::Mode_NotDefined. Adds a hadoop-style combine step that can reduce message loads.
-      static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_Defined; // gpelib4::Mode_Defined or gpelib4::Mode_NotDefined.
+      static const gpelib4::UDFDefineFlag VertexMapMode_ = gpelib4::Mode_NotDefined; // gpelib4::Mode_Defined or gpelib4::Mode_NotDefined.
       static const int PrintMode_ = gpelib4::Mode_Print_ByVertex; // options are gpelib4::Mode_Print_NodDefined, gpelib4::Mode_Print_ByVertex and gpelib4::Mode_Print_ByEdge. The latter two can be combined with a logical '|'
 
       typedef topology4::VertexAttribute V_ATTR;
@@ -130,7 +130,7 @@ namespace lianlian_score_ns {
       }
 
       void StartRun(gpelib4::MasterContext* context) {
-
+        context->set_udfedgemapsetting(gpelib4::UDFEdgeMapSetting_RequireSourceVertexAttribute);
       }
 
       void BeforeIteration(gpelib4::MasterContext* context) {
@@ -142,7 +142,8 @@ namespace lianlian_score_ns {
                           E_ATTR* edgeattr, gpelib4::SingleValueMapContext<MESSAGE> * context) {
         if (context->Iteration() == 1) {
           if (srcvertexattr->type() == T_TXN) {
-            context->Write(targetvid, MESSAGE(FLAG_MAP[targetvertexattr->type()]));
+//            context->Write(targetvid, MESSAGE(FLAG_MAP[targetvertexattr->type()]));
+            context->Write(targetvid, MESSAGE(64));  // magic number.
           } else {
             context->Write(targetvid, MESSAGE(FLAG_MAP[srcvertexattr->type()]));
           }
@@ -156,9 +157,9 @@ namespace lianlian_score_ns {
         }
       }
 
-      inline void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
-          const V_VALUE& singlevalue, gpelib4::SingleValueMapContext<MESSAGE> * context) {
-      }
+//      inline void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr, 
+//          const V_VALUE& singlevalue, gpelib4::SingleValueMapContext<MESSAGE> * context) {
+//      }
 
       void BetweenMapAndReduce(gpelib4::MasterContext* context) {
 
@@ -168,14 +169,19 @@ namespace lianlian_score_ns {
                          const V_VALUE& vertexvalue,
                          const MESSAGE& accumulator,
                          gpelib4::SingleValueContext<V_VALUE>* context) {
+        uint16_t accumulator_flags = accumulator.flags;
+        if (accumulator_flags >= 64) {  // magic number.
+          accumulator_flags = (accumulator_flags - 64) | FLAG_MAP[vertexattr->type()];
+        }
+
         V_VALUE val(vertexvalue);
-        val.flags |= accumulator.flags;
-        size_t flag_diff = ~vertexvalue.flags & val.flags;
+        val.flags |= accumulator_flags;
+        uint16_t flag_diff = ~vertexvalue.flags & val.flags;
         bool is_fraud = vertexattr->GetBool(A_ISFRAUD, false);
 
         if (vertexattr->type() == T_TXN && is_fraud) {
-          size_t hop = (context->Iteration() + 1) / 2;
-          for (size_t i = 1; i < N_FLAG; ++i) {
+          uint16_t hop = (context->Iteration() + 1) / 2;
+          for (uint16_t i = 1; i < N_FLAG; ++i) {
             if (FLAG_MAP[i] & flag_diff) {
               context->GlobalVariable_Reduce(GV_SCORE, WEIGHT_MAP[i][hop]);
             }
