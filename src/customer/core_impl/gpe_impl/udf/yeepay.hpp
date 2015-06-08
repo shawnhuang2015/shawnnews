@@ -56,17 +56,59 @@ namespace yeepay_ns {
     }
   };
 
+  struct EdgePair{
+    VertexLocalId_t src;
+    VertexLocalId_t tgt;
+    int src_type;
+    int tgt_type;
+
+    EdgePair(unsigned int s=0, unsigned int t=0, int stype=0, int ttype=0): src(s), tgt(t), src_type(stype), tgt_type(ttype) {}
+
+    friend std::ostream& operator<<(std::ostream& os, const EdgePair& obj){
+      os<<obj.src<<" "<<obj.tgt << " " << obj.src_type << " " << obj.tgt_type << " ";
+      return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, EdgePair& obj){
+      // read obj from stream
+      is>>obj.src;
+      is>>obj.tgt;
+      is>>obj.src_type;
+      is>>obj.tgt_type;
+      return is;
+    }
+
+    friend bool operator==(const EdgePair& left, const EdgePair& right){
+      return left.src == right.src && left.tgt == right.tgt && left.src_type == right.src_type && left.tgt_type == right.tgt_type;
+    }
+  };
+
+
+  // define a hash function so we can use fast unordered_set to do counting of unique values
+  struct EdgePairHash : public std::unary_function<EdgePair,std::size_t>{
+    std::size_t operator()(EdgePair const& p) const {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, p.src);
+      boost::hash_combine(seed, p.tgt);
+      boost::hash_combine(seed, p.src_type);
+      boost::hash_combine(seed, p.tgt_type);
+      return seed;
+    }
+  };
+
   // UDF definition
   class YeepaySubGraphExtractUDF : public gpelib4::BaseUDF {
     private:
       const VertexLocalId_t source_vid_;
       const size_t start_time_;
       const size_t end_time_;
-      std::vector<path_t> paths_;
+      std::vector<path_t> path_;
       gutil::JSONWriter* writer_;
+      boost::unordered_set<VertexLocalId_t> vids;
 
     public:
-      boost::unordered_set<VertexLocalId_t> vids;
+      boost::unordered_set<VertexLocalId_t> vertices_;
+      vertex_map_t group_by_vertex;
 
       enum {GV_PATHS};
 
@@ -88,7 +130,7 @@ namespace yeepay_ns {
       YeepaySubGraphExtractUDF(int iteration_limit, VertexLocalId_t source, size_t start = 0,
                                size_t end = INF, gutil::JSONWriter* writer = NULL)
         : gpelib4::BaseUDF(EngineMode, iteration_limit), source_vid_(source),
-          start_time_(start), end_time_(end), paths_(), writer_(writer), vids() {
+          start_time_(start), end_time_(end), path_(), writer_(writer), vids() {
       }
 
       ~YeepaySubGraphExtractUDF() {}
@@ -147,23 +189,26 @@ namespace yeepay_ns {
           std::cerr << "m_writer_ is NULL" << std::endl;
           return;
         }
-        writer_->WriteStartObject();
+        //writer_->WriteStartObject();
 
         // fill vertices info into json.
-        writer_->WriteName("vertices");
-        writer_->WriteStartArray();
+        //writer_->WriteName("vertices");
+        //writer_->WriteStartArray();
 
-        const std::vector<path_t>& path = context->GlobalVariable_GetValue<std::vector<path_t> >(GV_PATHS);
-        session_map_t group_by_session(HASHSIZE_FACTOR * path.size());
-        for (std::vector<path_t>::const_iterator cit = path.begin(); cit != path.end(); ++cit) {
+        path_ = context->GlobalVariable_GetValue<std::vector<path_t> >(GV_PATHS);
+        session_map_t group_by_session(HASHSIZE_FACTOR * path_.size());
+        for (std::vector<path_t>::const_iterator cit = path_.begin(); cit != path_.end(); ++cit) {
           std::pair<session_map_t::iterator, bool> ret = group_by_session.insert(
             std::make_pair(cit->session_vid, 1));
           session_map_t::iterator it = ret.first;
           it->second.insert(cit->ip_vid);
           vids.insert(cit->session_vid);
 
+          
           std::pair<boost::unordered_set<VertexLocalId_t>::iterator, bool> ret1 = vids.insert(cit->ip_vid);
           if (ret1.second) {
+            vertices_.insert(cit->ip_vid);
+            /*
             writer_->WriteStartObject();
             writer_->WriteName("id");
             writer_->WriteMarkVId(cit->ip_vid);
@@ -173,24 +218,26 @@ namespace yeepay_ns {
             writer_->WriteStartObject();
             writer_->WriteEndObject();
             writer_->WriteEndObject();
+            */
           }
         }
 
         // end filling vertices.
-        writer_->WriteEndArray();
+        //writer_->WriteEndArray();
 
         size_t vid_count = vids.size();
         // just a rough estimate of the bucket size.
-        vertex_map_t group_by_vertex(HASHSIZE_FACTOR * vid_count * (vid_count - 1) / 2);
+        group_by_vertex = vertex_map_t(HASHSIZE_FACTOR * vid_count * (vid_count - 1) / 2);
         for (session_map_t::const_iterator cit = group_by_session.begin();
              cit != group_by_session.end(); ++cit) {
           two_way_connect(cit->first, cit->second, group_by_vertex);
         }
-
+        
+        /*
         // fill edges info into json.
         writer_->WriteName("edges");
         writer_->WriteStartArray();
-
+        
         for (vertex_map_t::const_iterator cit = group_by_vertex.begin();
              cit != group_by_vertex.end(); ++cit) {
           writer_->WriteStartObject();
@@ -233,6 +280,7 @@ namespace yeepay_ns {
 
         // end writing json.
         writer_->WriteEndObject();
+        */
       }
 
       inline void Write(gutil::GOutputStream& ostream, const VertexLocalId_t& vid,

@@ -68,6 +68,8 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <set>
+#include <functional>
 
 using namespace std;
 /**
@@ -93,13 +95,39 @@ extern "C" void Concat( const vector<const char*> iTokenList, vector<uint32_t> i
                           char *const oToken, uint32_t& oTokenLen){
 
 
+
     int size = iTokenList.size();
     int index = 0;
+
+    const char s = ';';
 
     for (int i =0 ; i < size; i++){
       for (int j = 0; j< iTokenLen[i]; j++){
           oToken[index++] = iTokenList[i][j];
       }
+
+      oToken[index++] = s;
+    }
+
+    oTokenLen = index;
+}
+
+extern "C" void DistinctConcat( const vector<const char*> iTokenList, vector<uint32_t> iTokenLen, 
+                          char *const oToken, uint32_t& oTokenLen){
+
+    std::set<char> result;
+
+    int size = iTokenList.size();
+    int index = 0;
+
+    for (int i =0 ; i < size; i++){
+      for (int j = 0; j< iTokenLen[i]; j++){
+          result.insert(iTokenList[i][j]);
+      }
+    }
+
+    for (std::set<char>::const_iterator cit=result.begin(); cit!=result.end(); cit++) {
+      oToken[index++] = *cit;
     }
 
     oTokenLen = index;
@@ -124,28 +152,35 @@ int main(){
   vector<const char*> input2;
   vector<uint32_t> inputLen;
 
+  /*
   char a[3]= {'a','b','c'};
-  char b[2]= {'d','e'};
-  char c[1]= {'f'};
+  char b[3]= {'a','b','g'};
+  char c[3]= {'f','a','b'};
+  */
+
+  char a[]= "this is log 1";
+  char b[]= "This is log 2";
+  char c[]= "This is log 3";
 
   input2.push_back(a);
   input2.push_back(b);
   input2.push_back(c);
 
-  inputLen.push_back(3);
-  inputLen.push_back(2);
-  inputLen.push_back(1);
+  inputLen.push_back(13);
+  inputLen.push_back(13);
+  inputLen.push_back(13);
 
   uint32_t outputLen;
   char outputBuffer[2000];
 
-   Concat(input2, inputLen, outputBuffer, outputLen);
+  //DistinctConcat(input2, inputLen, outputBuffer, outputLen);
+  Concat(input2, inputLen, outputBuffer, outputLen);
 
-   for (int i=0; i<outputLen; i ++){
-     cout<<outputBuffer[i]<<"," ;
-   }
-   cout<<endl;
+  for (int i=0; i<outputLen; i ++){
+   cout<<outputBuffer[i];
+  }
 
+  cout<<endl;
 
 }
 

@@ -4,7 +4,7 @@
 	this.scaleAbilityData = [];  // Record the result for scalability testing.
 
 	window.v_width = $(window).width() / 1.1; // Setting the width of the visualization.
-	window.v_height = $(window).height()- 320;// Setting the height of the visualization.
+	window.v_height = $(window).height()- 310;// Setting the height of the visualization.
 
 
 	//<div class="container-fluid" width = v_width>
