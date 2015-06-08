@@ -99,7 +99,7 @@ extern "C" void Concat( const vector<const char*> iTokenList, vector<uint32_t> i
     int size = iTokenList.size();
     int index = 0;
 
-    const char s = ';';
+    const char s = 127;
 
     for (int i =0 ; i < size; i++){
       for (int j = 0; j< iTokenLen[i]; j++){

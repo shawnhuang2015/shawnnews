@@ -60,25 +60,36 @@ object EndpointDefinitions {
         },
         "setting" : {
           "layout" : "circle",
-          "graphType" : "undirected" 
+          "edgeDirectedType" : {"0":"undirected"}
+        },
+        "initialization":{
+          "coloring" : []
         },
         "events" : {
           "submit" : {
             "URL_head" : "/engine/check_ip",
             "URL_attrs" : {
-                "id" : {"usage":"input", "name":"id"},
-                "depth" : {"usage":"input", "name":"depth"},
-                "starttime" : {"usage":"input", "name":"starttime"},
-                "endtime" : {"usage":"input", "name":"endtime"}
+              "vars" : [
+                {"attr":"id", "usage":"input", "name":"id"}
+              ],
+              "maps" : [
+                {"attr":"depth", "usage":"input", "name":"depth"},
+                {"attr":"starttime", "usage":"input", "name":"starttime"},
+                {"attr":"endtime", "usage":"input", "name":"endtime"}
+              ]  
             }
           },
           "node_dblclick" : {
             "URL_head" : "/engine/check_ip",
             "URL_attrs" : {
-                "id" : {"usage":"select", "name":"id"},
-                "depth" : {"usage":"attributes", "name":"depth"},
-                "starttime" : {"usage":"input", "name":"starttime"},
-                "endtime" : {"usage":"input", "name":"endtime"}
+              "vars" : [
+                {"attr":"id", "usage":"select", "name":"id"}
+              ],
+              "maps" : [
+                {"attr":"depth", "usage":"attributes", "name":"depth"},
+                {"attr":"starttime", "usage":"input", "name":"starttime"},
+                {"attr":"endtime", "usage":"input", "name":"endtime"}
+              ] 
             }
           }
         } 

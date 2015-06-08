@@ -97,9 +97,16 @@ namespace UDIMPL {
           writer_->WriteMarkVId(*cit);
           writer_->WriteName("type");
           writer_->WriteUnsignedInt<unsigned>(0);
+
           writer_->WriteName("attr");
           writer_->WriteStartObject();
-          graphapi->GetOneVertex(*cit)->WriteAttributeToJson(*request.outputwriter_);
+          //graphapi->GetOneVertex(*cit)->WriteAttributeToJson(*request.outputwriter_);
+          writer_->WriteEndObject();
+
+          writer_->WriteName("other");
+          writer_->WriteStartObject();
+          writer_->WriteName("log");
+          writer_->WriteString(graphapi->GetOneVertex(*cit)->GetString(0));
           writer_->WriteEndObject();
           writer_->WriteEndObject();
       }
