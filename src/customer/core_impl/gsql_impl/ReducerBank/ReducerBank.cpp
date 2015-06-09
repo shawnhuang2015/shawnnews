@@ -109,25 +109,34 @@ extern "C" void Concat( const vector<const char*> iTokenList, vector<uint32_t> i
       oToken[index++] = s;
     }
 
+    oToken[index++] = '\0';
     oTokenLen = index;
 }
 
 extern "C" void DistinctConcat( const vector<const char*> iTokenList, vector<uint32_t> iTokenLen, 
                           char *const oToken, uint32_t& oTokenLen){
 
-    std::set<char> result;
+    std::set<std::string> result;
 
     int size = iTokenList.size();
     int index = 0;
 
+    const char s = 127;
+
     for (int i =0 ; i < size; i++){
-      for (int j = 0; j< iTokenLen[i]; j++){
-          result.insert(iTokenList[i][j]);
+      result.insert(std::string(iTokenList[i],iTokenLen[i]));
+
+      if (result.size() >= 50) {
+        break;
       }
     }
 
-    for (std::set<char>::const_iterator cit=result.begin(); cit!=result.end(); cit++) {
-      oToken[index++] = *cit;
+    for (std::set<std::string>::const_iterator cit=result.begin(); cit!=result.end(); cit++) {
+      for (int i=0; i<cit->size(); ++i) {
+        oToken[index++] = (*cit)[i];
+      }
+
+      oToken[index++] = s;
     }
 
     oTokenLen = index;
@@ -158,9 +167,9 @@ int main(){
   char c[3]= {'f','a','b'};
   */
 
-  char a[]= "this is log 1";
+  char a[]= "This is log 1";
   char b[]= "This is log 2";
-  char c[]= "This is log 3";
+  char c[]= "This is log 1";
 
   input2.push_back(a);
   input2.push_back(b);
@@ -173,8 +182,8 @@ int main(){
   uint32_t outputLen;
   char outputBuffer[2000];
 
-  //DistinctConcat(input2, inputLen, outputBuffer, outputLen);
-  Concat(input2, inputLen, outputBuffer, outputLen);
+  DistinctConcat(input2, inputLen, outputBuffer, outputLen);
+  //Concat(input2, inputLen, outputBuffer, outputLen);
 
   for (int i=0; i<outputLen; i ++){
    cout<<outputBuffer[i];
