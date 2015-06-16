@@ -86,7 +86,7 @@
   * this function concatenate all input tokens into one big token
   *
   */
-extern "C" void Concat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
+extern "C" void gconcat(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum,
     char* const oToken, uint32_t& oTokenLen){
       
   int k = 0;
@@ -118,7 +118,7 @@ int main(){
 
   char b[100];
   uint32_t  outlen;
-  Concat(a,len,2, b, outlen);
+  gconcat(a,len,2, b, outlen);
   for(int i =0; i<outlen; i++){
     std::cout<<b[i]<<",";
   }

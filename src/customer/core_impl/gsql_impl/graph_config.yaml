@@ -1,43 +1,41 @@
+AttributeEnumerators: 1
 EdgeTypes: 
 - Attributes: 
-  - AttributeName: e0_a1
-    AttributeType: UINT32
+  - AttributeName: role
+    AttributeType: STRING
   EdgeId: 0
-  EdgeName: etype0
-  FromVertexTypeName: vtype0
+  FromVertexTypeName: person
   IsDirected: true
-  ToVertexTypeName: vtype0
-- Attributes: 
-  - AttributeName: e1_a1
-    AttributeType: BOOL
-  EdgeId: 1
-  EdgeName: etype1
-  FromVertexTypeName: vtype0
-  IsDirected: false
-  ToVertexTypeName: vtype0
+  Name: roles
+  ToVertexTypeName: movie
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: mvme
+GraphName: person_movie
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
-  - AttributeName: v0_a1
-    AttributeType: UINT32
-    Nullable: false
-  PrimaryId: 
-    AttributeName: v0_id
+  - AttributeName: name
     AttributeType: STRING
-    Nullable: false
+  Name: person
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT
+  SecondaryIds: 
+  - AttributeName: sid
+    AttributeType: UINT
   VertexId: 0
-  VertexName: vtype0
-  StartId: 100
+  VertexStatisticsType: 1
 - Attributes: 
-  - AttributeName: v1_a1
-    AttributeType: BOOL
-    Nullable: false
-  PrimaryId: 
-    AttributeName: v1_id
+  - AttributeName: title
     AttributeType: STRING
-    Nullable: false
+  - AttributeName: country
+    AttributeType: UINT
+    Enumerator: 1
+  - AttributeName: year
+    AttributeType: UINT
+  Name: movie
+  PrimaryId: 
+    AttributeName: id
+    AttributeType: UINT
   VertexId: 1
-  VertexName: vtype1
+  VertexStatisticsType: 1

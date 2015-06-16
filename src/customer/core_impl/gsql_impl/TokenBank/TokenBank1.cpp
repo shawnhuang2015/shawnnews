@@ -197,6 +197,7 @@ extern "C" void ratingMovie(const char* const iToken, uint32_t iTokenLen,
 /**
  *  Unit testing of the token bank functions
  */ 
+/*
 int main(){
 
   char a[3]={'a','b','c'};
@@ -222,7 +223,6 @@ int main(){
 
   char c[14] = {'4',':','1',',','2','|','5',':','3','|','1','0',':','4'};
 
-  /*
   uint32_t alen = 0; 
 //ABC(c,14, b, alen);
 
@@ -238,7 +238,7 @@ int main(){
      }
   }
   cout <<endl;
-  */
 
 }
 
+  */

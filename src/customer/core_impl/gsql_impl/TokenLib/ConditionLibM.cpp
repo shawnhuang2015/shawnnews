@@ -96,6 +96,3 @@ extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[],
   return true;
 }
 
-
-
-
