@@ -322,9 +322,6 @@
             selectingByConditions();
           }
         });
-        
-
-        $('#content-page').append(window.pages_obj["ExploreNeighborhood"]);
 
         // stroe the JSON message.
         // out the json message in the JSON tab.
