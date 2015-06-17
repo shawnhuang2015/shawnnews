@@ -44,74 +44,64 @@
   <!-- Visulization Component -->  
   <!-- Control Panel -->
   
-    <nav id="navbar-example" class="navbar navbar-default navbar-static">
-      <div class="container-fluid">       
-        <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a id="drop1" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Display Attributes
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="drop1">
-                <li>
-                  <a href="">
-                    <div class="input-group">
-                      <span class="input-group-addon">Node Labels : </span>
-                      <select id="node_label_filtering" multiple="multiple">
-                      </select>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a href="">
-                    <div class="input-group">
-                      <span class="input-group-addon">Edge Labels : </span>
-                      <select id="edge_label_filtering" multiple="multiple">   
-                      </select>
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a id="drop2" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Selection
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="drop2">
-                <li>
-                  <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
-                </li>
-                <li >
-                  <a href="" onclick="hidingNodes()">Hide</a>
-                </li>
-                <li>    
-                   <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
-                      Change Color
-                   </a>
-                </li>
+  <nav id="navbar-example" class="navbar navbar-default navbar-static">
+    <div class="container-fluid">       
+      <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li>                    
+            <a href="">
+              <div class="input-group">
+                Node Labels :
+                <select id="node_label_filtering" multiple="multiple">
+                </select>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              Edge Labels :
+              <select id="edge_label_filtering" multiple="multiple">   
+              </select>
+            </a>
+          </li>
+          <li class="dropdown">
+            <a id="drop2" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Selection
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="drop2">
+              <li>
+                <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
+              </li>
+              <li >
+                <a href="" onclick="hidingNodes()">Hide</a>
+              </li>
+              <li>    
+                 <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
+                    Change Color
+                 </a>
+              </li>
 
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li id="fat-menu" class="dropdown">
-              <a id="drop3" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Graph Layout
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="drop3">
-                <li><a href="" onclick="console.log('test')">Force layout</a></li>
-                <li><a href="" onclick="console.log('test')">Tree layout</a></li>
-                <li><a href="" onclick="console.log('test')">Hierarchical layout</a></li>
-                <li><a href="" onclick="console.log('test')">Circle layout</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div><!-- /.nav-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li id="fat-menu" class="dropdown">
+            <a id="drop3" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              Graph Layout
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="drop3">
+              <li><a href="" onclick="console.log('test')">Force layout</a></li>
+              <li><a href="" onclick="console.log('test')">Tree layout</a></li>
+              <li><a href="" onclick="console.log('test')">Hierarchical layout</a></li>
+              <li><a href="" onclick="console.log('test')">Circle layout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.nav-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
 
   <!-- old -->
   <!--
