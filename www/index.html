@@ -41,13 +41,26 @@
     <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
   </div>
 
+  <!--div ng-controller="PopoverDemoCtrl">
+    <button popover-placement="right" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="console.log('test')">Popover With Template</button>
+
+    <script type="text/ng-template" id="myPopoverTemplate.html">
+        <div>{{dynamicPopover.content}}</div>
+        <div class="form-group">
+          <label>Popup Title:</label>
+          <input type="text" ng-model="dynamicPopover.title" class="form-control">
+        </div>
+    </script>
+  </div--> 
+
+
   <!-- Visulization Component -->  
   <!-- Control Panel -->
   <nav id="navbar-example" class="navbar navbar-default navbar-static">
     <div class="container-fluid">       
       <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
         <ul class="nav navbar-nav">
-          <li>                    
+          <li> 
             <a href="">
                 Node Labels :
                 <select id="node_label_filtering" multiple="multiple">
@@ -191,7 +204,8 @@
         <div align='left' id="prototype1" style="float:left;">
         </div>
         <!--iframe id="desc_iframe" src="desc.html"></iframe-->
-        <pre id="desc_iframe" style="float:left;overflow:auto; margin-left:5px"></pre>
+        <!--pre id="desc_iframe" style="float:left;overflow:auto; margin-left:5px"></pre-->
+
       </div>
 
       <!-- Tab Json -->
