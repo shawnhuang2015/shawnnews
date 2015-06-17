@@ -725,19 +725,23 @@
   }
 
   // call back function for the layout list box.
-  this.layoutChanged = function() {
+  this.layoutChanged = function(newLayout) {
 
     // get the new layout name.
-    var layoutType = $("#layoutType").val();
-    
     // set the new layout for gsqlv
     // start the layout process
     // refresh as animation in 500 milliseconds.
-
-    mygv
-    .layout(layoutType)
-    .startLayout()
-    .refreshAnimation(500)
+    if (newLayout == undefined) {
+      mygv
+      .startLayout()
+      .refreshAnimation(500)
+    }
+    else {
+      mygv
+      .layout(newLayout)
+      .startLayout()
+      .refreshAnimation(500)
+    }
 
     // set to center view after 500 milliseconds.
     setTimeout(
