@@ -171,7 +171,6 @@
     $.get( "engine/UIpages", function( data ) {
       //console.log("Received engine/UIpages " + data);
 
-
       window.pages_obj = JSON.parse(data); 
       //sort on index
       window.pages_obj.sort(function(a,b) {return (a.index - b.index);});
@@ -352,7 +351,7 @@
       $('#node_label_filtering').multiselect(nodeLabelFiltering);
       $('#edge_label_filtering').multiselect(edgeLabelFiltering);
 
-    });
+  });
 
   // remove space function.
   this.removeSpaces = function(s) {
@@ -362,23 +361,32 @@
   // Generate the data object for creating the main menu.
   // Specifiy the onclick event for submit button as onclick_submit(index).
   this.generateForm = function(pagesObject){
-
+    /*
+    <!--div class="navbar-form">
+      <div class="form-group">
+        <span ng-repeat-start="e in object.elements"></span> 
+        <label>{{e.label}} :</label>
+        <input class="form-control" ng-repeat-end type ="text" name="{{e.name}}" size="{{e.length}}" ng-model="input[e.name]" placeholder="Please input {{e.name}}">
+      </div>
+      <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button>
+    </div-->
+    */
     elements = pagesObject.elements;
     URL = pagesObject.URL
 
-    var s = "";
+    var s = '<div class="form-group" >';
     for (var i=0; i < elements.length; i++){
       if (elements[i]["label"]){
         s = s + elements[i]["label"]["name"];
       }
       if (elements[i]["textbox"]){
-        s = s + '    <input type ="text" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>    ';
+        s = s + '    <input type ="text" class="form-control" placeholder="Input ' + elements[i]["textbox"]["name"] + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>    ';
       }
     }
-    s += '   <input type = "submit" value = "Submit"'
+    s += '   <button type = "submit" class="btn btn-default"'
 
     s += 'onclick = onclick_submit('+ pagesObject.index + ')';
-    s +='>  '; 
+    s +='> Submit Query</button></div>'; 
     return s; 
   }
 

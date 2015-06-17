@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="visualization.ui">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,26 +14,33 @@
 </head>
 
 
-<body style="margin-left:10px; margin-right:10px">
+<body style="margin-left:10px; margin-right:10px" ng-controller="UIpages">
   <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">GraphSQL</a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-        </ul>
-      </div>
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img alt="GraphSQL" src="img/logo_0.png"></a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <!--li ng-repeat="tab in tabs"><a href="#" id="{{tab.name}}" name="{{tab.name + $index}}" ng-click="initializeUI(tab, $index)">{{tab.tabname}}</a></li-->
+      </ul>
     </div>
   </nav>
 
-  <div id="content-page" class="starter-template">
+  <div class="starter-template">
+    <div class="navbar-form" id="content-page">
+      <!--div class="form-group" >
+        <span ng-repeat-start="e in object.elements"></span> 
+        <label>{{e.label}} :</label>
+        <input class="form-control" ng-repeat-end type ="text" name="{{e.name}}" size="{{e.length}}" ng-model="input[e.name]" placeholder="Please input {{e.name}}">
+      </div>
+      <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
+    </div>
   </div>
 
   <!-- Visulization Component -->  
@@ -173,6 +180,8 @@
   <!-- Include 3rd Party Library -->
   <script src="graphAPI/lib/d3.js"></script>
   <script src="graphAPI/lib/jquery-2.1.3.js"></script>
+  <script type="text/javascript" src="graphAPI/lib/angular.js"></script>
+  <script type="text/javascript" src="graphAPI/lib/ui-bootstrap-tpls-0.13.0.js"></script>
 
   <script src="bt/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="bt/js/bootstrap-multiselect.js"></script>
@@ -182,6 +191,10 @@
   <script src="graphAPI/js/utlis.js"></script>
   <script src="graphAPI/js/gsqlv.v2.0.js"></script>
   <script src="graphAPI/js/main.js"></script>
+
+  <!-- Include UI componenets -->
+  <script type="text/javascript" src="graphAPI/js/ui_main.js"></script>
+  <script type="text/javascript" src="graphAPI/data/message.js"></script>
 </body>
 </html>
 
