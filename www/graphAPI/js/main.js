@@ -1,4 +1,4 @@
-!function() {
+
   console.log("<== where the code starts.")
 
   // Test case for dropdown list.
@@ -178,7 +178,7 @@
       for (var i=0; i < window.pages_obj.length; i++) {
         var tabname = window.pages_obj[i].tabname;
         var removedSpaces = removeSpaces(tabname);
-        tabline = '<li><a href="#" id="' + removedSpaces  + '" name="'+removedSpaces+'_'+ i + '">' + tabname + '</a></li>';
+        tabline = '<li><a href="" id="' + removedSpaces  + '" name="'+removedSpaces+'_'+ i + '">' + tabname + '</a></li>';
         
         // dropdown list for demo example.
         //window.pages_obj[removedSpaces] = '<div>' + generateDropdown(window.pages_obj[i]) + '</div>';
@@ -380,7 +380,7 @@
         s = s + '    <input type ="text" class="form-control" placeholder="Input ' + elements[i]["textbox"]["name"] + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>    ';
       }
     }
-    s += '   <button type = "submit" class="btn btn-default"'
+    s += '   <button type = "submit" class="btn btn-primary"'
 
     s += 'onclick = onclick_submit('+ pagesObject.index + ')';
     s +='> Submit Query</button></div>'; 
@@ -1035,7 +1035,7 @@
     }
 
     //7.
-        $('#edge_label_filtering').multiselect(edgeLabelFiltering);
+    $('#edge_label_filtering').multiselect(edgeLabelFiltering);
   }
 
   // call back function for the submit button. 
@@ -1383,4 +1383,4 @@
   //refer the graph visualization object.
   window.mygv = mygv;
   console.log("<== where the code ends.")
-}()
+

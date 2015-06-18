@@ -67,12 +67,25 @@ console.log("======> ui main start");
     }
   });
 
-app.controller('PopoverDemoCtrl', function ($scope) {
+app.controller('displayAttributesCtrl', function ($scope) {
   $scope.dynamicPopover = {
-    content: 'Hello, World!',
-    templateUrl: 'myPopoverTemplate.html',
-    title: 'Title'
+    content: 'Display Attributes',
+    templateUrl: 'labelMultiselection.html',
+    title: 'Attributes Labels'
   };
+
+
+  $scope.on_click = function () {
+
+    if (mygv.data().nodes.length == 0) {
+      $('#node_label_filtering').multiselect(nodeLabelFiltering);
+      $('#edge_label_filtering').multiselect(edgeLabelFiltering);
+    }
+
+    window.updateLabelFilteringListBox(mygv.data());
+
+    console.log("Display Attributes click")
+  }
 });
 
 console.log("======> ui main end ");

@@ -23,7 +23,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#"><img alt="GraphSQL" src="img/logo_0.png"></a>
+      <a class="navbar-brand" href=""><img alt="GraphSQL" src="img/logo_0.png"></a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
@@ -41,77 +41,93 @@
     <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
   </div>
 
-  <!--div ng-controller="PopoverDemoCtrl">
-    <button popover-placement="right" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="console.log('test')">Popover With Template</button>
-
-    <script type="text/ng-template" id="myPopoverTemplate.html">
-        <div>{{dynamicPopover.content}}</div>
-        <div class="form-group">
-          <label>Popup Title:</label>
-          <input type="text" ng-model="dynamicPopover.title" class="form-control">
-        </div>
-    </script>
-  </div--> 
-
-
   <!-- Visulization Component -->  
   <!-- Control Panel -->
-  <nav id="navbar-example" class="navbar navbar-default navbar-static">
-    <div class="container-fluid">       
-      <div class="collapse navbar-collapse bs-example-js-navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li> 
-            <a href="">
-                Node Labels :
-                <select id="node_label_filtering" multiple="multiple">
-                </select>
-            </a>
-          </li>
-          <li>
-            <a href="">
-              Edge Labels :
-              <select id="edge_label_filtering" multiple="multiple">   
-              </select>
-            </a>
-          </li>
-          <li class="dropdown">
-            <a id="drop2" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Selection
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="drop2">
-              <li>
-                <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
-              </li>
-              <li >
-                <a href="" onclick="hidingNodes()">Hide</a>
-              </li>
-              <li>    
-                 <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
-                    Change Color
-                 </a>
-              </li>
+  <div class="container-fluid">
+    <!--div ng-controller="PopoverDemoCtrl" style="float:left">
+      <button popover-placement="bottom" popover-template="dynamicPopover.templateUrl2" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="on_click()">Popover With Template 0</button>
 
-            </ul>
-          </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li id="fat-menu" class="dropdown">
-            <a id="drop3" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              Graph Layout
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="drop3">
-              <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
-              <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
-              <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
-              <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div><!-- /.nav-collapse -->
-    </div><!-- /.container-fluid -->
-  </nav>
+      <script type="text/ng-template" id="myPopoverTemplate2.html">
+          <div>{{dynamicPopover.content}}</div>
+          <div class="form-group">
+            <label>Popup Title: 000000000</label>
+            <input type="text" ng-model="dynamicPopover.title" class="form-control">
+          </div>
+      </script>
+    </div--> 
+    <div ng-controller="displayAttributesCtrl" style="float:left">
+      <style>
+        .caret-right {
+            border-left: 4px solid;
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+        }
+      </style>
+      <button popover-placement="right" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-primary" ng-click="on_click()">{{dynamicPopover.content}} &nbsp;<span class="caret caret-right"></span></button>
+
+      <script type="text/ng-template" id="labelMultiselection.html">
+        <div>
+        <label>Node Labels :</label>
+        <select id="node_label_filtering" multiple="multiple">
+        </select>
+        </div>
+        <div>
+        <label>Edge Labels :</label>
+        <select id="edge_label_filtering" multiple="multiple">   
+        </select>
+        </div>
+      </script>
+    </div> 
+
+    <span style="float:left">&nbsp;</span>
+
+    <div class="dropdown" style="float:left">
+      <a id="selectionDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-primary">
+          Selection
+          <span class="caret"></span>
+        </button>
+      </a>
+      <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
+        <li>
+          <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
+        </li>
+        <li >
+          <a href="" onclick="hidingNodes()">Hide</a>
+        </li>
+        <li>    
+           <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
+              Change Color
+           </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="btn-group navbar-right">
+      <!--button popover-placement="left" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="on_click()">Popover With Template 2</button>
+
+      <script type="text/ng-template" id="myPopoverTemplate.html">
+          <div>{{dynamicPopover.content}}</div>
+          <div class="form-group">
+            <label>Popup Title 123123123:</label>
+            <input type="text" ng-model="dynamicPopover.title" class="form-control">
+          </div>
+      </script-->
+      <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-primary">
+          Graph Layout
+          <span class="caret"></span>
+        </button>
+      </a>
+      <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
+        <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
+        <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
+        <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
+        <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
+      </ul>
+    </div> 
+  </div>
+  <!-- Container -->
 
   <!-- old -->
   <!--
