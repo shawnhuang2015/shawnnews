@@ -11,8 +11,8 @@
   this.messageArray = [];  // Record message from backend.
   this.scaleAbilityData = [];  // Record the result for scalability testing.
   
-  window.v_width = $(window).width() / 1.1; // Setting the width of the visualization.
-  window.v_height = $(window).height() - 300;// Setting the height of the visualization.
+  window.v_width = $('#viewport').width(); // Setting the width of the visualization.
+  window.v_height = $(window).height() - 230;// Setting the height of the visualization.
 
 
   //<div class="container-fluid" width = v_width>
@@ -21,16 +21,10 @@
   // Create the graph visualization object.
   var mygv = new gsqlv("mygv");
 
-  var log_view_width = 0.4
+  var log_view_width = 0.0
 
   // The graph visualization initialization setting.
-  var setting = {'divID':'prototype1', 'width':$('#content-page').width()*(1-log_view_width), 'height': v_height};
-
-  d3.select("#desc_iframe")
-  .style("width", $('#content-page').width()*log_view_width+"px")
-  .style("height", v_height+"px")
-  //.style("margin-left", "2px")
-  .style("border",0)
+  var setting = {'divID':'prototype1', 'width':window.v_width*(1-log_view_width), 'height': v_height};
 
   // LabelFiltering initialization status;
   var filteringStatus = {node:{type:false, id:true}, 
@@ -1321,7 +1315,7 @@
     d3.select("#messageBox").selectAll("*").remove();
 
     d3.select("#messageBox")
-    .style("width", $('#content-page').width() + "px ")
+    .style("width", v_width + "px")
     .style("height", v_height+"px")
 
     d3.select("#messageBox")
@@ -1337,13 +1331,13 @@
 
     // output the summary information for the whole graph.
     d3.select("#summaryOfAllNodes")
-    .style("width", $('#content-page').width() + "px ")
+    .style("width", v_width + "px")
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForAllNodes())
 
     // output the summary information for the selected sub graph.
     d3.select("#summaryOfSelectedNodes")
-    .style("width", $('#content-page').width() + "px ")
+    .style("width", v_width + "px")
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForSelectedNodes())
 

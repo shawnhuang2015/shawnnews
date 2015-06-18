@@ -32,18 +32,164 @@
     </div>
   </nav>
 
-  <div class="navbar-form" id="content-page">
-    <!--div class="form-group" >
-      <span ng-repeat-start="e in object.elements"></span> 
-      <label>{{e.label}} :</label>
-      <input class="form-control" ng-repeat-end type ="text" name="{{e.name}}" size="{{e.length}}" ng-model="input[e.name]" placeholder="Please input {{e.name}}">
+  <div class="row">
+    <div id="content-page" class="navbar-form" >
+      <!--div class="form-group" >
+        <span ng-repeat-start="e in object.elements"></span> 
+        <label>{{e.label}} :</label>
+        <input class="form-control" ng-repeat-end type ="text" name="{{e.name}}" size="{{e.length}}" ng-model="input[e.name]" placeholder="Please input {{e.name}}">
+      </div>
+      <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
     </div>
-    <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
   </div>
+  <!-- Row 1 -->
 
   <!-- Visulization Component -->  
   <!-- Control Panel -->
-  <div class="container-fluid">
+  <!--div class="container-fluid"-->
+
+  <div class="row">
+    <!-- Begin Right Side -->
+    <div class="col-md-9">
+      <div class="row">
+        <div class="col-md-4"> 
+          <div class="input-group">
+            <span class="input-group-addon">Node Labels: </span>
+            <select id="node_label_filtering" multiple="multiple">
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4"> 
+          <div class="input-group">
+            <span class="input-group-addon">Edge Labels : </span>
+            <select id="edge_label_filtering" multiple="multiple">
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-1"> 
+          <a id="selectionDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default">
+              Selection
+              <span class="caret"></span>
+            </button>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
+            <li>
+              <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
+            </li>
+            <li >
+              <a href="" onclick="hidingNodes()">Hide</a>
+            </li>
+            <li>    
+               <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
+                  Change Color
+               </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Control Panel Row 1 -->
+      <br />
+
+      <div class="row">
+        <!-- Tabs Area-->
+        <div id="viewport" class="col-md-12"> 
+          <div role="tabpanel" id="tapView">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graph</a></li>
+              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li>
+              <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
+              <!--li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li-->
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <!-- Tab Graph -->
+              <div role="tabpanel" class="tab-pane active" id="graph">
+                <br />
+                <div align='left' id="prototype1" style="float:left;">
+                </div>
+                <!--iframe id="desc_iframe" src="desc.html"></iframe-->
+                <!--pre id="desc_iframe" style="float:left;overflow:auto; margin-left:5px"></pre-->
+
+              </div>
+
+              <!-- Tab Json -->
+              <div role="tabpanel" class="tab-pane" id="json">
+                <style>
+                .key {
+                  color:red;
+                }
+                .string {
+                  color:green;
+                }
+                .number {
+                  color:blue;
+                }
+                </style>
+                <br />
+                <pre id="messageBox" style="float:left;overflow:auto;line-height: 90%;">
+                </pre>
+              </div>
+
+              <!-- Tab Summary -->
+              <div role="tabpanel" class="tab-pane" id="summary"> 
+                <br />
+                <div align='left' id="summaryInformationBox" stlye="float:left">
+                  <pre id="summaryOfAllNodes">Test</pre>
+                  <pre id="summaryOfSelectedNodes">Test</pre>
+                </div>
+              </div>
+
+              <!-- Tab More -->
+              <div role="tabpanel" class="tab-pane" id="more">
+                <br />
+                Coming Soon ...
+              </div>
+            </div>
+            <!-- End Tab panes -->
+
+          </div>
+        </div>
+      </div>
+      <!-- Viewport Row 2 -->
+    </div>
+    <!-- End Right Side -->
+
+    <!-- Begin Left Side -->
+    <div class="col-md-3"> 
+      <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+          <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default">
+              Graph Layout
+              <span class="caret"></span>
+            </button>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
+            <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
+            <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
+            <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
+            <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <br />
+      <!-- Layout Port -->
+      <div id="layoutport" class="row">
+        Something.
+      </div>
+    </div>
+    <!-- End Right Side -->
+
+  </div>
+  <!-- Row 2 -->
+
     <!--div ng-controller="PopoverDemoCtrl" style="float:left">
       <button popover-placement="bottom" popover-template="dynamicPopover.templateUrl2" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="on_click()">Popover With Template 0</button>
 
@@ -55,7 +201,7 @@
           </div>
       </script>
     </div--> 
-    <div ng-controller="displayAttributesCtrl" style="float:left">
+    <!--div ng-controller="displayAttributesCtrl" style="float:left">
       <style>
         .caret-right {
             border-left: 4px solid;
@@ -77,63 +223,13 @@
         </select>
         </div>
       </script>
-    </div> 
-
-    <span style="float:left">&nbsp;</span>
-
-    <div class="dropdown" style="float:left">
-      <a id="selectionDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-        <button class="btn btn-primary">
-          Selection
-          <span class="caret"></span>
-        </button>
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
-        <li>
-          <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
-        </li>
-        <li >
-          <a href="" onclick="hidingNodes()">Hide</a>
-        </li>
-        <li>    
-           <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
-              Change Color
-           </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="btn-group navbar-right">
-      <!--button popover-placement="left" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="on_click()">Popover With Template 2</button>
-
-      <script type="text/ng-template" id="myPopoverTemplate.html">
-          <div>{{dynamicPopover.content}}</div>
-          <div class="form-group">
-            <label>Popup Title 123123123:</label>
-            <input type="text" ng-model="dynamicPopover.title" class="form-control">
-          </div>
-      </script-->
-      <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-        <button class="btn btn-primary">
-          Graph Layout
-          <span class="caret"></span>
-        </button>
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
-        <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
-        <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
-        <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
-        <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
-      </ul>
-    </div> 
-  </div>
-  <!-- Container -->
+    </div--> 
 
   <!-- old -->
   <!--
   <div class="container-fluid">
     
-    <!-- first row for node action
+    first row for node action
     <div class="row">
         <div class="col-md-4"> 
         <div class="input-group">
@@ -196,71 +292,7 @@
         </select>
       </div>
     </div>  
-    
-
-  </div>
   -->
-
-  <!-- Tabs Area-->
-  <div role="tabpanel" id="tapView">
-
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graph</a></li>
-      <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li>
-      <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
-      <!--li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li-->
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content">
-      <!-- Tab Graph -->
-      <div role="tabpanel" class="tab-pane active" id="graph">
-        <br />
-        <div align='left' id="prototype1" style="float:left;">
-        </div>
-        <!--iframe id="desc_iframe" src="desc.html"></iframe-->
-        <!--pre id="desc_iframe" style="float:left;overflow:auto; margin-left:5px"></pre-->
-
-      </div>
-
-      <!-- Tab Json -->
-      <div role="tabpanel" class="tab-pane" id="json">
-        <style>
-        .key {
-          color:red;
-        }
-        .string {
-          color:green;
-        }
-        .number {
-          color:blue;
-        }
-        </style>
-        <br />
-        <pre id="messageBox" style="float:left;overflow:auto;line-height: 90%;">
-        </pre>
-      </div>
-
-      <!-- Tab Summary -->
-      <div role="tabpanel" class="tab-pane" id="summary"> 
-        <br />
-        <div align='left' id="summaryInformationBox" stlye="float:left">
-          <pre id="summaryOfAllNodes">Test</pre>
-          <pre id="summaryOfSelectedNodes">Test</pre>
-        </div>
-      </div>
-
-      <!-- Tab More -->
-      <div role="tabpanel" class="tab-pane" id="more">
-        <br />
-        Coming Soon ...
-      </div>
-    </div>
-    <!-- End Tab panes -->
-
-  </div>
-  <!-- End Visulization Component --> 
 
   <!-- script src="graphAPI/data/data.js"></script -->
   <!-- script src="data/graph.js"></script -->
