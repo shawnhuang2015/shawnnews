@@ -14,6 +14,8 @@
   window.v_width = $('#viewport').width(); // Setting the width of the visualization.
   window.v_height = $(window).height() - 230;// Setting the height of the visualization.
 
+  $('#layoutport').height(v_height + 62);
+
 
   //<div class="container-fluid" width = v_width>
   //$('#tapView').width(v_width*1.05);  // Setting the width of the tap for graph, JSON, summary, and more;
@@ -165,6 +167,17 @@
     $.get( "engine/UIpages", function( data ) {
       //console.log("Received engine/UIpages " + data);
 
+      
+      var table = "";
+      table += '<tr><td>Eve</td><td>Jackson</td><td>94</td></tr>'
+
+      for (var i=0; i<100; i++) {
+        $('#tableInformation').append(table);
+      }
+      
+
+          
+
       window.pages_obj = JSON.parse(data); 
       //sort on index
       window.pages_obj.sort(function(a,b) {return (a.index - b.index);});
@@ -198,7 +211,7 @@
             // initialize layout
             // setting pre definition of the graph visualization.
             mygv.clean()
-            mygv.layout(UIObject.setting.layout)
+            layoutChanged(UIObject.setting.layout)
             mygv.edgeDirectedType(UIObject.setting.edgeDirectedType)
             mygv.preDefinition(UIObject.initialization)
 
@@ -232,7 +245,7 @@
             UIObject = window.pages_obj[i]
             
             mygv.clean()
-            mygv.layout(UIObject.setting.layout)
+            layoutChanged(UIObject.setting.layout)
             mygv.edgeDirectedType(UIObject.setting.edgeDirectedType)
             mygv.preDefinition(UIObject.initialization)
 
@@ -735,7 +748,35 @@
       .layout(newLayout)
       .startLayout()
       .refreshAnimation(500)
+
+      $('#layoutProperty').empty();
+    
+      if (newLayout == "force") {
+        var label = '<label>Force Layout</label><br/>'
+        var restartForce = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Restart Force</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        $('#layoutProperty').append(label + restartForce + centerView);
+      }
+      else if (newLayout == "tree") {
+        var label = '<label>Tree Layout</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Tree Root</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        $('#layoutProperty').append(label + rootString + centerView);
+      }
+      else if (newLayout == "hierarchical") {
+        var label = '<label>Hierarchical Layout</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Hierarchical Root</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        $('#layoutProperty').append(label + rootString + centerView);
+      }
+      else if (newLayout == "circle") {
+        var label = '<label>Circle Layout</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Center Node</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        $('#layoutProperty').append(label + rootString + centerView);
+      }
     }
+
 
     // set to center view after 500 milliseconds.
     setTimeout(
