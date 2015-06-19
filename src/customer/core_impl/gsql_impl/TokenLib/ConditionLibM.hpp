@@ -44,6 +44,7 @@
 #include <cstring>
 #include <stdbool.h>
 #include <cstdlib>
+#include <string>
 
 /**
  * This funtion compares two string (case sensitive), and returns true if they are equal.
@@ -63,5 +64,21 @@ extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[
 
 extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[], 
     uint32_t iTokenLen[], uint32_t iTokenNum);
+
+/**
+ * Predicate testing helper function. 
+ *    E.g. WHERE $1 IS NUMERIC 
+ *    Will call this function.
+ *
+ * IsNumeric test whether a string is a numeric number.
+ * 
+ * Numeric number is defined as follows in regular expression:
+ *      (+/-)?[0-9][0-9]*(.[0-9])?[0-9]*     
+ *
+ * Any space appear in between will not be taken as numeric number. 
+ * Space in front and at the end is OK.
+ */
+
+extern "C" bool IsNumeric (std::string s);
 
 #endif /* CONDITIONLIBM_HPP_ */

@@ -75,6 +75,7 @@ extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[]
 /**
  *  Unit testing of the token bank functions
  */ 
+/*
 int main(){
 
   char* a[2];
@@ -95,4 +96,5 @@ int main(){
   }
 
 }
+*/
 

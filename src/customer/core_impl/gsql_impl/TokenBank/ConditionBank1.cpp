@@ -68,6 +68,7 @@ extern "C"  bool GreaterThan3(const char* const iToken, uint32_t iTokenLen) {
 /**
  *  Unit testing of the token bank functions
  */ 
+/*
 int main(){
 
   char a[3]={'1','2','3'};
@@ -80,3 +81,4 @@ int main(){
 
 }
 
+*/

@@ -68,6 +68,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <set>
 
 using namespace std;
 /**
@@ -104,7 +105,7 @@ extern "C" void _Concat( const vector<const char*> iTokenList, vector<uint32_t> 
 
     oTokenLen = index;
 }
- 
+
 
 /**
  *  Unit testing of the token bank functions

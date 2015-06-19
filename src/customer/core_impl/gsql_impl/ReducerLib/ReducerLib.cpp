@@ -75,6 +75,7 @@
 #include <cfloat>
 #include <vector>
 #include <string>
+#include <set>
 #include <ReducerLib.hpp>
 
 using namespace std;
@@ -268,6 +269,27 @@ extern "C" void gsql_concat_str( const vector<const char*> iValueList,
     oValue[0]='\0';
     oValueLen =0;
   }
+}
+
+extern "C" void gsql_distinct_concat_str (
+  const vector<const char*> iTokenList, 
+  vector<uint32_t> iTokenLen, char *const oToken, 
+  uint32_t& oTokenLen) {
+
+    oTokenLen = 0;
+    std::set<std::string> result;
+
+    for (int i = 0; i < iTokenList.size(); i++) {
+      result.insert (std::string (iTokenList[i], iTokenLen[i]) );
+    }
+
+    for (std::set<std::string>::const_iterator cit = result.begin(); 
+        cit != result.end(); cit++) {
+
+      for (int i = 0; i < cit->size(); i++) {
+        oToken[oTokenLen++] = (*cit)[i];
+      }
+    }
 }
 
 

@@ -173,3 +173,10 @@ extern "C" bool gsql_and_bool(const vector<bool> iValueList);
  */
 extern "C" void gsql_concat_str(const vector<const char*> iValueList, vector<uint32_t> iValueLen, char *const oValue, uint32_t& oValueLen);
 
+
+/**
+ * Concatenate a list of distinct char string.
+ * @par  Example 
+ *       load "source_file" to vertex v values ($0, $1, reduce(gsql_distinct_concat_str($2))); 
+ */
+extern "C" void gsql_distinct_concat_str (const vector<const char*> iTokenList, vector<uint32_t> iTokenLen, char *const oToken, uint32_t& oTokenLen);

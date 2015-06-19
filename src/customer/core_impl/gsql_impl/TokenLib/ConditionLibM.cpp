@@ -96,6 +96,104 @@ extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[],
   return true;
 }
 
+/**
+ * Predicate testing helper function. 
+ *    E.g. WHERE $1 IS NUMERIC 
+ *    Will call this function.
+ *
+ * IsNumeric test whether a string is a numeric number.
+ * 
+ * Numeric number is defined as follows in regular expression:
+ *      (+/-)?  [0-9]   [0-9]*    (.[0-9])?   [0-9]*     
+ *  ^     ^       ^       ^        ^   ^         ^       ^
+ *  |     |       |       |        |   |         |       |
+ * INIT  SIGN   START   MIDDLE    DOT  TAIL     TAIL    END
+ *
+ * Any space appear in between will not be taken as numeric number. 
+ * Space in front and at the end is OK.
+ */
 
+extern "C" bool IsNumeric (std::string s) { 
+  enum State {INIT, SIGN, START, MIDDLE, DOT, TAIL, END};
+  size_t i = 0;
+  State current = INIT;
 
+  while (i < s.size()) {
+    switch (current) {
+      case INIT:
+        if (s[i] == ' ') {
+          // stays same
+        } else if ( std::isdigit(s[i]) ) {
+          current = START;
+        } else if (s[i] == '-' || s[i] == '+') {
+          current = SIGN;
+        } else {
+          return false;
+        }
+        break;
+      case SIGN:
+        if ( std::isdigit(s[i]) ) {
+          current = START;
+        } else if (s[i] == ' ') {
+          current = END;
+        } else {
+          return false;
+        }
+        break;
+      case START:
+        if ( std::isdigit(s[i]) ) {
+          current = MIDDLE;
+        } else if (s[i] == '.') {
+          current = DOT;
+        } else if (s[i] == ' ') {
+          current = END;
+        } else {
+          return false;
+        }
+        break;
+      case MIDDLE:
+        if ( std::isdigit(s[i]) ) {
+          // stays same
+        } else if (s[i] == '.') {
+          current = DOT;
+        } else if (s[i] == ' ') {
+          current = END;
+        } else {
+          return false;
+        }
+        break;
+      case DOT:
+        if ( std::isdigit(s[i]) ) {
+          current = TAIL;
+        } else {
+          return false;
+        }
+        break;
+      case TAIL:
+        if ( std::isdigit(s[i]) ) {
+          // stays same
+        } else if (s[i] == ' ') {
+          current = END;
+        } else {
+          return false;
+        }
+        break;
+      case END:
+        if (s[i] == ' ') {
+          ;// stays the same
+        } else {
+          return false;
+        }
+        break;
+      default:
+        return false;
+    }
+    i ++;
+  }
 
+  if (current == TAIL || current == START 
+      || current == MIDDLE || current == END) {
+    return true;
+  }
+  return false;
+}
