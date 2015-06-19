@@ -44,6 +44,7 @@
 #include <cstring>
 #include <stdbool.h>
 #include <cstdlib>
+#include <string>
 
 /**
  * This funtion compares two string (case sensitive), and returns true if they are equal.
@@ -63,5 +64,76 @@ extern "C" bool gsql_token_equal(const char* const iToken[], uint32_t iTokenLen[
 
 extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[], 
     uint32_t iTokenLen[], uint32_t iTokenNum);
+
+inline bool IsNumeric (std::string s) { 
+  enum State {INIT, SIGN, START, MIDDLE, DOT, TAIL};
+  size_t i = 0;
+  State current = INIT;
+
+  while (i < s.size() && s[i] == ' ')
+    i++;
+
+  while (i < s.size()) {
+    switch (current) {
+      case INIT:
+        if ( std::isdigit(s[i]) ) {
+          current = START;
+        } else if (s[i] == '-' || s[i] == '+') {
+          current = SIGN;
+        } else {
+          return false;
+        }
+        break;
+      case SIGN:
+        if ( std::isdigit(s[i]) ) {
+          current = START;
+        } else {
+          return false;
+        }
+        break;
+      case START:
+        if ( std::isdigit(s[i]) ) {
+          current = MIDDLE;
+        } else if (s[i] == '.') {
+          current = DOT;
+        } else {
+          return false;
+        }
+        break;
+      case MIDDLE:
+        if ( std::isdigit(s[i]) ) {
+          current = MIDDLE;
+        } else if (s[i] == '.') {
+          current = DOT;
+        } else {
+          return false;
+        }
+        break;
+      case DOT:
+        if ( std::isdigit(s[i]) ) {
+          current = TAIL;
+        } else {
+          return false;
+        }
+        break;
+      case TAIL:
+        if ( std::isdigit(s[i]) ) {
+          current = TAIL;
+        } else {
+          return false;
+        }
+        break;
+      default:
+        return false;
+    }
+    i ++;
+  }
+
+  if (current == TAIL || current == START 
+      || current == MIDDLE) {
+    return true;
+  }
+  return false;
+}
 
 #endif /* CONDITIONLIBM_HPP_ */
