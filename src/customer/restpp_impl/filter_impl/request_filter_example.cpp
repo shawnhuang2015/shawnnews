@@ -33,8 +33,8 @@ extern "C" {
   The following parameters are your output:
 * @param jsoptions - The jsoptions object you will access on impl.hpp
 * @param id_set The - set of ids for translation
-* @param error_message - if anything wrong happens, set the error_message. If error_message is set to
-*        nonempty, the request will be immediately returned without forwarding to GPE.
+* @param message - message is directly sent back to user if the filter returns false. Otherwise, setting message
+*                 has no effects.
 * @return - true if every is right and the request is expected to be sent to GPE, false if something wrong happen
 *         and the error_message will be returned to customer.
 */
@@ -46,7 +46,7 @@ bool RequestFilterExample(
                const std::map<std::string, std::vector<std::string> > &params,
                Json::Value &jsoptions,
                IdSet &idset,
-               std::string &errormessage){
+               std::string &message){
 
 
 

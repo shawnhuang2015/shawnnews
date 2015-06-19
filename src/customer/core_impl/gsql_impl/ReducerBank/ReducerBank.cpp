@@ -90,7 +90,7 @@ extern "C" uint64_t MySum(const vector<uint64_t> iTokenList) {
 }
 
 
-extern "C" void gconcat( const vector<const char*> iTokenList, vector<uint32_t> iTokenLen, 
+extern "C" void _Concat( const vector<const char*> iTokenList, vector<uint32_t> iTokenLen, 
                           char *const oToken, uint32_t& oTokenLen){
 
 
@@ -140,7 +140,7 @@ int main(){
   uint32_t outputLen;
   char outputBuffer[2000];
 
-   gconcat(input2, inputLen, outputBuffer, outputLen);
+   _Concat(input2, inputLen, outputBuffer, outputLen);
 
    for (int i=0; i<outputLen; i ++){
      cout<<outputBuffer[i]<<"," ;
