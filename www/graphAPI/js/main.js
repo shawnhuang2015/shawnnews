@@ -1414,11 +1414,40 @@
   }
 
   this.onClick_table = function (d) {
+    var type = ''
+    var attr = ''
+    var value = ''
     $(d)
     .find('td')
     .each(function(i, d) {
-      console.log(i + ' Item : ' + $(d).html())
+      var temp = $(d).html()
+      switch(i) {
+        case 0:
+          type = temp.split(':')[0].replace(/^\s+|\s+$/g, '');
+          break;
+        case 1:
+          attr = temp;
+          break;
+        case 2:
+          value = temp;
+        break;
+        default:
+        break;
+      }
     })
+
+    var conditionString = attr + "=='" + value + "'";
+
+    // Unselect everything in the graph visualization.
+    mygv.unselectingEverything();
+
+    // doing selecting base on condition type and condition string.
+    if (type == "node") {
+      mygv.selectingNodesByConditions(conditionString);
+    }
+    else if (type == "link") {
+      mygv.selectingEdgesByConditions(conditionString);
+    }
   }   
 
   //refer the graph visualization object.

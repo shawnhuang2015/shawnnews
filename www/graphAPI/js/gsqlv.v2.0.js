@@ -2624,18 +2624,18 @@ var gsqlv = function(x) {
       node = selectedNodes[node]
       
       var index = 0;
-      result += '<tr onclick="onClick_table(this)"><td> Node:'+node.id+';'+node.type+'</td><td> id </td><td>' + node.id + '</td></tr>';
+      result += '<tr onclick="onClick_table(this)"><td> node:'+node.id+';'+node.type+'</td><td> id </td><td>' + node.id + '</td></tr>';
       index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> Node:'+node.id+';'+node.type+'</td><td> type </td><td>' + node.type + '</td></tr>';
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> node:'+node.id+';'+node.type+'</td><td> type </td><td>' + node.type + '</td></tr>';
       index++;
 
       for (var key in Object.keys(node.attr)) {
         key = Object.keys(node.attr)[key];
         if (index) {
-          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> Node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
+          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
         }
         else {
-          result += '<tr onclick="onClick_table(this)"><td> Node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
+          result += '<tr onclick="onClick_table(this)"><td> node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
         }
 
         index++;
@@ -2657,7 +2657,7 @@ var gsqlv = function(x) {
         key = Object.keys(link.attr)[key];
 
         if (link.attr[key] instanceof Array) {
-          link.attr[key] = link.attr[key].join(";");
+          link.attr[key] = link.attr[key].join(",<br>");
         }
 
         if (index) {
