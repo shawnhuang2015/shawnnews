@@ -2646,11 +2646,11 @@ var gsqlv = function(x) {
       link = selectedEdges[link]
       
       var index = 0;
-      result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'=>'+link.target.id+'</td><td> Source </td><td>' + link.source.id+';'+link.source.type + '</td></tr>';
+      result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'<br>=>'+link.target.id+'</td><td> Source </td><td>' + link.source.id+';'+link.source.type + '</td></tr>';
       index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td> Target </td><td>' + link.target.id+';'+link.target.type+ '</td></tr>';
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td> Target </td><td>' + link.target.id+';'+link.target.type+ '</td></tr>';
       index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td> type </td><td>' + link.type + '</td></tr>';
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td> type </td><td>' + link.type + '</td></tr>';
       index++;
 
       for (var key in Object.keys(link.attr)) {
@@ -2661,10 +2661,10 @@ var gsqlv = function(x) {
         }
 
         if (index) {
-          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
+          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
         }
         else {
-          result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+':'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
+          result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
         }
 
         index++;
