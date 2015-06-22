@@ -14,7 +14,7 @@
   window.v_width = $('#viewport').width(); // Setting the width of the visualization.
   window.v_height = $(window).height() - 230;// Setting the height of the visualization.
 
-  $('#layoutport').height(v_height + 62);
+  //$('#layoutport').height(v_height + 62);
 
 
   //<div class="container-fluid" width = v_width>
@@ -167,16 +167,15 @@
     $.get( "engine/UIpages", function( data ) {
       //console.log("Received engine/UIpages " + data);
 
-      
-      var table = "";
-      table += '<tr><td>Eve</td><td>Jackson</td><td>94</td></tr>'
+      /*
+      var table = function(t) {
+          return '<tr onclick="onClick_table(this)"><td>Eve</td><td>Jackson</td><td>' + t + '</td></tr>'
+      };
 
       for (var i=0; i<100; i++) {
-        $('#tableInformation').append(table);
-      }
-      
-
-          
+        $('#tableInformation').append(table(i));
+      } 
+      */  
 
       window.pages_obj = JSON.parse(data); 
       //sort on index
@@ -753,31 +752,31 @@
     
       if (newLayout == "force") {
         var label = '<label>Force Layout</label><br/>'
-        var restartForce = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Restart Force</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        var restartForce = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Restart Force</button>';
+        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + restartForce + centerView);
       }
       else if (newLayout == "tree") {
         var label = '<label>Tree Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Tree Root</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Tree Root</button>';
+        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "hierarchical") {
         var label = '<label>Hierarchical Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Hierarchical Root</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Hierarchical Root</button>';
+        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "circle") {
         var label = '<label>Circle Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Center Node</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Center Node</button>';
+        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
     }
 
-
+    $('#tableBox').height($('#right_side').height() - $('#layoutport').height() - 20)
     // set to center view after 500 milliseconds.
     setTimeout(
     function() {
@@ -1368,7 +1367,7 @@
     // remove previous summary information display.
     d3.select("#summaryOfAllNodes").selectAll("*").remove();
     d3.select("#summaryOfSelectedNodes").selectAll("*").remove();
-    d3.select("#desc_iframe").selectAll("*").remove();
+    d3.select("#tableInformation").selectAll("*").remove();
 
     // output the summary information for the whole graph.
     d3.select("#summaryOfAllNodes")
@@ -1382,8 +1381,8 @@
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForSelectedNodes())
 
-    d3.select("#desc_iframe")
-    .style("height", v_height+"px")
+    d3.select("#tableInformation")
+    //.style("height", v_height+"px")
     .html(mygv.outputLogforSelectedNodes())
   }
 
@@ -1398,11 +1397,10 @@
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForSelectedNodes())
 
-    d3.select("#desc_iframe").selectAll("*").remove();
+    d3.select("#tableInformation").selectAll("*").remove();
 
     // out the new log information.
-    d3.select("#desc_iframe")
-    .style("height", v_height+"px")
+    d3.select("#tableInformation")
     .html(mygv.outputLogforSelectedNodes())
   }
 
@@ -1414,6 +1412,14 @@
       return x;
     }
   }
+
+  this.onClick_table = function (d) {
+    $(d)
+    .find('td')
+    .each(function(i, d) {
+      console.log(i + ' Item : ' + $(d).html())
+    })
+  }   
 
   //refer the graph visualization object.
   window.mygv = mygv;

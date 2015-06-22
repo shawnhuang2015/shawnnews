@@ -50,7 +50,7 @@
 
   <div class="row">
     <!-- Begin Right Side -->
-    <div class="col-md-9">
+    <div id="right_side" class="col-md-9" style="">
       <div class="row">
         <div class="col-md-4"> 
           <div class="input-group">
@@ -161,38 +161,41 @@
     <!-- End Right Side -->
 
     <!-- Begin Left Side -->
-    <div class="col-md-3"> 
-      <div class="row">
-        <div class="col-md-6 col-md-offset-6">
-          <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <button class="btn btn-default">
-              Graph Layout
-              <span class="caret"></span>
-            </button>
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
-            <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
-            <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
-            <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
-            <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
-          </ul>
+    <div id='left_side' class="col-md-3" style=""> 
+      <div id="layoutport" class="row" style="background-color: #dadada;border-style:solid;border-color: #dadada; ">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-6" >
+            <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <button class="btn btn-info">
+                Graph Layout
+                <span class="caret"></span>
+              </button>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
+              <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
+              <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
+              <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
+              <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Layout Port -->
+        <div class="row" style="">
+          <div id="layoutProperty" style="width:90%;" align="right">
+          </div>
         </div>
       </div>
 
-      <br />
-      <!-- Layout Port -->
-      <div id="layoutport" class="row" style="">
-        <div id="layoutProperty" style="width:90%;height:40%;" align="right">
-        </div>
-        <div id="tableBox" style="overflow:auto;width:97%;height:60%">  
-          <table class="table table-hover" id="tableInformation">
-            <tr>
-              <th>Firstname</th>
-              <th>Lastname</th> 
-              <th>Points</th>
-            </tr>
-          </table>
-        </div>
+      <br/>
+
+      <div id="tableBox" class="row" style="overflow:auto;">  
+        <table class="table table-hover table-bordered" id="tableInformation">
+          <tr>
+            <th>Element Type</th>
+            <th>Attribute Name</th> 
+            <th>Attribute Value</th>
+          </tr>
+        </table>
       </div>
     </div>
     <!-- End Right Side -->

@@ -2606,36 +2606,68 @@ var gsqlv = function(x) {
 
   gsqlv.outputLogforSelectedNodes = function() {
     var selectedNodes = data.nodes.filter(function(n){return n.selected});
+    var selectedEdges = data.links.filter(function(l){return l.selected});
 
-    if (selectedNodes.length == 0) {
+    if (selectedNodes.length == 0 && selectedEdges.length == 0) {
       return '<span style="color:#636363;font-size:15px;font-family: Times">No Selected Node</span>\n'
     }
-    var result = '<span style="color:#3182bd;font-size:15px;font-family: Times">Original log of the selected nodes:</span>\n'
+    var result = '<tr>\
+            <th>Element Type</th>\
+            <th>Attribute Name</th>\
+            <th>Attribute Value</th>\
+          </tr>'
 
-    var index = 0;
-    var separator = String.fromCharCode(127);
+    
+    //var separator = String.fromCharCode(127);
 
     for (var node in selectedNodes) {
       node = selectedNodes[node]
-      //result += '<span style="color:red;font-size:15px;font-family: Times">'+ node.id+':</span>\n'; 
-      logs = node.other.log.split(separator);
+      
+      var index = 0;
+      result += '<tr onclick="onClick_table(this)"><td> Node:'+node.id+';'+node.type+'</td><td> id </td><td>' + node.id + '</td></tr>';
+      index++;
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> Node:'+node.id+';'+node.type+'</td><td> type </td><td>' + node.type + '</td></tr>';
+      index++;
 
-      for (var log in logs) {
-        if (logs[log] == "") {
-          continue;
-        }
-
-        if (log % 2) {
-          log = logs[log];
-          result += '<span style="font-weight:bold;color:#e6550d;font-size:15px;font-family: Times"> Log '+index+++' :</span>';
-          result += '<span style="color:#636363;font-size:15px;font-family: Times">'+ log+'</span>\n';
+      for (var key in Object.keys(node.attr)) {
+        key = Object.keys(node.attr)[key];
+        if (index) {
+          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> Node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
         }
         else {
-          log = logs[log];
-          result += '<span style="font-weight:bold;color:#e6550d;font-size:15px;font-family: Times"> Log '+index+++' :</span>';
-          result += '<span style="background-color:#ddd;color:#636363;font-size:15px;font-family: Times">'+ log+'</span>\n';
+          result += '<tr onclick="onClick_table(this)"><td> Node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
         }
 
+        index++;
+      }
+    }
+
+    for (var link in selectedEdges) {
+      link = selectedEdges[link]
+      
+      var index = 0;
+      result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'=>'+link.target.id+'</td><td> Source </td><td>' + link.source.id+';'+link.source.type + '</td></tr>';
+      index++;
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td> Target </td><td>' + link.target.id+';'+link.target.type+ '</td></tr>';
+      index++;
+      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td> type </td><td>' + link.type + '</td></tr>';
+      index++;
+
+      for (var key in Object.keys(link.attr)) {
+        key = Object.keys(link.attr)[key];
+
+        if (link.attr[key] instanceof Array) {
+          link.attr[key] = link.attr[key].join(";");
+        }
+
+        if (index) {
+          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+':'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
+        }
+        else {
+          result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+':'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
+        }
+
+        index++;
       }
     }
 
