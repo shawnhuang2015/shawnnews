@@ -40,6 +40,11 @@
   .setting(setting)
   .init()
  
+  $('svg').mouseover(function() {
+    $('#'+setting.divID).focus();
+    console.log('123')
+  })//
+
   // The configure object of the node label multiselecting list box.
     var nodeLabelFiltering = {
         maxHeight: 600,
@@ -741,6 +746,10 @@
       mygv
       .startLayout()
       .refreshAnimation(500)
+
+      setTimeout(function() {
+        mygv.center_view();
+      }, 500)
     }
     else {
 
@@ -769,26 +778,26 @@
     
       if (newLayout == "force") {
         var label = '<label>Force Layout</label><br/>'
-        var restartForce = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Restart Force</button>';
-        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
+        var restartForce = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Restart Force</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + restartForce + centerView);
       }
       else if (newLayout == "tree") {
         var label = '<label>Tree Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Tree Root</button>';
-        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Tree Root</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "hierarchical") {
         var label = '<label>Hierarchical Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Hierarchical Root</button>';
-        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Hierarchical Root</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "circle") {
         var label = '<label>Circle Layout</label><br/>'
-        var rootString = '<button type="button" class="btn btn-info" onclick="setTheRootNode()">Set Center Node</button>';
-        var centerView = '<button type="button" class="btn btn-info" onclick="mygv.center_view();">Set Center View</button>';
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">Set Center Node</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">Set Center View</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
     }

@@ -632,13 +632,17 @@ var gsqlv = function(x) {
     var width = setting.width;
     var height = setting.height;
 
+    d3.select('body')
+    .on("keydown.brush", event_handlers.keydown_brush)
+    .on("keyup.brush", event_handlers.keyup_brush)
+
     // SVG element
     svg = d3.select("#" + setting.divID)
     .attr("tabindex", 0)
     .style("width", width+"px")
     .style("height", height+"px")
-    .on("keydown.brush", event_handlers.keydown_brush)
-    .on("keyup.brush", event_handlers.keyup_brush)
+    //.on("keydown.brush", event_handlers.keydown_brush)
+    //.on("keyup.brush", event_handlers.keyup_brush)
     .each(function() {
       this.focus();
     })
@@ -1826,8 +1830,8 @@ var gsqlv = function(x) {
         }
 
         jsItem += jsVariable;
-        jsItem += 'try{ if ('+x+') {__node.selected=true;}\
-            else{__node.selected=false;}}catch(err){__node.selected=false;}'
+        jsItem += 'try{ if ('+x+') {__node.selected=__node.previouslySelected=true;}\
+            else{__node.selected=__node.previouslySelected=false;}}catch(err){__node.selected=__node.previouslySelected=false;}'
 
         jsItem += '}();'
 
@@ -1963,7 +1967,7 @@ var gsqlv = function(x) {
         }
 
         jsItem += jsVariable;
-        jsItem += 'try{ if ('+x+') {__link.selected=true;"__link.source.selected=true;__link.target.selected=true"}\
+        jsItem += 'try{ if ('+x+') {__link.selected=__link.previouslySelected=true;"__link.source.selected=true;__link.target.selected=true"}\
             else{;}}catch(err){;}'
 
         jsItem += '}();'
@@ -2762,6 +2766,11 @@ var gsqlv = function(x) {
 
     console.log('d3.event.keyCode : ', d3.event.keyCode);
 
+    if (!($('#'+setting.divID).is(":focus"))) {
+      console.log(shiftKey);
+      return;
+    }
+
     if (d3.event.keyCode == 67) {   //the 'c' key
       gsqlv.center_view();
       layouts["force"].stop();
@@ -2927,6 +2936,11 @@ var gsqlv = function(x) {
       temp_nodes.classed("selected", function(p) { 
         return p.selected = p.previouslySelected = false; 
       });
+
+      temp_links.classed("selected", function(p) { 
+        return p.selected = p.previouslySelected = false; 
+      });
+
     }
 
     if (shiftKey) {
@@ -2953,7 +2967,9 @@ var gsqlv = function(x) {
       return d.selected; 
     })
 
+    gsqlv.updateSelectedElements();
 
+    /*
     temp_links.classed("selected", function(d) {
       return d.previouslySelected = d.selected = d.target.selected || d.source.selected;
     });
@@ -2961,6 +2977,7 @@ var gsqlv = function(x) {
     temp_links_labels.classed("selected", function(d) {
       return d.previouslySelected = d.selected = d.target.selected || d.source.selected;
     });
+    */
   }
 
   event_handlers.node_dragging = function(d) {
@@ -2976,11 +2993,12 @@ var gsqlv = function(x) {
         })
 
     window.updateSummaryInformationForSelectedNodes();
-        gsqlv.refresh();
+    gsqlv.refresh();
   }
 
   event_handlers.node_dragended = function(d) {
     //console.log("node dragended")
+    //gsqlv.updateSelectedElements();
     window.updateSummaryInformationForSelectedNodes();
   }
 
@@ -3122,6 +3140,10 @@ var gsqlv = function(x) {
     if (!shiftKey) {
       // unselect everything.
       temp_links.classed("selected", function(p) { 
+        return p.selected = p.previouslySelected = false; 
+      });
+
+      temp_nodes.classed("selected", function(p) { 
         return p.selected = p.previouslySelected = false; 
       });
     }

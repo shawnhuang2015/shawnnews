@@ -14,7 +14,7 @@
 </head>
 
 
-<body style="margin-left:10px; margin-right:10px;width:98%;background:#f9f8f3" ng-controller="UIpages">
+<body style="margin-left:10px; margin-right:10px;width:98%;" ng-controller="UIpages">
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -50,7 +50,7 @@
 
   <div class="row">
     <!-- Begin Right Side -->
-    <div id="right_side" class="col-md-8" style="border-style:double;border-color: #ecebe7;">
+    <div id="right_side" class="col-md-8" style="">
       <div class="row">
         <div class="col-md-4"> 
           <div class="input-group">
@@ -62,7 +62,7 @@
 
         <div class="col-md-4"> 
           <div class="input-group">
-            <span class="input-group-addon">Edge Labels : </span>
+            <span class="input-group-addon">Edge Labels: </span>
             <select id="edge_label_filtering" multiple="multiple">
             </select>
           </div>
@@ -162,11 +162,11 @@
 
     <!-- Begin Left Side -->
     <div id='left_side' class="col-md-4" style=""> 
-      <div id="layoutport" class="row" style="border-style:double;border-color: #ecebe7;">
+      <div id="layoutport" class="row" style="background-color:#ecebe7;">
         <div class="row">
-          <div class="col-md-4 col-md-offset-8">
+          <div class="col-md-4 col-md-offset-4" align="center">
             <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-              <button class="btn btn-info">
+              <button class="btn btn-default">
                 Graph Layout
                 <span class="caret"></span>
               </button>
@@ -181,8 +181,8 @@
         </div>
         <!-- Layout Port -->
         <div class="row" >
-          <div class="col-md-10 col-md-offset-1" style="background-color:#ecebe7;"> <!-- border-style:solid;border-color: #ecebe7; -->
-            <div id="layoutProperty" align="right">
+          <div class="col-md-10 col-md-offset-1" style=""> <!-- border-style:solid;border-color: #ecebe7; -->
+            <div id="layoutProperty" align="center">
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@
 
       
 
-      <div id="tableBox" class="row" style="overflow:auto;border-style:double;border-color: #ecebe7;">  
+      <div id="tableBox" class="row" style="overflow:auto;">  
         <br/>
         <table class="table table-hover table-bordered" id="tableInformation">
           <tr>
