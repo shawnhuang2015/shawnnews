@@ -12,9 +12,10 @@
 #ifndef REGISTER_BUILTIN_FILTER_HPP
 #define REGISTER_BUILTIN_FILTER_HPP
 
-#include <sysinit.hpp>
+#include <librestpp.hpp>
 #include <filtermanager.hpp>
-#include <parse.hpp>
+
+#include "update_request_filter_example.hpp"
 
 /*----------------------------------------------------------------------------------------
 Ste 1:  All filter code are included in this file and compiled into one object file.

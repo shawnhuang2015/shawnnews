@@ -7,10 +7,9 @@
  * Created on: June 16, 2015
  *      Author: jzhong
  ******************************************************************************/
-#ifndef UPDATE_REQUEST_FILTER_HPP
-#define UPDATE_REQUEST_FILTER_HPP
+#ifndef UPDATE_REQUEST_FILTER_EXAMPLE_HPP
+#define UPDATE_REQUEST_FILTER_EXAMPLE_HPP
 
-#include <parse.hpp>
 #include <fstream>
 
 bool UpdateRequestFilterExample(RequestInfo *request_info,
