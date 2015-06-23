@@ -743,10 +743,27 @@
       .refreshAnimation(500)
     }
     else {
-      mygv
-      .layout(newLayout)
-      .startLayout()
-      .refreshAnimation(500)
+
+      if (newLayout == 'force') {
+        mygv
+        .layout(newLayout)
+        .startLayout();
+
+        setTimeout(function() {
+          mygv.center_view();
+        }, 4000);
+      }
+      else {
+        mygv
+        .layout(newLayout)
+        .startLayout()
+        .refreshAnimation(500)   
+
+        setTimeout(function() {
+          mygv.center_view();
+        }, 500)
+      }
+
 
       $('#layoutProperty').empty();
     
@@ -778,10 +795,6 @@
 
     $('#tableBox').height($('#right_side').height() - $('#layoutport').height() - 20)
     // set to center view after 500 milliseconds.
-    setTimeout(
-    function() {
-      mygv.center_view();
-    }, 500)
   }
 
   // call back function for set root node button.

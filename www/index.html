@@ -14,7 +14,7 @@
 </head>
 
 
-<body style="margin-left:10px; margin-right:10px" ng-controller="UIpages">
+<body style="margin-left:10px; margin-right:10px;width:98%;background:#f9f8f3" ng-controller="UIpages">
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -100,8 +100,8 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graph</a></li>
-              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li>
+              <li role="presentation" class="active" ><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab" >Graph</a></li>
+              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab" >JSON</a></li>
               <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
               <!--li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li-->
             </ul>
@@ -109,7 +109,7 @@
             <!-- Tab panes -->
             <div class="tab-content">
               <!-- Tab Graph -->
-              <div role="tabpanel" class="tab-pane active" id="graph">
+              <div role="tabpanel" class="tab-pane fade in active" id="graph">
                 <br />
                 <div align='left' id="prototype1" style="float:left;">
                 </div>
@@ -119,7 +119,7 @@
               </div>
 
               <!-- Tab Json -->
-              <div role="tabpanel" class="tab-pane" id="json">
+              <div role="tabpanel" class="tab-pane fade" id="json">
                 <style>
                 .key {
                   color:red;
@@ -137,7 +137,7 @@
               </div>
 
               <!-- Tab Summary -->
-              <div role="tabpanel" class="tab-pane" id="summary"> 
+              <div role="tabpanel" class="tab-pane fade" id="summary"> 
                 <br />
                 <div align='left' id="summaryInformationBox" stlye="float:left">
                   <pre id="summaryOfAllNodes">Test</pre>
@@ -146,7 +146,7 @@
               </div>
 
               <!-- Tab More -->
-              <div role="tabpanel" class="tab-pane" id="more">
+              <div role="tabpanel" class="tab-pane fade" id="more">
                 <br />
                 Coming Soon ...
               </div>
@@ -162,7 +162,7 @@
 
     <!-- Begin Left Side -->
     <div id='left_side' class="col-md-4" style=""> 
-      <div id="layoutport" class="row" style="background-color: #dadada;border-style:solid;border-color: #dadada; ">
+      <div id="layoutport" class="row" style="width:100%;">
         <div class="row">
           <div class="col-md-6 col-md-offset-6" >
             <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -180,15 +180,15 @@
           </div>
         </div>
         <!-- Layout Port -->
-        <div class="row" style="">
-          <div id="layoutProperty" style="width:90%;" align="right">
+        <div class="row" style="background-color:#ecebe7;border-style:solid;border-color: #ecebe7; ">
+          <div id="layoutProperty" style="width:95%;" align="right">
           </div>
         </div>
       </div>
 
       <br/>
 
-      <div id="tableBox" class="row" style="overflow:auto;">  
+      <div id="tableBox" class="row" style="width:100%;overflow:auto;">  
         <table class="table table-hover table-bordered" id="tableInformation">
           <tr>
             <th>Element Type</th>
