@@ -1961,6 +1961,8 @@ var gsqlv = function(x) {
         var jsVariable = "";
         jsVariable += "var __link =" + y + '.data().links[' +i+'];'
         jsVariable += "var type = __link.type;"
+        jsVariable += "var source = __link.source;"
+        jsVariable += "var target = __link.target;"
 
         for (var key in l.attr) {
           jsVariable += "var "+key+"=__link.attr."+key+";";
@@ -2608,54 +2610,70 @@ var gsqlv = function(x) {
     return result
   }
 
-  gsqlv.outputLogforSelectedNodes = function() {
+  gsqlv.outputTableforSelectedNodes = function() {
     var selectedNodes = data.nodes.filter(function(n){return n.selected});
     var selectedEdges = data.links.filter(function(l){return l.selected});
 
+    var result = ''
+
     if (selectedNodes.length == 0 && selectedEdges.length == 0) {
-      return '<span style="color:#636363;font-size:15px;font-family: Times">No Selected Node</span>\n'
+      result += '<span style="color:#636363;font-size:15px;font-family: Times">No Selected Node</span>\n';
+      return result;
     }
-    var result = '<tr>\
-            <th>Element Type</th>\
-            <th>Attribute Name</th>\
-            <th>Attribute Value</th>\
-          </tr>'
+    /*
+    else {
+      result += '<tr>\
+        <th>Element Type</th>\
+        <th>Attribute Name</th>\
+        <th>Attribute Value</th>\
+      </tr>';
+      result += '<tr>\
+        <th>Element Type</th>\
+        <th>Attribute Name</th>\
+        <th>Attribute Value</th>\
+      </tr>'
+    }
+    */
+
+    /* <table class="table table-hover table-bordered" id="tableInformation">
+          <tr>
+            <th>Element Type</th>
+            <th>Element ID type Name</th> 
+          </tr>
+        </table> 
+    */
+   
 
     
     //var separator = String.fromCharCode(127);
 
     for (var node in selectedNodes) {
-      node = selectedNodes[node]
-      
-      var index = 0;
-      result += '<tr onclick="onClick_table(this)"><td> node:'+node.id+';'+node.type+'</td><td> id </td><td>' + node.id + '</td></tr>';
-      index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> node:'+node.id+';'+node.type+'</td><td> type </td><td>' + node.type + '</td></tr>';
-      index++;
+      node = selectedNodes[node];
 
+      var nodeItem = '<table class="table table-hover table-bordered">';
+      nodeItem += '<tr onclick="onClick_table_head(this,\'node\',\''+node.id+'\',\''+node.type+'\')"><td style="width:25%">Element Name</td><td style="width:75%">node:'+node.id+'</td></tr>';
+      nodeItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
+      nodeItem += '<tr onclick="onClick_table(this,\'node\')"><td>type</td><td>' + node.type + '</td></tr>'
+      
       for (var key in Object.keys(node.attr)) {
         key = Object.keys(node.attr)[key];
-        if (index) {
-          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
-        }
-        else {
-          result += '<tr onclick="onClick_table(this)"><td> node:'+node.id+';'+node.type+'</td><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
-        }
-
-        index++;
+        nodeItem += '<tr onclick="onClick_table(this,\'node\')"><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
       }
+
+      nodeItem += '</table>';
+      result += nodeItem;
+      
     }
 
     for (var link in selectedEdges) {
       link = selectedEdges[link]
-      
-      var index = 0;
-      result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'<br>=>'+link.target.id+'</td><td> Source </td><td>' + link.source.id+';'+link.source.type + '</td></tr>';
-      index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td> Target </td><td>' + link.target.id+';'+link.target.type+ '</td></tr>';
-      index++;
-      result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td> type </td><td>' + link.type + '</td></tr>';
-      index++;
+
+      var linkItem = '<table class="table table-hover table-bordered">';
+      linkItem += '<tr onclick="onClick_table_head(this,\'link\',\''
+        +link.source.id+'\',\''+link.source.type+'\',\''+link.target.id+'\',\''+link.target.type+'\',\''+link.type+
+        '\')"><td style="width:25%">Element Name</td><td style="width:75%"> link:'+link.source.id+'=>'+link.target.id+'</td></tr>';
+      linkItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
+      linkItem += '<tr onclick="onClick_table(this,\'link\')"><td>type</td><td>' + link.type + '</td></tr>';
 
       for (var key in Object.keys(link.attr)) {
         key = Object.keys(link.attr)[key];
@@ -2664,15 +2682,11 @@ var gsqlv = function(x) {
           link.attr[key] = link.attr[key].join(",<br>");
         }
 
-        if (index) {
-          result += '<tr onclick="onClick_table(this)"><td style="visibility: hidden"> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
-        }
-        else {
-          result += '<tr onclick="onClick_table(this)"><td> link:'+link.source.id+'<br>:'+link.target.id+'  </td><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
-        }
-
-        index++;
+        linkItem += '<tr onclick="onClick_table(this,\'link\')"><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
       }
+
+      linkItem += "</table>"
+      result += linkItem;
     }
 
     return result;
@@ -2903,11 +2917,13 @@ var gsqlv = function(x) {
     })
 
     temp_links.classed("selected", function(d) {
-      return d.selected = d.target.selected || d.source.selected;
+      //return d.selected = d.target.selected || d.source.selected;
+      return d.selected = d.target.selected && d.source.selected;
     });
 
     temp_links_labels.classed("selected", function(d) {
-      return d.selected = d.target.selected || d.source.selected;
+      //return d.selected = d.target.selected || d.source.selected;
+      return d.selected = d.target.selected && d.source.selected;
     });
 
     window.updateSummaryInformationForSelectedNodes();

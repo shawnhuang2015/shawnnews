@@ -7,8 +7,8 @@ console.log("======> ui main start");
     $scope.input = {};
     $scope.graphMenu = {};
 
-    $scope.graphMenu.node = {labels:["a", "b", "c"]};
-    $scope.graphMenu.edge = {labels:["a", "b", "c"]};
+    $scope.graphMenu.node = {labels:[]};
+    $scope.graphMenu.edge = {labels:[]};
     $scope.graphMenu.selections = ["Highlight", "Coloring", "Deleting", "Hiding"];
     $scope.graphMenu.layouts = ["Force Layout", "Hierarchical Layout", "Tree Layout", "Circle Layout"];
     $scope.graphMenu.visualization = ["Graph", "JSON", "Summary", "More"];

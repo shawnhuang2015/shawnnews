@@ -42,7 +42,7 @@
  
   $('svg').mouseover(function() {
     $('#'+setting.divID).focus();
-    console.log('123')
+    //console.log('123')
   })//
 
   // The configure object of the node label multiselecting list box.
@@ -1389,7 +1389,7 @@
     // remove previous summary information display.
     d3.select("#summaryOfAllNodes").selectAll("*").remove();
     d3.select("#summaryOfSelectedNodes").selectAll("*").remove();
-    d3.select("#tableInformation").selectAll("*").remove();
+    d3.select("#tableBox").selectAll("*").remove();
 
     // output the summary information for the whole graph.
     d3.select("#summaryOfAllNodes")
@@ -1403,9 +1403,9 @@
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForSelectedNodes())
 
-    d3.select("#tableInformation")
+    d3.select("#tableBox")
     //.style("height", v_height+"px")
-    .html(mygv.outputLogforSelectedNodes())
+    .html(mygv.outputTableforSelectedNodes())
   }
 
   // Just output the summary information for the selected sub graph.
@@ -1419,11 +1419,11 @@
     .style("height", v_height/2.02+"px")
     .html(mygv.summaryInformationForSelectedNodes())
 
-    d3.select("#tableInformation").selectAll("*").remove();
+    d3.select("#tableBox").selectAll("*").remove();
 
     // out the new log information.
-    d3.select("#tableInformation")
-    .html(mygv.outputLogforSelectedNodes())
+    d3.select("#tableBox")
+    .html(mygv.outputTableforSelectedNodes())
   }
 
   this.checkUndefinedForBool = function(x) {
@@ -1435,8 +1435,8 @@
     }
   }
 
-  this.onClick_table = function (d) {
-    var type = ''
+  this.onClick_table = function (d, type) {
+
     var attr = ''
     var value = ''
     $(d)
@@ -1445,15 +1445,12 @@
       var temp = $(d).html()
       switch(i) {
         case 0:
-          type = temp.split(':')[0].replace(/^\s+|\s+$/g, '');
-          break;
-        case 1:
           attr = temp;
           break;
-        case 2:
+        case 1:
           value = temp;
         break;
-        default:
+          default:
         break;
       }
     })
@@ -1470,7 +1467,30 @@
     else if (type == "link") {
       mygv.selectingEdgesByConditions(conditionString);
     }
-  }   
+  }  
+
+  this.onClick_table_head = function () {
+    console.log(arguments);
+
+    var conditionString = "";
+
+    if (arguments[1] == 'node') {
+
+      conditionString += 'id=="'+ arguments[2]+'"&&type=="'+arguments[3]+'"';
+
+      mygv.unselectingEverything();
+      mygv.selectingNodesByConditions(conditionString);
+    }
+    else if (arguments[1] == 'link') {
+
+      conditionString += 'source.id=="'+ arguments[2]+'"&&source.type=="'+arguments[3]
+        + '"&&target.id=="' + arguments[4] + '"&&target.type=="' + arguments[5]
+        + '"&&type=="' + arguments[6] + '"';
+
+      mygv.unselectingEverything();
+      mygv.selectingEdgesByConditions(conditionString);
+    }
+  } 
 
   //refer the graph visualization object.
   window.mygv = mygv;
