@@ -2651,13 +2651,13 @@ var gsqlv = function(x) {
       node = selectedNodes[node];
 
       var nodeItem = '<table class="table table-hover table-bordered">';
-      nodeItem += '<tr onclick="onClick_table_head(this,\'node\',\''+node.id+'\',\''+node.type+'\')"><td style="width:25%">Element Name</td><td style="width:75%">node:'+node.id+'</td></tr>';
-      nodeItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
-      nodeItem += '<tr onclick="onClick_table(this,\'node\')"><td>type</td><td>' + node.type + '</td></tr>'
+      nodeItem += '<tr name="element_name" onclick="onClick_table_head(this,\'node\',\''+node.id+'\',\''+node.type+'\')"><td style="color: #fff;background-color: #337ab7;border-color: #2e6da4;width:25%">Element Name</td><td style="width:75%">node:'+node.id+'</td></tr>';
+      //nodeItem += '<tr><th>Attribute Name</th><th>Value</th></tr>'; //style="color: #fff;background-color: #337ab7;border-color: #2e6da4;"
+      nodeItem += '<tr name="attribute_name" onclick="onClick_table(this,\'node\')"><td>type</td><td>' + node.type + '</td></tr>'
       
       for (var key in Object.keys(node.attr)) {
         key = Object.keys(node.attr)[key];
-        nodeItem += '<tr onclick="onClick_table(this,\'node\')"><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
+        nodeItem += '<tr name="attribute_name" onclick="onClick_table(this,\'node\')"><td>'+key+'</td><td>' + node.attr[key] + '</td></tr>'
       }
 
       nodeItem += '</table>';
@@ -2669,11 +2669,11 @@ var gsqlv = function(x) {
       link = selectedEdges[link]
 
       var linkItem = '<table class="table table-hover table-bordered">';
-      linkItem += '<tr onclick="onClick_table_head(this,\'link\',\''
+      linkItem += '<tr name="element_name" onclick="onClick_table_head(this,\'link\',\''
         +link.source.id+'\',\''+link.source.type+'\',\''+link.target.id+'\',\''+link.target.type+'\',\''+link.type+
-        '\')"><td style="width:25%">Element Name</td><td style="width:75%"> link:'+link.source.id+'=>'+link.target.id+'</td></tr>';
-      linkItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
-      linkItem += '<tr onclick="onClick_table(this,\'link\')"><td>type</td><td>' + link.type + '</td></tr>';
+        '\')"><td style="color: #fff;background-color: #337ab7;border-color: #2e6da4;width:25%">Element Name</td><td style="width:75%"> link:'+link.source.id+'=>'+link.target.id+'</td></tr>';
+      //linkItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
+      linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td>type</td><td>' + link.type + '</td></tr>';
 
       for (var key in Object.keys(link.attr)) {
         key = Object.keys(link.attr)[key];
@@ -2682,7 +2682,7 @@ var gsqlv = function(x) {
           link.attr[key] = link.attr[key].join(",<br>");
         }
 
-        linkItem += '<tr onclick="onClick_table(this,\'link\')"><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
+        linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td>'+key+'</td><td>' + link.attr[key] + '</td></tr>'
       }
 
       linkItem += "</table>"

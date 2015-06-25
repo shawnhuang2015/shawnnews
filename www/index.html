@@ -14,8 +14,8 @@
 </head>
 
 
-<body style="margin-left:10px; margin-right:10px;width:98%;" ng-controller="UIpages">
-  <nav class="navbar navbar-inverse navbar-fixed-top">
+<body style="margin-left:15px; margin-right:15px;width:96%;" ng-controller="UIpages">
+  <nav id='bodyRow_1' class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
         <span class="sr-only">Toggle navigation</span>
@@ -32,7 +32,7 @@
     </div>
   </nav>
 
-  <div class="row">
+  <div id='bodyRow_2' class="row">
     <div id="content-page" class="navbar-form" >
       <!--div class="form-group" >
         <span ng-repeat-start="e in object.elements"></span> 
@@ -44,14 +44,17 @@
   </div>
   <!-- Row 1 -->
 
+  <div id='bodyRow_hr' class="row" style="margin-left:0px;width:100%;height:1px; background-color: #ecebe7;margin-top:10px;margin-bottom:19px">
+  </div>
+
   <!-- Visulization Component -->  
   <!-- Control Panel -->
   <!--div class="container-fluid"-->
 
-  <div class="row">
+  <div id='bodyRow_3' class="row">
     <!-- Begin Right Side -->
     <div id="right_side" class="col-md-8" style="">
-      <div class="row">
+      <div class="row" style="margin-bottom:19px">
         <div class="col-md-4"> 
           <div class="input-group">
             <span class="input-group-addon">Node Labels: </span>
@@ -91,7 +94,7 @@
         </div>
       </div>
       <!-- Control Panel Row 1 -->
-      <br />
+      <!--br /-->
 
       <div class="row">
         <!-- Tabs Area-->

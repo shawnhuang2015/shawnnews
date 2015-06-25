@@ -10,9 +10,12 @@
 
   this.messageArray = [];  // Record message from backend.
   this.scaleAbilityData = [];  // Record the result for scalability testing.
+
+  var button_height = 50 + 50 + 30 + 34 + 19 + 62 + 10//$('#bodyRow_1').height() + $('#bodyRow_2').height() + $('#bodyRow_hr').height();
+  console.log(button_height);
   
   window.v_width = $('#viewport').width(); // Setting the width of the visualization.
-  window.v_height = $(window).height() - 230;// Setting the height of the visualization.
+  window.v_height = $(window).height() - button_height;// Setting the height of the visualization.
 
   //$('#layoutport').height(v_height + 62);
 
@@ -195,7 +198,7 @@
         //window.pages_obj[removedSpaces] = '<div>' + generateDropdown(window.pages_obj[i]) + '</div>';
 
         // input box for input 
-        window.pages_obj[removedSpaces] = '<div>' + generateForm(window.pages_obj[i]) + '</div>';
+        window.pages_obj[removedSpaces] = '' + generateForm(window.pages_obj[i]) + '';
 
         //console.log(window.pages_obj[removedSpaces]);
         //console.log("Registering event for " + "#" + removedSpaces);
@@ -1467,6 +1470,11 @@
     else if (type == "link") {
       mygv.selectingEdgesByConditions(conditionString);
     }
+
+    $('tr[name=element_name]').css("background-color","")
+    $('tr[name=attribute_name]').css("background-color","")
+
+    $(d).css("background-color","#a1d99b")
   }  
 
   this.onClick_table_head = function () {
@@ -1490,6 +1498,11 @@
       mygv.unselectingEverything();
       mygv.selectingEdgesByConditions(conditionString);
     }
+
+    $('tr[name=element_name]').css("background-color","")
+    $('tr[name=attribute_name]').css("background-color","")
+
+    $(arguments[0]).css("background-color","#a1d99b")
   } 
 
   //refer the graph visualization object.
