@@ -52,6 +52,7 @@ utility/gmmnt/memorydataobject.hpp
 utility/gutil/bitqueue.hpp
 utility/gutil/compactreader.hpp
 utility/gutil/glogging.hpp
+utility/gutil/gsqlcontainer.hpp
 utility/gutil/goutputstream.hpp
 utility/gutil/gpelibidtypes.hpp
 utility/gutil/gsorter.hpp
