@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 #ifdef BUILDVERSION
     std::string versStr = BUILDVERSION;
     std::replace(versStr.begin(), versStr.end(), ',', '\n');
-    std::cout << "GPE Server: Version\n" << versStr << std::endl;
+    std::cerr << "GPE Server: Version\n" << versStr << std::endl;
 #endif
   UDIMPL::UDFRunner impl;
 #ifndef OPENCODE

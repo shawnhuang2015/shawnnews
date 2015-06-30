@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 #ifdef BUILDVERSION
     std::string versStr = BUILDVERSION;
     std::replace(versStr.begin(), versStr.end(), ',', '\n');
-    std::cout << "GPP Server: Version\n" << versStr << std::endl;
+    std::cerr << "GPP Server: Version\n" << versStr << std::endl;
 #endif
 
   // you can use standard post filter or NULL or use your customized post filter here.
