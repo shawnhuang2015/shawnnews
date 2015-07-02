@@ -13,7 +13,6 @@
 #define REGISTER_BUILTIN_FILTER_HPP
 
 #include <librestpp.hpp>
-#include <filtermanager.hpp>
 
 #include "update_request_filter_example.hpp"
 
