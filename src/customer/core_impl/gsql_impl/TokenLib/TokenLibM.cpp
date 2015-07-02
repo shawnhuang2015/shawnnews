@@ -93,4 +93,44 @@ extern "C" void gsql_concat(const char* const iToken[], uint32_t iTokenLen[], ui
   oTokenLen = k;
 }
 
+ /**
+  * This function replace the specified seperator to '\30'.
+  */
 
+extern "C" void gsql_replace_separator (const char* const iToken[], uint32_t iTokenLen[], 
+    uint32_t iTokenNum, char* const oToken, uint32_t& oTokenLen) {
+
+  uint32_t j,k;
+  oTokenLen = 0;
+  for (uint32_t i = 0; i < iTokenLen[0];) {
+    for (j = 0, k = i; j < iTokenLen[1] && k < iTokenLen[0]; 
+        j ++, k++)  {
+      if (iToken[0][k] != iToken[1][j]) {
+        break;
+      }
+    }
+    // If there is a match
+    if (j == iTokenLen[1]) {
+      // Should not be:
+      // 1. Heading '\30'
+      // 2. consecutive '\30'
+      if (oTokenLen != 0 && oToken[oTokenLen-1] != '\30') {
+        oToken[oTokenLen++] = '\30';
+      }
+      i += iTokenLen[1];
+    } 
+    // If there is no match 
+    else {
+      oToken[oTokenLen++] = iToken[0][i++];
+    }
+  }
+  // trim trailing '\30'
+  if (oTokenLen > 0) {
+    oTokenLen --;
+    while (oTokenLen > 0 && oToken[oTokenLen] == '\30') {
+      oTokenLen --;
+    }
+    // end
+    oToken[++oTokenLen] = '\0';
+  }
+}

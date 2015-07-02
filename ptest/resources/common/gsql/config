@@ -6,15 +6,16 @@
 # on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
 # e.g. DotDir=/usr/bin/
 
-
-# IUM will create this
+# gsql script will generate this config
+# ptest will generate the soft link ~/.ptest/bin_root
 CanonnicalLoader=~/.ptest/bin_root
 
 
-# IUM will create this
+# gsql script will generate this config
+# ptest will generate the soft link ~/.ptest/config_root 
 GSELoaderConfig=~/.ptest/config_root/gse_loader/gse_loader1.conf
 
-# IUM generate this.
+# gsql generate this
 # This is tokenUDF string->string function's output buffer size
 OutputTokenBufferSize=50000
 

@@ -92,5 +92,12 @@ extern "C" void gsql_concat(const char* const iToken[], uint32_t iTokenLen[], ui
     char* const oToken, uint32_t& oTokenLen);
 
 
+ /**
+  * This function replace the specified seperator to '\30'.
+  * @par  Example 
+  *       load "source_file" to vertex v values ($0, $1, gsql_replace_separator($1, $2)); 
+  */
+extern "C" void gsql_replace_separator (const char* const iToken[], uint32_t iTokenLen[], 
+    uint32_t iTokenNum, char* const oToken, uint32_t& oTokenLen);
 
 #endif /* TOKENLIBM_HPP_ */
