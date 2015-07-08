@@ -8,8 +8,8 @@
  *      Author: jzhong
  ******************************************************************************/
 
-#include "librestpp.hpp"
-#include <restpp_impl/builtin_filter_impl/register_builtin_filter.hpp>
+#include <restpp/librestpp.hpp>
+#include "builtin_filter_impl/register_builtin_filter.hpp"
 
 int main(int argc, char **argv){
   StartService(argc, argv, &RegisterBuiltinFilters);
