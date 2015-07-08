@@ -10,6 +10,7 @@
 
 #include <restpp/librestpp.hpp>
 #include "builtin_filter_impl/register_builtin_filter.hpp"
+#include "filterutil.cpp"
 
 int main(int argc, char **argv){
   StartService(argc, argv, &RegisterBuiltinFilters);
