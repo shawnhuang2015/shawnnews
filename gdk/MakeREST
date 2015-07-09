@@ -3,8 +3,9 @@ CFLAGS += -DMULTIEDGETYPES
 
 EXECUTABLE=bin/release/poc_rest_server
 SOURCE_MAIN_DIR = src/customer/restpp_impl
+SOURCE_RESTPP_DIR = gsdk/include/restpp/
 SOURCE_OTHER_DIR = src/customer/restpp_impl/system_filter
-SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp)
+SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp) $(wildcard $(SOURCE_RESTPP_DIR)/*.cpp)
 SOURCES2 = $(wildcard $(SOURCE_OTHER_DIR)/*.cpp)
 
 CC=g++
