@@ -11,7 +11,7 @@
 
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-#include "kstepneighborhoodsubgrap.hpp"
+#include "kstepneighborhoodsubgraph.hpp"
 
 using namespace gperun;
 
