@@ -11,6 +11,7 @@
 #define FILTER_UTIL_CPP
 
 #include <restpp/librestpp.hpp>
+#include <sstream>
 
 void IdSet::Init(SchemaManager *schema_manager_) {
   schema_manager = schema_manager_;
