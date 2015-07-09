@@ -41,6 +41,7 @@ CFLAGS += $(LIBINCLUDE)
 
 LDFLAGS += -L$(LIBB)
 LDFLAGS += -lolgplib
+LDFLAGS += -lrestpplib
 LDFLAGS += -lgpelib
 LDFLAGS += -ldistlib
 LDFLAGS += -lnetlib
@@ -65,7 +66,6 @@ LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS +=-lfcgi
 LDFLAGS += -lpthread -ldl
-LDFLAGS += -lrestpplib
 
 UNAME_S := $(shell uname -s)
 ifneq ($(UNAME_S),Darwin)
