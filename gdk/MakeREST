@@ -65,7 +65,7 @@ LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS +=-lfcgi
 LDFLAGS += -lpthread -ldl
-LDFLAGS += -lrestpp
+LDFLAGS += -lrestpplib
 
 UNAME_S := $(shell uname -s)
 ifneq ($(UNAME_S),Darwin)
