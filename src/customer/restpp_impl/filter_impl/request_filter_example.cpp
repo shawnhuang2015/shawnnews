@@ -8,7 +8,6 @@
  *      Author: jzhong
  ******************************************************************************/
 #include <restpp/librestpp.hpp>
-#include "../filterutil.hpp"
 
 #include <sstream>
 #include <cstdio>
