@@ -2,8 +2,8 @@ CFLAGS = -D__STDC_FORMAT_MACROS
 CFLAGS += -DMULTIEDGETYPES
 
 EXECUTABLE=bin/release/poc_rest_server
-SOURCE_MAIN_DIR = src/realtime/restpp
-SOURCE_OTHER_DIR = src/realtime/restpp/system_filter
+SOURCE_MAIN_DIR = src/customer/restpp_impl
+SOURCE_OTHER_DIR = src/customer/restpp_impl/system_filter
 SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp)
 SOURCES2 = $(wildcard $(SOURCE_OTHER_DIR)/*.cpp)
 
@@ -28,6 +28,7 @@ LIBINCLUDE += -Igsdk/include/core/gse
 LIBINCLUDE += -Igsdk/include/olgp
 LIBINCLUDE += -Igsdk/include/core/topology
 LIBINCLUDE += -Igsdk/include/utility
+LIBINCLUDE += -Igsdk/include/realtime
 
 CFLAGS += -c -Wall -fmessage-length=0
 CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
@@ -63,6 +64,7 @@ LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS +=-lfcgi
 LDFLAGS += -lpthread -ldl
+LDFLAGS += -lrestpp
 
 UNAME_S := $(shell uname -s)
 ifneq ($(UNAME_S),Darwin)

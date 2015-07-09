@@ -26,6 +26,7 @@ LIBINCLUDE += -Igsdk/include/core/gse
 LIBINCLUDE += -Igsdk/include/olgp
 LIBINCLUDE += -Igsdk/include/core/topology
 LIBINCLUDE += -Igsdk/include/utility
+LIBINCLUDE += -Igsdk/include/realtime
 
 CFLAGS += -c -Wall -fmessage-length=0
 CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
