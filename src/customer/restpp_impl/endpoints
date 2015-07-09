@@ -26,5 +26,40 @@
          "response_filter":"ResponseFilterExample",
          "summary":"This is an example UDF to demonstrate how to write endpoint configuration"
       }
+   },
+   "kstepsubgraph":{
+    "GET/POST":{
+      "function":"kstepsubgraph",
+      "action":"query",
+      "target":"GPE",
+      "parameters":{
+        "id":{
+          "type":"STRING",
+          "is_id":true,
+          "id_type":"$type"
+        },
+        "type": {
+          "type":"TYPENAME"
+        },
+        "depth":{
+          "type":"UINT32",
+          "min_count":0
+        },
+        "max":{
+          "type":"UINT32",
+          "min_count":0
+        }
+      },
+      "summary":"This is an UDF to output N depth neighborhood subgraph."
+    }
+   },
+   "UIpages":{
+    "GET":{
+      "function":"UIpages",
+      "action":"filter",
+      "target":"GPE",
+      "response_filter":"ResponseFilterUIpages",
+      "summary":"This is used for initializing visualization."
+    }
    }
 }
