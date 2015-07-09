@@ -20,10 +20,10 @@ namespace UDIMPL {
   class UDFRunner : public ServiceImplBase{
   public:
     bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
-      if(request.request_function_== "kneighborsize") {
+      if(request.request_function_ == "kneighborsize") {
         return RunUDF_KNeighborSize(serviceapi, request);
       }
-      else if(request.request_function == "kstepsubgraph") {
+      else if(request.request_function_ == "kstepsubgraph") {
         return RunUDF_KStepNeighborhoodSubgraph(serviceapi, request);
       }
       else {
