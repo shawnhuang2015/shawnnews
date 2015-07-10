@@ -30,10 +30,10 @@ namespace VISUALIZATION {
     VertexLocalId_t src;
     VertexLocalId_t tgt;
     uint32_t type;
+    std::string attr;
     uint32_t srctype;
     uint32_t tgttype;
-    std::string attr;
-
+    
     EdgePair(unsigned int s = 0, unsigned int t = 0, uint32_t vt = 0,
       std::string a = "", uint32_t svt = 0, uint32_t tvt = 0)
     : src(s), tgt(t), type(vt), attr(a), srctype(svt), tgttype(tvt) { }
