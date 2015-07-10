@@ -1,0 +1,2 @@
+killall nginx
+/usr/sbin/nginx -c ~/product/src/visualization/nginx_conf/conf/nginx.conf -p ~/product/src/visualization/nginx_conf
