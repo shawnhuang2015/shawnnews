@@ -42,14 +42,5 @@
       },
       "summary":"This is an UDF to output N depth neighborhood subgraph."
     }
-   },
-   "UIpages":{
-    "GET":{
-      "function":"UIpages",
-      "action":"filter",
-      "target":"GPE",
-      "response_filter":"ResponseFilterUIpages",
-      "summary":"This is used for initializing visualization."
-    }
    }
 }

@@ -34,64 +34,6 @@ RequestObject* ResponseFilterExample(const std::string &response, std::string &n
   return NULL;
 }
 
-RequestObject* ResponseFilterUIpages(const std::string &response, std::string &new_response){
-  //new_response = std::string("Add something new") + response;
-  new_response = std::string("");
-  new_response += 
-  "[ "
-      "{"
-        "\"tabname\": \"Explore K Step Neighborhood\","
-        "\"index\": 0,"
-        "\"elements\": [ "
-            "{ \"label\": { \"name\": \"ID\" } }, { \"textbox\": {\"name\" : \"id\", \"length\" : 20 } },"
-            "{ \"label\": { \"name\" : \"Type\"} }, { \"textbox\": {\"name\" : \"type\", \"length\" : 10 } }, "
-            "{ \"label\": { \"name\": \"Depth\" } }, { \"textbox\": {\"name\" : \"depth\", \"length\" : 10 } },"
-            "{ \"label\": { \"name\": \"Max\" } }, { \"textbox\": {\"name\" : \"max\", \"length\" : 10 } }"
-        "],"
-        "\"attributes\": {"
-          "\"depth\" : 1,"
-          "\"max\" : 25"
-        "},"
-        "\"setting\" : {"
-          "\"layout\" : \"circle\","
-          "\"edgeDirectedType\" : {}"
-        "},"
-        "\"initialization\":{"
-          "\"coloring\" : ["
-          "]"
-        "},"
-        "\"events\" : {"
-          "\"submit\" : {"
-            "\"URL_head\" : \"/engine/kstepsubgraph\","
-            "\"URL_attrs\" : {"
-              "\"vars\" : ["
-              "],"
-              "\"maps\" : ["
-                "{\"attr\":\"type\", \"usage\":\"input\", \"name\":\"type\"},"
-                "{\"attr\":\"id\", \"usage\":\"input\", \"name\":\"id\"},"
-                "{\"attr\":\"depth\", \"usage\":\"input\", \"name\":\"depth\"},"
-                "{\"attr\":\"max\", \"usage\":\"input\", \"name\":\"max\"}"
-             " ]"  
-            "}"
-          "},"   
-          "\"node_dblclick\" : {"
-            "\"URL_head\" : \"/engine/kstepsubgraph\","
-            "\"URL_attrs\" : {"
-              "\"vars\" : ["
-              "],"
-              "\"maps\" : ["
-                "{\"attr\":\"type\", \"usage\":\"select\", \"name\":\"type\"},"
-                "{\"attr\":\"id\", \"usage\":\"select\", \"name\":\"id\"},"
-               "{\"attr\":\"depth\", \"usage\":\"attributes\", \"name\":\"depth\"},"
-                "{\"attr\":\"max\", \"usage\":\"attributes\", \"name\":\"max\"}"
-              "]}}}}"
-    "]";
-
-  return NULL;
-}
-
-
-
 #ifdef __cplusplus
 }
 #endif
