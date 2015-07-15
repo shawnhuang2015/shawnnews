@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-c -w -lstdc++ -fPIC
 LIB_NAME=filters
 LDFLAGS=-lstdc++ -shared
-ifeq "$(wildcard $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp )" ""
+ifneq "$(wildcard $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp )" ""
 	JSON_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp
 	RESTPP_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/realtime/restpp
 else
