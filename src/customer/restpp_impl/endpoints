@@ -1,14 +1,4 @@
 {
-   "builtins":{
-      "GET/POST":{
-         "function":"builtins",
-         "action":"query",
-         "target":"GPE",
-         "parameters":null,
-         "request_filter":"BlueprintFilter",
-         "summary":"Blueprint API endpoint."
-      }
-   },
    "example":{
       "GET/POST":{
          "function":"example",
