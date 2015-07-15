@@ -52,4 +52,5 @@
       },
       "summary":"This is an UDF to output N depth neighborhood subgraph."
     }
+   }
 }
