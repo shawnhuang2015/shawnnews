@@ -34,8 +34,6 @@ RequestObject* ResponseFilterExample(const std::string &response, std::string &n
   return NULL;
 }
 
-
-
 #ifdef __cplusplus
 }
 #endif

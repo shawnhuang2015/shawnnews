@@ -10,13 +10,14 @@ SOURCES2 = $(wildcard $(SOURCE_OTHER_DIR)/*.cpp)
 CC=g++
 LIBB = gsdk/lib/release
 LIBINCLUDE = -Isrc/customer
+LIBINCLUDE += -Isrc/customer/core_impl/gpe_impl
 LIBINCLUDE += -Igsdk/include
 LIBINCLUDE += -Igsdk/include/third_party
 #LIBINCLUDE += -Igsdk/include/third_party/yaml/usr/local/include
 LIBINCLUDE += -Igsdk/include/third_party/sparsehash/usr/local/include
 LIBINCLUDE += -Igsdk/include/third_party/glog/usr/local/include
 LIBINCLUDE += -Igsdk/include/third_party/jsoncpp/include
-#LIBINCLUDE += -Igsdk/include/third_party/redis/deps/hiredis
+LIBINCLUDE += -Igsdk/include/third_party/redis/deps/hiredis
 #LIBINCLUDE += -Igsdk/include/third_party/zlib
 #LIBINCLUDE += -Igsdk/include/third_party/zookeeper_c/include/zookeeper
 #LIBINCLUDE += -Igsdk/include/third_party/librdkafka/include
@@ -25,6 +26,7 @@ LIBINCLUDE += -Igsdk/include/core/gse
 LIBINCLUDE += -Igsdk/include/olgp
 LIBINCLUDE += -Igsdk/include/core/topology
 LIBINCLUDE += -Igsdk/include/utility
+LIBINCLUDE += -Igsdk/include/realtime
 
 CFLAGS += -c -Wall -fmessage-length=0
 CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
@@ -36,6 +38,7 @@ CFLAGS += $(LIBINCLUDE)
 
 LDFLAGS += -L$(LIBB)
 LDFLAGS += -lolgplib
+LDFLAGS += -lrestpplib
 LDFLAGS += -lgpelib
 LDFLAGS += -ldistlib
 LDFLAGS += -lnetlib
@@ -59,6 +62,11 @@ LDFLAGS += -lrdkafka
 LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS += -lpthread -ldl
+
+UNAME_S := $(shell uname -s)
+ifneq ($(UNAME_S),Darwin)
+  LDFLAGS += -lcryptopp
+endif
 
 ODIR = objs
 OBJECTS1  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
