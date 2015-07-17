@@ -5,9 +5,6 @@ EdgeTypes:
     AttributeType: STRING
   EdgeId: 0
   FromVertexTypeName: person
-  InitVersionAttributes: 
-  - AttributeName: role
-    AttributeType: STRING
   IsDirected: true
   Name: roles
   ToVertexTypeName: movie
@@ -17,9 +14,6 @@ GraphName: person_movie
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
-  - AttributeName: name
-    AttributeType: STRING
-  InitVersionAttributes: 
   - AttributeName: name
     AttributeType: STRING
   Name: person
@@ -37,14 +31,6 @@ VertexTypes:
   - AttributeName: country
     AttributeType: UINT
     Enumerator: 1
-  - AttributeName: year
-    AttributeType: UINT
-  InitVersionAttributes: 
-  - AttributeName: title
-    AttributeType: STRING
-  - AttributeName: country
-    AttributeType: UINT
-    Enumerator: 2147483647
   - AttributeName: year
     AttributeType: UINT
   Name: movie
