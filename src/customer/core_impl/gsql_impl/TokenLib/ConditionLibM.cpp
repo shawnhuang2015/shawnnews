@@ -101,20 +101,24 @@ extern "C" bool gsql_token_ignore_case_equal(const char* const iToken[],
  *    E.g. WHERE $1 IS NUMERIC 
  *    Will call this function.
  *
- * IsNumeric test whether a string is a numeric number.
+ * IsNumeric test whether a string is a numeric number, implemented as an FSM.
  * 
  * Numeric number is defined as follows in regular expression:
- *      (+/-)?  [0-9]   [0-9]*    (.[0-9])?   [0-9]*     
- *  ^     ^       ^       ^        ^   ^         ^       ^
- *  |     |       |       |        |   |         |       |
- * INIT  SIGN   START   MIDDLE    DOT  TAIL     TAIL    END
+ *      (+/-)?  [0-9]   [0-9]*    (.[0-9])?   [0-9]*  ((e/E) (+/-)?  [0-9]    [0-9]*)?    
+ *  ^     ^       ^       ^        ^   ^         ^       ^     ^       ^         ^         ^
+ *  |     |       |       |        |   |         |       |     |       |         |         |
+ * INIT  SIGN   START   MIDDLE    DOT  TAIL     TAIL    EXP  EXPSIGN EXPDGT  EXPDGTAIL    END
  *
  * Any space appear in between will not be taken as numeric number. 
  * Space in front and at the end is OK.
+ *
+ * Author: Chengjie Qin
+ * Created: July, 2015
  */
 
 extern "C" bool IsNumeric (std::string s) { 
-  enum State {INIT, SIGN, START, MIDDLE, DOT, TAIL, END};
+  enum State {INIT, SIGN, START, MIDDLE, DOT, 
+    TAIL, EXP, EXPSIGN, EXPDGT, EXPDGTAIL, END};
   size_t i = 0;
   State current = INIT;
 
@@ -147,6 +151,9 @@ extern "C" bool IsNumeric (std::string s) {
           current = DOT;
         } else if (s[i] == ' ') {
           current = END;
+        } else if (s[i] == 'e' ||
+            s[i] == 'E') {
+          current = EXP;
         } else {
           return false;
         }
@@ -158,6 +165,9 @@ extern "C" bool IsNumeric (std::string s) {
           current = DOT;
         } else if (s[i] == ' ') {
           current = END;
+        } else if (s[i] == 'e' ||
+            s[i] == 'E') {
+          current = EXP;
         } else {
           return false;
         }
@@ -172,6 +182,44 @@ extern "C" bool IsNumeric (std::string s) {
       case TAIL:
         if ( std::isdigit(s[i]) ) {
           // stays same
+        } else if (s[i] == ' ') {
+          current = END;
+        } else if (s[i] == 'e' ||
+            s[i] == 'E') {
+          current = EXP;
+        } else {
+          return false;
+        }
+        break;
+      case EXP:
+        if ( std::isdigit(s[i]) ) {
+          current = EXPDGT;
+        } else if (s[i] == '-' ||
+            s[i] == '+') {
+          current = EXPSIGN;
+        } else {
+          return false;
+        }
+        break;
+      case EXPSIGN:
+        if ( std::isdigit(s[i]) ) {
+          current = EXPDGT;
+        } else {
+          return false;
+        }
+        break;
+      case EXPDGT:
+        if ( std::isdigit(s[i]) ) {
+          current = EXPDGTAIL;
+        } else if (s[i] == ' ') {
+          current = END;
+        } else {
+          return false;
+        }
+        break;
+      case EXPDGTAIL:
+        if ( std::isdigit(s[i]) ) {
+            ;// stays the same
         } else if (s[i] == ' ') {
           current = END;
         } else {
@@ -192,7 +240,8 @@ extern "C" bool IsNumeric (std::string s) {
   }
 
   if (current == TAIL || current == START 
-      || current == MIDDLE || current == END) {
+      || current == MIDDLE || current == END
+      || current == EXPDGT || current == EXPDGTAIL) {
     return true;
   }
   return false;

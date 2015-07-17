@@ -114,8 +114,8 @@ extern "C" void gsql_replace_separator (const char* const iToken[], uint32_t iTo
       // Should not be:
       // 1. Heading '\30'
       // 2. consecutive '\30'
-      if (oTokenLen != 0 && oToken[oTokenLen-1] != '\30') {
-        oToken[oTokenLen++] = '\30';
+      if (oTokenLen != 0 && oToken[oTokenLen-1] != (char)30) {
+        oToken[oTokenLen++] = (char)30;
       }
       i += iTokenLen[1];
     } 
@@ -127,7 +127,7 @@ extern "C" void gsql_replace_separator (const char* const iToken[], uint32_t iTo
   // trim trailing '\30'
   if (oTokenLen > 0) {
     oTokenLen --;
-    while (oTokenLen > 0 && oToken[oTokenLen] == '\30') {
+    while (oTokenLen > 0 && oToken[oTokenLen] == (char)30) {
       oTokenLen --;
     }
     // end
