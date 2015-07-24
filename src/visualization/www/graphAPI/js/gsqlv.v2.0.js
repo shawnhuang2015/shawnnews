@@ -3042,7 +3042,7 @@ var gsqlv = function(x) {
 
       d.px += d3.event.dx;
       d.py += d3.event.dy;
-        })
+    })
 
     window.updateSummaryInformationForSelectedNodes();
     gsqlv.refresh();
