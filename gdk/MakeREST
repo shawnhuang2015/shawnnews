@@ -1,5 +1,3 @@
-CFLAGS = -D__STDC_FORMAT_MACROS
-CFLAGS += -DMULTIEDGETYPES
 
 EXECUTABLE=bin/release/poc_rest_server
 SOURCE_MAIN_DIR = src/customer/restpp_impl
