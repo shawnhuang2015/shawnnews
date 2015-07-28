@@ -57,6 +57,7 @@ utility/gutil/goutputstream.hpp
 utility/gutil/gpelibidtypes.hpp
 utility/gutil/gsorter.hpp
 utility/gutil/iterator.hpp
+utility/gutil/jsonreader.hpp
 utility/gutil/jsonwriter.hpp
 utility/gutil/spinlock.hpp
 utility/gutil/gtimer.hpp
