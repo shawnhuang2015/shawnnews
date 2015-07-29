@@ -197,6 +197,24 @@ populate_repos() {
     done
 }
 
+#######################################################
+# Populate commit message check                       #
+#######################################################
+populate_commit_msg_check() {
+    for i in "${!DIRECTORY[@]}"; do
+        if [ "${DIRECTORY[$i]}" == "src/er" ]; then
+            cd ${DIRECTORY[$i]}; ER_DIR=$(pwd); cd ${CWD}
+            break
+        fi
+    done
+    if [ -f ${ER_DIR}/gitenv/commit-msg ]; then
+        for i in "${!DIRECTORY[@]}"; do
+            if [ "${SRC_TYPE[$i]}" == "src" ]; then
+                cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg; cd ${CWD}")
+            fi
+        done
+    fi
+}
 ############################################
 # show if a branch is dirty                #
 ############################################
@@ -401,6 +419,7 @@ if [ $cmd_update_repo == true ]; then
     update_gitignore_file
     populate_dir
     populate_repos
+    populate_commit_msg_check
 fi
 
 if [ $cmd_show_repo == true ]; then
