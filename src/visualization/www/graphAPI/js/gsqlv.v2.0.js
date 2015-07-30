@@ -3548,7 +3548,9 @@ var gsqlv = function(x) {
     else {
       var attrs = vattr.split('|');
       attrs.forEach(function(attr, i) {
-        var items = attr.split(':');
+        var items = attr.split(':', 1);
+        items[1] = attr.substring(attr.indexOf(":")+1);
+        
         if (items.length > 1) {
           if (items[0] == 'type') {
             items[0] = 'type_index';
