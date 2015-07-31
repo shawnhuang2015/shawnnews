@@ -38,6 +38,9 @@ core/gpe/gpelib4/enginedriver/singleadaptorcache.hpp
 core/gpe/gpelib4/udfs/udfinclude.hpp
 core/gpe/gpelib4/udfs/singleactiveudfbase.hpp
 core/gse/gse2/dict/enum/enum_mapper.hpp
+core/gse/gse2/dict/redis/gse_redis_service.hpp
+core/gse/gse2/base/gse_base_types.hpp
+core/gse/gse2/dict/dict_service.hpp
 core/topology/topology4/attribute.hpp
 core/topology/topology4/deltabase.hpp
 core/topology/topology4/edgeattribute.hpp
