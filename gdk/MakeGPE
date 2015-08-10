@@ -1,6 +1,10 @@
 #CFLAGS = -DGOOGLE_DENSEHASHMAP
 #CFLAGS += -DMULTIEDGETYPES
 
+ifndef CFLAGS
+  $(error CFLAGS is not set. Please run "gpkg.sh" instead)
+endif
+
 EXECUTABLE=bin/release/poc_gpe_server
 SOURCE_MAIN_DIR = src/customer/core_impl/gpe_impl
 SOURCE_OTHER_DIR = src/customer/core_impl
