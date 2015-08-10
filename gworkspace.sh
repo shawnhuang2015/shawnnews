@@ -3,6 +3,12 @@
 # repo populating                                     #
 #######################################################
 
+if [ -z $GSQL_PROJ_HOME ]
+then
+  echo "GSQL_PROJ_HOME is not set. Go back to \"product\" folder and source .gsql_setup_dev_env.source"
+  exit 2
+fi
+
 #-----------------------------------------------------#
 # Common definitions                                  #
 #-----------------------------------------------------#
@@ -414,6 +420,22 @@ if [ -d "gdk" ] && [ ! -d "src/core" ]; then
 fi
 
 getRepoConfig "config/proj.config"
+
+# Make sure gdk repos match product repos
+if [ "G$(basename `pwd`)" = "Ggdk" ]
+then
+    for i in "${!DIRECTORY[@]}"; do
+        dir=${DIRECTORY[$i]#../}
+        if grep -q "$dir" ../config/proj.config
+        then
+            line=$(grep "$dir" ../config/proj.config | sed -e '/^#/d')
+            REPO[$i]=$(echo $line | awk '{print $3}')
+            BRANCH[$i]=$(echo $line | awk '{print $4}')
+            VERSION[$i]=$(echo $line | awk '{print $5}')
+            SRC_TYPE[$i]=$(echo $line | awk '{print $6}')
+        fi
+    done
+fi
 
 if [ $cmd_update_repo == true ]; then
     update_gitignore_file
