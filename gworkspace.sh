@@ -3,12 +3,6 @@
 # repo populating                                     #
 #######################################################
 
-if [ -z $GSQL_PROJ_HOME ]
-then
-  echo "GSQL_PROJ_HOME is not set. Go back to \"product\" folder and source .gsql_setup_dev_env.source"
-  exit 2
-fi
-
 #-----------------------------------------------------#
 # Common definitions                                  #
 #-----------------------------------------------------#
