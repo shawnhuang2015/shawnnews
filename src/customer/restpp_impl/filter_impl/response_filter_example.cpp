@@ -30,7 +30,7 @@ extern "C" {
 *           (2) Return NULL to return new_response to customer.
 */
 RequestObject* ResponseFilterExample(const std::string &response, std::string &new_response){
-  // new_response = std::string("Add something new") + response;
+  new_response = std::string("{\"something new\":true}");
   return NULL;
 }
 
