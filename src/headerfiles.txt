@@ -49,6 +49,7 @@ core/topology/topology4/metafiles.hpp
 core/topology/topology4/segmentvertexattributereader.hpp
 core/topology/topology4/vertexattribute.hpp
 core/topology/topology4/samplingcontroller.hpp
+core/topology/topology4/graphupdates.hpp
 utility/gbucket/bucket.hpp
 utility/gbucket/bucketcontainer.hpp
 utility/gmmnt/memorydataobject.hpp
