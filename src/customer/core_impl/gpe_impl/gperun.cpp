@@ -7,7 +7,6 @@
  *      Author: lichen
  ******************************************************************************/
 
-#include <gutil/statushubagent.hpp>
 #include <gpe/serviceapi.hpp>
 #ifndef OPENCODE
 #include <core_impl/gse_impl/post_impl.hpp>
@@ -21,7 +20,6 @@ int main(int argc, char** argv) {
     std::cerr << "GPE Server: Version\n" << versStr << std::endl;
 #endif
 
-  gutil::StatusHubAgentServer::Start();
 
   UDIMPL::UDFRunner impl;
 #ifndef OPENCODE
