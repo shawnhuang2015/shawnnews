@@ -1,3 +1,6 @@
+ifndef CFLAGS
+  $(error CFLAGS is not set. Please run "gpkg.sh" instead)
+endif
 
 EXECUTABLE=bin/release/poc_rest_server
 SOURCE_MAIN_DIR = src/customer/restpp_impl

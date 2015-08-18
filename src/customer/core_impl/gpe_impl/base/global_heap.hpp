@@ -140,7 +140,7 @@ namespace UDIMPL {
         // optimization: the next two 'worst' items are in positions 1 and 2.
         // if we are better than the WORST--contents_[0]  but not contents_[1] and contents_[2]
         // then we can just emplace the new item as the current root.
-        if(comparator_(newElement,contents_[1]) == false && comparator_(newElement,contents_[2]) == false) {
+        if(contents_.size() >= 2 && comparator_(newElement,contents_[1]) == false && comparator_(newElement,contents_[2]) == false) {
           contents_[0] = newElement;
         }else {
           std::pop_heap(contents_.begin(), contents_.end(), comparator_);

@@ -3551,7 +3551,7 @@ var gsqlv = function(x) {
         var items = attr.split(':', 1);
         items[1] = attr.substring(attr.indexOf(":")+1);
         
-        if (items.length > 1) {
+        if (items.length > 1 && items[0] != "" && items[1] != "") {
           if (items[0] == 'type') {
             items[0] = 'type_index';
             return; // ignore the type attributes.
