@@ -8,9 +8,6 @@
  ******************************************************************************/
 
 #include <gpe/serviceapi.hpp>
-#ifndef OPENCODE
-#include <core_impl/gse_impl/post_impl.hpp>
-#endif
 #include "impl.hpp"
 
 int main(int argc, char** argv) {
@@ -20,11 +17,6 @@ int main(int argc, char** argv) {
     std::cerr << "GPE Server: Version\n" << versStr << std::endl;
 #endif
   UDIMPL::UDFRunner impl;
-#ifndef OPENCODE
-  UDIMPL::UD_PostJson2Delta postdelta_impl;
-  gperun::ServiceAPI::Run(argc, argv, &impl, &postdelta_impl);
-#else
   gperun::ServiceAPI::Run(argc, argv, &impl);
-#endif
 }
 
