@@ -10,10 +10,15 @@ export CFLAGS
 all:
 	./gpkg.sh
 
+debug:
+	./gpkg.sh -d
+
 gpe:
+	@make clean
 	@make -f MakeGPE all
 
 rest:
+	@make clean
 	@make -f MakeREST all
 
 demo:
@@ -21,4 +26,4 @@ demo:
 	@make -f MakeDemo all
 
 clean:
-	\rm -rf objs/*.o bin/release/*
+	\rm -rf objs/*.o
