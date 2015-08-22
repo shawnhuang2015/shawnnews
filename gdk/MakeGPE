@@ -1,8 +1,5 @@
-#CFLAGS = -DGOOGLE_DENSEHASHMAP
-#CFLAGS += -DMULTIEDGETYPES
-
 ifndef CFLAGS
-  $(error CFLAGS is not set. Please run "gpkg.sh" instead)
+$(error CFLAGS is not set. Please run "make gpe" instead)
 endif
 
 EXECUTABLE=bin/release/poc_gpe_server
@@ -89,6 +86,5 @@ all: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
 
-
 clean:
-	rm -rf objs/*.o bin/release/*
+	\rm -rf objs/*.o bin/release/*

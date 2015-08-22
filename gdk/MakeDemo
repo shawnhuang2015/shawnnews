@@ -1,3 +1,7 @@
+ifndef CFLAGS
+$(error CFLAGS is not set. Please run "make demo" instead)
+endif
+
 EXECUTABLE=bin/release/demo_gperun
 SOURCE_MAIN_DIR = src/demo
 SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp)
@@ -24,7 +28,7 @@ LIBINCLUDE += -Igsdk/include/utility
 #debug: CFLAGS += -DDEBUG -g
 #debug: $(EXECUTABLE)
 
-CFLAGS  = -c -O3 -Wall -c -fmessage-length=0
+CFLAGS  += -c -O3 -Wall -c -fmessage-length=0
 CFLAGS += -Wno-unused -fpermissive -fno-omit-frame-pointer 
 CFLAGS += -ldl
 CFLAGS += -DRELEASE
@@ -69,6 +73,5 @@ all: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
 
-
 clean:
-	rm -rf objs/*.o bin/*/*
+	\rm -rf objs/*.o bin/release/*
