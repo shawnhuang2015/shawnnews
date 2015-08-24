@@ -1,6 +1,7 @@
 olgp/gpe/internalgraphapi.hpp
 olgp/gpe/serviceapi.hpp
 olgp/gpe/serviceimplbase.hpp
+olgp/gpe/graphrecords.hpp
 core/gpe/gapi4/baseedgesfilter.hpp
 core/gpe/gapi4/baseverticesfilter.hpp
 core/gpe/gapi4/edgescollection.hpp
@@ -67,6 +68,7 @@ utility/gutil/spinlock.hpp
 utility/gutil/gtimer.hpp
 utility/gutil/gcharbuffer.hpp
 utility/gutil/compactwriter.hpp
+utility/gutil/gjsonhelper.hpp
 realtime/restpp/librestpp.hpp
 realtime/restpp/idset.cpp
 realtime/restpp/schemamanager.cpp
