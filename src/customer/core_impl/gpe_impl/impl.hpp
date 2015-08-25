@@ -22,12 +22,21 @@ class UDFRunner : public ServiceImplBase {
   bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     if (request.request_function_ == "kneighborsize") {
       return RunUDF_KNeighborSize(serviceapi, request);
-    } else {
-      return false;  /// not a valid request
     }
+    if(request.request_function_ == "gpath") {
+      return RunUDF_GPath(serviceapi, request);
+    }
+    
+    return false;  /// not a valid request
   }
 
  private:
+  bool RunUDF_GPath(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
+    std::cout << " GPath invoked " << std::endl;
+    std::cout << " Jsoptions is " << request.jsoptions_.toStyledString() << std::endl;
+    return true;
+  }
   bool RunUDF_KNeighborSize(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     // sample to convert vid.
