@@ -1,6 +1,7 @@
 olgp/gpe/internalgraphapi.hpp
 olgp/gpe/serviceapi.hpp
 olgp/gpe/serviceimplbase.hpp
+olgp/gpe/comparators.hpp
 olgp/gpe/graphrecords.hpp
 core/gpe/gapi4/baseedgesfilter.hpp
 core/gpe/gapi4/baseverticesfilter.hpp
