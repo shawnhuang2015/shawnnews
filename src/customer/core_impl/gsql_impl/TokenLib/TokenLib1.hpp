@@ -93,6 +93,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <ctime>
 
 
 using namespace std;
@@ -142,5 +143,13 @@ extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLe
  *       load "source_file" to vertex v values ($0, $1, gsql_to_bool($2));
  */
 extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen);
+
+/**
+ * This function returns the currect epoch time.
+ *
+ * @par Example
+ *       load "source_file" to vertex v values ($0, $1, gsql_current_time_epoch(0));
+ */
+extern "C"  uint64_t gsql_current_time_epoch (const char* const iToken, uint32_t iTokenLen);
 
 #endif /* TOKENLIB1_HPP_ */

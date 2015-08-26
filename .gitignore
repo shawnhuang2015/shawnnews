@@ -58,6 +58,7 @@ mgnt_cli/
 gsql/.history
 gsql/config
 gsql/output
+gsql/logs/GSQL_LOG
 
 # GTEST generated files#
 # ###################
