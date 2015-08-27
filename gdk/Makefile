@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 cppFlagCmd = ../src/er/buildenv/get_cpp_flags
 ifneq ("$(wildcard $(cppFlagCmd))","")
 CFLAGS := $(shell $(cppFlagCmd) )
