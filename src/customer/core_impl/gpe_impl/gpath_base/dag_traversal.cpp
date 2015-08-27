@@ -23,6 +23,9 @@ namespace UDIMPL {
     }
 
     DAGTraversal::DAGTraversal(CONTEXT_TABLE_PTR ptr): minLayerIndex_(0) {
+      if (ptr->validPaths.empty()) {
+        return;
+      }
       //create a sNode for the current contextTable
       GVector<uint32_t>::T traversalPaths(ptr->validPaths.size(), 0);//create the validPaths for traversal
       for (uint32_t i = 0; i < ptr->validPaths.size(); ++i) {
@@ -82,7 +85,7 @@ namespace UDIMPL {
         return false;
       }
       
-      while (stack_.top().ptr->layerIndex_ > minLayerIndex_) {
+      while (!stack_.empty() && stack_.top().ptr->layerIndex_ > minLayerIndex_) {
         StackNode curNode = stack_.top();
         stack_.pop();
         //update expressions
@@ -107,7 +110,7 @@ namespace UDIMPL {
         return false;
       }
       
-      while (stack_.top().ptr != CONTEXT_TABLE_NULL_PTR) {
+      while (!stack_.empty() && stack_.top().ptr != CONTEXT_TABLE_NULL_PTR) {
         StackNode curNode = stack_.top();
         stack_.pop();
         //update expressions
