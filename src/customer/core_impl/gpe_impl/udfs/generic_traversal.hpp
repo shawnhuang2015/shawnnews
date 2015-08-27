@@ -519,6 +519,8 @@ public:
 private:
   // Write context table, with RANode
   void writeContextTable(CONTEXT_TABLE_PTR table, RANode* raNode) {
+    std::cout << "Write Table" << std::endl;
+    std::cout << *table << std::endl;
     ColumnMeta& columnMeta = raNode->newColumnMeta_;
     
     //write the name of contextTable

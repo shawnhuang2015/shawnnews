@@ -5,6 +5,9 @@
 namespace UDIMPL {
   namespace GPATH_TOOLS {
     DAGTraversal::DAGTraversal(CONTEXT_TABLE_PTR ptr, GVector<Expression>::T& expressions): minLayerIndex_(std::numeric_limits<uint32_t>::max()) {
+      if (ptr->validPaths.empty()) {
+        return;
+      }
       //create a sNode for the current contextTable
       GVector<uint32_t>::T traversalPaths(ptr->validPaths.size(), 0);//create the validPaths for traversal
       for (uint32_t i = 0; i < ptr->validPaths.size(); ++i) {
@@ -31,6 +34,9 @@ namespace UDIMPL {
     }
 
     void DAGTraversal::pushValidParentsIntoStack(StackNode& sNode, std::stack<StackNode>& st) {
+      if (sNode.traversalPaths.empty()) {
+        return;
+      }
       CONTEXT_TABLE_PTR ptr = sNode.ptr;//get a copy of the contextTable pointer for the sNode
 
       //only one possible pointer, all traversalPaths belong to this pointer
