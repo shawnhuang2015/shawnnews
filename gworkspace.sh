@@ -202,7 +202,7 @@ populate_repos() {
 #######################################################
 populate_commit_msg_check() {
     for i in "${!DIRECTORY[@]}"; do
-        if [ "${DIRECTORY[$i]}" == "src/er" ]; then
+        if [ "${DIRECTORY[$i]}" == "src/er" ] || [ "${DIRECTORY[$i]}" == "../src/er" ] ; then
             cd ${DIRECTORY[$i]}; ER_DIR=$(pwd); cd ${CWD}
             break
         fi
@@ -213,6 +213,12 @@ populate_commit_msg_check() {
                 cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg; cd ${CWD}")
             fi
         done
+        if [ -d .git/hooks ]; then
+            cmdarr=("${cmdarr[@]}" "ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg;")
+        fi
+        if [ -d ../.git/hooks ]; then
+            cmdarr=("${cmdarr[@]}" "cd ..; ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg; cd ${CWD}")
+        fi
     fi
 }
 ############################################
