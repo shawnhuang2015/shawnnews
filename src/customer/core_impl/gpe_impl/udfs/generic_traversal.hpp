@@ -490,6 +490,7 @@ public:
         ptr->push(tablePtr);
       }
       CONTEXT_TABLE_PTR result = ptr->execEndRun();
+      result->getContextTable();
       localMap[frontierNodes[i]->pathNumber_] = result;//adding result into local map
       if (frontierNodes[i]->isOutput_) {
         RANode* raNodePtr = endRunAggJobs.getRANodeByName(frontierNodes[i]->nodeName_);
@@ -519,8 +520,8 @@ public:
 private:
   // Write context table, with RANode
   void writeContextTable(CONTEXT_TABLE_PTR table, RANode* raNode) {
-    std::cout << "Write Table" << std::endl;
-    std::cout << *table << std::endl;
+    //std::cout << "Write Table" << std::endl;
+    //std::cout << *table << std::endl;
     ColumnMeta& columnMeta = raNode->newColumnMeta_;
     
     //write the name of contextTable
