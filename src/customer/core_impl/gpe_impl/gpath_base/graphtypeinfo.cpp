@@ -110,13 +110,13 @@ bool GraphMetaData::getAllEdgeAttributes(std::string edgeName, GVector<std::stri
 
 void GraphMetaData::getGraphMeta(ServiceAPI& serviceApi) {
   topology4::TopologyMeta* topoMeta = serviceApi.GetTopologyMeta();
-  GVector<topology4::VertexTypeMeta>::T& vertexMeta = topoMeta->vertextypemeta_;
-  GVector<topology4::EdgeTypeMeta>::T& edgeMeta = topoMeta->edgetypemeta_;
+  std::vector<topology4::VertexTypeMeta>& vertexMeta = topoMeta->vertextypemeta_;
+  std::vector<topology4::EdgeTypeMeta>& edgeMeta = topoMeta->edgetypemeta_;
   for (uint32_t i = 0; i < vertexMeta.size(); ++i) {
     std::string typeName = vertexMeta[i].typename_;
     vertexTypeName.push_back(typeName);
     vertexTypeId[typeName] = vertexMeta[i].typeid_;
-    GVector<topology4::AttributeMeta>::T attributes = vertexMeta[i].attributes_.attributelist_;
+    std::vector<topology4::AttributeMeta> attributes = vertexMeta[i].attributes_.attributelist_;
     //if (attributes.size() == 0) attributes = vertexMeta[i].attributes_ignored_.attributelist_;
     attrListType attributeList;
     GVector<std::string>::T vAttrName;
@@ -135,7 +135,7 @@ void GraphMetaData::getGraphMeta(ServiceAPI& serviceApi) {
     edgeTypeId[typeName] = edgeMeta[i].typeid_;
     edgeIsDirected[typeName] = edgeMeta[i].isdirected_;
     edgeConstraint[typeName] = std::make_pair(edgeMeta[i].fromtypename_, edgeMeta[i].totypename_);
-    GVector<topology4::AttributeMeta>::T attributes = edgeMeta[i].attributes_.attributelist_;
+    std::vector<topology4::AttributeMeta> attributes = edgeMeta[i].attributes_.attributelist_;
     //if (attributes.size() == 0) attributes = edgeMeta[i].attributes_ignored_.attributelist_;
     attrListType attributeList;
     GVector<std::string>::T eAttrName;
