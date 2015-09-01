@@ -22,9 +22,9 @@ class UDFRunner : public ServiceImplBase {
   bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     if (request.request_function_ == "kneighborsize") {
       return RunUDF_KNeighborSize(serviceapi, request);
-    } else {
-      return false;  /// not a valid request
     }
+    
+    return false;  /// not a valid request
   }
 
  private:
