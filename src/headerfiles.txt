@@ -76,7 +76,7 @@ realtime/restpp/schemamanager.cpp
 # for batch mode
 core/gpe/gpelib4/enginedriver/enginedriver.hpp
 # post customization
-core/gse/post_service/post_json2delta.hpp
+core/topology/postservice/post_json2delta.hpp
 utility/gutil/requestidmaps.hpp
 # for gpp
 olgp/gpp/internalgppincludes.hpp
