@@ -2,12 +2,11 @@ CC=g++
 CFLAGS=-c -w -lstdc++ -fPIC
 LIB_NAME=filters
 LDFLAGS=-lstdc++ -shared
+RESTPP_PATH = $(GSQL_PROJ_HOME)/src/realtime/restpp
 ifneq "$(wildcard $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp )" ""
 	JSON_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp
-	RESTPP_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/realtime/restpp
 else
 	JSON_PATH =  $(GSQL_PROJ_HOME)/src/third_party/jsoncpp
-	RESTPP_PATH = $(GSQL_PROJ_HOME)/src/realtime/restpp
 endif
 INCLUDE=-I$(JSON_PATH)/include -I$(GSQL_PROJ_HOME)/src/realtime/
 SYS_SRC=$(JSON_PATH)/json_reader.cpp $(JSON_PATH)/json_writer.cpp $(JSON_PATH)/json_value.cpp
