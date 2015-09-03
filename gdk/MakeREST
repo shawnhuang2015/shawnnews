@@ -93,4 +93,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
 
 clean:
-	\rm -rf objs/*.o bin/release/*
+	rm -rf objs/*.o bin/release/*
