@@ -7,6 +7,13 @@
  * Created on: May 9, 2015
  *      Author: jzhong
  ******************************************************************************/
+
+/******************************************************************************
+ * Do NOT edit on this file. Follow this file to create you own filters in a 
+ * new file. Directly editting on this file may lead to merge conflicts with
+ * poc4.3_base in the future.
+ ******************************************************************************/
+
 #include <restpp/librestpp.hpp>
 
 #include <sstream>
