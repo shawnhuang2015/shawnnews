@@ -64,6 +64,7 @@ gsql/logs/GSQL_LOG
 # ###################
 gtest/diff/*
 gtest/output/*
+gtest/.working_dir/*
 
 # gdk generated
 deploy_gsdk/
