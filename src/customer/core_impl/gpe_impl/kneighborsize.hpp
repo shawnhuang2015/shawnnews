@@ -1,7 +1,7 @@
 #ifndef GPERUN_KNEIGHBORSIZE_HPP_
 #define GPERUN_KNEIGHBORSIZE_HPP_
 
-#include <gpelib4/udfs/singleactiveudfbase.hpp>
+#include <gpelib4/udfs/udfinclude.hpp>
 
 namespace UDIMPL {
   class KNeighborSize : public SingleActiveBaseUDF {
