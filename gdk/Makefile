@@ -27,4 +27,7 @@ demo:
 	@make -f MakeDemo all
 
 clean:
+	# querydispatcher.o is NOT compiled by Makefile
+	\cp objs/querydispatcher.o /tmp/querydispatcher.o
 	\rm -rf objs/*.o
+	\mv /tmp/querydispatcher.o objs/
