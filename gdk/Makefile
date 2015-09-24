@@ -14,6 +14,10 @@ all:
 debug:
 	./gpkg.sh -d
 
+filter:
+	@make -f MakeFilter clean
+	@make -f MakeFilter
+
 gpe:
 	@make clean
 	@make -f MakeGPE all
@@ -28,6 +32,4 @@ demo:
 
 clean:
 	# querydispatcher.o is NOT compiled by Makefile
-	\cp objs/querydispatcher.o /tmp/querydispatcher.o
-	\rm -rf objs/*.o
-	\mv /tmp/querydispatcher.o objs/
+	ls objs/*.o | grep -v querydispatcher.o | xargs rm -f
