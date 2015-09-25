@@ -1,4 +1,4 @@
-cd /home/xinyuchang/poc4.3/product/gtest;./gtest gsql.sh 5 > /tmp/a
+cd $PRODUCT/gtest;./gtest gsql.sh 5 > /tmp/a
 
 grep "Update\: cp"  /tmp/a > /tmp/b
 sed 's/Update\://g' /tmp/b > /tmp/a
