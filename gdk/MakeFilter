@@ -6,7 +6,7 @@ GDK_REALTIME = gsdk/include/realtime
 GDK_RESTPP = $(GDK_REALTIME)/restpp
 FILTER_DIR = src/customer/restpp_impl/filter_impl
 JSON_PATH = gsdk/include/third_party/jsoncpp
-INCLUDE = -I$(JSON_PATH)/include -I$(GDK_REALTIME)
+INCLUDE = -Igsdk/include/third_party -I$(JSON_PATH)/include -I$(GDK_REALTIME)
 SYS_SRC=$(JSON_PATH)/json_reader.cpp $(JSON_PATH)/json_writer.cpp $(JSON_PATH)/json_value.cpp
 SOURCES=$(wildcard $(FILTER_DIR)/*.cpp) $(GDK_RESTPP)/idset.cpp $(GDK_RESTPP)/schemamanager.cpp
 OBJECTS=$(SOURCES:.cpp=.o) $(SYS_SRC:.cpp=.o)
