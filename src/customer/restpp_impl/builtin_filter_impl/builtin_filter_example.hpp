@@ -12,9 +12,9 @@
 
 #include <fstream>
 
-bool UpdateRequestFilterExample(RequestInfo *request_info,
-                              ProcessingResult *processing_result,
-                              Handler *handler)
+bool BuiltinFilterExample(FilterHelper *filter_helper,
+           UserRequest *user_request,
+           GsqlRequest *gsql_request)
 {
   return true;
 }
