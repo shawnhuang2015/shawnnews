@@ -2,7 +2,7 @@
  * Copyright (c) 2015, GraphSQL Inc.
  * All rights reserved.
  * Project: RESTPP
- * register_builtin_filter.hpp:
+ * Brief: register builtin filters in this file.
  *
  *  Created on: Apr 24, 2015
  *      Author: jzhong
@@ -14,19 +14,22 @@
 
 #include <restpp/librestpp.hpp>
 
-#include "builtin_filter_example.hpp"
-
 /*----------------------------------------------------------------------------------------
-Ste 1:  All filter code are included in this file and compiled into one object file.
-        Include your .cpp here.
+  Steps for registering builtin filters:
+  
+  Step 1:  Include your *.hpp.
 -----------------------------------------------------------------------------------------*/
+#include "builtin_filter_example.hpp"
 
 
 void RegisterBuiltinFilters(){
   /*--------------------------------------------------------------------------------------
-  Step 2: register the function pointer of your filter with the filter name:
+  Step 2: register the function pointer of your filter under a unique filter name.
+  the following two lines just domonstrate how to register builtin filters, 
+  you can safely delete it on your own project.
   ---------------------------------------------------------------------------------------*/
-  // RESTPP_COMPONENTS::filtermanager->RegisterBuiltinFilter("FilterName", (RequestFilter)&BuiltinFilterExample);
+  RegisterBuiltinFilter("BuiltinRequestFilterExample", (RequestFilter)&BuiltinRequestFilterExample);
+  RegisterBuiltinFilter("BuiltinResponseFilterExample", (RequestFilter)&BuiltinResponseFilterExample);
 }
 
 

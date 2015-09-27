@@ -25,30 +25,18 @@ extern "C" {
 #endif
 
 
-  RequestObject* CascadeRequestGenerator(FilterHelper *filter_helper,
+  RequestObject* ResponseFilterExample(FilterHelper *filter_helper,
             GsqlResponse *gsql_response,
             UserResponse *user_response){
-    RequestObject *cascade_request = new RequestObject();
-    cascade_request->method = "GET";
-    cascade_request->url = "/cascade/second";
-    cascade_request->data = gsql_response->response;
-    cascade_request->params["string_param"].push_back("randomString");
-    return cascade_request;
-  }
-
-  RequestObject* CascadeRequestResponseFilter(FilterHelper *filter_helper,
-            GsqlResponse *gsql_response,
-            UserResponse *user_response){
-    user_response->content = "CascadeRequestResponseFilter: "
-      + gsql_response->response;
     return NULL;
     /*
-    RequestObject *cascade_request = new RequestObject();
-    cascade_request->method = "GET";
-    cascade_request->url = "/cascade/second";
-    cascade_request->data = gsql_response->response;
-    cascade_request->params["string_param"].push_back("randomString");
-    return cascade_request;
+    // generate cascaded request from response filter
+    RequestObject *cascaded_request = new RequestObject();
+    cascaded_request->method = "GET";
+    cascaded_request->url = "/cascade/second";
+    cascaded_request->data = gsql_response->response;
+    cascaded_request->params["string_param"].push_back("randomString");
+    return cascaded_request;
     */
   }
 

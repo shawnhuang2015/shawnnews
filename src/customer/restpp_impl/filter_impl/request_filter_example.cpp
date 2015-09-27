@@ -26,12 +26,10 @@
 extern "C" {
 #endif
 
-  void CascadeRequestRequestFilter(
+  void RequestFilterExample(
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request){
-    gsql_request->jsoptions["add"] = Json::Value(Json::arrayValue);
-    gsql_request->jsoptions["add"].append(123);
   }
 
 #ifdef __cplusplus

@@ -2,7 +2,6 @@ CC=g++
 CFLAGS=-c -w -lstdc++ -fPIC
 LIB_NAME=filters
 LDFLAGS=-lstdc++ -shared
-RESTPP_PATH = $(GSQL_PROJ_HOME)/src/realtime/restpp
 ifndef GSQL_PROJ_HOME:
 	GSQL_PROJ_HOME=../../../../
 endif
