@@ -72,6 +72,7 @@ UNAME_S := $(shell uname -s)
 ifneq ($(UNAME_S),Darwin)
   LDFLAGS += -lcryptopp
   LDFLAGS += -ljvm
+  LDFLAGS += -lrt
 else
   LDFLAGS += -framework javaVm
 endif
