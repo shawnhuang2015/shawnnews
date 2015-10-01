@@ -73,7 +73,12 @@ endif
 ODIR = objs
 OBJECTS1  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
 OBJECTS2 = $(patsubst $(SOURCE_OTHER_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES2))
-OBJECTS = $(ODIR)/querydispatcher.o $(OBJECTS1) $(OBJECTS2)
+OBJECTS = $(OBJECTS1) $(OBJECTS2)
+OBJECTS_EXEC = $(OBJECTS)
+if [ -a $(ODIR)/querydispatcher.o ] ; \
+then \
+OBJECTS_EXEC = $(ODIR)/querydispatcher.o  $(OBJECTS); \
+fi;
 
 $(ODIR)/%.o: $(SOURCE_MAIN_DIR)/%.cpp
 	$(CC) -o $@ $< $(CFLAGS) 
@@ -85,7 +90,7 @@ $(ODIR)/%.o: $(SOURCE_OTHER_DIR)/%.cpp
 all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
+	$(CC)  -o $@  $(OBJECTS_EXEC)  $(LDFLAGS)
 
 clean:
 	\rm -rf objs/*.o bin/release/*
