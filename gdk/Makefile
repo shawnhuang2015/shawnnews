@@ -31,5 +31,6 @@ demo:
 	@make -f MakeDemo all
 
 clean:
-	# querydispatcher.o is NOT compiled by Makefile
-	ls objs/*.o | grep -v querydispatcher.o | xargs rm -f
+	@# querydispatcher.o is NOT compiled by Makefile
+	@if ls objs/*.o >/dev/null 2>&1  ; then ls objs/*.o | grep -v querydispatcher.o | xargs rm -f; fi
+	@\rm -rf bin/release/*

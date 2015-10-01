@@ -75,10 +75,9 @@ OBJECTS1  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
 OBJECTS2 = $(patsubst $(SOURCE_OTHER_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES2))
 OBJECTS = $(OBJECTS1) $(OBJECTS2)
 OBJECTS_EXEC = $(OBJECTS)
-if [ -a $(ODIR)/querydispatcher.o ] ; \
-then \
-OBJECTS_EXEC = $(ODIR)/querydispatcher.o  $(OBJECTS); \
-fi;
+ifneq "$(wildcard $(ODIR)/querydispatcher.o)" ""
+  OBJECTS_EXEC = $(ODIR)/querydispatcher.o  $(OBJECTS)
+endif
 
 $(ODIR)/%.o: $(SOURCE_MAIN_DIR)/%.cpp
 	$(CC) -o $@ $< $(CFLAGS) 
@@ -93,4 +92,6 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC)  -o $@  $(OBJECTS_EXEC)  $(LDFLAGS)
 
 clean:
-	\rm -rf objs/*.o bin/release/*
+	@# querydispatcher.o is NOT compiled by Makefile
+	@if ls objs/*.o >/dev/null 2>&1  ; then ls objs/*.o | grep -v querydispatcher.o | xargs rm -f; fi
+	@\rm -rf bin/release/*
