@@ -17,7 +17,7 @@ namespace UDIMPL {
         QueryName(query_name),
         ServiceApi(serviceapi),
         Request(request) { }
-      bool RunQuery();
+      bool RunQuery() { return true; }
       template<class QueryUDF>
         bool Run(QueryUDF& udf)  {
           ServiceApi.RunUDF(&Request, &udf);
