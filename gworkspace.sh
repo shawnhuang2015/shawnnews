@@ -408,6 +408,17 @@ update_gitignore_file()
     mv  $temp_ignore_file $gitignore_file
 }
 
+#######################################################
+# run ad-hoc command after workspace update command   #
+#######################################################
+run_post_workspace_update_conf()
+{
+    # run post workspace command
+    if [ -f config/post_workspace_update.conf ]; then
+        echo "${bldblu}Run post update commands in config/post_workspace_update.conf ${txtrst}"
+        bash config/post_workspace_update.conf
+    fi
+}
 
 #######################################
 # Start from here                     #
@@ -476,7 +487,6 @@ DIFF=$(( $END - $START ))
 echo
 echo "${bldgre}$0 finished successfully in ${DIFF} seconds. ${txtrst}"
 
-
-
-
-
+if [ $cmd_update_repo == true ]; then
+    run_post_workspace_update_conf
+fi
