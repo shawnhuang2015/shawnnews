@@ -7,6 +7,7 @@ do
   IFS="$(printf '\n')"
   echo -e "#include \"querydispatcher.hpp\"\n" > /tmp/baseline.cpp
 
+  QNAME=''
   # parsing base line, and extract useful content
   while read -r line
   do
@@ -25,8 +26,12 @@ do
     then
       echo $line >> /tmp/baseline.cpp
     fi
-
   done < $file
+
+  if [ -z $QNAME ]
+  then
+    continue
+  fi
 
   # add more info
   echo -e "namespace UDIMPL {
