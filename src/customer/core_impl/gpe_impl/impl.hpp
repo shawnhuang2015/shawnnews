@@ -13,8 +13,7 @@
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
-#include "base/global_multiset.hpp"
-#include "query/test/test.hpp"
+
 using namespace gperun;
 
 namespace UDIMPL {

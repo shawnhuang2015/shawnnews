@@ -1,6 +1,5 @@
 #!/bin/bash
 
-PRODUCT="/home/xinyuchang/poc4.3/product/"
 BASELINES=$(find $PRODUCT/gtest/base_line/gsql/regress5/*)
 FLAG=0
 for file in $BASELINES
