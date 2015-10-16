@@ -60,6 +60,8 @@ then
   exit $RC
 fi
 
+echo "Pass "$file
+
 done
 
 echo "All correct!"
