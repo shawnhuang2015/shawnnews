@@ -13,6 +13,7 @@
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
+#include "query/test/test.hpp"
 
 using namespace gperun;
 
