@@ -3,11 +3,10 @@ $(error CFLAGS is not set. Please run "make rest" instead)
 endif
 
 EXECUTABLE=bin/release/poc_rest_server
+VALIDATOR_EXECUTABLE=bin/release/check_endpoints
 SOURCE_MAIN_DIR = src/customer/restpp_impl
-SOURCE_RESTPP_DIR = gsdk/include/restpp/
-SOURCE_OTHER_DIR = src/customer/restpp_impl/system_filter
-SOURCES  = $(wildcard $(SOURCE_MAIN_DIR)/*.cpp) $(wildcard $(SOURCE_RESTPP_DIR)/*.cpp)
-SOURCES2 = $(wildcard $(SOURCE_OTHER_DIR)/*.cpp)
+SOURCES  = $(SOURCE_MAIN_DIR)/restpprun.cpp
+VALIDATOR_SOURCES  = $(SOURCE_MAIN_DIR)/restppvalidator.cpp
 
 CC=g++
 LIBB = gsdk/lib/release
@@ -55,7 +54,7 @@ LDFLAGS += -lyaml-cpp
 #LDFLAGS += -lboost_wserialization
 LDFLAGS += -lboost_filesystem
 LDFLAGS += -lboost_system
-#LDFLAGS += -lboost_program_options
+LDFLAGS += -lboost_program_options
 LDFLAGS += -lboost_thread
 LDFLAGS += -lglog
 #LDFLAGS += -lgtest
@@ -77,21 +76,19 @@ else
   LDFLAGS += -framework javaVm
 endif
 ODIR = objs
-OBJECTS1  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
-OBJECTS2 = $(patsubst $(SOURCE_OTHER_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES2))
-OBJECTS = $(OBJECTS1) $(OBJECTS2)
+OBJECTS  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(SOURCES))
+VALIDATOR_OBJECTS  = $(patsubst $(SOURCE_MAIN_DIR)/%.cpp,$(ODIR)/%.o,$(VALIDATOR_SOURCES))
 
 $(ODIR)/%.o: $(SOURCE_MAIN_DIR)/%.cpp
 	$(CC) -o $@ $< $(CFLAGS) 
 
-$(ODIR)/%.o: $(SOURCE_OTHER_DIR)/%.cpp
-	$(CC) -o $@ $< $(CFLAGS)
-
-
-all: $(SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(VALIDATOR_SOURCES) $(EXECUTABLE) $(VALIDATOR_EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC)  -o $@  $(OBJECTS)  $(LDFLAGS)
+
+$(VALIDATOR_EXECUTABLE): $(VALIDATOR_OBJECTS) 
+	$(CC)  -o $@  $(VALIDATOR_OBJECTS)  $(LDFLAGS)
 
 clean:
 	rm -rf objs/*.o bin/release/*
