@@ -114,13 +114,13 @@ require(['gsqlv'], function(){
       mygv.redraw();
 
       if (options.length === 0) {
-        return toLanguage('No option selected ...');
+        return toLanguage('No option selected ...', "ui_component", "label");
       }
       else if (options.length > 3) {
-        return toLanguage('More than 3 options selected!');
+        return toLanguage('More than 3 options selected!', "ui_component", "label");
       }
       else {
-        return labels.map(function(d){return toLanguage(d)}).join(',') + '';
+        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(',') + '';
       }
     },
       //includeSelectAllOption: true,
@@ -175,13 +175,13 @@ require(['gsqlv'], function(){
       mygv.redraw();
 
       if (options.length === 0) {
-        return toLanguage('No option selected ...');
+        return toLanguage('No option selected ...', "ui_component", "label");
       }
       else if (options.length > 4) {
-        return toLanguage('More than 4 options selected!');
+        return toLanguage('More than 4 options selected!', "ui_component", "label");
       }
       else {
-        return labels.map(function(d){return toLanguage(d)}).join(', ') + '';
+        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(', ') + '';
       }
     },
     //includeSelectAllOption: true,
@@ -204,10 +204,10 @@ require(['gsqlv'], function(){
     var s = '<div class="form-group" >';
     for (var i=0; i < elements.length; i++){
       if (elements[i]["label"]){
-        s += '<label>'+toLanguage(elements[i]["label"]["name"])+':</label>';
+        s += '<label>'+toLanguage(elements[i]["label"]["name"], "ui_component", "label")+':</label>';
       }
       if (elements[i]["textbox"]){
-        s = s + '&nbsp;&nbsp;<input type ="text" class="form-control" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"]) + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
+        s = s + '&nbsp;&nbsp;<input type ="text" class="form-control" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"], "ui_component", "label") + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
       }
       if (elements[i]["selection"]) {
         s += '&nbsp;&nbsp;<select class="form-control" name='+ elements[i]["selection"]["name"] +'>'
@@ -247,13 +247,13 @@ require(['gsqlv'], function(){
     s += '&nbsp;&nbsp;<button type = "submit" class="btn btn-primary"'
 
     s += 'onclick = onclick_submit('+ pagesObject.index + ')';
-    s +='> '+toLanguage('Submit Query')+'</button></div>'; 
+    s +='> '+toLanguage('Submit Query', "ui_component", "label")+'</button></div>'; 
     return s; 
   }
 
   this.generateDropDown = function(dropdown) {
     var result = '<div id="button_'+dropdown.name+'" class="dropdown form-group">\
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="width:'+dropdown.length*10+'px"><b>'+toLanguage(dropdown.placeholder)+'</b>\
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="width:'+dropdown.length*10+'px"><b>'+toLanguage(dropdown.placeholder, "ui_component", "label")+'</b>\
                   <span class="caret"></span></button>\
                   </button>\
                   <ul id="dropdown_'+dropdown.name+'" class="dropdown-menu" style="width:200%">';
@@ -295,10 +295,10 @@ require(['gsqlv'], function(){
 
       for (var i=0; i < elements.length; i++){
         if (elements[i]["label"]){
-          result += '&nbsp;<label class="control-lable">'+toLanguage(elements[i]["label"]["name"])+':</label>&nbsp;';
+          result += '&nbsp;<label class="control-lable">'+toLanguage(elements[i]["label"]["name"], "ui_component", "label")+':</label>&nbsp;';
         }
         if (elements[i]["textbox"]){
-          result += '<input class="form-control" type ="text" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"]) + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
+          result += '<input class="form-control" type ="text" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"], "ui_component", "label") + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
         }
         if (elements[i]["selection"]) {
           result += '<select class="form-control" name='+ elements[i]["selection"]["name"] +'>'
@@ -699,27 +699,27 @@ require(['gsqlv'], function(){
       $('#layoutProperty').empty();
     
       if (newLayout == "force") {
-        var label = '<label>'+toLanguage('Force Layout')+'</label><br/>'
-        var restartForce = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Restart Force')+'</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View')+'</button>';
+        var label = '<label>'+toLanguage('Force Layout', "ui_component", "label")+'</label><br/>'
+        var restartForce = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Restart Force', "ui_component", "label")+'</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View', "ui_component", "label")+'</button>';
         $('#layoutProperty').append(label + restartForce + centerView);
       }
       else if (newLayout == "tree") {
-        var label = '<label>'+toLanguage('Tree Layout')+'</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Tree Root')+'</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View')+'</button>';
+        var label = '<label>'+toLanguage('Tree Layout', "ui_component", "label")+'</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Tree Root', "ui_component", "label")+'</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View', "ui_component", "label")+'</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "hierarchical") {
-        var label = '<label>'+toLanguage('Hierarchical Layout')+'</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Hierarchical Root')+'</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View')+'</button>';
+        var label = '<label>'+toLanguage('Hierarchical Layout', "ui_component", "label")+'</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Hierarchical Root', "ui_component", "label")+'</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View', "ui_component", "label")+'</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
       else if (newLayout == "circle") {
-        var label = '<label>'+toLanguage('Circle Layout')+'</label><br/>'
-        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Center Node')+'</button>';
-        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View')+'</button>';
+        var label = '<label>'+toLanguage('Circle Layout', "ui_component", "label")+'</label><br/>'
+        var rootString = '<button type="button" class="btn btn-default" onclick="setTheRootNode()">'+toLanguage('Set Center Node', "ui_component", "label")+'</button>';
+        var centerView = '<button type="button" class="btn btn-default" onclick="mygv.center_view();">'+toLanguage('Set Center View', "ui_component", "label")+'</button>';
         $('#layoutProperty').append(label + rootString + centerView);
       }
     }
@@ -746,10 +746,10 @@ require(['gsqlv'], function(){
     // if it is true, change the label of the button as unhighlighting.
     // else change the label of the button as highlighting.
     if(mygv.highlightingNodes()) {
-      $('#b_highlightingNodes').html(toLanguage('Unhighlight')); 
+      $('#b_highlightingNodes').html(toLanguage('Unhighlight', "ui_component", "label")); 
     }
     else {
-      $('#b_highlightingNodes').html(toLanguage('Highlight'));
+      $('#b_highlightingNodes').html(toLanguage('Highlight', "ui_component", "label"));
     }
   }
 
@@ -922,10 +922,10 @@ require(['gsqlv'], function(){
       }
 
       if (key == 'id') {
-        tempOptionHTML += toLanguage('Node id') + '</option>'
+        tempOptionHTML += toLanguage('Node id', "ui_component", "label") + '</option>'
       }
       else {
-        tempOptionHTML += toLanguage(key) + '</option>'
+        tempOptionHTML += toLanguage(key, "ui_component", "label") + '</option>'
       }
       
       $('#node_label_filtering').append(tempOptionHTML)
@@ -944,7 +944,7 @@ require(['gsqlv'], function(){
         continue;
       } 
       else {
-        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type')+': ' + toLanguage(type, type, type) + '"></optgroup>')
+        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type', "ui_component", "label")+': ' + toLanguage(type, type, type) + '"></optgroup>')
         $('#node_label_filtering').append(groupList);
       }
 
@@ -994,7 +994,7 @@ require(['gsqlv'], function(){
         tempOptionHTML += '>'
       }
 
-      tempOptionHTML += toLanguage(key) + '</option>'
+      tempOptionHTML += toLanguage(key, "ui_component", "label") + '</option>'
       $('#edge_label_filtering').append(tempOptionHTML)
     } 
 
@@ -1011,7 +1011,7 @@ require(['gsqlv'], function(){
         continue;
       } 
       else {
-        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type')+': ' + toLanguage(type, type, type) + '"></optgroup>')
+        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type', "ui_component", "label")+': ' + toLanguage(type, type, type) + '"></optgroup>')
         $('#edge_label_filtering').append(groupList);
       }
 
@@ -1796,7 +1796,7 @@ require(['gsqlv'], function(){
     tableHTML += '<thead><tr>'
 
     this.transactionEntity.forEach(function(d, i) {
-      tableHTML += '<th style="line-height:1.0">' + toLanguage(d) + '</th>'
+      tableHTML += '<th style="line-height:1.0">' + toLanguage(d, "ui_component", "label") + '</th>'
     })
 
     tableHTML += '</tr></thead>'
@@ -1883,7 +1883,7 @@ require(['gsqlv'], function(){
       this.commonEntitiesTableHead.push(key);
     }
 
-    this.commonEntitiesArray.push(this.commonEntitiesTableHead.map(function(d){return toLanguage(d)}));
+    this.commonEntitiesArray.push(this.commonEntitiesTableHead.map(function(d){return toLanguage(d, "ui_component", "label")}));
 
     // Create Tab
     var tab_template = '<li role="presentation"><a href="#{id}" aria-controls="{id}" role="tab" data-toggle="tab">{id} <span style="background-color:#ddd;" class="glyphicon glyphicon-remove" aria-hidden="true" onclick="removeOutputTabs()"></span></a></li>'
@@ -1899,7 +1899,7 @@ require(['gsqlv'], function(){
     tableHTML += '<thead><tr>'
 
     this.commonEntitiesTableHead.forEach(function(d, i) {
-      tableHTML += '<th style="line-height:1.0">' + toLanguage(d) + '</th>'
+      tableHTML += '<th style="line-height:1.0">' + toLanguage(d, "ui_component", "label") + '</th>'
     })
 
     tableHTML += '</tr></thead>'
@@ -2007,7 +2007,7 @@ require(['gsqlv'], function(){
         });
         */
 
-        data.unshift(this.transactionEntity.map(function(d){return toLanguage(d);}));
+        data.unshift(this.transactionEntity.map(function(d){return toLanguage(d, "ui_component", "label");}));
         
         var exportFileName = "Common_Transaction_Output";
         export_data_to_excel(data ,exportFileName);
@@ -2054,7 +2054,7 @@ require(['gsqlv'], function(){
         });
         */
 
-        var csvString = this.transactionEntity.map(function(d){return toLanguage(d)}).join(",") + '%0A';
+        var csvString = this.transactionEntity.map(function(d){return toLanguage(d, "ui_component", "label")}).join(",") + '%0A';
 
         data.forEach(function(d, i){
           csvString += d.join(",") + '%0A';
@@ -2106,7 +2106,7 @@ require(['gsqlv'], function(){
     else {
       //$('#queryInputInfoBox').html(JSON.stringify(payload));
       table += '<table class="table table-condensed table-bordered">'
-      table += '<tr><th>'+toLanguage('Query Type')+'</th><th>'+toLanguage('Query ID')+'</th></tr>';
+      table += '<tr><th>'+toLanguage('Query Type', "ui_component", "label")+'</th><th>'+toLanguage('Query ID', "ui_component", "label")+'</th></tr>';
       payload['input'].forEach(function(d){
         table += '<tr><td>'+d.type+'</td><td>'+d.id+'</td></tr>';
       })

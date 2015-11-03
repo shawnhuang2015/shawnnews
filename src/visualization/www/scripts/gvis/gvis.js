@@ -2860,12 +2860,12 @@ var gsqlv = function(x) {
   gsqlv.summaryInformationForAllNodes = function() {
     var numberOfNodes = data.nodes.length;
     var numberOfEdges = data.links.length;
-    var result = '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Summary Info of the Graph')+':</span>\n'
+    var result = '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Summary Info of the Graph', "ui_component", "label")+':</span>\n'
 
-    result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('All Types')+' : </span>\n'
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Nodes')+' : </span>' 
+    result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('All Types', "ui_component", "label")+' : </span>\n'
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Nodes', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + numberOfNodes + '</span>\n' 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Edges')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Edges', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + numberOfEdges + '</span>\n'
 
     var averageInDegree = 0;
@@ -2897,14 +2897,14 @@ var gsqlv = function(x) {
       averageOutDegree /= numberOfNodes;
     }
 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageInDegree.toFixed(2) + '</span>\n' 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageOutDegree.toFixed(2) + '</span>\n'
 
     for (var type in typeArray) {
       result += '<span style="color:green;font-size:15px;font-family: Times">Type ' + type + ' : </span>\n'
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Nodes')+' : </span>' 
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Nodes', "ui_component", "label")+' : </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + typeArray[type].length + '</span>\n' 
 
       var averageInDegreeT = 0;
@@ -2923,9 +2923,9 @@ var gsqlv = function(x) {
         averageOutDegreeT /= typeArray[type].length;
       }
 
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree')+' : </span>' 
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree', "ui_component", "label")+' : </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageInDegreeT.toFixed(2) + '</span>\n' 
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree')+' : </span>' 
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree', "ui_component", "label")+' : </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageOutDegreeT.toFixed(2) + '</span>\n'
     }
     return result
@@ -2937,14 +2937,14 @@ var gsqlv = function(x) {
     var numberOfEdges = data.links.filter(function(n){return n.selected}).length;
 
     if (numberOfNodes == 0) {
-      return '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('No Selected Node')+'</span>\n'
+      return '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('No Selected Node', "ui_component", "label")+'</span>\n'
     }
-    var result = '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Summary Info of the Selected Nodes')+':</span>\n'
+    var result = '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Summary Info of the Selected Nodes', "ui_component", "label")+':</span>\n'
 
-    result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('All Types')+' : </span>\n'
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Selected Nodes')+' : </span>' 
+    result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('All Types', "ui_component", "label")+' : </span>\n'
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Selected Nodes', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + numberOfNodes + '</span>\n' 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Selected Edges')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Number of Selected Edges', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + numberOfEdges + '</span>\n'
 
     var averageInDegree = 0;
@@ -2983,14 +2983,14 @@ var gsqlv = function(x) {
       averageOutDegree /= numberOfNodes;
     }
 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageInDegree.toFixed(2) + '</span>\n' 
-    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree')+' : </span>' 
+    result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree', "ui_component", "label")+' : </span>' 
     result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageOutDegree.toFixed(2) + '</span>\n'
 
     for (var type in tempTypeArray) {
-      result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Type')+ ':' + toLanguage(type) + ' : </span>\n'
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+ toLanguage('Number of Nodes')+ ': </span>' 
+      result += '<span style="color:green;font-size:15px;font-family: Times">'+toLanguage('Type', "ui_component", "label")+ ':' + toLanguage(type, type, type) + ' : </span>\n'
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+ toLanguage('Number of Nodes', "ui_component", "label")+ ': </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + tempTypeArray[type].length + '</span>\n' 
 
       var averageInDegreeT = 0;
@@ -3009,9 +3009,9 @@ var gsqlv = function(x) {
         averageOutDegreeT /= tempTypeArray[type].length;
       }
 
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree')+' : </span>' 
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average In Degree', "ui_component", "label")+' : </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageInDegreeT.toFixed(2) + '</span>\n' 
-      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree')+' : </span>' 
+      result += '<span style="color:red;font-size:15px;font-family: Times">'+toLanguage('Average Out Degree', "ui_component", "label")+' : </span>' 
       result += '<span style="color:blue;font-size:15px;font-family: Times">' + averageOutDegreeT.toFixed(2) + '</span>\n'
     }
     return result
@@ -3024,7 +3024,7 @@ var gsqlv = function(x) {
     var result = ''
 
     if (selectedNodes.length == 0 && selectedEdges.length == 0) {
-      result += '<span style="color:#636363;font-size:15px;font-family: Times">'+toLanguage('No Selected Node')+'</span>\n';
+      result += '<span style="color:#636363;font-size:15px;font-family: Times">'+toLanguage('No Selected Node', "ui_component", "label")+'</span>\n';
       return result;
     }
     /*
@@ -3061,12 +3061,12 @@ var gsqlv = function(x) {
       nodeItem += '<tr name="element_name" onclick="onClick_table_head(this,\'node\',\''
         +node.id+'\',\''+node.type
         +'\')"><td style="color: #fff;background-color: #337ab7;border-color: #2e6da4;width:25%;line-height:1.0;padding:4px">' 
-        +toLanguage('Node Name')+'</td><td style="width:75%;line-height:1.0;padding:4px">'
+        +toLanguage('Node Name', "ui_component", "label")+'</td><td style="width:75%;line-height:1.0;padding:4px">'
         +toLanguage(node.id)+'</td></tr>';
       //nodeItem += '<tr><th>Attribute Name</th><th>Value</th></tr>'; //style="color: #fff;background-color: #337ab7;border-color: #2e6da4;"
 
       nodeItem += '<tr name="attribute_name" onclick="onClick_table(this,\'node\')"><td style="line-height:1.0;padding:4px">'
-        + toLanguage('type') +'</td><td style="line-height:1.0;padding:4px">' 
+        + toLanguage('type', "ui_component", "label") +'</td><td style="line-height:1.0;padding:4px">' 
         + toLanguage(node.type) + '</td></tr>'
       for (var key in Object.keys(node.attr)) {
         key = Object.keys(node.attr)[key];
@@ -3086,9 +3086,9 @@ var gsqlv = function(x) {
       var linkItem = '<table class="table table-hover table-bordered" style="table-layout: fixed;word-wrap: break-word">';
       linkItem += '<tr name="element_name" onclick="onClick_table_head(this,\'link\',\''
         +link.source.id+'\',\''+link.source.type+'\',\''+link.target.id+'\',\''+link.target.type+'\',\''+link.type+
-        '\')"><td style="color: #fff;background-color: #5bc0de;border-color: #46b8da;width:25%;line-height:1.0;padding:4px">'+toLanguage('Link Name')+'</td><td style="width:75%;line-height:1.0;padding:4px">'+link.source.id+'=>'+link.target.id+'</td></tr>';
+        '\')"><td style="color: #fff;background-color: #5bc0de;border-color: #46b8da;width:25%;line-height:1.0;padding:4px">'+toLanguage('Link Name', "ui_component", "label")+'</td><td style="width:75%;line-height:1.0;padding:4px">'+link.source.id+'=>'+link.target.id+'</td></tr>';
       //linkItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
-      linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td style="line-height:1.0;padding:4px">'+toLanguage('type')+'</td><td style="line-height:1.0;padding:4px">' + toLanguage(link.type) + '</td></tr>';
+      linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td style="line-height:1.0;padding:4px">'+toLanguage('type', "ui_component", "label")+'</td><td style="line-height:1.0;padding:4px">' + toLanguage(link.type) + '</td></tr>';
 
       for (var key in Object.keys(link.attr)) {
         key = Object.keys(link.attr)[key];
