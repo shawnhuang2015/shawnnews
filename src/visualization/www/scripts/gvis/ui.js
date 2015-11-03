@@ -38,19 +38,19 @@ require(['gsqlv'], function(){
 
   // LabelFiltering initialization status;
   var filteringStatus = {node:{type:true, id:true, 
-                              app:{score:false, name:true}, 
-                              friend:{count:true},
-                              location:{count:true},
-                              enterprise:{group_count:true, count:true, name:true},
-                              warning:{is_warning:true},
-                              phone_no:{importance:true,has_friend:true,fraction_of_callees_has_friends:true},
-                              reason:{reason:true},
-                              level:{complaint_count:true},
-                              bypass_complaint:{bypass_complaint_count:true},
-                              srtype:{category:true, complaint_count:false},
-                              solution:{product_list:true}
+                              // app:{score:false, name:true}, 
+                              // friend:{count:true},
+                              // location:{count:true},
+                              // enterprise:{group_count:true, count:true, name:true},
+                              // warning:{is_warning:true},
+                              // phone_no:{importance:true,has_friend:true,fraction_of_callees_has_friends:true},
+                              // reason:{reason:true},
+                              // level:{complaint_count:true},
+                              // bypass_complaint:{bypass_complaint_count:true},
+                              // srtype:{category:true, complaint_count:false},
+                              // solution:{product_list:true}
                             }, 
-                          edge:{type:true, id:false,
+                          edge:{type:false, id:false,
                               //phone_no_phone_no:{call_times:true}
                           }
                         };

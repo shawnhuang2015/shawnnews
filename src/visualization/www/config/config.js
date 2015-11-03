@@ -4,30 +4,6 @@ var UIpages =
         "tabname": "Transaction Lookup",
         "index": 0,
         "elements": [ 
-            // { 
-            //   "dropdown": {
-            //     "name" : "input", 
-            //     "length" : 25, 
-            //     "placeholder": "Input multiple types and ids", 
-            //     "content": {
-            //       "type" : "dynamic", // "Dynamic" or "static"
-            //       "elements" : [
-            //         //{ "label": { "name" : "Type"} }, { "textbox": {"name" : "type", "length" : 10, "placeholder": "input type"}},
-            //         { "label": { "name" : "Type"} }, { "selection": {"name": "type", "length" : 10, 
-            //           "value":["transaction", "phone", "user", "bankcard", "client", "merchant"]}
-            //         },
-            //         { "label": { "name": "ID" } }, { "textbox": {"name" : "id", "length" : 20, "placeholder": "input id"} }
-            //       ]
-            //     } 
-            //   }
-            // },
-            // { "label": { "name": "Start Time" } }, { "datetimebox": {"name" : "starttime", "length" : 20, "placeholder": "1970-01-01 00:00:00"} },
-            // { "label": { "name" : "End Time"} }, { "datetimebox": {"name" : "endtime", "length" : 20, "placeholder": "2020-01-01 00:00:00"} }, 
-            /*
-            { "label": { "name" : "Type"} }, { "selection": {"name": "type", "length" : 10, 
-              "value":["transaction", "phone", "user", "bankcard", "client", "merchant"]}
-            },
-            */
             { "label": { "name": "ID" } }, { "textbox": {"name" : "id", "length" : 20 } },
             { "label": { "name" : "Type"} }, { "selection": {"name": "type", "length" : 10, "value":["transaction", "phone", "user", "bankcard", "client", "merchant"]} },
             { "label": { "name": "Depth" } }, { "textbox": {"name" : "depth", "length" : 10, "placeholder": "1" } },
