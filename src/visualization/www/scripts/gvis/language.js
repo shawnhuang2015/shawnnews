@@ -194,7 +194,7 @@ language_lib_chinese.add_word("op_time", "数据日期");
 language_lib_chinese.add_word("product_no", "用户号码");
 language_lib_chinese.add_word("user_id", "用户标识");
 language_lib_chinese.add_word("city_id", "地市编码");
-language_lib_chinese.add_word("open_date", "入网日期");
+language_lib_chinese.add_word("open_date", "入网日期"); 
 language_lib_chinese.add_word("enterprise_mark", "集团价值级别");
 //1 A1 ；2 A2 ； 3 B1 ； 4 B2 ; 5 C ; 7 D1 ; 9 D2
 language_lib_chinese.add_type_word("1", "A1", "phone_no", "enterprise_mark");
