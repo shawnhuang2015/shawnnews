@@ -4200,11 +4200,11 @@ var gsqlv = function(x) {
         items[1] = attr.substring(attr.indexOf(":")+1);
 
         if (items.length > 1 && items[0] != "" && items[0] != items[1]) {
-          // if (items[0] == 'type' || items[0].indexOf("od_et") > -1 || items[0] == 'outdegree') {
-          //   //items[0] = 'type_index';
-          //   //console.log(items[0])
-          //   return; // ignore the type attributes.
-          // }
+          if (items[0] == 'type') { //|| items[0].indexOf("od_et") > -1 || items[0] == 'outdegree') {
+            //items[0] = 'type_index';
+            //console.log(items[0])
+            return; // ignore the type attributes.
+          }
 
           var tempAttr = reggie.exec(items[0]); // "degree(0)" => "degree(0)", "degree", "0";
           if (tempAttr == null) {

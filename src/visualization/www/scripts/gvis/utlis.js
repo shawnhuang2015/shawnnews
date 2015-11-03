@@ -76,6 +76,22 @@ function template(template) {
   return template;
 }
 
+/*
+Example :
+template = 'translate({{x}}, {{y}})';
+
+return applyTemplate(template, {x:10, y:10})
+
+*/
+function applyTemplate(template, objects) {
+  for (var key in objects) {
+    value = objects[key]
+    template = template.replace(new RegExp("{{"+key+"}}", "g"), value)
+  }
+  
+  return template;
+}
+
 
 /*
 Example :
