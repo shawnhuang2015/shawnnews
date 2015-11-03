@@ -3,12 +3,12 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-var isDebugging = true; // false;
+//var isDebugging = true; // false;
 
 require.config({
     //For development purposes, We force RequireJS to bypass the cache by appending a timestamp.
     //Delete this for release version.
-    urlArgs: isDebugging ? "bust=" + (new Date()).getTime() : "",
+    urlArgs: /*isDebugging*/ true ? "bust=" + (new Date()).getTime() : "",
     baseUrl: 'scripts',
     paths: {
         jquery: 'lib/jquery-2.1.3',
