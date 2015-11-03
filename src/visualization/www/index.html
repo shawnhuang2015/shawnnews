@@ -1,20 +1,18 @@
-
 <!DOCTYPE html>
-<html lang="en" ng-app="visualization.ui">
+<!--  Chinese Version UI -->
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GSQL UI</title>
-  <!-- Bootstrap core CSS -->
-  <link href="bt/css/bootstrap.min.css" rel="stylesheet">
-  <link href="bt/css/starter-template.css" rel="stylesheet">
-  <link rel="stylesheet" href="bt/css/bootstrap-multiselect.css" type="text/css">
-  <link rel="stylesheet" href="bt/css/bootstrap-colorpicker.css" type="text/css">
+  <title>GSQL DEMO</title>
+
+  <link rel="stylesheet" href="scripts/css/main.css" rel="stylesheet">
+  <script data-main="scripts/main" src="scripts/lib/require.js"></script>
 </head>
 
 
-<body style="margin-left:15px; margin-right:15px;width:96%;" ng-controller="UIpages">
+<body style="margin-left:15px; margin-right:15px;width:96%;" >
   <nav id='bodyRow_1' class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -23,7 +21,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href=""><!--img alt="GraphSQL" src="img/logo_0.png"-->GraphSQL</a>
+      <a class="navbar-brand" href="javascript:;"><!--img alt="GraphSQL" src="img/logo_0.png"-->GraphSQL</a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
@@ -31,6 +29,8 @@
       </ul>
     </div>
   </nav>
+
+
 
   <div id='bodyRow_2' class="row">
     <div id="content-page" class="navbar-form" >
@@ -44,8 +44,8 @@
   </div>
   <!-- Row 1 -->
 
-  <div id='bodyRow_hr' class="row" style="margin-left:0px;margin-right:0px;width:100%;height:1px; background-color: #9ecae1;margin-top:10px;margin-bottom:19px">
-  </div>
+  <!--div id='bodyRow_hr' class="row" style="margin-left:0px;margin-right:0px;width:100%;height:1px; background-color: #9ecae1;margin-top:10px;margin-bottom:19px">
+  </div-->
 
   <!-- Visulization Component -->  
   <!-- Control Panel -->
@@ -53,11 +53,12 @@
 
   <div id='bodyRow_3' class="row">
     <!-- Begin Left Side -->
-    <div id="left_side" class="col-md-8" style="">
+    <div id="left_side" class="col-md-9" style="">
       <div class="row" style="margin-bottom:19px">
         <div class="col-md-4"> 
           <div class="input-group">
-            <span class="input-group-addon">Node Labels: </span>
+            <!--span class="input-group-addon">Node Labels: </span-->
+            <span id="nodelabel_label_id" class="input-group-addon"></span>
             <select id="node_label_filtering" multiple="multiple">
             </select>
           </div>
@@ -65,34 +66,50 @@
 
         <div class="col-md-4"> 
           <div class="input-group">
-            <span class="input-group-addon">Edge Labels: </span>
+            <!--span class="input-group-addon">Edge Labels: </span-->
+            <span id="linklabel_label_id" class="input-group-addon"></span>
             <select id="edge_label_filtering" multiple="multiple">
             </select>
           </div>
         </div>
 
-        <div class="col-md-1"> 
-          <a id="selectionDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <button class="btn btn-default">
-              Selection
+        <div class="col-md-2"> 
+          <a id="selectionDropdown" href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default" id="">
+              <span id="options_label_id"></span>
               <span class="caret"></span>
             </button>
           </a>
           <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
             <li>
-              <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
+              <a href="javascript:;" id="b_highlightingNodes" onclick="highlightingNodes()"><span id="highlighting_label_id"></span></a>
             </li>
             <li >
-              <a href="" onclick="hidingNodes()">Hide</a>
+              <a href="javascript:;" onclick="hidingNodes()"><span id="delete_label_id"></span></a>
             </li>
             <li>    
-               <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
-                  Change Color
+               <a href="javascript:;" id="colorpicker" data-color="rgb(255, 0, 0)">
+                  <span id="coloring_label_id"></span>
                </a>
             </li>
           </ul>
         </div>
+
+        <!--
+        <div class="col-md-4"> 
+          <button type="button" class="btn btn-default" onclick="findCommonTransaction()">寻找关联交易</button>
+          <button type="button" class="btn btn-default" onclick="findCommonEntities()">寻找关联信息</button>
+        </div>
+        -->
       </div>
+      <!--div class="row" style="margin-bottom:19px">
+        <div class="col-md-3"> 
+          <button type="button" class="btn btn-default btn-sm" onclick="findCommonTransaction()">寻找关联交易</button>
+        </div>
+        <div class="col-md-3"> 
+          <button type="button" class="btn btn-default btn-sm" onclick="findCommonEntities()">寻找关联信息</button>
+        </div>
+      </div-->
       <!-- Control Panel Row 1 -->
       <!--br /-->
 
@@ -103,9 +120,9 @@
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active" ><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab" >Graph</a></li>
-              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab" >JSON</a></li>
-              <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
+              <li role="presentation" class="active" ><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab" ><span id="visualization_label_id"></span></a></li>
+              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab" ><span id="jsonmessage_label_id"></span></a></li>
+              <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab"><span id="graphinformation_label_id"></span></a></li>
               <!--li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li-->
             </ul>
 
@@ -164,21 +181,21 @@
     <!-- End Left Side -->
 
     <!-- Begin Right Side -->
-    <div id='right_side' class="col-md-4" style=""> 
+    <div id='right_side' class="col-md-3" style=""> 
       <div id="layoutport" class="row" style="background-color:#ecebe7;">
         <div class="row">
           <div class="col-md-4 col-md-offset-4" align="center">
-            <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <a id="layoutDropdown" href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
               <button class="btn btn-default">
-                Graph Layout
+                <span id="layout_label_id"></span>
                 <span class="caret"></span>
               </button>
             </a>
             <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
-              <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
-              <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
-              <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
-              <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
+              <li><a href="javascript:;" onclick="layoutChanged('force')"><span id="forcelayout_label_id"></span></a></li>
+              <li><a href="javascript:;" onclick="layoutChanged('tree')"><span id="treelayout_label_id"></span></a></li>
+              <li><a href="javascript:;" onclick="layoutChanged('hierarchical')"><span id="hierarchicallayout_label_id"></span></a></li>
+              <li><a href="javascript:;" onclick="layoutChanged('circle')"><span id="circlelayout_label_id"></span></a></li>
             </ul>
           </div>
         </div>
@@ -191,6 +208,8 @@
         </div>
       </div>
 
+      <div id="queryInputInfoBox" class="row" style="height:70px;overflow:auto;border: 2px solid #8AC007;">
+      </div>
       <br/>
 
       <div id="tableBox" class="row" style="overflow:auto;">  
@@ -198,30 +217,23 @@
       </div>
     </div>
     <!-- End Right Side -->
-
   </div>
+  
+  <!--div id='bodyRow_4' class="row">
+    <div class="col-md-8" style="margin-top:10px">
+    <button type="button" class="btn btn-default btn-xs" onclick="outputCSVFile()">输出csv文件</button>
+    <button type="button" class="btn btn-default btn-xs" onclick="outputExcelFile()">输出Excel文件</button>
+    </div>
+    <div class="col-md-4" style="margin-top:10px">
+      <p class="text-right"><kbd>shift +</kbd><img src="img/mouse_left_click.png" style="height:20px;"/> 选择多个节点</p>
+    </div>
+    <ul id="outputTabs" class="nav nav-tabs" role="tablist">
+    </ul>
 
-  <!-- script src="graphAPI/data/data.js"></script -->
-  <!-- script src="data/graph.js"></script -->
-
-  <!-- Include 3rd Party Library -->
-  <script src="graphAPI/lib/d3.js"></script>
-  <script src="graphAPI/lib/jquery-2.1.3.js"></script>
-  <script type="text/javascript" src="graphAPI/lib/angular.js"></script>
-  <script type="text/javascript" src="graphAPI/lib/ui-bootstrap-tpls-0.13.0.js"></script>
-
-  <script src="bt/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="bt/js/bootstrap-multiselect.js"></script>
-  <script type="text/javascript" src="bt/js/bootstrap-colorpicker.js"></script>
-
-  <!-- Include GraphSQL Library -->
-  <script src="graphAPI/js/utlis.js"></script>
-  <script src="graphAPI/js/gsqlv.v2.0.js"></script>
-  <script src="graphAPI/js/main.js"></script>
-
-  <!-- Include UI componenets -->
-  <script type="text/javascript" src="graphAPI/js/ui_main.js"></script>
-  <script type="text/javascript" src="graphAPI/data/message.js"></script>
+    <div id="outputContent" class="tab-content">
+    </div>
+  </div-->
+  
 </body>
 </html>
 
