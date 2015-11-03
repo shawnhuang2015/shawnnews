@@ -216,5 +216,8 @@ extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen) {
   return compareStrIgnoreCase(token, trueString);
 }
 
+extern "C" uint64_t gsql_current_time_epoch(const char* const iToken, uint32_t iTokenLen) {
+    return time(0);
+}
 
 

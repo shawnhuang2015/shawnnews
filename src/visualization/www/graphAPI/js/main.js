@@ -466,11 +466,9 @@
             if ($('#' + attr.name)[0].value=="") {
               ; 
             }
-            else{
-                //submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value/*.toLowerCase()*/ +"&";   
-                submit_URL += name + "=" + $('#' + attr.name)[0].value/*.toLowerCase()*/ +"&";  
+            else{ 
+                submit_URL += name + "=" + $('#' + attr.name)[0].value +"&";  
             } 
-            //submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
           }
           else if (attr.usage == "attributes") {
             submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
@@ -1142,15 +1140,13 @@
               ; 
             }
             else{
-              if (name == "type") {
+              if (name == "") { // do not use the toLowerCase feature.
                 submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value.toLowerCase() +"&";
               }
               else {
                 submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value/*.toLowerCase()*/ +"&";
               }
-              
             } 
-            //submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
           }
           else if (attr.usage == "attributes") {
             submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";

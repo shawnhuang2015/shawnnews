@@ -7,32 +7,40 @@
  * Created on: May 9, 2015
  *      Author: jzhong
  ******************************************************************************/
+
+/******************************************************************************
+ * Do NOT edit on this file. Follow this file to create you own filters in a 
+ * new file. Directly editting on this file may lead to merge conflicts with
+ * poc4.3_base in the future.
+ ******************************************************************************/
+
 #include <restpp/librestpp.hpp>
 
 #include <sstream>
 #include <cstdio>
-#include <vector>
+#include <string>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
-* This function is where you implement your response filter. The name of this function does not matter.
-* You can use any function name. Just remember to update the "response_filter" filed of your endpoint configuration.
-*
-* @param response - the response sent from GPE to RESTPP
-* @param new_response - the response that actually sent back to customer.
-* @return - (1) If you want to initiate a cascaded request, return a pointer to a ResponseRequest object. In this case
-*               new_response won't be sent back to customer.
-*               The ResponseRequest must be allocated on heap using new operation; otherwise it would deallocate
-*               when the filter function returns.
-*           (2) Return NULL to return new_response to customer.
-*/
-RequestObject* ResponseFilterExample(const std::string &response, std::string &new_response){
-  new_response = std::string("Add something new") + response;
-  return NULL;
-}
+
+  RequestObject* ResponseFilterExample(FilterHelper *filter_helper,
+            GsqlResponse *gsql_response,
+            UserResponse *user_response){
+    return NULL;
+    /*
+    // generate cascaded request from response filter
+    RequestObject *cascaded_request = new RequestObject();
+    cascaded_request->method = "GET";
+    cascaded_request->url = "/cascade/second";
+    cascaded_request->data = gsql_response->response;
+    cascaded_request->params["string_param"].push_back("randomString");
+    return cascaded_request;
+    */
+  }
+
+
 
 #ifdef __cplusplus
 }

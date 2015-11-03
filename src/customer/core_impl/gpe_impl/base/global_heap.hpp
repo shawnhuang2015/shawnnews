@@ -64,7 +64,7 @@ namespace UDIMPL {
 
     void Combine(BaseVariableObject* other) {
       HeapVariable<ELEMENT_t> *otherGlobalHeap = (HeapVariable<ELEMENT_t>*)other;
-      typename GVector<ELEMENT_t>::T otherHeap = otherGlobalHeap->contents_;
+      /*typename GVector<ELEMENT_t>::T otherHeap = otherGlobalHeap->contents_;
 
       while (otherHeap.size() > 0) {
         // Pop from other heap and add it to this heap
@@ -78,6 +78,10 @@ namespace UDIMPL {
           std::pop_heap(contents_.begin(), contents_.end(), comparator_);
           contents_.pop_back();
         }
+      }*/
+      const size_t n = otherGlobalHeap->contents_.size();
+      for (size_t i = 0; i < n; ++i) {
+        Add(otherGlobalHeap->contents_[i]);// call reduce to combine two heap.
       }
     }
 
@@ -94,7 +98,7 @@ namespace UDIMPL {
 //    1)  Comp(New,Heap[0]) == true:  this means that Heap[0] will be removed from a full heap.
 //    a)  if Comp(New, Heap[1]) == false && Comp(New, Heap[2]) == false  then Heap[0] = New
 //    b)  else:  Pop_heap(),  Push_heap(New)
-
+/*
     void Reduce(const void *newValue) {
       const ELEMENT_t newElement = *(reinterpret_cast<const ELEMENT_t*>(newValue));
       if(contents_.size() < maxSize_) {
@@ -113,7 +117,38 @@ namespace UDIMPL {
         }
       }
     }
+    */
+   void Reduce(const void *newValue) {
+      const ELEMENT_t& newElement = *(reinterpret_cast<const ELEMENT_t*>(newValue));
+      Add(newElement);
+    }
+     gutil::GMutex mutex_;
 
+    void LockedAdd(const ELEMENT_t& newElement) {
+       gutil::GLock lock(mutex_);
+       Add(newElement);
+    }
+
+    void Add(const ELEMENT_t& newElement) {
+      if (maxSize_ == 0) {
+        return;// if maxSize_ == 0 do nothing
+      }
+      if(contents_.size() < maxSize_) {
+        contents_.push_back(newElement);
+        std::push_heap(contents_.begin(), contents_.end(), comparator_);
+      }else if(comparator_(newElement,contents_[0]) == true) {
+        // optimization: the next two 'worst' items are in positions 1 and 2.
+        // if we are better than the WORST--contents_[0]  but not contents_[1] and contents_[2]
+        // then we can just emplace the new item as the current root.
+        if(contents_.size() >= 2 && comparator_(newElement,contents_[1]) == false && comparator_(newElement,contents_[2]) == false) {
+          contents_[0] = newElement;
+        }else {
+          std::pop_heap(contents_.begin(), contents_.end(), comparator_);
+          contents_[contents_.size()-1] = newElement;
+          std::push_heap(contents_.begin(), contents_.end(), comparator_);
+        }
+      }
+    }
     /** This function returns the results in sorted order.
      *
      * It should only be called at the end of all execution, because it

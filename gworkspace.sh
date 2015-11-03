@@ -197,6 +197,30 @@ populate_repos() {
     done
 }
 
+#######################################################
+# Populate commit message check                       #
+#######################################################
+populate_commit_msg_check() {
+    for i in "${!DIRECTORY[@]}"; do
+        if [ "${DIRECTORY[$i]}" == "src/er" ] || [ "${DIRECTORY[$i]}" == "../src/er" ] ; then
+            cd ${DIRECTORY[$i]}; ER_DIR=$(pwd); cd ${CWD}
+            break
+        fi
+    done
+    if [ -f ${ER_DIR}/gitenv/commit-msg ]; then
+        for i in "${!DIRECTORY[@]}"; do
+            if [ "${SRC_TYPE[$i]}" == "src" ]; then
+                cmdarr=("${cmdarr[@]}" "cd ${DIRECTORY[$i]}; ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg; cd ${CWD}")
+            fi
+        done
+        if [ -d .git/hooks ]; then
+            cmdarr=("${cmdarr[@]}" "ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg;")
+        fi
+        if [ -d ../.git/hooks ]; then
+            cmdarr=("${cmdarr[@]}" "cd ..; ln -s -f ${ER_DIR}/gitenv/commit-msg  .git/hooks/commit-msg; cd ${CWD}")
+        fi
+    fi
+}
 ############################################
 # show if a branch is dirty                #
 ############################################
@@ -384,6 +408,17 @@ update_gitignore_file()
     mv  $temp_ignore_file $gitignore_file
 }
 
+#######################################################
+# run ad-hoc command after workspace update command   #
+#######################################################
+run_post_workspace_update_conf()
+{
+    # run post workspace command
+    if [ -f config/post_workspace_update.conf ]; then
+        echo "${bldblu}Run post update commands in config/post_workspace_update.conf ${txtrst}"
+        bash config/post_workspace_update.conf
+    fi
+}
 
 #######################################
 # Start from here                     #
@@ -397,10 +432,27 @@ fi
 
 getRepoConfig "config/proj.config"
 
+# Make sure gdk repos match product repos
+if [ "G$(basename `pwd`)" = "Ggdk" ]
+then
+    for i in "${!DIRECTORY[@]}"; do
+        dir=${DIRECTORY[$i]#../}
+        if grep -q "$dir" ../config/proj.config
+        then
+            line=$(grep "$dir" ../config/proj.config | sed -e '/^#/d')
+            REPO[$i]=$(echo $line | awk '{print $3}')
+            BRANCH[$i]=$(echo $line | awk '{print $4}')
+            VERSION[$i]=$(echo $line | awk '{print $5}')
+            SRC_TYPE[$i]=$(echo $line | awk '{print $6}')
+        fi
+    done
+fi
+
 if [ $cmd_update_repo == true ]; then
     update_gitignore_file
     populate_dir
     populate_repos
+    populate_commit_msg_check
 fi
 
 if [ $cmd_show_repo == true ]; then
@@ -435,7 +487,6 @@ DIFF=$(( $END - $START ))
 echo
 echo "${bldgre}$0 finished successfully in ${DIFF} seconds. ${txtrst}"
 
-
-
-
-
+if [ $cmd_update_repo == true ]; then
+    run_post_workspace_update_conf
+fi

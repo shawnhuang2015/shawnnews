@@ -58,14 +58,18 @@ mgnt_cli/
 gsql/.history
 gsql/config
 gsql/output
+gsql/logs/GSQL_LOG
 
 # GTEST generated files#
 # ###################
 gtest/diff/*
 gtest/output/*
+gtest/.working_dir/*
 
 # gdk generated
 deploy_gsdk/
+#cpkg generated
+cpkg/
 ################ auto generated =====
 src/olgp
 src/core/topology
@@ -78,3 +82,4 @@ src/msg
 src/er
 src/gle
 bigtest
+src/gpath
