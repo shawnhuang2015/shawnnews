@@ -17,7 +17,7 @@ require.config({
         tipsy: 'lib/jquery.tipsy',
         xlsx: 'lib/xlsx.core.min',
         config: '../config/config',
-        gsqlv: 'gvis/gvis',
+        gvis: 'gvis/gvis',
         language: 'gvis/language',
         bootstrap: 'bootstrap/js/bootstrap',
         multiselect:'bootstrap/js/bootstrap-multiselect',
@@ -33,9 +33,9 @@ require.config({
         // ui: {
         //     deps: ['jquery', 'd3', 'helper']
         // },
-        gsqlv: {
+        gvis: {
             deps: ['config', 'tipsy', 'donuts', 'd3', 'helper', 'language'],
-            exports: 'gsqlv',
+            exports: 'gvis',
         },
         bootstrap:  {
             deps: ['jquery'],
