@@ -19,8 +19,8 @@
  * Author: Zixuan Zhuang
  ******************************************************************************/
 
-#ifndef UDF_HPP_
-#define UDF_HPP_
+#ifndef EXPRFUNCTIONS_HPP_
+#define EXPRFUNCTIONS_HPP_
 
 #include <stdlib.h>
 typedef std::string string; //XXX DON'T REMOVE
@@ -42,4 +42,4 @@ inline string to_string (float val) {
 }
 /****************************************/
 
-#endif /* UDF_HPP_ */
+#endif /* EXPRFUNCTIONS_HPP_ */
