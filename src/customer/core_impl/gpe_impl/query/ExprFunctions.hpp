@@ -23,6 +23,8 @@
 #define EXPRFUNCTIONS_HPP_
 
 #include <stdlib.h>
+#include <string>
+#include <sstream>
 typedef std::string string; //XXX DON'T REMOVE
 
 /****** BIULT-IN FUNCTIONS **************/
