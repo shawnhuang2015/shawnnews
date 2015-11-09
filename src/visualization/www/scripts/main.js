@@ -17,7 +17,7 @@ require.config({
         tipsy: 'lib/jquery.tipsy',
         xlsx: 'lib/xlsx.core.min',
         config: '../config/config',
-        gvis: 'main/gvis/gvis.core',
+        core: 'main/gvis/gvis.core',
         language: 'main/gvis/gvis.language',
         bootstrap: 'bootstrap/js/bootstrap',
         multiselect:'bootstrap/js/bootstrap-multiselect',
@@ -26,16 +26,20 @@ require.config({
         colorpicker: 'bootstrap/js/bootstrap-colorpicker',
         slider: 'bootstrap/js/bootstrap-slider',
         helper: 'main/gvis/gvis.utils',
+        data: 'main/gvis/gvis.data',
         donuts:'lib/Donut3D',
         ui:'main/ui',
     },
     shim: {
-        // ui: {
-        //     deps: ['jquery', 'd3', 'helper']
-        // },
-        gvis: {
+        ui: {
+            deps: ['data']
+        },
+        data: {
+            deps: ['core'],
+            //exports: 'gvis.data'
+        },
+        core: {
             deps: ['config', 'tipsy', 'donuts', 'd3', 'helper', 'language'],
-            exports: 'gvis',
         },
         bootstrap:  {
             deps: ['jquery'],

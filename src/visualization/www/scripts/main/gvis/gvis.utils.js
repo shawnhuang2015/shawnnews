@@ -128,3 +128,58 @@ function moveGroup(cx, cy) {
     d3.select(this)
     .attr('transform', translate(cx-width/2, cy-height/2))
 }
+
+
+function make_listed_hash() {
+    var list = [];
+    var keys = [];
+    var hash = {};
+    return {
+        push: function(k,v) {
+            if (!hash[k]) {
+                keys.push(k);
+                list.push(v);
+            }
+            else {
+                var index = keys.indexOf(k);
+                list[index] = v;
+            }
+            hash[k] = v;
+        },
+        insert: function(pos,k,v) {
+            if (!hash[k]) {
+                keys.splice(pos,0,k);
+                list.splice(pos,0,v);
+                hash[k] = v;
+            }
+        },
+        remove: function(k) {
+            if (!hash[k]) {
+            }
+            else {
+                delete hash[k];
+                var index = keys.indexOf(k);
+                keys.splice(index, 1);
+                list.splice(index, 1);
+            }
+        },
+        update: function(k, v) {
+            if (!hash[k]) {
+            }
+            else {
+                var index = keys.indexOf(k);
+                list[index] = v;
+                hash[k] = v;
+            }
+        },
+        list: list,
+        keys: keys,
+        hash: hash
+    };
+};
+
+
+
+
+
+

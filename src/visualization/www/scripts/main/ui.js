@@ -1,4 +1,4 @@
-require(['gvis'], function(){
+require([], function(){
 
   var graph = new gvis();
 
