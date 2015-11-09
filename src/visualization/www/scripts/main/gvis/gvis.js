@@ -1,11 +1,14 @@
 (function(undefined) {
   "use strict";
-  
+
+  var __instances = 0;
+
   var gvis = function(conf) {
     var self = this,
         _conf = conf || {};
 
     self.version = '0.2.0';
+    
 
     console.log(self);
   }
