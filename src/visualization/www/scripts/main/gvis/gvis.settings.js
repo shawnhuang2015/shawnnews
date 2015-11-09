@@ -1,6 +1,8 @@
 (function(undefined) {
   "use strict";
 
+  console.log('Loading gvis.settings')
+
   var settings = {
     skipType : ["reason", "level", "app", "phone_no", "location",
                   "friend", "complaint", "user", "device",

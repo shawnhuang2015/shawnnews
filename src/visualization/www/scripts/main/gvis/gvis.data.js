@@ -1,20 +1,22 @@
 (function(undefined) {
   "use strict";
+  console.log('Loading gvis.data')
+
   gvis.data = gvis.data || {};
 
 
-  gvis.data.refineDataName = function (newData) {
-    // the result should be as nodes and edges.
-    var result = {"nodes":[], "edges":[]};
+  gvis.data.initialization = function (newData) {
+    // the result should be as nodes and links.
+    var result = {"nodes":[], "links":[]};
     var arrResult = []
-    this.topology4VertexAttribute_to_json();
-    // newData.vertices.forEach(function(n) {
+
+    // newData.nodes.forEach(function(n) {
     //   // Example of a node :
     //   tempNode = {type:'', id:'', attr: {}, style: {}, other: {}};
     //   tempNode.type = n.type
     //   tempNode.id = n.id
-    //   tempNode.attr = topology4VertexAttribute_to_json(n.attr);
-    //   tempNode.other = clone(n.other)
+    //   tempNode.attr = this.topology4VertexAttribute_to_json(n.attr);
+    //   tempNode.other = gvis.utils.clone(n.other)
 
     //   arrResult.push(tempNode);
     // }) 
@@ -28,28 +30,28 @@
     //   result.nodes.push(tempResult[key]);
     // }
 
-    // newData.edges.forEach(function(e) {
+    // newData.links.forEach(function(e) {
     //   // Example of a link :
     //   // {"source":{"type":"newType1","id":"newKey1"},"target":{"type":"type0","id":"key45"},"attr":{"weight":"0.01","name":"name0.7"}, "type":0};
-    //   tempEdge = {"source":{"type":"","id":""},"target":{"type":"","id":""},"attr":""};
-    //   tempEdge.source.type = e.src.type
-    //   tempEdge.source.id = e.src.id
-    //   tempEdge.target.type = e.tgt.type
-    //   tempEdge.target.id = e.tgt.id
+    //   templink = {"source":{"type":"","id":""},"target":{"type":"","id":""},"attr":""};
+    //   templink.source.type = e.src.type
+    //   templink.source.id = e.src.id
+    //   templink.target.type = e.tgt.type
+    //   templink.target.id = e.tgt.id
 
-    //   // Check whether a edge includes 'type' attribute. 
+    //   // Check whether a link includes 'type' attribute. 
     //   if ("type" in e) {
-    //     tempEdge.type = e.type
+    //     templink.type = e.type
     //   }
     //   else {
-    //     tempEdge.type = "Undefined"
+    //     templink.type = "Undefined"
     //   }
       
     //   //deep copy the object of the attributes.
-    //   tempEdge.attr = topology4VertexAttribute_to_json(e.attr) //The way to parse edge and vertex attrs are same.
-    //   tempEdge.other = clone(e.other)
+    //   templink.attr = topology4VertexAttribute_to_json(e.attr) //The way to parse link and vertex attrs are same.
+    //   templink.other = clone(e.other)
 
-    //   result.edges.push(tempEdge);
+    //   result.links.push(tempLink);
     // })
     
     return result

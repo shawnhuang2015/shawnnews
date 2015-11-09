@@ -3,12 +3,11 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-//var isDebugging = true; // false;
 
 require.config({
     //For development purposes, We force RequireJS to bypass the cache by appending a timestamp.
     //Delete this for release version.
-    urlArgs: /*isDebugging*/ true ? "bust=" + (new Date()).getTime() : "",
+    urlArgs: /*isDebugging*/ false ? "bust=" + (new Date()).getTime() : "",
     baseUrl: 'scripts',
     paths: {
         jquery: 'lib/jquery-2.1.3',
@@ -17,7 +16,6 @@ require.config({
         tipsy: 'lib/jquery.tipsy',
         xlsx: 'lib/xlsx.core.min',
         config: '../config/config',
-        core: 'main/gvis/gvis.core',
         language: 'main/language',
         bootstrap: 'bootstrap/js/bootstrap',
         multiselect:'bootstrap/js/bootstrap-multiselect',
@@ -25,11 +23,17 @@ require.config({
         datetime_zhCN: 'bootstrap/js/locales/bootstrap-datetimepicker.zh-CN',
         colorpicker: 'bootstrap/js/bootstrap-colorpicker',
         slider: 'bootstrap/js/bootstrap-slider',
+        donuts:'lib/Donut3D',
+        ui:'main/ui',
+
+        core: 'main/gvis/gvis.core',
         utils: 'main/gvis/gvis.utils',
         data: 'main/gvis/gvis.data',
         settings: 'main/gvis/gvis.settings',
-        donuts:'lib/Donut3D',
-        ui:'main/ui',
+        behaviors: 'main/gvis/gvis.behaviors',
+        render: 'main/gvis/gvis.render',
+        layouts: 'main/gvis/gvis.layouts',
+        events: 'main/gvis/gvis.events',
         gvis: 'main/gvis/gvis'
     },
     shim: {
@@ -42,8 +46,20 @@ require.config({
         settings: {
             deps: ['utils']
         },
+        behaviors: {
+            deps: ['utils']
+        },
+        render: {
+            deps: ['utils']
+        },
+        layouts: {
+            deps: ['utils']
+        },
+        events: {
+            deps: ['utils']
+        },
         core: {
-            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings'],
+            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings', 'behaviors', 'render', 'layouts', 'events'],
         },
         utils: {
             deps: ['gvis']

@@ -1,6 +1,7 @@
 (function(undefined) {
   "use strict";
-  
+  console.log('Loading gvis.utils')
+
   // Initialize 
   gvis.utils = gvis.utils || {}
 
@@ -20,7 +21,7 @@
  
     var temp = obj.constructor(); // give temp the original obj's constructor
     for (var key in obj) {
-        temp[key] = clone(obj[key]);
+        temp[key] = this.clone(obj[key]);
     }
  
     return temp;
