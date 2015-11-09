@@ -13,4 +13,4 @@
   }
 
   this.gvis = gvis;
-}).call(this)
+}).call(window)
