@@ -1,4 +1,6 @@
 (function(undefined) {
+  "use strict";
+  
   var gvis = function(conf) {
     var self = this,
         _conf = conf || {};

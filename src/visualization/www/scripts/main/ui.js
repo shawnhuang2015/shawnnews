@@ -1,8 +1,8 @@
 require([], function(){
 
-  var graph = new gvis();
+  var gvis_object = new gvis();
 
 
-  this.test = graph
+  this.test = gvis_object;
 
 });

@@ -1,5 +1,6 @@
 (function(undefined) {
-
+  "use strict";
+  
   // Initialize 
   gvis.utils = gvis.utils || {}
 

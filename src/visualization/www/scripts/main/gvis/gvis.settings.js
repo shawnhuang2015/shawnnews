@@ -1,4 +1,6 @@
 (function(undefined) {
+  "use strict";
+
   var settings = {
     skipType : ["reason", "level", "app", "phone_no", "location",
                   "friend", "complaint", "user", "device",

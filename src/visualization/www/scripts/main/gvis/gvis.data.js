@@ -1,5 +1,5 @@
 (function(undefined) {
-
+  "use strict";
   gvis.data = gvis.data || {};
 
 
