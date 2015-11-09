@@ -18,29 +18,37 @@ require.config({
         xlsx: 'lib/xlsx.core.min',
         config: '../config/config',
         core: 'main/gvis/gvis.core',
-        language: 'main/gvis/gvis.language',
+        language: 'main/language',
         bootstrap: 'bootstrap/js/bootstrap',
         multiselect:'bootstrap/js/bootstrap-multiselect',
         datetime: 'bootstrap/js/bootstrap-datetimepicker',
         datetime_zhCN: 'bootstrap/js/locales/bootstrap-datetimepicker.zh-CN',
         colorpicker: 'bootstrap/js/bootstrap-colorpicker',
         slider: 'bootstrap/js/bootstrap-slider',
-        helper: 'main/gvis/gvis.utils',
+        utils: 'main/gvis/gvis.utils',
         data: 'main/gvis/gvis.data',
+        settings: 'main/gvis/gvis.settings',
         donuts:'lib/Donut3D',
         ui:'main/ui',
+        gvis: 'main/gvis/gvis'
     },
     shim: {
         ui: {
-            deps: ['data']
+            deps: ['core', 'multiselect', 'datetime_zhCN', 'colorpicker', 'slider']
         },
         data: {
-            deps: ['core'],
-            //exports: 'gvis.data'
+            deps: ['utils'],
+        },
+        settings: {
+            deps: ['utils']
         },
         core: {
-            deps: ['config', 'tipsy', 'donuts', 'd3', 'helper', 'language'],
+            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings'],
         },
+        utils: {
+            deps: ['gvis']
+        },
+
         bootstrap:  {
             deps: ['jquery'],
         },
@@ -67,9 +75,6 @@ require.config({
         },
         donuts : {
             deps : ['d3']
-        },
-        helper : {
-            deps : ['multiselect', 'datetime_zhCN', 'colorpicker', 'slider']
         }
     }
 });
