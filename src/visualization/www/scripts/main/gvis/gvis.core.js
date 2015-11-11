@@ -6,10 +6,15 @@
   console.log('Loading gvis.core')
 
   gvis.prototype.data = function(newData) {
-    var _this = this.localScope();
-
-    _this.graph = new gvis.data.graph(newData);
-    _this = {test:'test'}
+    var _this = this.scope;
   }
+
+  gvis.prototype.test = function() {
+    var _this = this.scope;
+
+    _this.graph.addNode({id:0,type:0});
+    _this.graph.addNode.call(window, {id:0,type:0});
+  }
+
   
 }).call(this)

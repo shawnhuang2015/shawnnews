@@ -28,7 +28,7 @@ require.config({
 
         core: 'main/gvis/gvis.core',
         utils: 'main/gvis/gvis.utils',
-        data: 'main/gvis/gvis.data',
+        data: 'main/gvis/gvis.graph',
         settings: 'main/gvis/gvis.settings',
         behaviors: 'main/gvis/gvis.behaviors',
         renders: 'main/gvis/gvis.renders',

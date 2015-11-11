@@ -39,9 +39,10 @@ require([], function(){
       {"source": {"id": 5, "type": "movie"}, "target": {"id": 12, "type": "usr"}, "etype": "bbc", "attr": {"aa1": 3, "aa2": 4}, "style": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 0.5}, "directed": true}]
   };
 
-  this.test = new gvis();
-  console.log('Doing the UI.js')
+  this.test = new gvis(config);
+  test.test();
 
-  test.data(newdata);
-  console.log(test.localScope());
+  window.addEventListener('resize', function() {
+    console.log('resizing')
+  });
 });

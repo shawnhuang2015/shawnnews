@@ -1,4 +1,4 @@
-var UIpages = 
+var config = 
 [ 
       {
         "tabname": "Graph Stucture Lookup",

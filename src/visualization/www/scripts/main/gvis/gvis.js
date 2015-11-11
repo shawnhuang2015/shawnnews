@@ -6,6 +6,7 @@
 
   var gvis = function(conf) {
 
+    //local data object.
     var _this = {};
 
     var version = '0.2.0'
@@ -29,12 +30,16 @@
       }
     })
 
-    _this.graph = {};
+    _this.settings = {};
+    _this.settings.conf = conf;
 
-
-    window.addEventListener('resize', function() {
-      console.log('resizing')
-    });
+    _this.graph = new gvis.graph();
+    _this.behaviors = {};
+    _this.events = {};
+    _this.renders = {};
+    _this.layouts = {};
+   
+    console.log(_this.graph.data());
   }
 
   this.gvis = gvis;
