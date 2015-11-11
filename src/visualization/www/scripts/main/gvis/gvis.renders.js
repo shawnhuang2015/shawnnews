@@ -1,6 +1,6 @@
 (function(undefined) {
   "use strict";
-  // Doing somthing for render
+  // Doing somthing for renders
   console.log('Loading gvis.render')
   
 }).call(this)

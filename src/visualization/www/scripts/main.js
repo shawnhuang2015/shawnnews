@@ -31,7 +31,7 @@ require.config({
         data: 'main/gvis/gvis.data',
         settings: 'main/gvis/gvis.settings',
         behaviors: 'main/gvis/gvis.behaviors',
-        render: 'main/gvis/gvis.render',
+        renders: 'main/gvis/gvis.renders',
         layouts: 'main/gvis/gvis.layouts',
         events: 'main/gvis/gvis.events',
         gvis: 'main/gvis/gvis'
@@ -59,7 +59,7 @@ require.config({
             deps: ['utils']
         },
         core: {
-            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings', 'behaviors', 'render', 'layouts', 'events'],
+            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings', 'behaviors', 'renders', 'layouts', 'events'],
         },
         utils: {
             deps: ['gvis']

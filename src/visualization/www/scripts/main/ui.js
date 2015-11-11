@@ -1,8 +1,4 @@
 require([], function(){
-
-  this.test = new gvis();
-  console.log('Doing the UI.js')
-
   var newdata = {
     "nodes": [
       {"id": "0", "type": "usr", "attr": {"a1": 1, "a2": 2}, "style": {"size": 100, "shape": "square", "fill": "#ff5500", "stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}},
@@ -43,6 +39,9 @@ require([], function(){
       {"source": {"id": 5, "type": "movie"}, "target": {"id": 12, "type": "usr"}, "etype": "bbc", "attr": {"aa1": 3, "aa2": 4}, "style": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 0.5}, "directed": true}]
   };
 
+  this.test = new gvis();
+  console.log('Doing the UI.js')
+
   test.data(newdata);
-  console.log(test.data());
+  console.log(test.localScope());
 });

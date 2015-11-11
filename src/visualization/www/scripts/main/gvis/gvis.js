@@ -5,14 +5,36 @@
   var __instances = 0;
 
   var gvis = function(conf) {
-    var self = this,
-        _conf = conf || {};
 
-    self.version = '0.2.0';
+    var _this = {};
 
-    var data = {"nodes":[], "links":[]};
+    var version = '0.2.0'
 
-    console.log(self);
+    //return the version information.
+    Object.defineProperty(this, 'version', {
+      get: function() { return 'gvis version('+ version + ')'; },
+      set: function(newValue) { },
+    })
+
+    //Retuen local data object _this.
+    Object.defineProperty(this, 'scope', {
+      get: function() { return _this; },
+      set: function(newValue) {
+        try {
+          throw new Error("scope is read-only.")
+        }
+        catch (err) {
+          console.log(err)
+        }
+      }
+    })
+
+    _this.graph = {};
+
+
+    window.addEventListener('resize', function() {
+      console.log('resizing')
+    });
   }
 
   this.gvis = gvis;
