@@ -30,7 +30,7 @@
       }
     })
 
-    _this.settings = {};
+    _this.settings = gvis.settings;
     _this.settings.conf = conf;
 
     _this.graph = new gvis.graph();
@@ -39,7 +39,6 @@
     _this.renders = {};
     _this.layouts = {};
    
-    console.log(_this.graph.data());
   }
 
   this.gvis = gvis;

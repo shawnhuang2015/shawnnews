@@ -9,6 +9,18 @@
     var _this = this.scope;
   }
 
+  gvis.prototype.addNode = function(newNode) {
+    var _this = this.scope;
+
+    _this.graph.addNode(newNode);
+  }
+
+  gvis.prototype.addLink = function(newLink) {
+    var _this = this.scope;
+
+    _this.graph.addLink(newLink);
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 

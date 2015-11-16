@@ -19,6 +19,8 @@
                     solution:{product_list:true},
                     phone_no:{has_friend:true,fraction_of_callees_has_friends:true}
                   }
+    ,nodeKeyConcChar : '-'
+    ,linkKeyConcChar : '_'
   }
 
   gvis.settings = gvis.utils.extend(gvis.settings || {}, settings);
