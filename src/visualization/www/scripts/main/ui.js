@@ -41,14 +41,17 @@ require([], function(){
 
   this.test = new gvis(config);
 
-  for (var node in data.nodes) {
-    test.addNode(data.nodes[node]);
-  }
+  test.read(data);
 
-  for (var link in data.links) {
-    test.addLink(data.links[link]);
-  }
-  
+  console.log(test.scope.graph.nodes());
+  // for (var node in data.nodes) {
+  //   test.addNode(data.nodes[node]);
+  // }
+
+  // for (var link in data.links) {
+  //   test.addLink(data.links[link]);
+  // }
+
 
   window.addEventListener('resize', function() {
     console.log('resizing')

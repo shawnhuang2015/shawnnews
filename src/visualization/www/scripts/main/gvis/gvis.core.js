@@ -21,6 +21,23 @@
     _this.graph.addLink(newLink);
   }
 
+  gvis.prototype.dropNode = function(node) {
+    var _this = this.scope;
+
+    _this.graph.dropNode(node.type, node.id);
+  }
+
+  gvis.prototype.dropLink = function(link) {
+    var _this = this.scope;
+
+    _this.graph.dropLink(link.source.type, link.source.id, link.target.type, link.target.id, link.type, true);
+  }
+
+  gvis.prototype.read = function(data) {
+    var _this = this.scope;
+    _this.graph.read(data);
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 
