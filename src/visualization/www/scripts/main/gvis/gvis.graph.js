@@ -51,7 +51,7 @@
 
     this.read = function(subgraph) {
 
-      this.clear()
+      this.clear();
 
       for (var node in subgraph.nodes) {
         this.addNode(subgraph.nodes[node]);

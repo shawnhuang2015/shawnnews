@@ -6,4 +6,9 @@
 @import url("../bootstrap/css/bootstrap-slider.css");
 @import url("tipsy.css");
 
-
+.axis line {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
+}

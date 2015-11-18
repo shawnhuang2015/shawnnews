@@ -36,12 +36,14 @@
   gvis.prototype.read = function(data) {
     var _this = this.scope;
     _this.graph.read(data);
+
+    console.log(_this.graph.data())
   }
 
   gvis.prototype.render = function() {
     var _this = this.scope;
-
-    _this.renderer.render();
+    _this.layouts.random();
+    _this.renderer.update();
   }
 
   gvis.prototype.test = function() {

@@ -34,11 +34,12 @@
     _this.conf = conf;
 
     _this.graph = new gvis.graph();
-    _this.behaviors = {};
+    _this.layouts = new gvis.layouts(_this.graph);
     _this.events = {};
-    _this.renderer = new gvis.renders(_this.conf.container, _this.conf.render_type);
-    _this.layouts = {};
-   
+
+    _this.behaviors = {};
+    
+    _this.renderer = new gvis.renders(_this);   
   }
 
   this.gvis = gvis;
