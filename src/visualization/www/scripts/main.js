@@ -49,7 +49,7 @@ require.config({
         behaviors: {
             deps: ['utils']
         },
-        render: {
+        renders: {
             deps: ['utils']
         },
         layouts: {

@@ -31,12 +31,12 @@
     })
 
     _this.settings = gvis.settings;
-    _this.settings.conf = conf;
+    _this.conf = conf;
 
     _this.graph = new gvis.graph();
     _this.behaviors = {};
     _this.events = {};
-    _this.renders = {};
+    _this.renderer = new gvis.renders(_this.conf.container, _this.conf.render_type);
     _this.layouts = {};
    
   }

@@ -38,6 +38,12 @@
     _this.graph.read(data);
   }
 
+  gvis.prototype.render = function() {
+    var _this = this.scope;
+
+    _this.renderer.render();
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 

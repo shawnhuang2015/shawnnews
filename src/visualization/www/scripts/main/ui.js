@@ -39,11 +39,14 @@ require([], function(){
       {"source": {"id": "5", "type": "movie"}, "target": {"id": "12", "type": "usr"}, "type": "bbc", "attr": {"aa1": 3, "aa2": 4}, "style": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 0.5}, "directed": true}]
   };
 
-  this.test = new gvis(config);
+  this.test = new gvis({
+    configure: config,
+    container: 'prototype1',
+    render_type: 'svg',
+  });
 
   test.read(data);
 
-  console.log(test.scope.graph.nodes());
   // for (var node in data.nodes) {
   //   test.addNode(data.nodes[node]);
   // }
@@ -51,6 +54,9 @@ require([], function(){
   // for (var link in data.links) {
   //   test.addLink(data.links[link]);
   // }
+
+
+  test.render();
 
 
   window.addEventListener('resize', function() {

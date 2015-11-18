@@ -50,6 +50,19 @@
     }
 
     this.read = function(subgraph) {
+
+      this.clear()
+
+      for (var node in subgraph.nodes) {
+        this.addNode(subgraph.nodes[node]);
+      }
+
+      for (var link in subgraph.links) {
+        this.addLink(subgraph.links[link]);
+      }
+    }
+
+    this.addSubgraph = function(subgraph) {
       for (var node in subgraph.nodes) {
         this.addNode(subgraph.nodes[node]);
       }
@@ -209,6 +222,7 @@
         }
         catch (err) {
           console.log(err);
+          return;
         }
       }
       else {
@@ -417,6 +431,8 @@
       // end Remove the link from graph.
     }
 
+
+    // clear the graph.
     this.clear = function() {
       data = {
         array: {
