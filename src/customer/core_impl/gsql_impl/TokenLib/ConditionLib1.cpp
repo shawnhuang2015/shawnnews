@@ -42,7 +42,10 @@
 
 #include <ConditionLib1.hpp>
 
-/* This funtion compares two strings, and returns true if they are equal */
+/**
+ * This funtion compares two strings, and returns true if they are equal.
+ * This is used internally in this file by other condition functions.
+ */
 static inline bool compareStrIgnoreCase (std::string s1, std::string s2) {
 
   int len = s1.length();
