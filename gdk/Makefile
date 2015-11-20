@@ -10,6 +10,7 @@ export CFLAGS
 
 all:
 	./gpkg.sh
+	@make done
 
 debug:
 	./gpkg.sh -d
@@ -21,6 +22,7 @@ filter:
 gpe:
 	@make clean
 	@make -f MakeGPE all
+	@make done
 
 rest:
 	@make clean
@@ -34,3 +36,7 @@ clean:
 	@# querydispatcher.o is NOT compiled by Makefile
 	@if ls objs/*.o >/dev/null 2>&1  ; then ls objs/*.o | grep -v querydispatcher.o | xargs rm -f; fi
 	@\rm -rf bin/release/*
+
+done:
+	@#remove querydispatcher.o file after compile gpe
+	@\rm -f objs/querydispatcher.o

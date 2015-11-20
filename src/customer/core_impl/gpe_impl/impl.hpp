@@ -24,9 +24,13 @@ class UDFRunner : public ServiceImplBase {
     if (request.request_function_ == "kneighborsize") {
       return RunUDF_KNeighborSize(serviceapi, request);
       } else if (request.request_function_ == "queryDispatcher") {
+#ifdef RUNQUERY
         std::string queryName = request.jsoptions_["query_name"][0].asString();
         QueryDispatcher qdp(queryName,serviceapi, request);
         return qdp.RunQuery();
+#else
+        return false;
+#endif
     }
     
     return false;  /// not a valid request
