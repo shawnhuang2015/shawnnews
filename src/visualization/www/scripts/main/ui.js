@@ -1,4 +1,5 @@
 require([], function(){
+  
   var data = {
     "nodes": [
       {"id": "0", "type": "usr", "_attrs": {"a1": 1, "a2": 2}, "_styles": {"size": 100, "shape": "square", "fill": "#ff5500", "stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}},

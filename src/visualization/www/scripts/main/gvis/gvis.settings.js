@@ -8,6 +8,7 @@
     ,linkKeyConcChar : '_'
     ,attrs: '_attrs'
     ,styles: '_styles'
+    ,key: '_key'
   }
 
   gvis.settings = gvis.utils.extend(gvis.settings || {}, settings);

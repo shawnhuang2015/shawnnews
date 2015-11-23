@@ -121,7 +121,7 @@
         }
       }
       else {
-        node.key = key;
+        node[gvis.settings.key] = key;
         data.index.nodes[key] = node;
       }
       // end 2.
@@ -226,7 +226,7 @@
         }
       }
       else {
-        link.key = key_link;
+        link[gvis.settings.key] = key_link;
         data.index.links[key_link] = link;
       }
       // end 2.
@@ -330,7 +330,7 @@
       // 5.2 remove neighbors of other nodes that related dropped node.
       for (var i in data.index.nodes) {
         var other_node = data.index.nodes[i];
-        var other_key = other_node.key;
+        var other_key = other_node[gvis.settings.key];
 
         delete data.neighbors.in[other_key][key];
         delete data.neighbors.out[other_key][key];

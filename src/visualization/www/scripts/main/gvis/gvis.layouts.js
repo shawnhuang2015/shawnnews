@@ -9,8 +9,8 @@
 
   gvis.layouts.prototype.random = function() {
     this.graph.data().array.nodes.forEach(function(n) {
-      n[gvis.settings.styles].x = Math.random();
-      n[gvis.settings.styles].y = Math.random();
+      n.x = Math.random();
+      n.y = Math.random();
     })
   }
   
