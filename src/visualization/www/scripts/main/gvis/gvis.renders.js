@@ -242,8 +242,9 @@
   }
 
   gvis.renders.svg.prototype.addNodeRenderer = function() {
-    console.log("addNodeRenderer", this, arguments)
+    //console.log("addNodeRenderer", this, arguments)
 
+    var nodes = arguments[0];
     var _svg = arguments[1];
 
     var drag = d3.behavior.drag()
@@ -252,7 +253,7 @@
         .on("drag", dragging)
         .on("dragend", dragended);
 
-    this[0].forEach(function(n) {
+    nodes[0].forEach(function(n) {
       if (!n) {
         return;
       }
@@ -337,17 +338,7 @@
         for (var link_key in graph.neighbors.all[node_key][other_key]) {
           var link= d3.select('#link_'+link_key)
 
-          _svg.updateLinkRenderer.call(link, null, _svg)
-          // var data = link.data()[0]
-          // var points = _svg.renders.generateCurvedLinkPoints(data)
-
-          // link.select('#link_path_'+data[gvis.settings.key])
-          // .attr("d", function(d) {
-          //   var line = d3.svg.line().interpolate("basis");
-          //   return line(points);
-          // })
-
-          //link.select('#link')
+          _svg.updateLinkRenderer(link, _svg)
         }
       }
     }
@@ -358,10 +349,11 @@
   }
 
   gvis.renders.svg.prototype.updateNodeRenderer = function() {
+    var nodes = arguments[0]
     var _svg = arguments[1];
     var duration = arguments[2] || 0;
 
-    this[0].forEach(function(n) {
+    nodes[0].forEach(function(n) {
       if (!n) {
         return;
       }
@@ -398,9 +390,10 @@
   }
 
   gvis.renders.svg.prototype.addLinkRenderer = function() {
+    var links = arguments[0] 
     var _svg = arguments[1];
 
-    this[0].forEach(function(l) {
+    links[0].forEach(function(l) {
       if (!l) {
         return;
       }
@@ -492,10 +485,11 @@
   }
 
   gvis.renders.svg.prototype.updateLinkRenderer = function() {
+    var links = arguments[0]
     var _svg = arguments[1];
     var duration = arguments[2] || 0;
 
-    this[0].forEach(function(l) {
+    links[0].forEach(function(l) {
       if (!l) {
         return;
       }
