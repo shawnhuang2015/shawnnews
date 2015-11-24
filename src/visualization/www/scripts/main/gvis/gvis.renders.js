@@ -42,7 +42,7 @@
 
     this.generateCurvedLinkPoints = function(link) {
       var a = 0.25;
-      var b = 20; // initNodeSetting.r * 4;
+      var b = 30; // initNodeSetting.r * 4;
       var edgeMargin = 20;
       var markMargin = 2;
 
@@ -108,7 +108,7 @@
       var ty1 = y1 - (edgeMargin+markMargin) * (y1 - C1[1]) / tdc;
 
       if (td < 2*(edgeMargin+markMargin)) {
-        return []//[[x0, y0], [x0, y0]]
+        return []
       }
 
       if (tdc < edgeMargin+markMargin) {
@@ -336,15 +336,18 @@
       for (var other_key in graph.neighbors.all[node_key]) {
         for (var link_key in graph.neighbors.all[node_key][other_key]) {
           var link= d3.select('#link_'+link_key)
-          var data = link.data()[0]
-          link.select('#link_path_'+data[gvis.settings.key])
-          .attr("d", function(d) {
-            var line = d3.svg.line().interpolate("basis");
 
-            var points = _svg.renders.generateCurvedLinkPoints(d)
-            
-            return line(points);
-          })
+          _svg.updateLinkRenderer.call(link, null, _svg)
+          // var data = link.data()[0]
+          // var points = _svg.renders.generateCurvedLinkPoints(data)
+
+          // link.select('#link_path_'+data[gvis.settings.key])
+          // .attr("d", function(d) {
+          //   var line = d3.svg.line().interpolate("basis");
+          //   return line(points);
+          // })
+
+          //link.select('#link')
         }
       }
     }
@@ -356,7 +359,7 @@
 
   gvis.renders.svg.prototype.updateNodeRenderer = function() {
     var _svg = arguments[1];
-    var duration = arguments[2];
+    var duration = arguments[2] || 0;
 
     this[0].forEach(function(n) {
       if (!n) {
@@ -408,8 +411,29 @@
 
       var data = link.data()[0]
 
+      var points = _svg.renders.generateCurvedLinkPoints(data);
+
       var path = link.append('g')
                  .classed('link_path', true)
+
+      var label = link.append('g')
+                  .attr('id', 'label_' + data[gvis.settings.key])
+
+
+      var display;
+      var x;
+      var y; 
+
+      if (points.length == 0) {
+        display = 'none';
+        x = _svg.renders.xScale(0.5 * data.source.x+ 0.5 * data.target.x);
+        y = _svg.renders.yScale(0.5 * data.source.y+ 0.5 * data.target.y);
+      } 
+      else {
+        display = '';
+        x = 0.5 * points[1][0] + 0.5 * points[2][0];
+        y = 0.5 * points[1][1] + 0.5 * points[2][1];
+      }
 
       path.append('defs')
       .append("marker")
@@ -434,17 +458,42 @@
       .attr("opacity", 0.8)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
-        // return line([[_svg.renders.xScale(d.source.x), _svg.renders.yScale(d.source.y)],[_svg.renders.xScale(d.target.x), _svg.renders.yScale(d.target.y)]])
-        
-        return line(_svg.renders.generateCurvedLinkPoints(d));
+        return line(points);
       })
       .attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
+
+
+      label.attr('display', display);
+
+      var text = label.append('text')
+      .attr('id', 'label_text_' + data[gvis.settings.key])
+      .attr('x', x)
+      .attr('y', y)
+      .attr("text-anchor", "middle")
+      .text(function(d) {
+        return d.type;
+      })
+
+
+      var bbox = text[0][0].getBBox();
+
+      //label.insert('rect', '#label_' + data[gvis.settings.key])
+      label.append('rect')
+      .classed('label_background_rect', true)
+      .attr('rx', 4)
+      .attr('ry', 4)
+      .attr('x', bbox.x)
+      .attr('y', bbox.y)
+      .attr('width', bbox.width)
+      .attr('height', bbox.height)
+      .attr('fill', 'blue')
+      .attr('opacity', 0.2)
     })
   }
 
   gvis.renders.svg.prototype.updateLinkRenderer = function() {
     var _svg = arguments[1];
-    var duration = arguments[2];
+    var duration = arguments[2] || 0;
 
     this[0].forEach(function(l) {
       if (!l) {
@@ -455,14 +504,54 @@
 
       var data = link.data()[0]
 
+      var points = _svg.renders.generateCurvedLinkPoints(data);
+
+      var x;
+      var y;
+      var display;
+
+      if (points.length == 0) {
+        display = 'none';
+        x = _svg.renders.xScale(0.5 * data.source.x+ 0.5 * data.target.x);
+        y = _svg.renders.yScale(0.5 * data.source.y+ 0.5 * data.target.y);
+      } 
+      else {
+        display = '';
+        x = 0.5 * points[1][0] + 0.5 * points[2][0];
+        y = 0.5 * points[1][1] + 0.5 * points[2][1];
+      }
+
       link.select('#link_path_'+data[gvis.settings.key])
       .transition()
       .duration(duration)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
         
-        return line(_svg.renders.generateCurvedLinkPoints(d));
+        return line(points);
       })
+
+      var label = link.select('#label_'+data[gvis.settings.key])
+
+      label.attr('display', display);
+
+      var text = label.select('#label_text_' + data[gvis.settings.key])
+      .attr('x', x)
+      .attr('y', y)
+      .text(function(d) {
+        return d.type;
+      })
+
+      var bbox = text[0][0].getBBox();
+
+      //label.insert('rect', '#label_' + data[gvis.settings.key])
+      label
+      .select('.label_background_rect')
+      .transition()
+      .duration(duration)
+      .attr('x', bbox.x)
+      .attr('y', bbox.y)
+      .attr('width', bbox.width)
+      .attr('height', bbox.height)
     })
   }
 
