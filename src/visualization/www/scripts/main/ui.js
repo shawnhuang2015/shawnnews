@@ -16,8 +16,11 @@ require([], function(){
       {"id": "11", "type": "movie", "_attrs": {"a1": 1, "a2": 2}, "_styles": {"size": 10, "shape": "diamond", "fill": "#2CA02C", "stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 0.7}},
       {"id": "12", "type": "usr", "_attrs": {"a1": 1, "a2": 2}, "_styles": {"size": 60, "shape": "cross", "fill": "#2CA02C", "stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 0.6}}],
     "links": [
-      {"source": {"id": "0", "type": "usr"}, "target": {"id": "1", "type": "tag"}, "type": "abc", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}, "directed": true},
-      {"source": {"id": "0", "type": "usr"}, "target": {"id": "2", "type": "usr"}, "type": "adf", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#2CA02C", "strokeWidth": 1, "dashed": false, "opacity": 0.9}, "directed": false},
+      {"source": {"id": "0", "type": "usr"}, "target": {"id": "1", "type": "tag"}, "type": "aaa", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}, "directed": true},
+      {"source": {"id": "0", "type": "usr"}, "target": {"id": "1", "type": "tag"}, "type": "bbb", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}, "directed": true},
+      {"source": {"id": "0", "type": "usr"}, "target": {"id": "1", "type": "tag"}, "type": "ccc", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#ccc", "strokeWidth": 1, "dashed": true, "opacity": 1}, "directed": true},
+      {"source": {"id": "0", "type": "usr"}, "target": {"id": "2", "type": "usr"}, "type": "aaa", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#2CA02C", "strokeWidth": 1, "dashed": false, "opacity": 0.9}, "directed": false},
+      {"source": {"id": "0", "type": "usr"}, "target": {"id": "2", "type": "usr"}, "type": "bbb", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#2CA02C", "strokeWidth": 1, "dashed": false, "opacity": 0.9}, "directed": false},
       {"source": {"id": "0", "type": "usr"}, "target": {"id": "3", "type": "movie"}, "type": "dds", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#E377C2", "strokeWidth": 1, "dashed": true, "opacity": 0.8}, "directed": true},
       {"source": {"id": "4", "type": "tag"}, "target": {"id": "0", "type": "usr"}, "type": "adx", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#1F77B4", "strokeWidth": 1, "dashed": false, "opacity": 0.7}, "directed": true},
       {"source": {"id": "5", "type": "movie"}, "target": {"id": "0", "type": "usr"}, "type": "fdd", "_attrs": {"aa1": 3, "aa2": 4}, "_styles": {"stroke": "#2CA02C", "strokeWidth": 1, "dashed": true, "opacity": 0.6}, "directed": false},

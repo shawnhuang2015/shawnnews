@@ -281,6 +281,17 @@ gvis.utils.icons = function(name) {
   }
 }
 
+gvis.utils.rotate = function(cx, cy, x, y, angle) {
+    //X' = X cosB - Y sinB
+    //Y' = X sinB + Y cosB
+    var radians = (Math.PI / 180) * angle,
+    cos = Math.cos(radians),
+    sin = Math.sin(radians),
+    nx = (cos * (x - cx)) - (sin * (y - cy)) + cx,
+    ny = (sin * (x - cx)) + (cos * (y - cy)) + cy;
+    return [nx, ny];
+  }
+
 
 
 
