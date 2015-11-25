@@ -4,4 +4,15 @@
   // highlighting, coloring, hiding behaviors.
   console.log('Loading gvis.behaviors')
 
+  gvis.behaviors = gvis.behaviors || {};
+
+  gvis.behaviors.render = {
+    nodeRadius : 20,
+  }
+
+  gvis.behaviors.icons = {
+    usr : 'user',
+    movie : 'movie'
+  }
+
 }).call(this)

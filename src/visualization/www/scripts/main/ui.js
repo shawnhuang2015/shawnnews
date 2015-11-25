@@ -67,5 +67,7 @@ require([], function(){
 
   window.addEventListener('resize', function() {
     console.log('resizing')
+    d3.select('#prototype1').style('height', $(window).height()/2+'px');
+    test.update(0);
   });
 });

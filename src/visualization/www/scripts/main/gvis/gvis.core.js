@@ -46,6 +46,11 @@
     _this.renderer.update();
   }
 
+  gvis.prototype.update = function(duration) {
+    var _this = this.scope
+    _this.renderer.update(duration);
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 

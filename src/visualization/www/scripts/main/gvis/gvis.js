@@ -9,7 +9,7 @@
     //local data object.
     var _this = {};
 
-    var version = '0.2.0'
+    var version = '0.1.2'
 
     //return the version information.
     Object.defineProperty(this, 'version', {
@@ -37,7 +37,7 @@
     _this.layouts = new gvis.layouts(_this.graph);
     _this.events = {};
 
-    _this.behaviors = {};
+    _this.behaviors = gvis.behaviors;
     
     _this.renderer = new gvis.renders(_this);   
   }

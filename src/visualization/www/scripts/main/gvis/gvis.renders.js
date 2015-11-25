@@ -19,12 +19,12 @@
 
 
     this.xScale = d3.scale.linear()
-                  .domain([0, this.domain_width])
-                  .range([0, this.range_width]);
+    .domain([0, this.domain_width])
+    .range([0, this.range_width]);
 
     this.yScale = d3.scale.linear()
-                  .domain([0, this.domain_height])
-                  .range([0, this.range_height])
+    .domain([0, this.domain_height])
+    .range([0, this.range_height])
 
 
     switch (this.render_type) {
@@ -42,9 +42,9 @@
 
     this.generateCurvedLinkPoints = function(link) {
       var a = 0.25;
-      var b = 30; // initNodeSetting.r * 4;
-      var edgeMargin = 20;
-      var markMargin = 2;
+      var b = gvis.behaviors.render.nodeRadius * 2; // initNodeSetting.r * 4;
+      var edgeMargin = gvis.behaviors.render.nodeRadius;
+      var markMargin = gvis.behaviors.render.nodeRadius / 10;
 
       var C0 = [0, 0]
       var C1 = [0, 0]
@@ -81,10 +81,9 @@
 
       var t = (n-1-2*i) * b / 2;
       var td = Math.sqrt((x0-x1)*(x0-x1)+(y0-y1)*(y0-y1));
-      var t0 = a * (td - 20) + 10;
-      var t1 = (1-a) * (td - 20) + 10;
+      var t0 = a * (td - edgeMargin) + edgeMargin * 0.5;
+      var t1 = (1-a) * (td - edgeMargin) + edgeMargin * 0.5;
 
-      //var angle = 90 - Math.atan2(x1-x0, y1-y0)*180/Math.PI;
       var angle = Math.atan2(y1-y0, x1-x0)*180/Math.PI;
 
       C0[0] = x0 + t0;
@@ -118,12 +117,11 @@
       }
 
       return [[tx0, ty0], C0, C1, [tx1, ty1]]
-      //return [[this.xScale(tx0), this.yScale(ty0)], [this.xScale(C0[0]), this.yScale(C0[1])], [this.xScale(C1[0]), this.yScale(C1[1])], [this.xScale(tx1), this.yScale(ty1)]];
     }
   }
 
-  gvis.renders.prototype.update = function() {
-    this.renderer.update();
+  gvis.renders.prototype.update = function(duration) {
+    this.renderer.update(duration);
   }
 
 
@@ -131,34 +129,63 @@
 
   /********** renders.svg **********/
   gvis.renders.svg = function(renders) {
-
     this.renders = renders;
+
+    this.events = new gvis.events.svg(this);
+
     var _this = renders._this;
 
     var container_id = "#" + renders.render_container
 
-    var zoom = d3.behavior.zoom()
-                .scaleExtent([0.1, 10])
-                .on("zoom", zoomed);
+    this.zoom = d3.behavior.zoom()
+    .scaleExtent([0.1, 10])
+    .on("zoom", this.events.zoomed);
+
+    this.brush = d3.svg.brush()
+    .x(this.renders.xScale)
+    .y(this.renders.yScale)
+    .on("brushstart", this.events.brushstart)
+    .on("brush", this.events.brush)
+    .on("brushend", this.events.brushend);
+
+    this.drag = d3.behavior.drag()
+    .origin(function(d) { return d; })
+    .on("dragstart", this.events.dragstarted)
+    .on("drag", this.events.dragging)
+    .on("dragend", this.events.dragended);
 
     var svg = d3.select(container_id)
-              .append("svg")
-              .attr("width", "100%")
-              .attr("height", "100%")
-              // This is used for a custom right-click 
-              .on("contextmenu", function() {
-                //console.log('oncontextmenu svg')
-                d3.event.preventDefault();
-              })
-              .call(zoom);
+    .append("svg")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("tabindex", 1)
+    .on("keydown", this.events.keydown)
+    .on("keyup", this.events.keyup)
+    .on("contextmenu", this.events.contextmenu)
+    .call(this.zoom)
+    .on("dblclick.zoom", null);
 
     svg.append('rect')
-      .classed('background_rect', true) 
-      .attr("width", "100%")
-      .attr("height", "100%")
-      .attr("fill", "#dadaeb")
-      .attr("opacity", 0.2)
-      .attr("stroke", "transparent")
+    .classed('background_rect', true) 
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("fill", "#dadaeb")
+    .attr("opacity", 0.2)
+    .attr("stroke", "transparent")
+
+    var g_brush = svg.append('g')
+    .classed('brush', true)
+    .datum(function() {
+      return {selected: false, preSlected: false};
+    })
+    .call(this.brush)
+
+    g_brush
+    .on("mousedown.brush", null)
+    .on("touchstart.brush", null)
+    .on("touchmove.brush", null)
+    .on("touchend.brush", null)
+    .select('.background').style('cursor', 'auto');
 
     var g_zoomer = svg.append('g')
 
@@ -168,22 +195,40 @@
 
     var g_legends = g_zoomer.append('g').classed('legends_group', true)
 
-    this.update = function() {
+    this.g_svg = svg;
+
+    this.g_brush = g_brush;
+
+    this.g_zoomer = g_zoomer;
+
+    this.g_links = g_links
+
+    this.g_nodes = g_nodes
+
+    this.g_legends = g_legends
+
+    this.update = function(duration) {
       console.log('render.svg.update ' + container_id)
+
+      duration = duration != undefined ? duration : 500;
 
       this.renders.range_width = +d3.select(container_id).style('width').slice(0, -2);
       this.renders.range_height = +d3.select(container_id).style('height').slice(0, -2);
 
       this.renders.xScale = d3.scale.linear()
-                    .domain([0, this.renders.domain_width])
-                    .range([0, this.renders.range_width]);
+      .domain([0, this.renders.domain_width])
+      .range([0, this.renders.range_width]);
 
       this.renders.yScale = d3.scale.linear()
-                   .domain([0, this.renders.domain_height])
-                   .range([0, this.renders.range_height]);
+      .domain([0, this.renders.domain_height])
+      .range([0, this.renders.range_height]);
 
-      // DATA JOIN
-      // Join new data with old elements, if any.
+      this.brush
+      .x(this.renders.xScale)
+      .y(this.renders.yScale)
+
+      // DATA BINDING
+      // Binding new data with old elements, if any.
       var d_links = g_links.selectAll('.link').data(_this.graph.data().array.links, function(d) {
         return d[gvis.settings.key]
       })
@@ -224,8 +269,8 @@
       // entering elements; so, operations on the update selection after appending to
       // the enter selection will apply to both entering and updating nodes.
       // Updating current elements
-      d_links.call(this.updateLinkRenderer, this, 500)
-      d_nodes.call(this.updateNodeRenderer, this, 500);
+      d_links.call(this.updateLinkRenderer, this, duration)
+      d_nodes.call(this.updateNodeRenderer, this, duration);
       d_legends.call(this.updateLegendRenderer, this);
   
 
@@ -234,11 +279,7 @@
       d_links.exit().remove();
       d_nodes.exit().remove();
       d_legends.exit().remove();
-    }
-
-    function zoomed() {
-      g_zoomer.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    }    
+    }   
   }
 
   gvis.renders.svg.prototype.addNodeRenderer = function() {
@@ -247,12 +288,6 @@
     var nodes = arguments[0];
     var _svg = arguments[1];
 
-    var drag = d3.behavior.drag()
-        .origin(function(d) { return d; })
-        .on("dragstart", dragstarted)
-        .on("drag", dragging)
-        .on("dragend", dragended);
-
     nodes[0].forEach(function(n) {
       if (!n) {
         return;
@@ -260,32 +295,33 @@
 
       // adding node
       var node = d3.select(n)
-                .append('g')
-                .classed('node_container', true)
-                .attr("transform", function(d) { 
-                  return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
-                })
-                .call(drag)
+      .append('g')
+      .classed('node_container', true)
+      .attr("transform", function(d) { 
+        return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
+      })
+      .call(_svg.drag)
 
       var data = node.data()[0];
       // bacground circle for node icon
       node
-      .append('g')
-      .classed('node_background_circle', true)
       .append('circle')
+      .classed('node_background_circle', true)
       .attr('stroke-opacity', 0)
+      .attr('stroke-width', 2)
+      .attr('stroke', 'red')
       .attr('fill-opacity', 0)
-      .attr('r', 20)
+      .attr('r', gvis.behaviors.render.nodeRadius)
 
       // add node icon
-      var icon = gvis.utils.icons('default');
+      var icon = gvis.utils.icons(gvis.behaviors.icons[data.type]);
 
       node
       .append('g')
       .classed('icon', true)
       .html(icon.svg)
       .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
-      .attr('fill', 'red')
+      .attr('fill', 'green')
 
       var label = node
                   .append('g')
@@ -315,37 +351,6 @@
       .attr('opacity', 0.2)
       
     })
-
-
-    function dragstarted() {
-      d3.event.sourceEvent.stopPropagation();
-      d3.select(this).classed("dragging", true);
-    }
-
-    function dragging(d) {
-      d.x += _svg.renders.xScale.invert(d3.event.dx);
-      d.y += _svg.renders.yScale.invert(d3.event.dy);
-
-      d3.select(this).attr("transform", function(d) { 
-        return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
-      })
-
-      var node_key = d[gvis.settings.key]
-
-      var graph = _svg.renders.graph.data();
-
-      for (var other_key in graph.neighbors.all[node_key]) {
-        for (var link_key in graph.neighbors.all[node_key][other_key]) {
-          var link= d3.select('#link_'+link_key)
-
-          _svg.updateLinkRenderer(link, _svg)
-        }
-      }
-    }
-
-    function dragended() {
-      d3.select(this).classed("dragging", false);
-    }
   }
 
   gvis.renders.svg.prototype.updateNodeRenderer = function() {
@@ -409,10 +414,6 @@
       var path = link.append('g')
                  .classed('link_path', true)
 
-      var label = link.append('g')
-                  .attr('id', 'label_' + data[gvis.settings.key])
-
-
       var display;
       var x;
       var y; 
@@ -455,13 +456,17 @@
       })
       .attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
 
+      var label = link.append('g')
+      .attr('id', 'label_' + data[gvis.settings.key])
+      .attr("transform", function(d) { 
+        return "translate(" + x + "," + y + ")"; 
+      })
+
 
       label.attr('display', display);
 
       var text = label.append('text')
       .attr('id', 'label_text_' + data[gvis.settings.key])
-      .attr('x', x)
-      .attr('y', y)
       .attr("text-anchor", "middle")
       .text(function(d) {
         return d.type;
@@ -525,27 +530,18 @@
       })
 
       var label = link.select('#label_'+data[gvis.settings.key])
+      .transition()
+      .duration(duration)
+      .attr("transform", function(d) { 
+        return "translate(" + x + "," + y + ")"; 
+      })
 
       label.attr('display', display);
 
       var text = label.select('#label_text_' + data[gvis.settings.key])
-      .attr('x', x)
-      .attr('y', y)
       .text(function(d) {
         return d.type;
       })
-
-      var bbox = text[0][0].getBBox();
-
-      //label.insert('rect', '#label_' + data[gvis.settings.key])
-      label
-      .select('.label_background_rect')
-      .transition()
-      .duration(duration)
-      .attr('x', bbox.x)
-      .attr('y', bbox.y)
-      .attr('width', bbox.width)
-      .attr('height', bbox.height)
     })
   }
 

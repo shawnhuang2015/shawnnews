@@ -13,5 +13,23 @@
       n.y = Math.random();
     })
   }
+
+  gvis.layouts.prototype.force = function() {
+    var force = d3.layout.force()
+    .nodes(this.graph.data().array.nodes)
+    .links(this.graph.data().array.links)
+    .size([1, 1])
+    .linkStrength(0.1)
+    .friction(0.9)
+    .linkDistance(0.1)
+    .charge(-30)
+    .gravity(0.1)
+    .theta(0.8)
+    .alpha(0.1)
+
+    force.start();
+    for (var i = 0; i < 20; ++i) force.tick();
+    force.stop();
+  }
   
 }).call(this)
