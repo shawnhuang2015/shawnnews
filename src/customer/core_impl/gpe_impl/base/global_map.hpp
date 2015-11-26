@@ -47,11 +47,7 @@ namespace UDIMPL {
     }
 
     void add(KEY key, VALUE value) {
-      if (!contains(key)) {
-        map_[key] = value;
-      } else {
-        (*map_[key]) += (*value);
-      }
+      map_[key] += value;
     }
 
     VALUE get(KEY key) {
