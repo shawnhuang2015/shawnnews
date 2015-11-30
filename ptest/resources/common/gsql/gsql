@@ -43,6 +43,6 @@ rm ./output/load_output.log
 JAR="$SHARED_LIB/gsql.jar"
 
 # $1 ddl, test_case/gsql/regress1/test_case1
-./resources/gsql_run_ptest.sh
+./resources/gsql_run_ptest.sh $JAR $1
 
 cat ./output/load_output.log
