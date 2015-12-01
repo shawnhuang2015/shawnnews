@@ -7,7 +7,17 @@
   gvis.behaviors = gvis.behaviors || {};
 
   gvis.behaviors.render = {
+    viewportBackgroundColor : '#fafafa',
+    viewportBackgroundOpacity : 1,
+    
     nodeRadius : 20,
+    nodeMaskRadius : 19,
+
+    nodeBackgroundFillColor : '#fafafa',
+    nodeBackgroundFillOpacity : 1,
+    nodeBackgroundStrokeColor: 'black',
+    nodeBackgroundStrokeOpacity: 0.5,
+    nodeBackgroundStrokeWidth: 0.3,
   }
 
   gvis.behaviors.icons = {

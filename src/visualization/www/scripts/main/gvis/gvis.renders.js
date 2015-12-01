@@ -165,12 +165,19 @@
     .call(this.zoom)
     .on("dblclick.zoom", null);
 
+    svg.append("defs").append("svg:clipPath")
+    .attr("id", "node-mask")
+    .append("svg:circle")
+    .attr("r", gvis.behaviors.render.nodeMaskRadius-1)
+    .attr("cx", 0)
+    .attr("cy", 0);
+
     svg.append('rect')
     .classed('background_rect', true) 
     .attr("width", "100%")
     .attr("height", "100%")
-    .attr("fill", "#dadaeb")
-    .attr("opacity", 0.2)
+    .attr("fill", gvis.behaviors.render.viewportBackgroundColor)
+    .attr("opacity", gvis.behaviors.render.viewportBackgroundOpacity)
     .attr("stroke", "transparent")
 
     var g_brush = svg.append('g')
@@ -297,7 +304,7 @@
       var node = d3.select(n)
       .append('g')
       .classed('node_container', true)
-      .attr("transform", function(d) { 
+      .attr("transform", function(d) {
         return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
       })
       .call(_svg.drag)
@@ -307,11 +314,12 @@
       node
       .append('circle')
       .classed('node_background_circle', true)
-      .attr('stroke-opacity', 0)
-      .attr('stroke-width', 2)
-      .attr('stroke', 'red')
-      .attr('fill-opacity', 0)
-      .attr('r', gvis.behaviors.render.nodeRadius)
+      .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+      .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
+      .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)
+      .attr('fill', gvis.behaviors.render.nodeBackgroundFillColor)
+      .attr('fill-opacity', gvis.behaviors.render.nodeBackgroundFillOpacity)
+      .attr('r', gvis.behaviors.render.nodeRadius-2)
 
       // add node icon
       var icon = gvis.utils.icons(gvis.behaviors.icons[data.type]);

@@ -31,7 +31,9 @@
           d.preSelected = d.selected = false;
         })
         .select('.node_background_circle')
-        .attr('stroke-opacity', 0)
+        .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+        .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
+        .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)
 
         d3.select(this)
         .each(function(d) {
@@ -39,6 +41,8 @@
         })
         .select('.node_background_circle')
         .attr('stroke-opacity', 1)
+        .attr('stroke-width', 3)
+        .attr('stroke', 'red')
       }
     }
 
