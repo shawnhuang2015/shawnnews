@@ -200,7 +200,7 @@
 
     var g_nodes = g_zoomer.append('g').classed('nodes_group', true)
 
-    var g_legends = g_zoomer.append('g').classed('legends_group', true)
+    var g_legends = svg.append('g').classed('legends_group', true)
 
     this.g_svg = svg;
 
@@ -271,6 +271,13 @@
       .classed('legend', true)
       .call(this.addLegendRenderer, this)
 
+      // EXIT
+      // Remove old elements as needed.
+      d_links.exit().remove();
+      d_nodes.exit().remove();
+      d_legends.exit().remove();
+
+
       // ENTER + UPDATE
       // Appending to the enter selection expands the update selection to include
       // entering elements; so, operations on the update selection after appending to
@@ -281,11 +288,7 @@
       d_legends.call(this.updateLegendRenderer, this);
   
 
-      // EXIT
-      // Remove old elements as needed.
-      d_links.exit().remove();
-      d_nodes.exit().remove();
-      d_legends.exit().remove();
+
     }   
   }
 
@@ -310,6 +313,7 @@
       .call(_svg.drag)
 
       var data = node.data()[0];
+
       // bacground circle for node icon
       node
       .append('circle')
@@ -334,6 +338,7 @@
       var label = node
                   .append('g')
 
+      // add node labels
       var text = label.append('text')
       .attr('id', function(d) {
         return 'label_' + d[gvis.settings.key];
@@ -341,11 +346,12 @@
       .attr("text-anchor", "middle")
       .attr('y', 31)
       .text(function(d) {
-        return d.type;
+        return d.type+':'+d.id;
       })
 
       var bbox = text[0][0].getBBox();
 
+      // add node label background rectangle
       //label.insert('rect', '#label_' + data[gvis.settings.key])
       label.append('rect')
       .classed('label_background_rect', true)
@@ -371,7 +377,7 @@
         return;
       }
 
-      // adding node
+      // select node
       var node = d3.select(n);
 
       node
@@ -382,12 +388,11 @@
         return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
       })
 
+      // get data
       var data = node.data()[0];
 
+      // select label
       var text = node.select('#label_' + data[gvis.settings.key])
-      .text(function(d) {
-        return d.type;
-      })
 
       var bbox = text[0][0].getBBox();
 
@@ -403,7 +408,7 @@
   }
 
   gvis.renders.svg.prototype.addLinkRenderer = function() {
-    var links = arguments[0] 
+    var links = arguments[0];
     var _svg = arguments[1];
 
     links[0].forEach(function(l) {
@@ -426,6 +431,7 @@
       var x;
       var y; 
 
+      // base on points to determing whether show the links.
       if (points.length == 0) {
         display = 'none';
         x = _svg.renders.xScale(0.5 * data.source.x+ 0.5 * data.target.x);
@@ -464,6 +470,7 @@
       })
       .attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
 
+      // adding labels for links
       var label = link.append('g')
       .attr('id', 'label_' + data[gvis.settings.key])
       .attr("transform", function(d) { 
@@ -554,11 +561,123 @@
   }
 
   gvis.renders.svg.prototype.addLegendRenderer = function() {
+    var legends = arguments[0] 
+    var _svg = arguments[1];
 
+    legends[0].forEach(function(l, i) {
+      if (!l) {
+        return;
+      }
+
+      // adding legend
+      var legend = d3.select(l)
+      .append('g')
+      .classed('legend_container', true)
+      // .attr("transform", function(d) {
+      //   return "translate(" + gvis.behaviors.render.legendNodeSize + "," + gvis.behaviors.render.legendNodeSize + ")"; 
+      // })
+
+      var type = legend.data()[0];
+
+      // bacground circle for legend node icon
+      legend
+      .append('circle')
+      .classed('legend_background_circle', true)
+      .attr('stroke-opacity', 0)
+      .attr('fill', gvis.behaviors.render.nodeBackgroundFillColor)
+      .attr('fill-opacity', gvis.behaviors.render.nodeBackgroundFillOpacity)
+      .attr('r', gvis.behaviors.render.legendNodeSize-2)
+
+      // add legend icon
+      var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
+
+      legend
+      .append('g')
+      .classed('icon', true)
+      .html(icon.svg)
+      .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
+      .attr('fill', 'red')
+
+      var label = legend
+                  .append('g')
+
+      // add legend labels
+      var text = label.append('text')
+      .attr('id', function(d) {
+        return 'legendLabel_' + d;
+      })
+      .attr("text-anchor", "left")
+      .attr('x', gvis.behaviors.render.legendNodeSize * 1.00)
+      .attr('y', gvis.behaviors.render.legendNodeSize * 0.25)
+      .text(function(d) {
+        return d;
+      })
+
+      var bbox = text[0][0].getBBox();
+
+      // add node label background rectangle
+      label.insert('rect', '#legendLabel_' + type)
+      //label.append('rect')
+      .classed('legendLabel_background_rect', true)
+      .attr('rx', 4)
+      .attr('ry', 4)
+      .attr('x', bbox.x)
+      .attr('y', bbox.y)
+      .attr('width', bbox.width)
+      .attr('height', bbox.height)
+      .attr('fill', '#ccc')
+      .attr('opacity', 0.9)
+    })
   }
 
   gvis.renders.svg.prototype.updateLegendRenderer = function() {
+    var legends = arguments[0] 
+    var _svg = arguments[1];
+    var duration = arguments[2] || 0
 
+    legends[0].forEach(function(l, i) {
+        if (!l) {
+          return;
+        }
+
+        // get legend
+        var legend = d3.select(l);
+
+        legend
+        .select('.legend_container')
+        .transition()
+        .duration(duration)
+        .attr("transform", function(d) {
+          return "translate(" + gvis.behaviors.render.legendNodeSize + "," + gvis.behaviors.render.legendNodeSize*(1+i*1.7) + ")"; 
+        })
+
+        var type = legend.data()[0];
+
+        // legend icon
+        var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
+
+        legend
+        .select('.icon')
+        .html(icon.svg)
+        .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
+        .attr('fill', 'red')
+
+        // add legend labels
+        var text = legend.select('text')
+        .text(function(d) {
+          return d;
+        })
+
+        var bbox = text[0][0].getBBox();
+
+        // add node label background rectangle
+        //label.insert('rect', '#label_' + data[gvis.settings.key])
+        legend.select('.legendLabel_background_rect')
+        .attr('x', bbox.x)
+        .attr('y', bbox.y)
+        .attr('width', bbox.width)
+        .attr('height', bbox.height)
+    })
   }
 
 

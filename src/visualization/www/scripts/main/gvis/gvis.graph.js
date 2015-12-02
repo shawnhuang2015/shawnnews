@@ -301,7 +301,7 @@
 
       // 2. remove from array
       for (var i=0; i<data.array.nodes.length; ++i) {
-        if (data.array.nodes[i].key == key) {
+        if (data.array.nodes[i][gvis.settings.key] == key) {
           data.array.nodes.splice(i, 1);
           break;
         }
@@ -311,7 +311,7 @@
       for (var i=data.array.links.length-1; i>=0; --i) {
         var link = data.array.links[i];
 
-        if (link.source.key == key || link.target.key == key) {
+        if (link.source[gvis.settings.key] == key || link.target[gvis.settings.key] == key) {
           this.dropLink(link.source.type, link.source.id, link.target.type, link.target.id, link.type, true)
         }
       }
@@ -337,8 +337,20 @@
         delete data.neighbors.all[other_key][key];
       }
 
-      // 7. never remove node from id map.
-      /* keep count node type and id*/
+      // 6. remove type of node from id map if no more type exist.
+      var checkType = false;
+
+      for (var i in data.array.nodes) {
+        var temp_node = data.array.nodes[i];
+        if (temp_node.type == type) {
+          checkType = true;
+          break;
+        }
+      }
+
+      if (!checkType) {
+        delete data.idMap.nodesType[type];
+      }
 
       // end Remove the node from graph.
     }
@@ -376,7 +388,7 @@
 
       // 2. remove the link from array
       for (var i=0; i<data.array.links.length; ++i) {
-        if (data.array.links[i].key == key_link) {
+        if (data.array.links[i][gvis.settings.key] == key_link) {
           data.array.links.splice(i, 1);
           break;
         }
@@ -425,6 +437,22 @@
             this.dropNode(source_type, source_id);
           }
         }
+      }
+
+      // 6. remove link type in idMap if this type is not in use anymore.
+      // 6. remove type of node from id map if no more type exist.
+      var checkType = false;
+
+      for (var i in data.array.links) {
+        var temp_link = data.array.links[i];
+        if (temp_link.type == link_type) {
+          checkType = true;
+          break;
+        }
+      }
+
+      if (!checkType) {
+        delete data.idMap.linksType[link_type];
       }
 
 

@@ -18,6 +18,8 @@
     nodeBackgroundStrokeColor: 'black',
     nodeBackgroundStrokeOpacity: 0.5,
     nodeBackgroundStrokeWidth: 0.3,
+
+    legendNodeSize: 20
   }
 
   gvis.behaviors.icons = {
