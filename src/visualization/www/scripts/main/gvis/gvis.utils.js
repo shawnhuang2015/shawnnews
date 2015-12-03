@@ -173,44 +173,6 @@
       };
   };
 
-}).call(this)
-
-
-// //Binding a function to an object.
-// function bind(obj, fn){
-//   var slice = [].slice;
-
-//   if ('string' == typeof fn) fn = obj[fn];
-//   if ('function' != typeof fn) throw new Error('bind() requires a function');
-//   var args = [].slice.call(arguments, 2);
-//   return function(){
-//     return fn.apply(obj, args.concat(slice.call(arguments)));
-//   }
-// }
-
-// // Deep copy object and array in javascript (same as jQuery.extend(true, {}, obj))
-// function cloneOld(obj) {
-// 	if(obj == null || typeof(obj) != 'object')
-// 		return obj;
-
-// 	var temp = obj.constructor();
-
-// 	if (obj instanceof Array) {
-// 		obj.forEach(function(n) {
-// 			temp.push(clone(n));
-// 		}) 
-// 	}
-// 	else {
-// 		for(var key in obj) {
-// 			if(obj.hasOwnProperty(key)) {
-// 				temp[key] = clone(obj[key]);
-// 			}
-// 		}
-// 	}
-// 	return temp;
-
-// }
-
 
 
 // /*
@@ -259,7 +221,7 @@ gvis.utils.icons = function(name) {
   if (!name) name = 'default';
 
   // adding icon default
-  icons['default'] = {svg:'', translate:'-15, -15', scale:'0.05, 0.05'}
+  icons['default'] = {svg:'', width:612, height:612}
   icons['default'].svg = '<path d="M230.724,181.208c-2.393,2.587-3.95,4.256-5.119,5.508C227.775,184.379,230.724,181.208,230.724,181.208z"/>\
     <path d="M336.962,200.875c7.956,9.792,11.906,21.337,11.906,34.634c0,9.514-2.727,18.666-8.151,27.512\
       c-2.977,5.007-6.898,9.848-11.795,14.465l-16.301,16.107c-15.634,15.356-25.732,28.958-30.35,40.865\
@@ -274,7 +236,7 @@ gvis.utils.icons = function(name) {
     <rect x="274.51" y="415.214" width="40.559" height="42.367"/>'
 
   // adding icon user
-  icons['user'] = {svg:'', translate:'-16, -18', scale:'0.7, 0.7'}
+  icons['user'] = {svg:'', width:36, height:48}
   icons['user'].svg = '<path d="M32.102,19.679c1.211-0.259,2.328-1.26,2.51-3.48c0.15-1.817-0.316-2.753-1.004-3.23c1.91-7.785-3.358-9.309-3.358-9.309\
       s-3.937-6.679-11.618-1.992c-0.977,0.596-2.496,1.738-3.401,2.917c-1.453,1.546-2.442,4.059-2.597,8.129\
       c-0.938,0.358-1.675,1.264-1.492,3.484c0.192,2.321,1.403,3.309,2.677,3.511c1.72,4.189,5.116,7.641,9.135,7.641\
@@ -289,7 +251,7 @@ gvis.utils.icons = function(name) {
       C40.814,32.354,37.373,28.171,32.42,27.006z"/>';
 
   // adding icon movie
-  icons['movie'] = {svg:'', translate:'-12, -12', scale:'0.05, 0.05'}
+  icons['movie'] = {svg:'', width:470, height:470}
   icons['movie'].svg = '<path d="M450.066,0v19.91h-44.5V0h-341.5v19.91h-44.5V0H0v469.633h19.566v-21.26h44.5v21.26h341.5v-21.26h44.5v21.26h19.566V0\
     H450.066z M64.066,396.635h-44.5v-42.443h44.5V396.635z M64.066,302.454h-44.5v-42.443h44.5V302.454z M64.066,208.273h-44.5V165.83\
     h44.5V208.273z M64.066,114.091h-44.5V71.648h44.5V114.091z M365.568,54.063v149.819H104.063V54.063H365.568z M104.063,415.568\
@@ -305,17 +267,18 @@ gvis.utils.icons = function(name) {
 }
 
 gvis.utils.rotate = function(cx, cy, x, y, angle) {
-    //X' = X cosB - Y sinB
-    //Y' = X sinB + Y cosB
-    var radians = (Math.PI / 180) * angle,
-    cos = Math.cos(radians),
-    sin = Math.sin(radians),
-    nx = (cos * (x - cx)) - (sin * (y - cy)) + cx,
-    ny = (sin * (x - cx)) + (cos * (y - cy)) + cy;
-    return [nx, ny];
-  }
+  //X' = X cosB - Y sinB
+  //Y' = X sinB + Y cosB
+  var radians = (Math.PI / 180) * angle,
+  cos = Math.cos(radians),
+  sin = Math.sin(radians),
+  nx = (cos * (x - cx)) - (sin * (y - cy)) + cx,
+  ny = (sin * (x - cx)) + (cos * (y - cy)) + cy;
+  return [nx, ny];
+}
 
 
+}).call(this)
 
 
 

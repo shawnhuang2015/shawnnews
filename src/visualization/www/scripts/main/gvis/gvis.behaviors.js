@@ -11,6 +11,7 @@
     viewportBackgroundOpacity : 1,
     
     nodeRadius : 20,
+    nodeRadiusMargin : 4,
     nodeMaskRadius : 19,
 
     nodeBackgroundFillColor : '#fafafa',

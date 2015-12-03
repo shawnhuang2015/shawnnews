@@ -323,16 +323,31 @@
       .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)
       .attr('fill', gvis.behaviors.render.nodeBackgroundFillColor)
       .attr('fill-opacity', gvis.behaviors.render.nodeBackgroundFillOpacity)
-      .attr('r', gvis.behaviors.render.nodeRadius-2)
+      .attr('r', gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)
 
       // add node icon
       var icon = gvis.utils.icons(gvis.behaviors.icons[data.type]);
+
+      //transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"
+      //Where sx is the scaling factor in the x-axis, sy in the y-axis.
+
+      var matrix = [];
+
+      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+
+      var scale = sx < sy ? sx : sy
+
+      var cx = icon.width/2;
+      var cy = icon.height/2;
+
+      var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
 
       node
       .append('g')
       .classed('icon', true)
       .html(icon.svg)
-      .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
+      .attr('transform', 'matrix('+matrix+')')
       .attr('fill', 'green')
 
       var label = node
@@ -591,11 +606,23 @@
       // add legend icon
       var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
 
+      var matrix = [];
+
+      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+
+      var scale = sx < sy ? sx : sy
+
+      var cx = icon.width/2;
+      var cy = icon.height/2;
+
+      var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
+
       legend
       .append('g')
       .classed('icon', true)
       .html(icon.svg)
-      .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
+      .attr('transform', 'matrix('+matrix+')')
       .attr('fill', 'red')
 
       var label = legend
@@ -656,10 +683,22 @@
         // legend icon
         var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
 
+        var matrix = [];
+
+      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+
+        var scale = sx < sy ? sx : sy
+
+        var cx = icon.width/2;
+        var cy = icon.height/2;
+
+        var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
+
         legend
         .select('.icon')
         .html(icon.svg)
-        .attr('transform', 'translate('+icon.translate+') scale('+icon.scale+')')
+        .attr('transform', 'matrix('+matrix+')')
         .attr('fill', 'red')
 
         // add legend labels
