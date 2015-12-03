@@ -21,12 +21,24 @@
     nodeBackgroundStrokeWidth : 0.3,
 
     legendNodeRadius : 15,
-    legendNodeRadiusMargin : 3
+    legendNodeRadiusMargin : 3,
+
+    nodeLabelsFontSize : 15,
+    linkLabelsFontSize : 13,
   }
 
   gvis.behaviors.icons = {
     usr : 'user',
     movie : 'movie'
+  }
+
+  gvis.behaviors.labels = {
+    node : {
+
+    },
+    link : {
+
+    }
   }
 
 }).call(this)

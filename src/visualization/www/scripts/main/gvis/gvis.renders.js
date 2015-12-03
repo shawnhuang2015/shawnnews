@@ -19,6 +19,24 @@
 
     this.zoomRange = [0.1, 10];
 
+    this.labels = {
+      nodes: {
+        usr: {
+          a1:true,
+          a2:true,
+          id:true,
+          type:true
+        }
+      },
+      links: {
+        bbb: {
+          aa1:true,
+          aa2:true,
+          type:true
+        }
+      }
+    }
+
     this.xScale = d3.scale.linear()
     .domain([0, this.domain_width])
     .range([0, this.range_width]);
@@ -123,6 +141,11 @@
 
   gvis.renders.prototype.update = function(duration) {
     this.renderer.update(duration);
+  }
+
+  gvis.renders.prototype.autoFit = function() {
+    var duration = 500;
+    this.renderer.autoFit(duration);
   }
 
 
@@ -286,10 +309,7 @@
       // Updating current elements
       d_links.call(this.updateLinkRenderer, this, duration)
       d_nodes.call(this.updateNodeRenderer, this, duration);
-      d_legends.call(this.updateLegendRenderer, this);
-  
-
-
+      d_legends.call(this.updateLegendRenderer, this, duration);
     }   
   }
 
@@ -360,10 +380,7 @@
         return 'label_' + d[gvis.settings.key];
       })
       .attr("text-anchor", "middle")
-      .attr('y', gvis.behaviors.render.nodeRadius + 12)
-      .text(function(d) {
-        return d.type+':'+d.id;
-      })
+      .attr('y', gvis.behaviors.render.nodeRadius + gvis.behaviors.render.nodeLabelsFontSize / 1.5 - gvis.behaviors.render.nodeLabelsFontSize)
 
       var bbox = text[0][0].getBBox();
 
@@ -384,7 +401,7 @@
   }
 
   gvis.renders.svg.prototype.updateNodeRenderer = function() {
-    var nodes = arguments[0]
+    var nodes = arguments[0];
     var _svg = arguments[1];
     var duration = arguments[2] || 0;
 
@@ -410,6 +427,15 @@
       // select label
       var text = node.select('#label_' + data[gvis.settings.key])
 
+      text
+      .attr("font-size", gvis.behaviors.render.nodeLabelsFontSize)
+      .each(function(d) {
+        nodeLabelGenerator(this, d);
+      })
+      // .text(function(d) {
+      //   return d.type+':'+d.id;
+      // })
+
       var bbox = text[0][0].getBBox();
 
       //label.insert('rect', '#label_' + data[gvis.settings.key])
@@ -421,6 +447,52 @@
       .attr('width', bbox.width)
       .attr('height', bbox.height)
     })
+
+    function nodeLabelGenerator(target, data) {
+      var labels = _svg.renders.labels.nodes[data.type];
+
+      d3.select(target).selectAll('tspan').remove();
+
+      if (!labels || Object.keys(labels).length === 0) {
+        d3.select(target)
+        .append("tspan")
+        .attr("x", 0)
+        .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
+        .text('ID:'+data.id)
+      }
+      else {
+        if (!!labels['type']) {
+          d3.select(target)
+          .append("tspan")
+          .attr("x", 0)
+          .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
+          .text('Type:'+data.type)
+        }
+
+        if (!!labels['id']) {
+          d3.select(target)
+          .append("tspan")
+          .attr("x", 0)
+          .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
+          .text('ID:'+data.id)
+        }
+
+        for (var attr in labels) {
+          if (attr == 'type' || attr == 'id') {
+            continue;
+          }
+          else {
+            if (labels[attr]) {
+              d3.select(target)
+              .append("tspan")
+              .attr("x", 0)
+              .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
+              .text(attr+':'+data[gvis.settings.attrs][attr])
+            }
+          }
+        }
+      }
+    }
   }
 
   gvis.renders.svg.prototype.addLinkRenderer = function() {
@@ -499,10 +571,6 @@
       var text = label.append('text')
       .attr('id', 'label_text_' + data[gvis.settings.key])
       .attr("text-anchor", "middle")
-      .text(function(d) {
-        return d.type;
-      })
-
 
       var bbox = text[0][0].getBBox();
 
@@ -569,11 +637,63 @@
 
       label.attr('display', display);
 
-      var text = label.select('#label_text_' + data[gvis.settings.key])
-      .text(function(d) {
-        return d.type;
+      var text = link.select('#label_text_' + data[gvis.settings.key]);
+
+      text
+      .attr('font-size', gvis.behaviors.render.linkLabelsFontSize)
+      .each(function(d) {
+        linkLabelGenerator(this, d);
       })
+
+      var bbox = text[0][0].getBBox();
+
+      //label.insert('rect', '#label_' + data[gvis.settings.key])
+      link.select('.label_background_rect')
+      .transition()
+      .duration(duration)
+      .attr('x', bbox.x)
+      .attr('y', bbox.y)
+      .attr('width', bbox.width)
+      .attr('height', bbox.height)
     })
+
+    function linkLabelGenerator(target, data) {
+      var labels = _svg.renders.labels.links[data.type];
+
+      d3.select(target).selectAll('tspan').remove();
+
+      if (!labels || Object.keys(labels).length === 0) {
+        d3.select(target)
+        .append("tspan")
+        .attr("x", 0)
+        .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
+        .text('Type:'+data.type)
+      }
+      else {
+        if (!!labels['type']) {
+          d3.select(target)
+          .append("tspan")
+          .attr("x", 0)
+          .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
+          .text('Type:'+data.type)
+        }
+
+        for (var attr in labels) {
+          if (attr == 'type') {
+            continue;
+          }
+          else {
+            if (labels[attr]) {
+              d3.select(target)
+              .append("tspan")
+              .attr("x", 0)
+              .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
+              .text(attr+':'+data[gvis.settings.attrs][attr])
+            }
+          }
+        }
+      }
+    }
   }
 
   gvis.renders.svg.prototype.addLegendRenderer = function() {

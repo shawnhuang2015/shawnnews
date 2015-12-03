@@ -44,6 +44,7 @@
     var _this = this.scope;
     _this.layouts.random();
     _this.renderer.update();
+    _this.renderer.autoFit();
   }
 
   gvis.prototype.update = function(duration) {
