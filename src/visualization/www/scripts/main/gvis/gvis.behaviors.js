@@ -16,11 +16,12 @@
 
     nodeBackgroundFillColor : '#fafafa',
     nodeBackgroundFillOpacity : 1,
-    nodeBackgroundStrokeColor: 'black',
-    nodeBackgroundStrokeOpacity: 0.5,
-    nodeBackgroundStrokeWidth: 0.3,
+    nodeBackgroundStrokeColor : 'black',
+    nodeBackgroundStrokeOpacity : 0.5,
+    nodeBackgroundStrokeWidth : 0.3,
 
-    legendNodeSize: 20
+    legendNodeRadius : 15,
+    legendNodeRadiusMargin : 3
   }
 
   gvis.behaviors.icons = {

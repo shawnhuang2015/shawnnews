@@ -17,6 +17,7 @@
     this.range_width = +d3.select('#'+this.render_container).style('width').slice(0, -2);
     this.range_height = +d3.select('#'+this.render_container).style('height').slice(0, -2);
 
+    this.zoomRange = [0.1, 10];
 
     this.xScale = d3.scale.linear()
     .domain([0, this.domain_width])
@@ -138,7 +139,7 @@
     var container_id = "#" + renders.render_container
 
     this.zoom = d3.behavior.zoom()
-    .scaleExtent([0.1, 10])
+    .scaleExtent(renders.zoomRange)
     .on("zoom", this.events.zoomed);
 
     this.brush = d3.svg.brush()
@@ -359,7 +360,7 @@
         return 'label_' + d[gvis.settings.key];
       })
       .attr("text-anchor", "middle")
-      .attr('y', 31)
+      .attr('y', gvis.behaviors.render.nodeRadius + 12)
       .text(function(d) {
         return d.type+':'+d.id;
       })
@@ -588,9 +589,6 @@
       var legend = d3.select(l)
       .append('g')
       .classed('legend_container', true)
-      // .attr("transform", function(d) {
-      //   return "translate(" + gvis.behaviors.render.legendNodeSize + "," + gvis.behaviors.render.legendNodeSize + ")"; 
-      // })
 
       var type = legend.data()[0];
 
@@ -601,15 +599,15 @@
       .attr('stroke-opacity', 0)
       .attr('fill', gvis.behaviors.render.nodeBackgroundFillColor)
       .attr('fill-opacity', gvis.behaviors.render.nodeBackgroundFillOpacity)
-      .attr('r', gvis.behaviors.render.legendNodeSize-2)
+      .attr('r', gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)
 
       // add legend icon
       var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
 
       var matrix = [];
 
-      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
-      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+      var sx = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.height;
 
       var scale = sx < sy ? sx : sy
 
@@ -634,8 +632,8 @@
         return 'legendLabel_' + d;
       })
       .attr("text-anchor", "left")
-      .attr('x', gvis.behaviors.render.legendNodeSize * 1.00)
-      .attr('y', gvis.behaviors.render.legendNodeSize * 0.25)
+      .attr('x', gvis.behaviors.render.legendNodeRadius * 1.00)
+      .attr('y', gvis.behaviors.render.legendNodeRadius * 0.25)
       .text(function(d) {
         return d;
       })
@@ -675,7 +673,7 @@
         .transition()
         .duration(duration)
         .attr("transform", function(d) {
-          return "translate(" + gvis.behaviors.render.legendNodeSize + "," + gvis.behaviors.render.legendNodeSize*(1+i*1.7) + ")"; 
+          return "translate(" + gvis.behaviors.render.legendNodeRadius + "," + (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*(1+i*2) + ")"; 
         })
 
         var type = legend.data()[0];
@@ -685,8 +683,8 @@
 
         var matrix = [];
 
-      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
-      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+        var sx = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.width;
+        var sy = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.height;
 
         var scale = sx < sy ? sx : sy
 
@@ -717,6 +715,101 @@
         .attr('width', bbox.width)
         .attr('height', bbox.height)
     })
+  }
+
+  gvis.renders.svg.prototype.autoFit = function(duration) {
+    duration = duration || 0;
+
+    var nodes = this.renders.graph.data().array.nodes;
+    var width = this.renders.domain_width;
+    var height = this.renders.domain_height;
+
+    //no molecules, nothing to do
+    if (nodes.length === 0)
+    return;
+
+    // Get the bounding box
+    var min_x = d3.min(nodes.map(function(d) {return d.x;}));
+    var min_y = d3.min(nodes.map(function(d) {return d.y;}));
+
+    var max_x = d3.max(nodes.map(function(d) {return d.x;}));
+    var max_y = d3.max(nodes.map(function(d) {return d.y;}));
+
+
+    // The width and the height of the graph
+    var mol_width = max_x - min_x;
+    var mol_height = max_y - min_y;
+
+    // how much larger the drawing area is than the width and the height
+    var width_ratio = width / mol_width;
+    var height_ratio = height / mol_height;
+
+    // we need to fit it in both directions, so we scale according to
+    // the direction in which we need to shrink the most
+    var min_ratio = Math.min(width_ratio, height_ratio) * 0.85;
+    if (min_ratio > this.renders.zoomRange[1]) min_ratio = this.renders.zoomRange[1];
+    if (min_ratio < this.renders.zoomRange[0]) min_ratio = this.renders.zoomRange[0];
+
+    // the new dimensions of the molecule
+    var new_mol_width = mol_width * min_ratio;
+    var new_mol_height = mol_height * min_ratio;
+
+    // translate so that it's in the center of the window
+    var x_trans = -(min_x) * min_ratio + (width - new_mol_width) / 2;
+    var y_trans = -(min_y) * min_ratio + (height - new_mol_height) / 2;
+
+    // do the actual moving
+    this.g_zoomer
+    .transition()
+    .duration(duration)
+    .attr("transform", "translate(" + [this.renders.xScale(x_trans), this.renders.yScale(y_trans)] + ")" + " scale(" + min_ratio + ")");
+
+    // tell the zoomer what we did so that next we zoom, it uses the
+    // transformation we entered here
+    this.zoom.translate([this.renders.xScale(x_trans), this.renders.yScale(y_trans)]);
+    this.zoom.scale(min_ratio);
+  }
+
+  gvis.renders.svg.prototype.centerView = function(duration) {
+
+    duration = duration || 0;
+
+    var xMass=0;
+    var yMass=0;
+
+    var nodes = this.renders.graph.data().array.nodes.filter(function(n) {
+      return n.selected;
+    });
+
+    if (nodes.length == 0) {
+      nodes = this.renders.graph.data().array.nodes;
+    }
+
+    if (nodes.length == 0) {
+      return;
+    }
+
+    nodes.forEach(function(n) {
+      xMass += n.x;
+      yMass += n.y;
+    })
+
+    xMass /= nodes.length;
+    yMass /= nodes.length;
+
+    var scale = this.zoom.scale();
+
+    var x_trans = this.renders.xScale(this.renders.domain_width/2 - xMass*scale) ;
+    var y_trans = this.renders.yScale(this.renders.domain_height/2 - yMass*scale) ;
+
+    this.g_zoomer
+    .transition()
+    .duration(duration)
+    .attr("transform", "translate(" + [x_trans, y_trans] + ")" + " scale(" + scale + ")");
+
+    // tell the zoomer what we did so that next we zoom, it uses the
+    // transformation we entered here
+    this.zoom.translate([x_trans, y_trans]);
   }
 
 

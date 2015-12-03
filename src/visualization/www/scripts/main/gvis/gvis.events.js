@@ -106,6 +106,16 @@
         _svg.g_brush.select('.background').style('cursor', 'crosshair')
         _svg.g_brush.call(_svg.brush);
       }
+
+      // key 'f'
+      if (d3.event.keyCode == 70) {
+        _svg.autoFit(500);
+      }
+      // key 'c'
+      else if (d3.event.keyCode == 67) {
+        _svg.centerView(500);
+      }
+
     }
 
     this.keyup = function() {
@@ -140,7 +150,6 @@
     }
 
     this.zoomed =  function() {
-      //console.log(d3.event.scale)
       _svg.g_zoomer.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     } 
   }
