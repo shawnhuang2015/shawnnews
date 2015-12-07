@@ -18,3 +18,5 @@
   }
 
   gvis.settings = gvis.utils.extend(gvis.settings || {}, settings);
+  
+}).call(this)

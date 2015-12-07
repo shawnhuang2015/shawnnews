@@ -32,6 +32,8 @@
     nodeLabelsFontSize : 15,
     linkLabelsFontSize : 13,
 
+
+    highlightColor : '#ff0000',
     nodeHighlightStrokWidth : 5,
     nodeHighlightStrokOpacity : 0.5,
     linkHighlightStrokWidth : 5,
@@ -51,4 +53,4 @@
 
     }
   }
-
+}).call(this)

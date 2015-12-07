@@ -49,4 +49,4 @@
   }
 
   this.gvis = gvis;
-
+}).call(this)

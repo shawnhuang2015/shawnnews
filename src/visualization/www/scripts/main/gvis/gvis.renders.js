@@ -169,7 +169,9 @@
 
     this.zoom = d3.behavior.zoom()
     .scaleExtent(renders.zoomRange)
-    .on("zoom", this.events.zoomed);
+    .on("zoomstart", this.events.zoomstart)
+    .on("zoom", this.events.zoomed)
+    .on("zoomend", this.events.zoomend)
 
     this.brush = d3.svg.brush()
     .x(this.renders.xScale)
@@ -391,8 +393,8 @@
       var bbox = text[0][0].getBBox();
 
       // add node label background rectangle
-      //label.insert('rect', '#label_' + data[gvis.settings.key])
-      label.append('rect')
+      label.insert('rect', '#label_' + data[gvis.settings.key])
+      //label.append('rect')
       .classed('label_background_rect', true)
       .attr('rx', 4)
       .attr('ry', 4)
@@ -531,7 +533,8 @@
 
       var link = d3.select(l)
                  .append('g')
-                 .classed('link_container', true);
+                 .classed('link_container', true)
+                 .on('mousedown', _svg.events.linkmousedown)
 
 
       var data = link.data()[0]
@@ -574,8 +577,8 @@
       path.append('path')
       .classed('link_line_background', true)
       .attr("id", 'link_line_background_'+data[gvis.settings.key])
-      .attr("fill", 'transparent')
-      .attr("stroke", 'red')
+      .attr("fill", 'none')
+      .attr("stroke", gvis.behaviors.render.highlightColor)
       .attr("stroke-linecap", "round")
       .attr("stroke-width", gvis.behaviors.render.linkHighlightStrokWidth)
       .attr("stroke-opacity", 0)
@@ -587,7 +590,7 @@
       path.append('path')
       .classed('link_line', true)
       .attr("id", 'link_line_'+data[gvis.settings.key])
-      .attr("fill", 'transparent')
+      .attr("fill", 'none')
       .attr("stroke", 'black')
       .attr("stroke-width", 1)
       .attr("stroke-linecap", "round")
@@ -605,8 +608,6 @@
       .attr("transform", function(d) { 
         return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
       })
-      .on('click', _svg.events.linkClick)
-
 
       label.attr('display', display);
 
@@ -616,8 +617,8 @@
 
       var bbox = text[0][0].getBBox();
 
-      //label.insert('rect', '#label_' + data[gvis.settings.key])
-      label.append('rect')
+      label.insert('rect', '#label_text_' + data[gvis.settings.key])
+      //label.append('rect')
       .classed('label_background_rect', true)
       .attr('rx', 4)
       .attr('ry', 4)
@@ -625,8 +626,11 @@
       .attr('y', bbox.y)
       .attr('width', bbox.width)
       .attr('height', bbox.height)
-      .attr('fill', 'blue')
-      .attr('opacity', 0.2)
+      .attr('fill', '#9ecae1')
+      .attr('opacity', 1)
+      .attr('stroke', gvis.behaviors.render.highlightColor)
+      .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokWidth/2.0)
+      .attr('stroke-opacity', 0)
     })
   }
 

@@ -64,5 +64,5 @@
     _this.graph.addNode({id:0,type:0});
     _this.graph.addNode.call(window, {id:0,type:0});
   }
-
+}).call(this)
   

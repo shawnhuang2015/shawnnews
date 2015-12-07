@@ -37,4 +37,4 @@
     for (var i = 0; i < 20; ++i) force.tick();
     force.stop();
   }
-  
+}).call(this)
