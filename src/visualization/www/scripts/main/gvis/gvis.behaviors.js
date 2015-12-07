@@ -35,9 +35,9 @@
 
     highlightColor : '#ff0000',
     nodeHighlightStrokWidth : 5,
-    nodeHighlightStrokOpacity : 0.5,
+    nodeHighlightStrokOpacity : 0.6,
     linkHighlightStrokWidth : 5,
-    linkHighlightStrokOpacity : 0.5
+    linkHighlightStrokOpacity : 0.6
   }
 
   gvis.behaviors.icons = {

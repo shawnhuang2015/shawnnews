@@ -527,6 +527,14 @@
               return data.index.nodes[inMap.key]; 
             }  
           }
+          else if (typeof array === 'string') {
+            if (!data.index.nodes[array]) {
+              throw 'node ' + array + ' does not exist.'
+            }
+            else {
+              return data.index.nodes[array]; 
+            } 
+          }
           else {
             throw array + ' not an array or an object.'
           }
@@ -691,6 +699,18 @@
 
     this.data = function() {
       return data;
+    }
+
+    this.outgoingLinks = function(nodeKey) {
+      return data.neighbors.out[nodeKey];
+    }
+
+    this.incomingLinks = function(nodeKey) {
+      return data.neighbors.in[nodeKey];
+    }
+
+    this.inoutLinks = function(nodeKey) {
+      return data.neighbors.all[nodeKey];
     }
 
     function generateNodeKey(in_type, in_id) {

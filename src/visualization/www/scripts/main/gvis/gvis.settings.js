@@ -10,13 +10,16 @@
   console.log('Loading gvis.settings')
 
   var settings = {
-    nodeKeyConcChar : '-'
-    ,linkKeyConcChar : '_'
-    ,attrs: '_attrs'
-    ,styles: '_styles'
-    ,key: '_key'
+    domain_width : 1,
+    domain_height : 1,
+    nodeKeyConcChar : '-',
+    linkKeyConcChar : '_',
+    attrs: '_attrs',
+    styles: '_styles',
+    key: '_key',
+    iterated: '_iterated'
   }
 
   gvis.settings = gvis.utils.extend(gvis.settings || {}, settings);
-  
+
 }).call(this)

@@ -41,11 +41,9 @@
 
     _this.graph = new gvis.graph();
     _this.layouts = new gvis.layouts(_this.graph);
-    _this.events = {};
-
+    //_this.events = {};
     _this.behaviors = gvis.behaviors;
-    
-    _this.renderer = new gvis.renders(_this);   
+    _this.renderer = new gvis.renders(_this);
   }
 
   this.gvis = gvis;

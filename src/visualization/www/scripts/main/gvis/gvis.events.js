@@ -43,23 +43,7 @@
           d.preSelected = d.selected = true;
         })
 
-        _svg.g_svg.selectAll('.node')
-        .each(function(d) {
-          if (d.selected) {
-            d3.select(this)
-            .select('.node_background_circle')
-            .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokOpacity)
-            .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokWidth)
-            .attr('stroke', 'red')
-          }
-          else {
-            d3.select(this)
-            .select('.node_background_circle')
-            .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
-            .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
-            .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)   
-          }
-        })        
+        _svg.updateSelectedNodes();       
       }
     }
 
@@ -104,6 +88,8 @@
         .each(function(d) {
           d.preSelected = d.selected = true;
         })
+
+        _svg.updateSelectedLinks();
 
         _svg.g_svg
         .selectAll('.link')

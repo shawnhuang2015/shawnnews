@@ -48,7 +48,10 @@
 
   gvis.prototype.render = function() {
     var _this = this.scope;
-    _this.layouts.random();
+
+    //_this.layouts.random();
+    _this.layouts.tree();
+
     _this.renderer.update();
     _this.renderer.autoFit();
   }

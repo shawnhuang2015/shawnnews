@@ -10,14 +10,122 @@
   console.log('Loading gvis.layouts')
 
   gvis.layouts = function(graph) {
-    this.graph = graph;
+    this._graph = graph;
+    this._tree = {};
+    this._rootNodeKey = '';
+
+    this.addLayout('random', function() {
+      graph.data().array.nodes.forEach(function(n) {
+        n.x = Math.random();
+        n.y = Math.random();
+      })
+    });
+
+
+    this.addLayout('tree', function() {
+      this.createTree();
+
+      var rootNode = this._graph.nodes(this._rootNodeKey);
+      rootNode.x = gvis.settings.domain_width / 2.0;
+      rootNode.y = 0
+
+      var tree = d3.layout.tree()
+      .size([1, 1])
+      .separation(function(a, b) {
+        return (a.parent == b.parent ? 1 : 2);
+      })
+      .nodes(this._tree)
+
+      tree.forEach(function(node) {
+        node.node.x = node.x;
+        node.node.y = node.y;
+      })
+
+    });
   }
 
-  gvis.layouts.prototype.random = function() {
-    this.graph.data().array.nodes.forEach(function(n) {
-      n.x = Math.random();
-      n.y = Math.random();
+  gvis.layouts.prototype.addLayout = function(layoutName, layoutFn) {
+    if ( typeof layoutName !== 'string' ||
+      typeof layoutFn !== 'function' ||
+      arguments.length !== 2) {
+      throw 'addLayout: Wrong arguments.'
+    }
+
+    if (this[layoutName]) {
+      throw 'layout ' + layoutName + ' already exists.'  
+    }
+
+    this[layoutName] = layoutFn;
+
+    return this;
+  }
+
+  gvis.layouts.prototype.createTree = function() {
+    if (this._rootNodeKey === '' || !this._rootNodeKey) {
+      this._rootNodeKey = this._graph.nodes()[0][gvis.settings.key];
+    }
+
+    this._graph.nodes().forEach(function(node) {
+      node[gvis.settings.iterated] = false;
     })
+
+    var rootNode = this._graph.nodes(this._rootNodeKey);
+    rootNode[gvis.settings.iterated] = true;
+
+    this._tree = {"children":[], "node":rootNode}
+
+    function iterateTree (parents, depth) {
+      depth += 1;
+
+      var _graph = this._graph;
+
+      var nextDepthParents = []
+
+      parents.forEach(function(parent) {
+        var outlinks = _graph.outgoingLinks(parent.node[gvis.settings.key]);
+        var inlinks = _graph.incomingLinks(parent.node[gvis.settings.key]);
+
+        for (var key in outlinks) {
+          var node = outlinks[key][Object.keys(outlinks[key])[0]].target || {};
+          if (!node[gvis.settings.iterated]) {
+            node[gvis.settings.iterated] = true;
+
+            var treeNode = {"children":[], "node":node, "depth":depth};
+            parent.children.push(treeNode);
+            nextDepthParents.push(treeNode);
+          }
+        }
+
+        for (var key in inlinks) {
+          var node = inlinks[key][Object.keys(inlinks[key])[0]].source || {};
+          if (!node[gvis.settings.iterated]) {
+            node[gvis.settings.iterated] = true;
+
+            var treeNode = {"children":[], "node":node, "depth":depth};
+            parent.children.push(treeNode);
+            nextDepthParents.push(treeNode);
+          }
+        }
+      })
+
+      if (!nextDepthParents.length) {
+        return;
+      }
+      
+      iterateTree.call(this, nextDepthParents, depth);
+    }
+
+    iterateTree.call(this, [this._tree], 0)
+  }
+
+  gvis.layouts.prototype.setRootNode = function(type, id) {
+    try {
+      var node = this.graph.nodes(type, id);
+      this.rootNodeKey = node[gvis.settings.key]
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
 
   gvis.layouts.prototype.force = function() {

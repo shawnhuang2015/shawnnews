@@ -17,8 +17,8 @@
     this.render_container = _this.conf.container;
     this.render_type = !_this.conf.render_type ? 'svg' : _this.conf.render_type;    
 
-    this.domain_width = 1;
-    this.domain_height = 1;
+    this.domain_width = gvis.settings.domain_width;
+    this.domain_height = gvis.settings.domain_height;
 
     this.range_width = +d3.select('#'+this.render_container).style('width').slice(0, -2);
     this.range_height = +d3.select('#'+this.render_container).style('height').slice(0, -2);
@@ -627,7 +627,7 @@
       .attr('width', bbox.width)
       .attr('height', bbox.height)
       .attr('fill', '#9ecae1')
-      .attr('opacity', 1)
+      .attr('fill-opacity', 0.5)
       .attr('stroke', gvis.behaviors.render.highlightColor)
       .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokWidth/2.0)
       .attr('stroke-opacity', 0)
@@ -985,6 +985,49 @@
     // tell the zoomer what we did so that next we zoom, it uses the
     // transformation we entered here
     this.zoom.translate([x_trans, y_trans]);
+  }
+
+  gvis.renders.svg.prototype.updateSelectedNodes = function() {
+
+    this.g_svg.selectAll('.node')
+    .each(function(d) {
+      if (d.selected) {
+        d3.select(this)
+        .select('.node_background_circle')
+        .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokOpacity)
+        .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokWidth)
+        .attr('stroke', 'red')
+      }
+      else {
+        d3.select(this)
+        .select('.node_background_circle')
+        .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+        .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
+        .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)   
+      }
+    }) 
+  }
+
+  gvis.renders.svg.prototype.updateSelectedLinks = function() {
+
+    this.g_svg
+    .selectAll('.link')
+    .each(function(d) {
+      if (d.selected) {
+        d3.select(this).select('.link_line_background')
+        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+
+        d3.select(this).select('.label_background_rect')
+        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+      }
+      else {
+        d3.select(this).select('.link_line_background')
+        .attr('stroke-opacity', 0)
+
+        d3.select(this).select('.label_background_rect')
+        .attr('stroke-opacity', 0)
+      }
+    })   
   }
 
 
