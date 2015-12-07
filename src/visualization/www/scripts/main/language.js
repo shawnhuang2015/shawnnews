@@ -1,3 +1,9 @@
+/******************************************************************************
+ * Copyright (c) 2015, GraphSQL Inc.                                          *
+ * All rights reserved                                                        *
+ * Unauthorized copying of this file, via any medium is strictly prohibited   *
+ * Proprietary and confidential                                               *
+ ******************************************************************************/
 var language = "default"; // "default", "english", "chinese".
 //var language = "default"; // "default", "english", "chinese".
 

@@ -1,3 +1,9 @@
+/******************************************************************************
+ * Copyright (c) 2015, GraphSQL Inc.                                          *
+ * All rights reserved                                                        *
+ * Unauthorized copying of this file, via any medium is strictly prohibited   *
+ * Proprietary and confidential                                               *
+ ******************************************************************************/
 (function(undefined) {
   "use strict";
   // Doing something for behaviors for nodes and links by using customized configuration. Such as style structure, pre definition of the style base on attributes.
@@ -46,4 +52,3 @@
     }
   }
 
-}).call(this)
