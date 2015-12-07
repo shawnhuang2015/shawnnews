@@ -397,6 +397,25 @@
       .attr('fill', 'red')
       .attr('opacity', 0.2)
       
+      $(node[0][0]).tipsy({ 
+        gravity: 'w',  // n s e w
+        html: true,
+        title: function() {
+          var d = this.__data__;
+          var template = '<span style="color:{{color}}">{{key}}</span>:{{value}}<br />'; 
+
+          var result = '';
+
+          result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'id', value:d.id});
+          result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'type', value:d.type})
+
+          for (var key in d[gvis.settings.attrs]) {
+            result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key, value:d[gvis.settings.attrs][key]})
+          }
+          
+          return result;
+        }
+      });
     })
   }
 
@@ -506,7 +525,8 @@
 
       var link = d3.select(l)
                  .append('g')
-                 .classed('link_container', true)
+                 .classed('link_container', true);
+
 
       var data = link.data()[0]
 
@@ -533,6 +553,7 @@
 
       path.append('defs')
       .append("marker")
+      .classed('link_marker', true)
       .attr("id", "link_marker_"+data[gvis.settings.key])
       .attr("markerWidth", "10")
       .attr("markerHeight", "10")
@@ -541,11 +562,25 @@
       .attr("orient", "auto")
       .attr("fill", 'black')
       .attr("markerUnits", "userSpaceOnUse") // User for "strokeWidth"
-      .attr("stroke-width", "3px")
+      .attr("stroke-width", 3)
       .html('<path d="M0,0 L0,6 L7,3 L0,0"/>')
 
       path.append('path')
-      .attr("id", 'link_path_'+data[gvis.settings.key])
+      .classed('link_line_background', true)
+      .attr("id", 'link_line_background_'+data[gvis.settings.key])
+      .attr("fill", 'transparent')
+      .attr("stroke", 'red')
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", gvis.behaviors.render.linkHighlightStrokWidth)
+      .attr("stroke-opacity", 0)
+      .attr("d", function(d) {
+        var line = d3.svg.line().interpolate("basis");
+        return line(points);
+      })
+
+      path.append('path')
+      .classed('link_line', true)
+      .attr("id", 'link_line_'+data[gvis.settings.key])
       .attr("fill", 'transparent')
       .attr("stroke", 'black')
       .attr("stroke-width", 1)
@@ -562,8 +597,9 @@
       var label = link.append('g')
       .attr('id', 'label_' + data[gvis.settings.key])
       .attr("transform", function(d) { 
-        return "translate(" + x + "," + y + ")"; 
+        return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
       })
+      .on('click', _svg.events.linkClick)
 
 
       label.attr('display', display);
@@ -619,7 +655,16 @@
         y = 0.5 * points[1][1] + 0.5 * points[2][1];
       }
 
-      link.select('#link_path_'+data[gvis.settings.key])
+      link.select('#link_line_'+data[gvis.settings.key])
+      .transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var line = d3.svg.line().interpolate("basis");
+        
+        return line(points);
+      })
+
+      link.select('#link_line_background_'+data[gvis.settings.key])
       .transition()
       .duration(duration)
       .attr("d", function(d) {
@@ -632,7 +677,7 @@
       .transition()
       .duration(duration)
       .attr("transform", function(d) { 
-        return "translate(" + x + "," + y + ")"; 
+        return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
       })
 
       label.attr('display', display);

@@ -36,12 +36,13 @@
 
   */
   gvis.utils.applyTemplate = function (template, objects) {
+    var result = ''
     for (var key in objects) {
       value = objects[key]
-      template = template.replace(new RegExp("{{"+key+"}}", "g"), value)
+      result = template.replace(new RegExp("{{"+key+"}}", "g"), value)
     }
     
-    return template;
+    return result;
   }
 
   /**

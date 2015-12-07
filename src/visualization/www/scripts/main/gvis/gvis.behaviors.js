@@ -25,6 +25,11 @@
 
     nodeLabelsFontSize : 15,
     linkLabelsFontSize : 13,
+
+    nodeHighlightStrokWidth : 5,
+    nodeHighlightStrokOpacity : 0.5,
+    linkHighlightStrokWidth : 5,
+    linkHighlightStrokOpacity : 0.5
   }
 
   gvis.behaviors.icons = {

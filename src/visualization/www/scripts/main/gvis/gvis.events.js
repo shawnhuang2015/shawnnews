@@ -15,6 +15,7 @@
 
     var currentKey;
 
+    //mouse down events.
     this.dragstarted = function() {
       d3.event.sourceEvent.stopPropagation();
       d3.select(this).classed("dragging", true);
@@ -30,19 +31,29 @@
         .each(function(d) {
           d.preSelected = d.selected = false;
         })
-        .select('.node_background_circle')
-        .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
-        .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
-        .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)
 
         d3.select(this)
         .each(function(d) {
           d.preSelected = d.selected = true;
         })
-        .select('.node_background_circle')
-        .attr('stroke-opacity', 1)
-        .attr('stroke-width', 3)
-        .attr('stroke', 'red')
+
+        _svg.g_svg.selectAll('.node')
+        .each(function(d) {
+          if (d.selected) {
+            d3.select(this)
+            .select('.node_background_circle')
+            .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokOpacity)
+            .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokWidth)
+            .attr('stroke', 'red')
+          }
+          else {
+            d3.select(this)
+            .select('.node_background_circle')
+            .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+            .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
+            .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)   
+          }
+        })        
       }
     }
 
@@ -68,6 +79,39 @@
 
     this.dragended = function() {
       d3.select(this).classed("dragging", false);
+    }
+
+    this.linkClick = function(d) {
+      if (shiftKey) {
+
+      }
+      else if(altKey) {
+
+      }
+      else {
+        _svg.g_svg.selectAll('.link')
+        .each(function(d) {
+          d.preSelected = d.selected = false;
+        })
+
+        d3.select(this)
+        .each(function(d) {
+          d.preSelected = d.selected = true;
+        })
+
+        _svg.g_svg
+        .selectAll('.link_path')
+        .each(function(d) {
+          if (d.selected) {
+            d3.select(this).select('.link_line_background')
+            .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+          }
+          else {
+            d3.select(this).select('.link_line_background')
+            .attr('stroke-opacity', 0)
+          }
+        })        
+      }
     }
 
     this.brushstart = function() {
