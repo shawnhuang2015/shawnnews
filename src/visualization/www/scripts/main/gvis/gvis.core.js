@@ -41,31 +41,47 @@
 
   gvis.prototype.read = function(data) {
     var _this = this.scope;
+
     _this.graph.read(data);
+    _this.layouts.random();
 
     console.log(_this.graph.data())
+
+    return this
+  }
+
+  gvis.prototype.layout = function(layoutName) {
+    var _this = this.scope;
+    //_this.layouts.random();
+    //_this.layouts.runLayout('tree');
+    //_this.layouts.runLayout('circle');
+    _this.layouts.runLayout(layoutName);
+
+    return this
   }
 
   gvis.prototype.render = function() {
     var _this = this.scope;
 
-    //_this.layouts.random();
-    _this.layouts.tree();
-
     _this.renderer.update();
     _this.renderer.autoFit();
+
+    return this
   }
 
-  gvis.prototype.update = function(duration) {
+  gvis.prototype.update = function(duration, delay) {
     var _this = this.scope
-    _this.renderer.update(duration);
+
+    _this.renderer.update(duration, delay);
+
+    return this
   }
 
   gvis.prototype.test = function() {
     var _this = this.scope;
 
-    _this.graph.addNode({id:0,type:0});
-    _this.graph.addNode.call(window, {id:0,type:0});
+    _this.graph.addNode({id:'0',type:'0'});
+    _this.graph.addNode.call(window, {id:'0',type:'0'});
   }
 }).call(this)
   

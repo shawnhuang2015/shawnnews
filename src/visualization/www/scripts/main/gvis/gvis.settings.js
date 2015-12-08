@@ -17,7 +17,8 @@
     attrs: '_attrs',
     styles: '_styles',
     key: '_key',
-    iterated: '_iterated'
+    iterated: '_iterated',
+    children: '_children'
   }
 
   gvis.settings = gvis.utils.extend(gvis.settings || {}, settings);

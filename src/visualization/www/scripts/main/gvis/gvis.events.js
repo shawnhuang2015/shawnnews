@@ -21,7 +21,7 @@
 
     var currentKey;
 
-    //mouse down events.
+    //node mouse down events.
     this.dragstarted = function() {
       d3.event.sourceEvent.stopPropagation();
       d3.select(this).classed("dragging", true);
@@ -43,7 +43,14 @@
           d.preSelected = d.selected = true;
         })
 
-        _svg.updateSelectedNodes();       
+        _svg.updateSelectedNodes();      
+
+        _svg.g_svg.selectAll('.link')
+        .each(function(d) {
+          d.preSelected = d.selected = d.source.selected || d.target.selected;
+        })
+
+        _svg.updateSelectedLinks();
       }
     }
 
@@ -89,26 +96,7 @@
           d.preSelected = d.selected = true;
         })
 
-        _svg.updateSelectedLinks();
-
-        _svg.g_svg
-        .selectAll('.link')
-        .each(function(d) {
-          if (d.selected) {
-            d3.select(this).select('.link_line_background')
-            .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
-
-            d3.select(this).select('.label_background_rect')
-            .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
-          }
-          else {
-            d3.select(this).select('.link_line_background')
-            .attr('stroke-opacity', 0)
-
-            d3.select(this).select('.label_background_rect')
-            .attr('stroke-opacity', 0)
-          }
-        })        
+        _svg.updateSelectedLinks();      
       }
     }
 
@@ -156,6 +144,63 @@
       // key 'c'
       else if (d3.event.keyCode == 67) {
         _svg.centerView(500);
+      }
+      // key 'r'
+      else if (d3.event.keyCode == 82) {
+
+        _svg.g_svg
+        .selectAll('.node')
+        .each(function(d) {
+          if (d.selected) {
+            _svg.renders._this.layouts.setRootNode(d.type, d.id);
+          }
+
+          return d.selected;
+        })
+
+        _svg.renders._this.layouts.runLayout();
+        _svg.update()
+        _svg.autoFit(500)
+      }
+      // key 'd'
+      else if (d3.event.keyCode == 68) {
+        _svg.g_svg
+        .selectAll('.node')
+        .each(function(d) {
+          if (d.selected) {
+            _svg.renders._this.graph.dropNode(d.type, d.id);
+          }
+
+          return d.selected;
+        })
+
+        _svg.renders._this.layouts.runLayout();
+        _svg.update()
+        .autoFit(500)
+      }
+      // key '1'
+      else if (d3.event.keyCode == 49) {
+        _svg.renders._this.layouts.runLayout('circle');
+        _svg.update()
+        _svg.autoFit(500)
+      }
+      // key '2'
+      else if (d3.event.keyCode == 50) {
+        _svg.renders._this.layouts.runLayout('tree');
+        _svg.update()
+        _svg.autoFit(500)
+      }
+      // key '3'
+      else if (d3.event.keyCode == 51) {
+        _svg.renders._this.layouts.runLayout('DFStree');
+        _svg.update()
+        _svg.autoFit(500)        
+      }
+      // key '4'
+      else if (d3.event.keyCode == 52) {
+        _svg.renders._this.layouts.runLayout('circle');
+        _svg.update()
+        _svg.autoFit(500)       
       }
 
     }

@@ -29,16 +29,22 @@
       nodes: {
         usr: {
           a1:true,
-          a2:true,
-          id:true,
-          type:true
+          id:true
+        },
+        movie: {
+          a2:true
         }
       },
       links: {
         bbb: {
           aa1:true,
-          aa2:true,
           type:true
+        },
+        bbc: {
+          type:false
+        },
+        ccb: {
+          aa1:true
         }
       }
     }
@@ -145,13 +151,21 @@
     }
   }
 
-  gvis.renders.prototype.update = function(duration) {
-    this.renderer.update(duration);
+  gvis.renders.prototype.update = function(duration, delay) {
+    duration = duration || 500;
+    delay = delay || 0;
+
+    this.renderer.update(duration, delay);
+
+    return this;
   }
 
-  gvis.renders.prototype.autoFit = function() {
-    var duration = 500;
-    this.renderer.autoFit(duration);
+  gvis.renders.prototype.autoFit = function(duration, delay) {
+    duration = duration || 500;
+    delay = delay || 0;
+    this.renderer.autoFit(duration, delay);
+
+    return this
   }
 
 
@@ -246,10 +260,11 @@
 
     this.g_legends = g_legends
 
-    this.update = function(duration) {
+    this.update = function(duration, delay) {
       console.log('render.svg.update ' + container_id)
 
-      duration = duration != undefined ? duration : 500;
+      duration = duration || 500;
+      delay = delay || 0;
 
       this.renders.range_width = +d3.select(container_id).style('width').slice(0, -2);
       this.renders.range_height = +d3.select(container_id).style('height').slice(0, -2);
@@ -315,9 +330,13 @@
       // entering elements; so, operations on the update selection after appending to
       // the enter selection will apply to both entering and updating nodes.
       // Updating current elements
-      d_links.call(this.updateLinkRenderer, this, duration)
-      d_nodes.call(this.updateNodeRenderer, this, duration);
-      d_legends.call(this.updateLegendRenderer, this, duration);
+      d_links.call(this.updateLinkRenderer, this, duration, delay)
+      d_nodes.call(this.updateNodeRenderer, this, duration, delay);
+      d_legends.call(this.updateLegendRenderer, this, duration, delay);
+
+
+      // remove tipsy
+      d3.selectAll('.tipsy').remove();
     }   
   }
 
@@ -431,6 +450,7 @@
     var nodes = arguments[0];
     var _svg = arguments[1];
     var duration = arguments[2] || 0;
+    var delay = arguments[3] || 0;
 
     nodes[0].forEach(function(n) {
       if (!n) {
@@ -443,6 +463,7 @@
       node
       .select('.node_container')
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr("transform", function(d) { 
         return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
@@ -468,6 +489,7 @@
       //label.insert('rect', '#label_' + data[gvis.settings.key])
       node.select('.label_background_rect')
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr('x', bbox.x)
       .attr('y', bbox.y)
@@ -638,6 +660,7 @@
     var links = arguments[0]
     var _svg = arguments[1];
     var duration = arguments[2] || 0;
+    var delay = arguments[3] || 0;
 
     links[0].forEach(function(l) {
       if (!l) {
@@ -667,6 +690,7 @@
 
       link.select('#link_line_'+data[gvis.settings.key])
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
@@ -676,6 +700,7 @@
 
       link.select('#link_line_background_'+data[gvis.settings.key])
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
@@ -685,6 +710,7 @@
 
       var label = link.select('#label_'+data[gvis.settings.key])
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr("transform", function(d) { 
         return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
@@ -705,6 +731,7 @@
       //label.insert('rect', '#label_' + data[gvis.settings.key])
       link.select('.label_background_rect')
       .transition()
+      .delay(delay)
       .duration(duration)
       .attr('x', bbox.x)
       .attr('y', bbox.y)
@@ -834,6 +861,7 @@
     var legends = arguments[0] 
     var _svg = arguments[1];
     var duration = arguments[2] || 0
+    var delay = arguments[3] || 0
 
     legends[0].forEach(function(l, i) {
         if (!l) {
@@ -846,6 +874,7 @@
         legend
         .select('.legend_container')
         .transition()
+        .delay(delay)
         .duration(duration)
         .attr("transform", function(d) {
           return "translate(" + gvis.behaviors.render.legendNodeRadius + "," + (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*(1+i*2) + ")"; 
@@ -892,8 +921,9 @@
     })
   }
 
-  gvis.renders.svg.prototype.autoFit = function(duration) {
+  gvis.renders.svg.prototype.autoFit = function(duration, delay) {
     duration = duration || 0;
+    delay = delay || 0;
 
     var nodes = this.renders.graph.data().array.nodes;
     var width = this.renders.domain_width;
@@ -921,7 +951,7 @@
 
     // we need to fit it in both directions, so we scale according to
     // the direction in which we need to shrink the most
-    var min_ratio = Math.min(width_ratio, height_ratio) * 0.85;
+    var min_ratio = Math.min(width_ratio, height_ratio) * 0.75;
     if (min_ratio > this.renders.zoomRange[1]) min_ratio = this.renders.zoomRange[1];
     if (min_ratio < this.renders.zoomRange[0]) min_ratio = this.renders.zoomRange[0];
 
@@ -936,6 +966,7 @@
     // do the actual moving
     this.g_zoomer
     .transition()
+    .delay(delay)
     .duration(duration)
     .attr("transform", "translate(" + [this.renders.xScale(x_trans), this.renders.yScale(y_trans)] + ")" + " scale(" + min_ratio + ")");
 
@@ -945,9 +976,10 @@
     this.zoom.scale(min_ratio);
   }
 
-  gvis.renders.svg.prototype.centerView = function(duration) {
+  gvis.renders.svg.prototype.centerView = function(duration, delay) {
 
     duration = duration || 0;
+    delay = delay || 0
 
     var xMass=0;
     var yMass=0;
@@ -979,6 +1011,7 @@
 
     this.g_zoomer
     .transition()
+    .delay(delay)
     .duration(duration)
     .attr("transform", "translate(" + [x_trans, y_trans] + ")" + " scale(" + scale + ")");
 

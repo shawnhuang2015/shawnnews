@@ -67,9 +67,10 @@ require([], function(){
   //   test.addLink(data.links[link]);
   // }
 
-  test.read(data);
-
-  test.render();
+  test
+  .read(data)
+  .layout('random')
+  .render()
 
   window.addEventListener('resize', function() {
     console.log('resizing')
