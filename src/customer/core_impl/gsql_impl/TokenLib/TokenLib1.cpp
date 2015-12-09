@@ -216,6 +216,14 @@ extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen) {
   return compareStrIgnoreCase(token, trueString);
 }
 
+extern "C" int64_t gsql_to_int(const char* const iToken, uint32_t iTokenLen) {
+  return (int64_t) atof(std::string(iToken, iTokenLen).c_str());
+}
+
+extern "C" uint64_t gsql_to_uint(const char* const iToken, uint32_t iTokenLen) {
+  return (uint64_t) atof(std::string(iToken, iTokenLen).c_str());
+}
+
 extern "C" uint64_t gsql_current_time_epoch(const char* const iToken, uint32_t iTokenLen) {
     return time(0);
 }
