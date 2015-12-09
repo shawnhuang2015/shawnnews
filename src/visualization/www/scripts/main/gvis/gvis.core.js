@@ -52,10 +52,16 @@
 
   gvis.prototype.layout = function(layoutName) {
     var _this = this.scope;
-    //_this.layouts.random();
-    //_this.layouts.runLayout('tree');
-    //_this.layouts.runLayout('circle');
+
     _this.layouts.runLayout(layoutName);
+
+    return this
+  }
+
+  gvis.prototype.addLayout = function(layoutName, Fn) {
+    var _this = this.scope;
+
+    _this.layouts.addLayout(layoutName, Fn);
 
     return this
   }

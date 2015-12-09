@@ -50,7 +50,7 @@ require([], function(){
   };
 
 
-  d3.select('#prototype1').style('height', $(window).height()/2+'px');
+  d3.select('#prototype1').style('height', ($(window).height()-220)+'px');
 
   this.test = new gvis({
     configure: config,
@@ -69,12 +69,31 @@ require([], function(){
 
   test
   .read(data)
-  .layout('random')
+  .addLayout('cluster', function() {
+      var size = this.createTreeBFS();
+
+      var rootNode = this._graph.nodes(this._rootNodeKey);
+      rootNode.x = gvis.settings.domain_width / 2.0;
+      rootNode.y = gvis.settings.domain_height / 2.0;
+
+      var layoutNodes = d3.layout.cluster()
+      .size([size[0] * gvis.settings.domain_width / 4.0, size[1] * gvis.settings.domain_height / 4.0])
+      .separation(function(a, b) {
+        return (a.parent == b.parent ? 1 : 2) / a.depth / a.depth;
+      })
+      .nodes(this._tree)
+
+      layoutNodes.forEach(function(node) {
+        node.node.x = node.x
+        node.node.y = node.y
+      })
+    })
+  .layout('cluster')
   .render()
 
   window.addEventListener('resize', function() {
     console.log('resizing')
-    d3.select('#prototype1').style('height', $(window).height()/2+'px');
+    d3.select('#prototype1').style('height', $(window).height()-220+'px');
     test.update(0);
   });
 });

@@ -198,7 +198,13 @@
       }
       // key '4'
       else if (d3.event.keyCode == 52) {
-        _svg.renders._this.layouts.runLayout('circle');
+        _svg.renders._this.layouts.runLayout('cluster');
+        _svg.update()
+        _svg.autoFit(500)       
+      }
+      //key '5'
+      else if (d3.event.keyCode == 53) {
+        _svg.renders._this.layouts.runLayout('treemap');
         _svg.update()
         _svg.autoFit(500)       
       }

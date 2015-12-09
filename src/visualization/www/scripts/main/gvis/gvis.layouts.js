@@ -44,6 +44,23 @@
       })
     });
 
+    this.addLayout('treemap', function() {
+      var size = this.createTreeBFS();
+
+      var rootNode = this._graph.nodes(this._rootNodeKey);
+      rootNode.x = gvis.settings.domain_width / 2.0;
+      rootNode.y = 0
+
+      var treeNodes = d3.layout.treemap().value(function(d) {return 1*d.children.length;})
+      .size([size[0] * gvis.settings.domain_width / 4.0, size[1] * gvis.settings.domain_height / 4.0])
+      .nodes(this._tree)
+
+      treeNodes.forEach(function(node) {
+        node.node.x = !node.parent ? 0 : node.parent.node.x + node.parent.dx * 0.3
+        node.node.y = !node.parent ? 0 : node.parent.node.y + node.y - node.parent.y + node.dy * 0.5
+      })
+    });
+
     this.addLayout('DFStree', function() {
       var size = this.createTreeDFS();
 
@@ -66,7 +83,6 @@
 
     this.addLayout('circle', function() {
       var size = this.createTreeBFS();
-      console.log(size);
 
       var rootNode = this._graph.nodes(this._rootNodeKey);
       rootNode.x = gvis.settings.domain_width / 2.0;
@@ -83,6 +99,21 @@
         var position = gvis.utils.rotate(0, 0, node.y, 0, node.x-Math.PI/2.0)
         node.node.x = position[0];
         node.node.y = position[1];
+      })
+    })
+
+    this.addLayout('moreLayoutIfNeeded', function() {
+      var size = this.createTreeBFS();
+
+      var rootNode = this._graph.nodes(this._rootNodeKey);
+      rootNode.x = gvis.settings.domain_width / 2.0;
+      rootNode.y = 0
+
+      var treeNodes = [];
+
+      treeNodes.forEach(function(node) {
+        node.node.x = node.x;
+        node.node.y = node.y;
       })
     })
   }
@@ -107,15 +138,12 @@
     layoutName = layoutName ||  this._layoutName;
     this._layoutName = layoutName;
 
-    try {
-      if (!this[layoutName]) {
-        this.tree();
-        throw 'layout ' + layoutName + ' does not exist.'  
-      }
-      this[layoutName]();
+    if (!this[layoutName]) {
+      this.tree();
+      throw 'layout ' + layoutName + ' does not exist.'  
     }
-    catch (err){
-      console.log(err);
+    else {
+      this[layoutName]();
     }
   }
 
@@ -135,7 +163,7 @@
     var rootNode = this._graph.nodes(this._rootNodeKey);
     rootNode[gvis.settings.iterated] = true;
 
-    this._tree = {"children":[], "node":rootNode};
+    this._tree = {"children":[], "node":rootNode, "depth":0};
     rootNode[gvis.settings.children] = [];
 
     function iterateTree (parents, depth) {
@@ -191,7 +219,7 @@
 
     iterateTree.call(this, [this._tree], 0)
 
-    console.log([maxWidth-1, maxDepth-1])
+    //console.log([maxWidth-1, maxDepth-1])
     return [maxWidth-1, maxDepth-1] 
   }
 
@@ -267,7 +295,7 @@
 
     iterateTree.call(this, [this._tree], 0)
 
-    console.log([maxWidth-1, maxDepth-1])
+    //console.log([maxWidth-1, maxDepth-1])
     return [maxWidth-1, maxDepth-1] 
   }
 

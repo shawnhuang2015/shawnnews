@@ -261,7 +261,7 @@
     this.g_legends = g_legends
 
     this.update = function(duration, delay) {
-      console.log('render.svg.update ' + container_id)
+      //console.log('render.svg.update ' + container_id)
 
       duration = duration || 500;
       delay = delay || 0;
