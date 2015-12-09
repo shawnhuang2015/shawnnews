@@ -70,24 +70,24 @@ require([], function(){
   test
   .read(data)
   .addLayout('cluster', function() {
-      var size = this.createTreeBFS();
+    var size = this.createTreeBFS();
 
-      var rootNode = this._graph.nodes(this._rootNodeKey);
-      rootNode.x = gvis.settings.domain_width / 2.0;
-      rootNode.y = gvis.settings.domain_height / 2.0;
+    var rootNode = this._graph.nodes(this._rootNodeKey);
+    rootNode.x = gvis.settings.domain_width / 2.0;
+    rootNode.y = gvis.settings.domain_height / 2.0;
 
-      var layoutNodes = d3.layout.cluster()
-      .size([size[0] * gvis.settings.domain_width / 4.0, size[1] * gvis.settings.domain_height / 4.0])
-      .separation(function(a, b) {
-        return (a.parent == b.parent ? 1 : 2) / a.depth / a.depth;
-      })
-      .nodes(this._tree)
-
-      layoutNodes.forEach(function(node) {
-        node.node.x = node.x
-        node.node.y = node.y
-      })
+    var layoutNodes = d3.layout.cluster()
+    .size([size[0] * gvis.settings.domain_width / 4.0, size[1] * gvis.settings.domain_height / 4.0])
+    .separation(function(a, b) {
+      return (a.parent == b.parent ? 1 : 2) / a.depth / a.depth;
     })
+    .nodes(this._tree)
+
+    layoutNodes.forEach(function(node) {
+      node.node.x = node.x
+      node.node.y = node.y
+    })
+  })
   .layout('cluster')
   .render()
 

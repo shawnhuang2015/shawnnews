@@ -38,7 +38,9 @@
       links: {
         bbb: {
           aa1:true,
-          type:true
+          type:true,
+          aa1:true,
+          aa2:true
         },
         bbc: {
           type:false
