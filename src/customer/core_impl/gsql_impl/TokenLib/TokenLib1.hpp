@@ -156,7 +156,8 @@ extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen);
  * @par  Example
  *       load "source_file" to vertex v values ($0, $1, gsql_to_int($2));
  */
-extern "C" int64_t gsql_to_int(const char* const iToken, uint32_t iTokenLen);
+//TODO: uncomment after upgrade to 4.3.3 
+//extern "C" int64_t gsql_to_int(const char* const iToken, uint32_t iTokenLen);
 
 /**
  * This function converts a string to unsigned int64. Apply implicit conversion from double to int
