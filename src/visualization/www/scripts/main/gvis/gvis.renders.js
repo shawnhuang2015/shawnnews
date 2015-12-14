@@ -152,6 +152,8 @@
       var end = new Date().getTime();
       var time = end - start;
 
+      renderFunction();
+
       var myRender = setInterval(renderFunction, between_delay);
 
       function renderFunction() {

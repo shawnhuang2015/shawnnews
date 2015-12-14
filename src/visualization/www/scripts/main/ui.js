@@ -128,7 +128,7 @@ require([], function(){
     return result;
   })
 
-  test.render(5000, 1000);
+  test.render(3000, 500);
 
   window.addEventListener('resize', function() {
     console.log('resizing')
