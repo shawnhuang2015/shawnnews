@@ -69,7 +69,11 @@ require([], function(){
 
   test
   .read(data)
-  .addLayout('cluster', function() {
+  //.layout('tree')
+  .layout('force')
+  //.render()
+
+  test.addLayout('cluster', function() {
     var size = this.createTreeBFS();
 
     var rootNode = this._graph.nodes(this._rootNodeKey);
@@ -88,8 +92,6 @@ require([], function(){
       node.node.y = node.y
     })
   })
-  .layout('cluster')
-  .render()
 
 
   test.showNodeLabel('tag', '1', ['type', 'a1', 'a2', 'asdf']);
@@ -101,7 +103,7 @@ require([], function(){
   test.setNodeToolTipFormat(function(type, id, attrs) {
     var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
 
-    var result = '';
+    var result = '<span style="color:#ff0000">Node</span><br />';
 
     result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type + '-' + id});
 
@@ -115,7 +117,7 @@ require([], function(){
   test.setLinkToolTipFormat(function(type, attrs) {
     var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
 
-    var result = '';
+    var result = '<span style="color:#ff0000">Link</span><br />';
 
     result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type});
 
@@ -126,7 +128,7 @@ require([], function(){
     return result;
   })
 
-  test.render();
+  test.render(5000, 1000);
 
   window.addEventListener('resize', function() {
     console.log('resizing')

@@ -9,15 +9,23 @@
   // Doing somthing for layouts
   console.log('Loading gvis.layouts')
 
-  gvis.layouts = function(graph) {
-    this._graph = graph;
+  var force = d3.layout.force()
+  .gravity(.1)
+  .distance(0.005)
+  .charge(-0.02)
+  .size([1, 1]);
+
+  gvis.layouts = function(_this) {
+    this._this = _this;
+
+    this._graph = _this.graph;
     this._tree = {};
     this._rootNodeKey = '';
 
     this._layoutName = 'random';
 
     this.addLayout('random', function() {
-      graph.data().array.nodes.forEach(function(n) {
+      this._graph.data().array.nodes.forEach(function(n) {
         n.x = Math.random();
         n.y = Math.random();
       })
@@ -134,16 +142,31 @@
     return this;
   }
 
+  gvis.layouts.prototype.setLayout = function(layoutName) {
+    layoutName = layoutName ||  this._layoutName;
+    this._layoutName = layoutName;
+  }
+
   gvis.layouts.prototype.runLayout = function(layoutName) {
     layoutName = layoutName ||  this._layoutName;
     this._layoutName = layoutName;
 
     if (!this[layoutName]) {
-      this.tree();
+      return this.tree();
       throw 'layout ' + layoutName + ' does not exist.'  
     }
     else {
-      this[layoutName]();
+      return this[layoutName]();
+    }
+  }
+
+  gvis.layouts.prototype.runLayoutIteratively = function(duration) {
+    if (!this[this._layoutName]) {
+      return this.tree();
+      throw 'layout ' + layoutName + ' does not exist.'  
+    }
+    else {
+      return this[this._layoutName](duration);
     }
   }
 
@@ -309,21 +332,28 @@
     }
   }
 
-  // gvis.layouts.prototype.force = function() {
-  //   var force = d3.layout.force()
-  //   .nodes(this.graph.data().array.nodes)
-  //   .links(this.graph.data().array.links)
-  //   .size([1, 1])
-  //   .linkStrength(0.1)
-  //   .friction(0.9)
-  //   .linkDistance(0.1)
-  //   .charge(-30)
-  //   .gravity(0.1)
-  //   .theta(0.8)
-  //   .alpha(0.1)
+  gvis.layouts.prototype.force = function(duration) {
 
-  //   force.start();
-  //   for (var i = 0; i < 20; ++i) force.tick();
-  //   force.stop();
-  // }
+    var _this = this;
+
+    force
+    .nodes(this._graph.nodes())
+    .links(this._graph.links())
+
+    var start = new Date().getTime();
+    var end = new Date().getTime();
+    var time = end - start;
+
+    force.start();
+
+    while (time < duration) {
+      end = new Date().getTime();
+      time = end - start;
+      force.tick();
+    }
+
+    force.stop();
+
+    return false;
+  }
 }).call(this)

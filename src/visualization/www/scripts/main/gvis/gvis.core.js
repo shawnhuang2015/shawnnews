@@ -53,7 +53,7 @@
   gvis.prototype.layout = function(layoutName) {
     var _this = this.scope;
 
-    _this.layouts.runLayout(layoutName);
+    _this.layouts.setLayout(layoutName);
 
     return this
   }
@@ -66,12 +66,15 @@
     return this
   }
 
-  gvis.prototype.render = function() {
+  gvis.prototype.render = function(total_time, between_delay, init_delay) {
     var _this = this.scope;
 
-    _this.renderer.update();
-    _this.renderer.autoFit();
-
+    total_time = total_time || 1000;
+    between_delay = between_delay || 500;
+    init_delay = init_delay || 0;
+    
+    _this.renderer.render(total_time, between_delay, init_delay);
+    
     return this
   }
 
@@ -87,6 +90,10 @@
     var _this = this.scope;
 
     var node = _this.graph.nodes(type, id)
+
+    for (var key in node[gvis.settings.styles].labels) {
+      node[gvis.settings.styles].labels[key] = false;
+    }
 
     for (var i in labels) {
       var label = labels[i];
@@ -114,10 +121,45 @@
     return this;
   }
 
+  gvis.prototype.hideNodeLabel = function(type, id, labels) {
+    var _this = this.scope;
+
+    var node = _this.graph.nodes(type, id)
+
+    for (var i in labels) {
+      var label = labels[i];
+
+      node[gvis.settings.styles].labels[label] = false;
+    }
+
+    return this;
+  }
+
+  gvis.prototype.hideNodeLabelByType = function(type, labels) {
+
+    var _this = this.scope;
+
+    var nodes = _this.graph.nodes();
+
+    for (var i in nodes) {
+      var node = nodes[i];
+
+      if (node.type == type) {
+        this.hideNodeLabel(node.type, node.id, labels);
+      }
+    }
+
+    return this;
+  }
+
   gvis.prototype.showLinkLabel = function(sourceType, sourceID, targetType, targetID, linkType, labels) {
     var _this = this.scope;
 
     var link = _this.graph.links(sourceType, sourceID, targetType, targetID, linkType);
+
+    for (var key in link[gvis.settings.styles].labels) {
+      link[gvis.settings.styles].labels[key] = false;
+    }
 
     for (var i in labels) {
       var label = labels[i];
@@ -136,6 +178,32 @@
 
       if (link.type == linkType) {
         this.showLinkLabel(link.source.type, link.source.id, link.target.type, link.target.id, link.type, labels);
+      }
+    }
+  }
+
+  gvis.prototype.hideLinkLabel = function(sourceType, sourceID, targetType, targetID, linkType, labels) {
+    var _this = this.scope;
+
+    var link = _this.graph.links(sourceType, sourceID, targetType, targetID, linkType);
+
+    for (var i in labels) {
+      var label = labels[i];
+
+      link[gvis.settings.styles].labels[label] = false;
+    }
+  }
+
+  gvis.prototype.hideLinkLabelByType = function(linkType, labels) {
+    var _this = this.scope;
+
+    var links = _this.graph.links();
+
+    for (var i in links) {
+      var link = links[i];
+
+      if (link.type == linkType) {
+        this.hideLinkLabel(link.source.type, link.source.id, link.target.type, link.target.id, link.type, labels);
       }
     }
   }

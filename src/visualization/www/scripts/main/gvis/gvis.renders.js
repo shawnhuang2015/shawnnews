@@ -76,7 +76,7 @@
       i = Object.keys(graph.neighbors.out[source_key][target_key]).indexOf(link_key)
 
       if (n == 0 || i == -1) {
-        return ;
+        return [];
       }
       else if (n == 2) {
         // customize two line case.
@@ -142,6 +142,33 @@
     this.renderer.autoFit(duration, delay);
 
     return this
+  }
+
+  gvis.renders.prototype.render = function(total_time, between_delay, init_delay) {
+    var _this = this;
+
+    setTimeout(function() {
+      var start = new Date().getTime();
+      var end = new Date().getTime();
+      var time = end - start;
+
+      var myRender = setInterval(renderFunction, between_delay);
+
+      function renderFunction() {
+        var converged = _this._this.layouts.runLayoutIteratively(between_delay*0.2);
+
+        _this.update(between_delay*0.8);
+        _this.autoFit(500, between_delay*0.8);
+
+        end = new Date().getTime();
+        time = end - start;
+
+        if (!!converged || time > total_time) {
+          window.clearInterval(myRender);
+          _this.autoFit();
+        }
+      }
+    }, init_delay);
   }
 
 
@@ -590,14 +617,20 @@
       // base on points to determing whether show the links.
       if (points.length == 0) {
         display = 'none';
-        x = _svg.renders.xScale(0.5 * data.source.x+ 0.5 * data.target.x);
-        y = _svg.renders.yScale(0.5 * data.source.y+ 0.5 * data.target.y);
+
+        var x0 = _svg.renders.xScale(data.source.x)
+        var y0 = _svg.renders.yScale(data.source.y)
+        var x1 = _svg.renders.xScale(data.target.x)
+        var y1 = _svg.renders.yScale(data.target.y)
+        
+        points = [[x0, y0], [x0, y0], [x1, y1], [x1, y1]]
       } 
       else {
         display = '';
-        x = 0.5 * points[1][0] + 0.5 * points[2][0];
-        y = 0.5 * points[1][1] + 0.5 * points[2][1];
       }
+
+      x = 0.5 * points[1][0] + 0.5 * points[2][0];
+      y = 0.5 * points[1][1] + 0.5 * points[2][1];
 
       path.append('defs')
       .append("marker")
@@ -651,7 +684,7 @@
         return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
       })
 
-      label.attr('display', display);
+      link.attr('display', display);
 
       var text = label.append('text')
       .attr('id', 'label_text_' + data[gvis.settings.key])
@@ -715,14 +748,20 @@
 
       if (points.length == 0) {
         display = 'none';
-        x = _svg.renders.xScale(0.5 * data.source.x+ 0.5 * data.target.x);
-        y = _svg.renders.yScale(0.5 * data.source.y+ 0.5 * data.target.y);
+
+        var x0 = _svg.renders.xScale(data.source.x)
+        var y0 = _svg.renders.yScale(data.source.y)
+        var x1 = _svg.renders.xScale(data.target.x)
+        var y1 = _svg.renders.yScale(data.target.y)
+        
+        points = [[x0, y0], [x0, y0], [x1, y1], [x1, y1]]
       } 
       else {
         display = '';
-        x = 0.5 * points[1][0] + 0.5 * points[2][0];
-        y = 0.5 * points[1][1] + 0.5 * points[2][1];
       }
+
+      x = 0.5 * points[1][0] + 0.5 * points[2][0];
+      y = 0.5 * points[1][1] + 0.5 * points[2][1];
 
       link.select('#link_line_'+data[gvis.settings.key])
       .transition()
@@ -752,7 +791,7 @@
         return "translate(" + x + "," + (y-gvis.behaviors.render.linkLabelsFontSize) + ")"; 
       })
 
-      label.attr('display', display);
+      link.attr('display', display);
 
       var text = link.select('#label_text_' + data[gvis.settings.key]);
 

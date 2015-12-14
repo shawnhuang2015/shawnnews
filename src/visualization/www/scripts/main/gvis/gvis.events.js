@@ -174,9 +174,8 @@
           return d.selected;
         })
 
-        _svg.renders._this.layouts.runLayout();
         _svg.update()
-        .autoFit(500)
+        _svg.autoFit(500)
       }
       // key '1'
       else if (d3.event.keyCode == 49) {
@@ -204,9 +203,8 @@
       }
       //key '5'
       else if (d3.event.keyCode == 53) {
-        _svg.renders._this.layouts.runLayout('treemap');
-        _svg.update()
-        _svg.autoFit(500)       
+        _svg.renders._this.layouts.setLayout('force');
+        _svg.renders.render(5000, 1000);  
       }
 
     }
