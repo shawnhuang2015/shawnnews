@@ -26,6 +26,9 @@
     nodeBackgroundStrokeOpacity : 0.5,
     nodeBackgroundStrokeWidth : 0.3,
 
+    nodeBackgroundFilter : 'black-glow', // black-glow, glow, shadow
+    linkBackgroundFilter : 'shadow',
+
     legendNodeRadius : 15,
     legendNodeRadiusMargin : 3,
 
@@ -45,12 +48,70 @@
     movie : 'movie'
   }
 
-  gvis.behaviors.labels = {
-    node : {
+  gvis.behaviors.style = gvis.behaviors.style || {};
+
+  gvis.behaviors.style.node = {
+    labels : {
 
     },
-    link : {
+    fill : gvis.behaviors.render.nodeBackgroundFillColor
 
+  }
+
+  gvis.behaviors.style.link = {
+    labels : {
+
+    },
+    "stroke-dasharray":  "5 5"
+
+  }
+
+  gvis.behaviors.style.initializeNode = function(node) {
+    for (var key in gvis.behaviors.style.node) {
+      node[gvis.settings.styles][key] = node[gvis.settings.styles][key] || gvis.utils.clone(gvis.behaviors.style.node[key]);
     }
+  }
+
+
+  gvis.behaviors.style.initializeLink = function(link) {
+    for (var key in gvis.behaviors.style.link) {
+      link[gvis.settings.styles][key] = link[gvis.settings.styles][key] || gvis.utils.clone(gvis.behaviors.style.link[key]);
+    }
+  }
+
+  gvis.behaviors.style.nodeToolTips = {
+    'default' : function(type, id, attrs) {
+      var template = '<span style="color:{{color}}">{{key}}</span>:{{value}}<br />'; 
+
+      var result = '';
+
+      result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'id', value:type});
+      result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'type', value:id})
+
+      for (var key in attrs) {
+        result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key, value:attrs[key]})
+      }
+      
+      return result;
+    },
+    'customized' : undefined
+  } 
+
+  gvis.behaviors.style.linkToolTips = {
+    'default' : function(type, attrs) {
+      var template = '<span style="color:{{color}}">{{key}}</span>:{{value}}<br />'; 
+
+      var result = '';
+
+      //result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'id', value:d.id});
+      result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'type', value:type})
+
+      for (var key in attrs) {
+        result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key, value:attrs[key]})
+      }
+      
+      return result;
+    },
+    'customized' : undefined
   }
 }).call(this)

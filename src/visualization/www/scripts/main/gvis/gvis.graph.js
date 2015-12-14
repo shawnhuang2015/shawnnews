@@ -89,6 +89,8 @@
 
       node = gvis.utils.clone(node);
 
+      gvis.behaviors.style.initializeNode(node);
+
       //1. do the id map.
       var in_id;
       var in_type;
@@ -163,6 +165,8 @@
       }
 
       link = gvis.utils.clone(link);
+
+      gvis.behaviors.style.initializeLink(link);
 
       // 1. check vaildation of new link. a) check node id map for exist node. b) update link id map. c) 
       var ex_source_type = link.source.type;

@@ -83,6 +83,75 @@
     return this
   }
 
+  gvis.prototype.showNodeLabel = function(type, id, labels) {
+    var _this = this.scope;
+
+    var node = _this.graph.nodes(type, id)
+
+    for (var i in labels) {
+      var label = labels[i];
+
+      node[gvis.settings.styles].labels[label] = true;
+    }
+
+    return this;
+  }
+
+  gvis.prototype.showNodeLabelByType = function(type, labels) {
+
+    var _this = this.scope;
+
+    var nodes = _this.graph.nodes();
+
+    for (var i in nodes) {
+      var node = nodes[i];
+
+      if (node.type == type) {
+        this.showNodeLabel(node.type, node.id, labels);
+      }
+    }
+
+    return this;
+  }
+
+  gvis.prototype.showLinkLabel = function(sourceType, sourceID, targetType, targetID, linkType, labels) {
+    var _this = this.scope;
+
+    var link = _this.graph.links(sourceType, sourceID, targetType, targetID, linkType);
+
+    for (var i in labels) {
+      var label = labels[i];
+
+      link[gvis.settings.styles].labels[label] = true;
+    }
+  }
+
+  gvis.prototype.showLinkLabelByType = function(linkType, labels) {
+    var _this = this.scope;
+
+    var links = _this.graph.links();
+
+    for (var i in links) {
+      var link = links[i];
+
+      if (link.type == linkType) {
+        this.showLinkLabel(link.source.type, link.source.id, link.target.type, link.target.id, link.type, labels);
+      }
+    }
+  }
+
+  gvis.prototype.setNodeToolTipFormat = function(fn) {
+    gvis.behaviors.style.nodeToolTips.customized = fn;
+
+    return this
+  }
+
+  gvis.prototype.setLinkToolTipFormat = function(fn) {
+    gvis.behaviors.style.linkToolTips.customized = fn;
+
+    return this
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 

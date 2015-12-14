@@ -25,32 +25,6 @@
 
     this.zoomRange = [0.1, 10];
 
-    this.labels = {
-      nodes: {
-        usr: {
-          a1:true,
-          id:true
-        },
-        movie: {
-          a2:true
-        }
-      },
-      links: {
-        bbb: {
-          aa1:true,
-          type:true,
-          aa1:true,
-          aa2:true
-        },
-        bbc: {
-          type:false
-        },
-        ccb: {
-          aa1:true
-        }
-      }
-    }
-
     this.xScale = d3.scale.linear()
     .domain([0, this.domain_width])
     .range([0, this.range_width]);
@@ -213,12 +187,59 @@
     .call(this.zoom)
     .on("dblclick.zoom", null);
 
-    svg.append("defs").append("svg:clipPath")
+    var defs = svg.append("defs");
+
+    defs.append("svg:clipPath")
     .attr("id", "node-mask")
     .append("svg:circle")
     .attr("r", gvis.behaviors.render.nodeMaskRadius-1)
     .attr("cx", 0)
     .attr("cy", 0);
+
+    defs.append('g')
+    .attr('id', 'filter_group')
+    .html(function(){
+      return '\
+        <!-- a transparent grey drop-shadow that blends with the background colour -->\
+        <filter id="filter_shadow" width="1.5" height="1.5" x="-.25" y="-.25">\
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="blur"/>\
+            <feColorMatrix result="bluralpha" type="matrix" values=\
+                    "1 0 0 0   0\
+                     0 1 0 0   0\
+                     0 0 1 0   0\
+                     0 0 0 0.4 0 "/>\
+            <feOffset in="bluralpha" dx="3" dy="3" result="offsetBlur"/>\
+            <feMerge>\
+                <feMergeNode in="offsetBlur"/>\
+                <feMergeNode in="SourceGraphic"/>\
+            </feMerge>\
+        </filter>\
+        \
+        <!-- a transparent grey glow with no offset -->\
+        <filter id="filter_black-glow">\
+            <feColorMatrix type="matrix" values=\
+                        "0 0 0 0   0\
+                         0 0 0 0   0\
+                         0 0 0 0   0\
+                         0 0 0 0.7 0"/>\
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>\
+            <feMerge>\
+                <feMergeNode in="coloredBlur"/>\
+                <feMergeNode in="SourceGraphic"/>\
+            </feMerge>\
+        </filter>\
+        \
+        <!-- a transparent glow that takes on the colour of the object it\'s applied to -->\
+        <filter id="filter_glow">\
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>\
+            <feMerge>\
+                <feMergeNode in="coloredBlur"/>\
+                <feMergeNode in="SourceGraphic"/>\
+            </feMerge>\
+        </filter>\
+        '
+    })
+
 
     svg.append('rect')
     .classed('background_rect', true) 
@@ -374,6 +395,7 @@
       .attr('fill', gvis.behaviors.render.nodeBackgroundFillColor)
       .attr('fill-opacity', gvis.behaviors.render.nodeBackgroundFillOpacity)
       .attr('r', gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)
+      .attr('filter', 'url(#filter_'+gvis.behaviors.render.nodeBackgroundFilter+')')
 
       // add node icon
       var icon = gvis.utils.icons(gvis.behaviors.icons[data.type]);
@@ -398,7 +420,9 @@
       .classed('icon', true)
       .html(icon.svg)
       .attr('transform', 'matrix('+matrix+')')
-      .attr('fill', 'green')
+      .attr('fill', function(d) {
+        return d[gvis.settings.styles].fill
+      })
 
       var label = node
                   .append('g')
@@ -431,18 +455,13 @@
         html: true,
         title: function() {
           var d = this.__data__;
-          var template = '<span style="color:{{color}}">{{key}}</span>:{{value}}<br />'; 
 
-          var result = '';
-
-          result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'id', value:d.id});
-          result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'type', value:d.type})
-
-          for (var key in d[gvis.settings.attrs]) {
-            result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key, value:d[gvis.settings.attrs][key]})
+          if (!!gvis.behaviors.style.nodeToolTips.customized) {
+            return gvis.behaviors.style.nodeToolTips.customized(d.type, d.id, d[gvis.settings.attrs], d);
           }
-          
-          return result;
+          else {
+            return gvis.behaviors.style.nodeToolTips.default(d.type, d.id, d[gvis.settings.attrs], d);
+          }
         }
       });
     })
@@ -500,7 +519,8 @@
     })
 
     function nodeLabelGenerator(target, data) {
-      var labels = _svg.renders.labels.nodes[data.type];
+      //var labels = _svg.renders.labels.nodes[data.type];
+      var labels = data[gvis.settings.styles].labels || {};
 
       d3.select(target).selectAll('tspan').remove();
 
@@ -528,18 +548,13 @@
           .text('ID:'+data.id)
         }
 
-        for (var attr in labels) {
-          if (attr == 'type' || attr == 'id') {
-            continue;
-          }
-          else {
-            if (labels[attr]) {
-              d3.select(target)
-              .append("tspan")
-              .attr("x", 0)
-              .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
-              .text(attr+':'+data[gvis.settings.attrs][attr])
-            }
+        for (var attr in data[gvis.settings.attrs]) {
+          if (!!labels[attr]) {
+            d3.select(target)
+            .append("tspan")
+            .attr("x", 0)
+            .attr("dy", gvis.behaviors.render.nodeLabelsFontSize)
+            .text(attr+':'+data[gvis.settings.attrs][attr])
           }
         }
       }
@@ -618,13 +633,16 @@
       .attr("stroke", 'black')
       .attr("stroke-width", 1)
       .attr("stroke-linecap", "round")
-      .attr("stroke-dasharray", "5 5")
+      .attr("stroke-dasharray", function(d) {
+        return d[gvis.settings.styles]['stroke-dasharray'];
+      })
       .attr("opacity", 0.8)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
         return line(points);
       })
-      .attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
+      .attr("marker-end", "url(#link_marker_"+data[gvis.settings.key] + ")")
+      //.attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
 
       // adding labels for links
       var label = link.append('g')
@@ -655,6 +673,22 @@
       .attr('stroke', gvis.behaviors.render.highlightColor)
       .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokWidth/2.0)
       .attr('stroke-opacity', 0)
+      //.attr('filter', 'url(#filter_'+gvis.behaviors.render.linkBackgroundFilter+')')
+
+      $(label[0][0]).tipsy({ 
+        gravity: 'w',  // n s e w
+        html: true,
+        title: function() {
+          var d = this.__data__;
+
+          if (!!gvis.behaviors.style.linkToolTips.customized) {
+            return gvis.behaviors.style.linkToolTips.customized(d.type, d[gvis.settings.attrs], d);
+          }
+          else {
+            return gvis.behaviors.style.linkToolTips.default(d.type, d[gvis.settings.attrs], d);
+          }
+        }
+      });
     })
   }
 
@@ -742,7 +776,9 @@
     })
 
     function linkLabelGenerator(target, data) {
-      var labels = _svg.renders.labels.links[data.type];
+      //var labels = _svg.renders.labels.links[data.type];
+
+      var labels = data[gvis.settings.styles].labels || {};
 
       d3.select(target).selectAll('tspan').remove();
 
@@ -762,18 +798,14 @@
           .text('Type:'+data.type)
         }
 
-        for (var attr in labels) {
-          if (attr == 'type') {
-            continue;
-          }
-          else {
-            if (labels[attr]) {
-              d3.select(target)
-              .append("tspan")
-              .attr("x", 0)
-              .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
-              .text(attr+':'+data[gvis.settings.attrs][attr])
-            }
+        for (var attr in data[gvis.settings.attrs]) {
+
+          if (!!labels[attr]) {
+            d3.select(target)
+            .append("tspan")
+            .attr("x", 0)
+            .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
+            .text(attr+':'+data[gvis.settings.attrs][attr])
           }
         }
       }
@@ -1032,13 +1064,15 @@
         .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokOpacity)
         .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokWidth)
         .attr('stroke', 'red')
+        .attr('filter', 'url(#filter_glow)')
       }
       else {
         d3.select(this)
         .select('.node_background_circle')
         .attr('stroke-opacity', gvis.behaviors.render.nodeBackgroundStrokeOpacity)
         .attr('stroke-width', gvis.behaviors.render.nodeBackgroundStrokeWidth)
-        .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)   
+        .attr('stroke', gvis.behaviors.render.nodeBackgroundStrokeColor)
+        .attr('filter', 'url(#filter_'+gvis.behaviors.render.nodeBackgroundFilter+')')
       }
     }) 
   }
@@ -1054,6 +1088,7 @@
 
         d3.select(this).select('.label_background_rect')
         .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+        //.attr('filter', 'url(#filter_glow)')
       }
       else {
         d3.select(this).select('.link_line_background')
@@ -1061,6 +1096,7 @@
 
         d3.select(this).select('.label_background_rect')
         .attr('stroke-opacity', 0)
+        //.attr('filter', 'url(#filter_'+gvis.behaviors.render.linkBackgroundFilter+')')
       }
     })   
   }

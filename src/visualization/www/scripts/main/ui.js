@@ -91,6 +91,43 @@ require([], function(){
   .layout('cluster')
   .render()
 
+
+  test.showNodeLabel('tag', '1', ['type', 'a1', 'a2', 'asdf']);
+  test.showNodeLabelByType('usr', ['id', 'a1', 'a2']);
+
+  test.showLinkLabel('tag', '4', 'movie', '11', 'bbs', ['type', 'aa1', 'aa2']);
+  test.showLinkLabelByType('bbc', ['aa1', 'aa2', '11123']);
+
+  test.setNodeToolTipFormat(function(type, id, attrs) {
+    var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
+
+    var result = '';
+
+    result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type + '-' + id});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key+':', value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  test.setLinkToolTipFormat(function(type, attrs) {
+    var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
+
+    var result = '';
+
+    result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key+':', value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  test.render();
+
   window.addEventListener('resize', function() {
     console.log('resizing')
     d3.select('#prototype1').style('height', $(window).height()-220+'px');
