@@ -35,12 +35,14 @@
     nodeLabelsFontSize : 15,
     linkLabelsFontSize : 13,
 
-
     highlightColor : '#ff0000',
-    nodeHighlightStrokWidth : 5,
-    nodeHighlightStrokOpacity : 0.6,
-    linkHighlightStrokWidth : 5,
-    linkHighlightStrokOpacity : 0.6
+    nodeHighlightStrokeWidth : 5,
+    nodeHighlightStrokeOpacity : 0.6,
+    linkHighlightStrokeWidth : 5,
+    linkHighlightStrokeOpacity : 0.6,
+
+    linkStrokeWidth : 2,
+    linkStrokeOpacity : 0.7
   }
 
   gvis.behaviors.icons = {
@@ -62,7 +64,7 @@
     labels : {
 
     },
-    "stroke-dasharray":  "5 5"
+    "stroke-dasharray":  [0.5, 0.5]
 
   }
 

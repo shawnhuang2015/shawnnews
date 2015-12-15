@@ -646,15 +646,23 @@
       .append("marker")
       .classed('link_marker', true)
       .attr("id", "link_marker_"+data[gvis.settings.key])
-      .attr("markerWidth", "10")
-      .attr("markerHeight", "10")
-      .attr("refX", 5)
-      .attr("refY", 3)
-      .attr("orient", "auto")
-      .attr("fill", 'black')
-      .attr("markerUnits", "userSpaceOnUse") // User for "strokeWidth"
-      .attr("stroke-width", 3)
-      .html('<path d="M0,0 L0,6 L7,3 L0,0"/>')
+      .each(function(d) {
+        var link_width = Math.sqrt(gvis.behaviors.render.linkStrokeWidth);
+
+        var template = '<path d="M0,0 L0,{{a}} L{{b}},{{c}} L0,0"/>';
+        var marker = gvis.utils.applyTemplate(template, {a:6*link_width, b:7*link_width, c:3*link_width});
+
+        d3.select(this)
+        .attr("markerWidth", 10*link_width)
+        .attr("markerHeight", 10*link_width)
+        .attr("refX", 5*link_width)
+        .attr("refY", 3*link_width)
+        .attr("orient", "auto")
+        .attr("fill", 'black')
+        .attr("markerUnits", "userSpaceOnUse") // User for "strokeWidth"
+        .attr("stroke-width", 3*link_width)
+        .html(marker)
+      })
 
       path.append('path')
       .classed('link_line_background', true)
@@ -662,7 +670,7 @@
       .attr("fill", 'none')
       .attr("stroke", gvis.behaviors.render.highlightColor)
       .attr("stroke-linecap", "round")
-      .attr("stroke-width", gvis.behaviors.render.linkHighlightStrokWidth)
+      .attr("stroke-width", gvis.behaviors.render.linkHighlightStrokeWidth)
       .attr("stroke-opacity", 0)
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
@@ -674,19 +682,32 @@
       .attr("id", 'link_line_'+data[gvis.settings.key])
       .attr("fill", 'none')
       .attr("stroke", 'black')
-      .attr("stroke-width", 1)
+      .attr("stroke-width", function(d) {
+        var width = d[gvis.settings.styles]['stroke-width'] || gvis.behaviors.render.linkStrokeWidth;
+        return width;
+      })
       .attr("stroke-linecap", "round")
       .attr("stroke-dasharray", function(d) {
-        return d[gvis.settings.styles]['stroke-dasharray'];
+        if (!!d[gvis.settings.styles].dashed) {
+          var a = 5 * d[gvis.settings.styles]['stroke-dasharray'][0] * gvis.behaviors.render.linkStrokeWidth;
+          var b = 5 * d[gvis.settings.styles]['stroke-dasharray'][0] * gvis.behaviors.render.linkStrokeWidth;
+          return a + ' ' + b;
+        }
+        else {
+          return ""
+        }
       })
-      .attr("opacity", 0.8)
+      .attr("opacity", function(d) {
+        var opacity = d[gvis.settings.styles]['stroke-opacity'] || gvis.behaviors.render.linkStrokeOpacity;
+        return opacity;
+      })
       .attr("d", function(d) {
         var line = d3.svg.line().interpolate("basis");
         return line(points);
       })
       //.attr("marker-end", "url(#link_marker_"+data[gvis.settings.key] + ")")
       .attr("marker-mid", function(d) {
-        if (d.directed)
+        if (!!d.directed)
           return "url(#link_marker_"+data[gvis.settings.key] + ")"
         else 
           return "";
@@ -719,7 +740,7 @@
       .attr('fill', '#9ecae1')
       .attr('fill-opacity', 0.5)
       .attr('stroke', gvis.behaviors.render.highlightColor)
-      .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokWidth/2.0)
+      .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokeWidth/2.0)
       .attr('stroke-opacity', 0)
       //.attr('filter', 'url(#filter_'+gvis.behaviors.render.linkBackgroundFilter+')')
 
@@ -1128,8 +1149,8 @@
       if (d.selected) {
         d3.select(this)
         .select('.node_background_circle')
-        .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokOpacity)
-        .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokWidth)
+        .attr('stroke-opacity', gvis.behaviors.render.nodeHighlightStrokeOpacity)
+        .attr('stroke-width', gvis.behaviors.render.nodeHighlightStrokeWidth)
         .attr('stroke', 'red')
         .attr('filter', 'url(#filter_glow)')
       }
@@ -1151,10 +1172,10 @@
     .each(function(d) {
       if (d.selected) {
         d3.select(this).select('.link_line_background')
-        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokeOpacity)
 
         d3.select(this).select('.label_background_rect')
-        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokOpacity)
+        .attr('stroke-opacity', gvis.behaviors.render.linkHighlightStrokeOpacity)
         //.attr('filter', 'url(#filter_glow)')
       }
       else {
