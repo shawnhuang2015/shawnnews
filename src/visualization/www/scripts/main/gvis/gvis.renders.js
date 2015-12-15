@@ -54,8 +54,8 @@
     this.generateCurvedLinkPoints = function(link) {
       var a = 0.25;
       var b = gvis.behaviors.render.nodeRadius * 2; // initNodeSetting.r * 4;
-      var edgeMargin = gvis.behaviors.render.nodeRadius;
-      var markMargin = gvis.behaviors.render.nodeRadius / 10;
+      var edgeMargin = gvis.behaviors.render.nodeRadius * 1.2;
+      var markMargin = 0//gvis.behaviors.render.nodeRadius / 10;
 
       var C0 = [0, 0]
       var C1 = [0, 0]
@@ -684,8 +684,13 @@
         var line = d3.svg.line().interpolate("basis");
         return line(points);
       })
-      .attr("marker-end", "url(#link_marker_"+data[gvis.settings.key] + ")")
-      //.attr("style", "marker-end:url(#link_marker_"+data[gvis.settings.key] + ")")
+      //.attr("marker-end", "url(#link_marker_"+data[gvis.settings.key] + ")")
+      .attr("marker-mid", function(d) {
+        if (d.directed)
+          return "url(#link_marker_"+data[gvis.settings.key] + ")"
+        else 
+          return "";
+      })
 
       // adding labels for links
       var label = link.append('g')
@@ -1101,6 +1106,19 @@
     // tell the zoomer what we did so that next we zoom, it uses the
     // transformation we entered here
     this.zoom.translate([x_trans, y_trans]);
+  }
+
+  gvis.renders.svg.prototype.unselectAllElements = function() {
+    this.renders.graph.nodes().forEach(function(n) {
+      n.preSlected = n.selected = false;
+    })
+
+    this.renders.graph.links().forEach(function(n) {
+      n.preSlected = n.selected = false;
+    })
+
+    this.updateSelectedNodes();
+    this.updateSelectedLinks();
   }
 
   gvis.renders.svg.prototype.updateSelectedNodes = function() {

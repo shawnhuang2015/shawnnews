@@ -60,22 +60,30 @@
       }
     }
 
-    this.dragging = function(d) {
-      d.x += _svg.renders.xScale.invert(d3.event.dx);
-      d.y += _svg.renders.yScale.invert(d3.event.dy);
+    this.dragging = function(draggingNodeData) {
 
-      d3.select(this).attr("transform", function(d) { 
-        return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
+      var nodes = _svg.renders.graph.nodes().filter(function(d) {
+        return d.selected;
       })
 
-      var node_key = d[gvis.settings.key]
-      var graph = _svg.renders.graph.data();
+      for (var i in nodes) {
+        var d = nodes[i];
+        d.x += _svg.renders.xScale.invert(d3.event.dx);
+        d.y += _svg.renders.yScale.invert(d3.event.dy);
 
-      for (var other_key in graph.neighbors.all[node_key]) {
-        for (var link_key in graph.neighbors.all[node_key][other_key]) {
-          var link= d3.select('#link_'+link_key)
+        var node_key = d[gvis.settings.key]
+        var node = d3.select('#node_'+node_key);
 
-          _svg.updateLinkRenderer(link, _svg)
+        _svg.updateNodeRenderer(node, _svg)
+
+        var graph = _svg.renders.graph.data();
+
+        for (var other_key in graph.neighbors.all[node_key]) {
+          for (var link_key in graph.neighbors.all[node_key][other_key]) {
+            var link= d3.select('#link_'+link_key)
+
+            _svg.updateLinkRenderer(link, _svg)
+          }
         }
       }
     }
@@ -108,6 +116,7 @@
 
     this.brushstart = function() {
       console.log('brush start')
+      _svg.unselectAllElements();
     }
 
     this.brush = function() {
