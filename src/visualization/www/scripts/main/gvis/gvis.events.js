@@ -21,6 +21,12 @@
 
     var currentKey;
 
+    var handlers = {};
+
+    this.setEventHandler = function(eventName, fn) {
+      handlers[eventName] = fn;
+    }
+
     //node mouse down events.
     this.dragstarted = function() {
       d3.event.sourceEvent.stopPropagation();
@@ -106,10 +112,63 @@
 
     this.brush = function() {
       var extent = d3.event.target.extent();
-      console.log(extent[1]);
+      
+      var translate = _svg.zoom.translate();
+      var scale = _svg.zoom.scale();
+
+      translate[0] = _svg.renders.xScale.invert(translate[0] / scale)
+      translate[1] = _svg.renders.yScale.invert(translate[1] / scale)
+
+      extent[0][0] = extent[0][0] / scale - translate[0]
+      extent[0][1] = extent[0][1] / scale - translate[1]
+      extent[1][0] = extent[1][0] / scale - translate[0]
+      extent[1][1] = extent[1][1] / scale - translate[1]
+
+      _svg.g_svg.selectAll('.node')
+      .each(function(d) {
+        d.preSelected = d.selected = (extent[0][0] <= d.x && d.x < extent[1][0]
+                && extent[0][1] <= d.y && d.y < extent[1][1]);
+      })
+
+      _svg.updateSelectedNodes();      
     }
 
     this.brushend = function() {
+      _svg.g_svg.selectAll('.link')
+      .each(function(d) {
+        d.preSelected = d.selected = d.source.selected && d.target.selected;
+      })
+
+      _svg.updateSelectedLinks();
+
+      // var extent = d3.event.target.extent();
+      
+      // var translate = _svg.zoom.translate();
+      // var scale = _svg.zoom.scale();
+
+      // translate[0] = _svg.renders.xScale.invert(translate[0] / scale)
+      // translate[1] = _svg.renders.yScale.invert(translate[1] / scale)
+
+      // extent[0][0] = extent[0][0] / scale - translate[0]
+      // extent[0][1] = extent[0][1] / scale - translate[1]
+      // extent[1][0] = extent[1][0] / scale - translate[0]
+      // extent[1][1] = extent[1][1] / scale - translate[1]
+
+      var nodes = _svg.renders.graph.nodes().filter(function(d) {
+        return d.selected;
+      })
+
+      var links = _svg.renders.graph.links().filter(function(d) {
+        return d.selected;
+      })
+
+      if(!handlers['multiSelect']) {
+        console.log('multiSelect Events :')
+      }
+      else {
+        handlers['multiSelect'](nodes, links, _svg);
+      }
+
       d3.event.target.clear();
       d3.select(this).call(d3.event.target);
     }
@@ -251,6 +310,69 @@
 
       // d3.event.sourceEvent.stopPropagation();
       // console.log('zoomend')
+    }
+
+    this.nodeClick = function(d) {
+      var that = this;
+      var d = d;
+
+      setTimeout(function() {
+          var dblclick = parseInt($(that).data('doubleClickCount'), 10);
+
+          if (dblclick > 0) {
+              $(that).data('doubleClickCount', dblclick-1);
+          } else {
+            if(!handlers['nodeClick']) {
+              console.log('node click')
+            }
+            else {
+              handlers['nodeClick'](d, _svg);
+            }
+          }
+      }, 200);
+    }
+
+    this.nodeDblClick = function(d) {
+      $(this).data('doubleClickCount', 2);
+
+      if(!handlers['nodeDblClick']) {
+        console.log('node DblClick')
+      }
+      else {
+        handlers['nodeDblClick'](d, _svg);
+      }
+    }   
+
+    this.linkClick = function(d) {
+      var that = this;
+      var d = d;
+
+      setTimeout(function() {
+          var dblclick = parseInt($(that).data('doubleClickCount'), 10);
+
+          if (dblclick > 0) {
+              $(that).data('doubleClickCount', dblclick-1);
+          } else {
+            if(!handlers['linkClick']) {
+              console.log('linkClick')
+            }
+            else {
+              handlers['linkClick'](d, _svg);
+            }
+          }
+      }, 200);
+
+    }
+
+    this.linkDblClick = function(d) {
+      $(this).data('doubleClickCount', 2);
+
+      if(!handlers['linkDblClick']) {
+        console.log('link DblClick')
+      }
+      else {
+        handlers['linkDblClick'](d, _svg);
+      }
     }
   }
 }).call(this)

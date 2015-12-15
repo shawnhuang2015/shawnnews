@@ -222,6 +222,13 @@
     return this
   }
 
+  gvis.prototype.on = function(event, fn) {
+    var _this = this.scope;
+    _this.renderer.setEventHandler(event, fn);
+
+    return this;
+  }
+
   gvis.prototype.test = function() {
     var _this = this.scope;
 

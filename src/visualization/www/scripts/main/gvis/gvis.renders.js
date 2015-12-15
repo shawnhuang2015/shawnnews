@@ -47,6 +47,10 @@
       break;
     }
 
+    this.setEventHandler = function(eventName, fn) {
+      this.renderer.events.setEventHandler(eventName, fn)
+    }
+
     this.generateCurvedLinkPoints = function(link) {
       var a = 0.25;
       var b = gvis.behaviors.render.nodeRadius * 2; // initNodeSetting.r * 4;
@@ -410,6 +414,8 @@
       .attr("transform", function(d) {
         return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
       })
+      .on("dblclick", _svg.events.nodeDblClick)
+      .on("click", _svg.events.nodeClick)
       .call(_svg.drag)
 
       var data = node.data()[0];
@@ -602,6 +608,8 @@
       var link = d3.select(l)
                  .append('g')
                  .classed('link_container', true)
+                 .on("dblclick", _svg.events.linkDblClick)
+                 .on("click", _svg.events.linkClick)
                  .on('mousedown', _svg.events.linkmousedown)
 
 

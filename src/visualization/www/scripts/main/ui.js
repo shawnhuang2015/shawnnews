@@ -128,7 +128,24 @@ require([], function(){
     return result;
   })
 
-  test.render(3000, 500);
+  test.render(1000, 500);
+
+  test
+  .on('nodeClick', function(d, renderer) {
+    console.log('customized click', d, renderer)
+  })
+  .on('nodeDblClick', function(d, renderer) {
+    console.log('customized dblclick', d)
+  })
+  .on('linkClick', function(d, renderer) {
+    console.log('customized click', d)
+  })
+  .on('linkDblClick', function(d, renderer) {
+    console.log('customized dblclick', d)
+  })
+  .on('multiSelect', function(nodes, links, renderer) {
+    console.log('multiSelect : ', nodes.length, ',', links.length);
+  })
 
   window.addEventListener('resize', function() {
     console.log('resizing')
