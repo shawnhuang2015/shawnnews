@@ -105,8 +105,8 @@
 
       treeNodes.forEach(function(node) {
         var position = gvis.utils.rotate(0, 0, node.y, 0, node.x-Math.PI/2.0)
-        node.node.x = position[0];
-        node.node.y = position[1];
+        node.node.x = position[0] + gvis.settings.domain_width / 2.0;
+        node.node.y = position[1] + gvis.settings.domain_height / 2.0;
       })
     })
 

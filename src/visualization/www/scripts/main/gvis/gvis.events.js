@@ -86,10 +86,16 @@
           }
         }
       }
+
+            
+      // remove tipsy
+      d3.selectAll('.tipsy').remove();
     }
 
     this.dragended = function() {
       d3.select(this).classed("dragging", false);
+
+
     }
 
     this.linkmousedown = function(d) {
@@ -226,7 +232,7 @@
           return d.selected;
         })
 
-        _svg.renders.render(0, 0); 
+        _svg.renders.render(500, 500); 
       }
       // key 'd'
       else if (d3.event.keyCode == 68) {
@@ -240,29 +246,29 @@
           return d.selected;
         })
 
-        _svg.renders.render(500, 0); 
+        _svg.renders.render(500, 500); 
         // _svg.update()
         // _svg.autoFit(500)
       }
       // key '1'
       else if (d3.event.keyCode == 49) {
         _svg.renders._this.layouts.setLayout('circle');
-        _svg.renders.render(0, 0); 
+        _svg.renders.render(500, 500); 
       }
       // key '2'
       else if (d3.event.keyCode == 50) {
         _svg.renders._this.layouts.setLayout('tree');
-        _svg.renders.render(0, 0); 
+        _svg.renders.render(500, 500); 
       }
       // key '3'
       else if (d3.event.keyCode == 51) {
         _svg.renders._this.layouts.setLayout('DFStree');
-        _svg.renders.render(0, 0);      
+        _svg.renders.render(500, 500);      
       }
       // key '4'
       else if (d3.event.keyCode == 52) {
         _svg.renders._this.layouts.setLayout('cluster');
-        _svg.renders.render(0, 0);   
+        _svg.renders.render(500, 500);   
       }
       //key '5'
       else if (d3.event.keyCode == 53) {
@@ -308,6 +314,7 @@
       //d3.event.preventDefault();
 
       // console.log('zoomstart')
+
     }
 
     this.zoomed =  function() {

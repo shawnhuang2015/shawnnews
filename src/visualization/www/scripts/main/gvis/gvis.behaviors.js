@@ -35,19 +35,22 @@
     nodeLabelsFontSize : 15,
     linkLabelsFontSize : 13,
 
+    linkStrokeWidth : 1,
+    linkStrokeOpacity : 0.6,
+
     highlightColor : '#ff0000',
     nodeHighlightStrokeWidth : 5,
     nodeHighlightStrokeOpacity : 0.6,
     linkHighlightStrokeWidth : 5,
     linkHighlightStrokeOpacity : 0.6,
 
-    linkStrokeWidth : 2,
-    linkStrokeOpacity : 0.7
+
   }
 
   gvis.behaviors.icons = {
     usr : 'user',
-    movie : 'movie'
+    movie : 'card',
+    tag : 'bank'
   }
 
   gvis.behaviors.style = gvis.behaviors.style || {};

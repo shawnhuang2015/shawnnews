@@ -132,8 +132,8 @@
   }
 
   gvis.renders.prototype.update = function(duration, delay) {
-    duration = duration || 500;
-    delay = delay || 0;
+    duration = duration != undefined ? duration : 500;
+    delay = delay != undefined ? delay : 0;
 
     this.renderer.update(duration, delay);
 
@@ -141,8 +141,8 @@
   }
 
   gvis.renders.prototype.autoFit = function(duration, delay) {
-    duration = duration || 500;
-    delay = delay || 0;
+    duration = duration != undefined ? duration : 500;
+    delay = delay != undefined ? delay : 0;
     this.renderer.autoFit(duration, delay);
 
     return this
@@ -171,7 +171,6 @@
 
         if (!!converged || time > total_time) {
           window.clearInterval(myRender);
-          _this.autoFit();
         }
       }
     }, init_delay);
@@ -319,8 +318,8 @@
     this.update = function(duration, delay) {
       //console.log('render.svg.update ' + container_id)
 
-      duration = duration || 500;
-      delay = delay || 0;
+      duration = duration != undefined ? duration : 500;
+      delay = delay != undefined ? delay : 0;
 
       this.renders.range_width = +d3.select(container_id).style('width').slice(0, -2);
       this.renders.range_height = +d3.select(container_id).style('height').slice(0, -2);
@@ -1031,8 +1030,8 @@
   }
 
   gvis.renders.svg.prototype.autoFit = function(duration, delay) {
-    duration = duration || 0;
-    delay = delay || 0;
+    duration = duration != undefined ? duration : 0;
+    delay = delay != undefined ? delay : 0;
 
     var nodes = this.renders.graph.data().array.nodes;
     var width = this.renders.domain_width;
@@ -1087,8 +1086,8 @@
 
   gvis.renders.svg.prototype.centerView = function(duration, delay) {
 
-    duration = duration || 0;
-    delay = delay || 0
+    duration = duration != undefined ? duration : 0;
+    delay = delay != undefined ? delay : 0
 
     var xMass=0;
     var yMass=0;

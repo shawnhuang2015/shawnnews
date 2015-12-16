@@ -69,11 +69,12 @@
   gvis.prototype.render = function(total_time, between_delay, init_delay) {
     var _this = this.scope;
     
-    total_time = total_time || 1000;
-    between_delay = between_delay || 500;
-    init_delay = init_delay || 0;
+    total_time = total_time != undefined ? total_time : 500;
+    total_time = total_time >= 1000 ? total_time : 500;
 
-    _this.renderer.update(0, 0);
+    between_delay = between_delay != undefined ? between_delay : 500;
+
+    init_delay = init_delay != undefined ? init_delay : 0;444
     
     _this.renderer.render(total_time, between_delay, init_delay);
     

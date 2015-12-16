@@ -62,7 +62,7 @@ require.config({
             deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings', 'behaviors', 'renders', 'layouts', 'events'],
         },
         utils: {
-            deps: ['gvis']
+            deps: ['gvis', 'd3']
         },
 
         bootstrap:  {
