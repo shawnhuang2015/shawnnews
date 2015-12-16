@@ -81,11 +81,11 @@
             </button>
           </a>
           <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
-            <li>
+            <!-- <li>
               <a href="javascript:;" id="b_highlightingNodes" onclick="highlightingNodes()"><span id="highlighting_label_id"></span></a>
-            </li>
+            </li> -->
             <li >
-              <a href="javascript:;" onclick="hidingNodes()"><span id="delete_label_id"></span></a>
+              <a href="javascript:;" onclick="deleteNodes()"><span id="delete_label_id"></span></a>
             </li>
             <li>    
                <a href="javascript:;" id="colorpicker" data-color="rgb(255, 0, 0)">
@@ -194,7 +194,7 @@
             <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
               <li><a href="javascript:;" onclick="layoutChanged('force')"><span id="forcelayout_label_id"></span></a></li>
               <li><a href="javascript:;" onclick="layoutChanged('tree')"><span id="treelayout_label_id"></span></a></li>
-              <li><a href="javascript:;" onclick="layoutChanged('hierarchical')"><span id="hierarchicallayout_label_id"></span></a></li>
+              <li><a href="javascript:;" onclick="layoutChanged('cluster')"><span id="hierarchicallayout_label_id"></span></a></li>
               <li><a href="javascript:;" onclick="layoutChanged('circle')"><span id="circlelayout_label_id"></span></a></li>
             </ul>
           </div>

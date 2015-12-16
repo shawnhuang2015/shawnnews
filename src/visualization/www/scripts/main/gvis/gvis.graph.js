@@ -8,7 +8,9 @@
   "use strict";
   console.log('Loading gvis.graph')
 
-  gvis.graph = function() {
+  gvis.graph = function(_this) {
+
+    this._this = _this;
 
     var data;
     var _nodesIdCount = 0;
@@ -363,6 +365,11 @@
       }
 
       // end Remove the node from graph.
+
+      // if it is root node, pick the first node as root node.
+      if (this._this.layouts._rootNodeKey == key && this.nodes().length) {
+        this._this.layouts._rootNodeKey = this.nodes()[0][gvis.settings.key];
+      }
     }
 
     this.dropLink = function(source_type, source_id, target_type, target_id, link_type, remove_nodes) {

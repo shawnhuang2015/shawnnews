@@ -13,6 +13,7 @@
   gvis.behaviors = gvis.behaviors || {};
 
   gvis.behaviors.render = {
+    linkMarker : 'marker-end', // marker-mid marker-end
     viewportBackgroundColor : '#fafafa',
     viewportBackgroundOpacity : 1,
     
@@ -50,7 +51,13 @@
   gvis.behaviors.icons = {
     usr : 'user',
     movie : 'card',
-    tag : 'bank'
+    tag : 'bank',
+    phone : 'phone',    
+    bankcard : 'card',
+    user : 'user',
+    client : 'bank',
+    merchant : '',
+    transaction : 'transaction'
   }
 
   gvis.behaviors.style = gvis.behaviors.style || {};
@@ -59,7 +66,7 @@
     labels : {
 
     },
-    fill : gvis.behaviors.render.nodeBackgroundFillColor
+    fill : '#f00'
 
   }
 
@@ -67,12 +74,14 @@
     labels : {
 
     },
-    "stroke-dasharray":  [0.5, 0.5]
+    "stroke" : '#000',
+    "stroke-dasharray" :  [0.5, 0.5]
 
   }
 
   gvis.behaviors.style.initializeNode = function(node) {
     for (var key in gvis.behaviors.style.node) {
+      node[gvis.settings.styles] = node[gvis.settings.styles] || {};
       node[gvis.settings.styles][key] = node[gvis.settings.styles][key] || gvis.utils.clone(gvis.behaviors.style.node[key]);
     }
   }
@@ -80,6 +89,7 @@
 
   gvis.behaviors.style.initializeLink = function(link) {
     for (var key in gvis.behaviors.style.link) {
+      link[gvis.settings.styles] = link[gvis.settings.styles] || {};
       link[gvis.settings.styles][key] = link[gvis.settings.styles][key] || gvis.utils.clone(gvis.behaviors.style.link[key]);
     }
   }

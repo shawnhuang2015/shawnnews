@@ -88,7 +88,7 @@ require(['gsqlv'], function(){
         var key = $(this).val();
         var type = "";
 
-         if ($(this).parent().is('select')) {
+        if ($(this).parent().is('select')) {
           type = "__key"
           key = key;
         }

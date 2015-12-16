@@ -39,9 +39,9 @@
     _this.settings = gvis.settings;
     _this.conf = conf;
 
-    _this.graph = new gvis.graph();
+    _this.graph = new gvis.graph(_this);
     _this.layouts = new gvis.layouts(_this);
-    
+
     //_this.events = {};
 
     _this.behaviors = gvis.behaviors;

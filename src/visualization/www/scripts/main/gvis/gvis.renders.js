@@ -151,6 +151,11 @@
   gvis.renders.prototype.render = function(total_time, between_delay, init_delay) {
     var _this = this;
 
+    if (!this.graph.nodes().length) {
+      this.update(); 
+      return;
+    }
+
     setTimeout(function() {
       var start = new Date().getTime();
       var end = new Date().getTime();
@@ -174,6 +179,10 @@
         }
       }
     }, init_delay);
+  }
+
+  gvis.renders.prototype.clear = function() {
+    this.renderer.clear();
   }
 
 
@@ -395,6 +404,12 @@
     }   
   }
 
+  gvis.renders.svg.prototype.clear = function() {
+    this.g_links.selectAll('*').remove();
+    this.g_nodes.selectAll('*').remove();
+    this.g_legends.selectAll('*').remove();
+  }
+
   gvis.renders.svg.prototype.addNodeRenderer = function() {
     //console.log("addNodeRenderer", this, arguments)
 
@@ -527,6 +542,13 @@
       // get data
       var data = node.data()[0];
 
+
+      // update icon
+      node.select('.icon')
+      .attr('fill', function(d) {
+        return d[gvis.settings.styles].fill
+      })
+
       // select label
       var text = node.select('#label_' + data[gvis.settings.key])
 
@@ -638,6 +660,13 @@
         display = '';
       }
 
+      // if (points[0][0] == points[1][0] &&  points[1][0] == points[2][0] && points[2][0] == points[3][0]) {
+      //   points[2][0] += 10;
+      //   points[3][0] += 10;
+      //   points[2][1] += 10;
+      //   points[3][1] += 10;
+      // }
+
       x = 0.5 * points[1][0] + 0.5 * points[2][0];
       y = 0.5 * points[1][1] + 0.5 * points[2][1];
 
@@ -705,7 +734,7 @@
         return line(points);
       })
       //.attr("marker-end", "url(#link_marker_"+data[gvis.settings.key] + ")")
-      .attr("marker-mid", function(d) {
+      .attr(gvis.behaviors.render.linkMarker, function(d) {
         if (!!d.directed)
           return "url(#link_marker_"+data[gvis.settings.key] + ")"
         else 
@@ -780,9 +809,11 @@
       var x;
       var y;
       var display;
+      var visibility;
 
       if (points.length == 0) {
         display = 'none';
+        visibility = 'hidden';
 
         var x0 = _svg.renders.xScale(data.source.x)
         var y0 = _svg.renders.yScale(data.source.y)
@@ -792,9 +823,11 @@
         points = [[x0, y0], [x0, y0], [x1, y1], [x1, y1]]
       } 
       else {
-        display = '';
+        display = 'inline';
+        visibility = 'visible';
       }
 
+      // for label position.
       x = 0.5 * points[1][0] + 0.5 * points[2][0];
       y = 0.5 * points[1][1] + 0.5 * points[2][1];
 
@@ -827,6 +860,8 @@
       })
 
       link.attr('display', display);
+      link.select('.link_container')
+      .attr('display', display);
 
       var text = link.select('#label_text_' + data[gvis.settings.key]);
 
@@ -857,11 +892,11 @@
       d3.select(target).selectAll('tspan').remove();
 
       if (!labels || Object.keys(labels).length === 0) {
-        d3.select(target)
-        .append("tspan")
-        .attr("x", 0)
-        .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
-        .text('Type:'+data.type)
+        // d3.select(target)
+        // .append("tspan")
+        // .attr("x", 0)
+        // .attr("dy", gvis.behaviors.render.linkLabelsFontSize)
+        // .text('Type:'+data.type)
       }
       else {
         if (!!labels['type']) {

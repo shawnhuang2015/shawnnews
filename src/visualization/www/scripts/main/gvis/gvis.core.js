@@ -13,6 +13,8 @@
 
   gvis.prototype.data = function(newData) {
     var _this = this.scope;
+
+    return _this.graph;
   }
 
   gvis.prototype.addNode = function(newNode) {
@@ -66,6 +68,13 @@
     return this
   }
 
+  gvis.prototype.redraw = function() {
+    var _this = this.scope;
+
+    _this.renderer.clear();
+    _this.renderer.update(0, 0);
+  }
+
   gvis.prototype.render = function(total_time, between_delay, init_delay) {
     var _this = this.scope;
     
@@ -74,7 +83,7 @@
 
     between_delay = between_delay != undefined ? between_delay : 500;
 
-    init_delay = init_delay != undefined ? init_delay : 0;444
+    init_delay = init_delay != undefined ? init_delay : 0;
     
     _this.renderer.render(total_time, between_delay, init_delay);
     
@@ -128,6 +137,11 @@
     var _this = this.scope;
 
     var node = _this.graph.nodes(type, id)
+
+    if (labels == undefined) {
+      node[gvis.settings.styles].labels = {};
+      return this;
+    }
 
     for (var i in labels) {
       var label = labels[i];
@@ -226,6 +240,34 @@
   gvis.prototype.on = function(event, fn) {
     var _this = this.scope;
     _this.renderer.setEventHandler(event, fn);
+
+    return this;
+  }
+
+  gvis.prototype.setRootNode = function(type, id) {
+    var _this = this.scope;
+
+    _this.layouts.setRootNode(type, id);
+
+    return this;
+  }
+
+  gvis.prototype.getSelectedNodes = function() {
+    var _this = this.scope;
+
+    return _this.graph.nodes().filter(function(n) {
+      return n.selected;
+    })
+
+    return this;
+  }
+
+  gvis.prototype.getSelectedLinks = function() {
+    var _this = this.scope;
+
+    return _this.graph.links().filter(function(l) {
+      return l.selected;
+    })
 
     return this;
   }

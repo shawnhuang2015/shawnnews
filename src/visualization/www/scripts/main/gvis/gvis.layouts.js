@@ -26,8 +26,8 @@
 
     this.addLayout('random', function() {
       this._graph.data().array.nodes.forEach(function(n) {
-        n.x = Math.random();
-        n.y = Math.random();
+        n.x = 0//Math.random();
+        n.y = 0//Math.random();
       })
     });
 

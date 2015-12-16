@@ -7,13 +7,371 @@
 require([], function(){
   //test();
 
+  d3.select('#prototype1').style('height', ($(window).height()-220)+'px');
+
+  this.visualization = new gvis({
+    configure: config,
+    container: 'prototype1',
+    //render_type: 'svg',
+  });
+
+
+  visualization.setNodeToolTipFormat(function(type, id, attrs) {
+    var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
+
+    var result = '<span style="color:#ff0000">Node</span><br />';
+
+    result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type + '-' + id});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key+':', value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  visualization.setLinkToolTipFormat(function(type, attrs) {
+    var template = '<span style="color:{{color}}">{{key}}{{value}}</span><br />'; 
+
+    var result = '<span style="color:#ff0000">Link</span><br />';
+
+    result += gvis.utils.applyTemplate(template, {color:'#fec44f', key:'', value:type});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:'#99d8c9', key:key+':', value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+
+  visualization
+  .on('nodeClick', function(d, renderer) {
+    //console.log('customized click', d, renderer)
+    d3.select("#tableBox").selectAll("*").remove();
+
+    d3.select("#tableBox")
+    .html(outputTableforSelectedElements([d], []))
+  })
+  .on('nodeDblClick', function(d, renderer) {
+    //console.log('customized dblclick', d)
+    d3.select("#tableBox").selectAll("*").remove();
+
+    d3.select("#tableBox")
+    .html(outputTableforSelectedElements([d], []))
+  })
+  .on('linkClick', function(d, renderer) {
+    //console.log('customized click', d)
+    d3.select("#tableBox").selectAll("*").remove();
+
+    d3.select("#tableBox")
+    .html(outputTableforSelectedElements([], [d]))
+  })
+  .on('linkDblClick', function(d, renderer) {
+    //console.log('customized dblclick', d)
+    d3.select("#tableBox").selectAll("*").remove();
+
+    d3.select("#tableBox")
+    .html(outputTableforSelectedElements([], [d]))
+  })
+  .on('multiSelect', function(nodes, links, renderer) {
+    //console.log('multiSelect : ', nodes.length, ',', links.length);
+    d3.select("#tableBox").selectAll("*").remove();
+
+    d3.select("#tableBox")
+    .html(outputTableforSelectedElements(nodes, links))
+  })
+
+  var rootNodeType = '';
+  var rootNodeID = '';
+  var targetNodeType = '';
+  var targetNodeID = '';
+
   var button_height = 230;
+  var filteringStatus = {
+    node:{
+        transaction: {type:true, id:true}, 
+        phone : {type:true, id:true},
+        client : {type:true, id:true},
+        user : {type:true, id:true},
+        bankcard : {type:true, id:true}
+        // app:{score:false, name:true}, 
+        // friend:{count:true},
+        // location:{count:true},
+        // enterprise:{group_count:true, count:true, name:true},
+        // warning:{is_warning:true},
+        // phone_no:{importance:true,has_friend:true,fraction_of_callees_has_friends:true},
+        // reason:{reason:true},
+        // level:{complaint_count:true},
+        // bypass_complaint:{bypass_complaint_count:true},
+        // srtype:{category:true, complaint_count:false},
+        // solution:{product_list:true}
+      }, 
+    edge:{
+        transactionphone:{type:true},
+        //phone_no_phone_no:{call_times:true}
+    }
+  };
+
+  window.selectionBoxLabels = filteringStatus
 
   this.messageArray = [];  
+
+  // The configure object of the node label multiselecting list box.
+  var nodeLabelFiltering = {
+    maxHeight: 600,
+    buttonWidth: '100%',
+    enableClickableOptGroups: true,
+    // Call back function once the selection changed.
+    buttonText: function(options, select) {
+      var labels = [];
+
+      if (visualization.data().nodes().length != 0) {
+        for (var key in selectionBoxLabels.node){
+          for (var item in selectionBoxLabels.node[key]) {
+            selectionBoxLabels.node[key][item] = false;
+          }   
+        } 
+      }
+
+      options.each(function() {      
+        var key = $(this).val();
+        var type = "";
+
+        if ($(this).parent().is('select')) {
+          type = "__key"
+          key = key;
+        }
+        else if ($(this).parent().is('optgroup')){
+          type = $(this).parent().attr("value");
+          key = key.split('&')[0]
+        }
+        else {
+          type = "";
+        }
+
+        try {
+          selectionBoxLabels.node[type][key] = true;
+        }
+        catch (err) {
+          console.log(err);
+        }
+
+        labels.push(key);      
+      });
+
+      Object.keys(selectionBoxLabels.node).forEach(function(type) {
+        var labels = Object.keys(selectionBoxLabels.node[type]).filter(function(key) {
+          return selectionBoxLabels.node[type][key];
+        })
+
+        visualization.showNodeLabelByType(type, labels);
+      })
+
+      visualization.update(0, 0);
+
+      // test.showNodeLabel('tag', '1', ['type', 'a1', 'a2', 'asdf']);
+      // test.showNodeLabelByType('usr', ['id', 'a1', 'a2']);
+
+      // test.showLinkLabel('tag', '4', 'movie', '11', 'bbs', ['type', 'aa1', 'aa2']);
+      // test.showLinkLabelByType('bbc', ['aa1', 'aa2', '11123']);
+
+      if (options.length === 0) {
+        return toLanguage('No option selected ...', "ui_component", "label");
+      }
+      else if (options.length > 3) {
+        return toLanguage('More than 3 options selected!', "ui_component", "label");
+      }
+      else {
+        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(',') + '';
+      }
+    },
+      //includeSelectAllOption: true,
+      //selectAllText: 'Check all!'
+  }
+
+
+    // The configure object of the edge label multiselecting list box.
+  var edgeLabelFiltering = {
+    maxHeight: 600,
+    buttonWidth: '100%',
+    enableClickableOptGroups: true,
+    // Call back function once the selection changed
+    buttonText: function(options, select) {
+      var labels = [];
+
+      if (visualization.data().links().length != 0) {
+        for (var key in selectionBoxLabels.edge){
+          for (var item in selectionBoxLabels.edge[key]) {
+            selectionBoxLabels.edge[key][item] = false;
+          }   
+        }
+      }
+
+      options.each(function() {      
+        var key = $(this).val();
+        var type = "";
+
+         if ($(this).parent().is('select')) {
+          type = "__key"
+          key = key;
+        }
+        else if ($(this).parent().is('optgroup')){
+          type = $(this).parent().attr("value");
+          key = key.split('&')[0]
+        }
+        else {
+          type = "";
+        }
+
+        try {
+          selectionBoxLabels.edge[type][key] = true;
+        }
+        catch (err) {
+          console.log(err);
+        }
+
+        labels.push(key);      
+      });
+
+      Object.keys(selectionBoxLabels.edge).forEach(function(type) {
+        var labels = Object.keys(selectionBoxLabels.edge[type]).filter(function(key) {
+          return selectionBoxLabels.edge[type][key];
+        })
+
+        visualization.showLinkLabelByType(type, labels);
+      })
+
+      visualization.update(0, 0);
+
+      if (options.length === 0) {
+        return toLanguage('No option selected ...', "ui_component", "label");
+      }
+      else if (options.length > 4) {
+        return toLanguage('More than 4 options selected!', "ui_component", "label");
+      }
+      else {
+        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(', ') + '';
+      }
+    },
+    //includeSelectAllOption: true,
+    //selectAllText: 'Check all!'
+  }
+
+
+  function topology4VertexAttribute_to_json(vattr) {
+    var result = {};
+    var reggie = /(.*)\((\d*)\)$/;  // for degree(0) => degree, 0
+
+    if (vattr == "" || vattr == undefined) {
+      return result;
+    }
+    else if (typeof(vattr) == 'object') {
+      return clone(vattr);
+    }
+    else {
+      var attrs = vattr.split('|');
+      attrs.forEach(function(attr, i) {
+        //var items = attr.split(':');
+        var items = attr.split(':', 1);
+        items[1] = attr.substring(attr.indexOf(":")+1);
+
+        if (items.length > 1 && items[0] != "" && items[0] != items[1]) {
+          if (items[0] == 'type') { //|| items[0].indexOf("od_et") > -1 || items[0] == 'outdegree') {
+            //items[0] = 'type_index';
+            //console.log(items[0])
+            return; // ignore the type attributes.
+          }
+
+          var tempAttr = reggie.exec(items[0]); // "degree(0)" => "degree(0)", "degree", "0";
+          if (tempAttr == null) {
+            result[items[0]] = items[1];
+          }
+          else {
+            result[tempAttr[1]] = items[1];
+          }
+        }
+      })
+      return result; 
+    }
+  }
+
+  function refineDataName(newData) {
+
+    var color = d3.scale.category10();
+    
+    // the result should be as nodes and edges.
+    var result = {"nodes":[], "links":[]};
+    var arrResult = []
+    newData.vertices.forEach(function(n) {
+      // Example of a node :
+      // {"type":"newType1","id":"newKey1","attr":{"weight":"0.2","name":"newNode1newNode1newNode1"}};
+      tempNode = {};
+      tempNode.type = n.type
+      tempNode.id = n.id
+      tempNode[gvis.settings.attrs] = topology4VertexAttribute_to_json(n.attr);
+      tempNode[gvis.settings.styles] = {fill:color(n.type)};
+      tempNode.other = gvis.utils.clone(n.other)
+
+      arrResult.push(tempNode);
+    }) 
+
+    var tempResult = {};
+    arrResult.forEach(function(n, i){
+      tempResult[n.id + '-'+ n.type] = n; 
+    })
+
+    for (var key in tempResult) {
+      result.nodes.push(tempResult[key]);
+    }
+
+    newData.edges.forEach(function(e) {
+      // Example of a link :
+      // {"source":{"type":"newType1","id":"newKey1"},"target":{"type":"type0","id":"key45"},"attr":{"weight":"0.01","name":"name0.7"}, "type":0};
+      tempEdge = {"source":{"type":"","id":""}, "target":{"type":"","id":""}, directed:true};
+      tempEdge.source.type = e.src.type
+      tempEdge.source.id = e.src.id
+      tempEdge.target.type = e.tgt.type
+      tempEdge.target.id = e.tgt.id
+
+      // Check whether a edge includes 'type' attribute. 
+      if ("type" in e) {
+        tempEdge.type = e.type
+      }
+      else {
+        tempEdge.type = "Undefined"
+      }
+      
+      //deep copy the object of the attributes.
+      tempEdge[gvis.settings.attrs] = topology4VertexAttribute_to_json(e.attr) //The way to parse edge and vertex attrs are same.
+      tempEdge[gvis.settings.styles] = {fill:color(e.type)};
+      tempEdge.other = gvis.utils.clone(e.other)
+
+      result.links.push(tempEdge);
+    })
+    
+    return result
+  }
 
   // remove space function.
   this.removeSpaces = function(s) {
     return s.replace(/\s/g, '');
+  }
+
+  this.deleteNodes = function() {
+    visualization.getSelectedNodes().forEach(function(n) {
+      visualization.dropNode(n);
+    })
+
+    visualization.update(500, 500);
+  }
+
+  this.coloringNodes = function(color) {
+    visualization.getSelectedNodes().forEach(function(n) {
+      n[gvis.settings.styles].fill = color;
+    })
+
+    visualization.update(0, 0);
   }
 
   this.JSONMessageOutput = function() {
@@ -65,7 +423,7 @@ require([], function(){
         s += '<label>'+toLanguage(elements[i]["label"]["name"], "ui_component", "label")+':</label>';
       }
       if (elements[i]["textbox"]){
-        s = s + '&nbsp;&nbsp;<input type ="text" class="form-control" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"], "ui_component", "label") + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
+        s = s + '&nbsp;&nbsp;<input onkeypress="onkeypress_submit()" type ="text" class="form-control" placeholder="' + toLanguage(elements[i]["textbox"]["placeholder"], "ui_component", "label") + '" name="' + elements[i]["textbox"]["name"] + '" size=' + elements[i]["textbox"]["length"] + '>&nbsp;&nbsp;';
       }
       if (elements[i]["selection"]) {
         s += '&nbsp;&nbsp;<select class="form-control" name='+ elements[i]["selection"]["name"] +'>'
@@ -248,6 +606,261 @@ require([], function(){
     });
   }
 
+  this.updateLabelFilteringListBox = function(graph) {
+    // if graph data is empty return.
+    if (graph.nodes().length === 0) {
+      return;
+    }
+
+    // store the previous status of the selectionBoxLabels. The status is like whether a label is selected or not.
+    nodelabels = selectionBoxLabels.node;
+
+    // initialize the selectionBoxLabels of node.
+    // "__key" is the type for "type" and "id", which is the key of a node and edge.
+    selectionBoxLabels.node = {};
+
+    // for each nodes 'type','id' are default for every nodes.
+    // Then get what attribtues each type of node has.
+    graph.nodes().forEach(function(n){
+      if (n.type in selectionBoxLabels.node) {
+        ;
+      }
+      else {
+        selectionBoxLabels.node[n.type] = {};
+      }
+
+      ['type', 'id'].forEach(function(d, i) {
+        if (d in n) {
+          if (typeof nodelabels[n.type] == 'object' && d in nodelabels[n.type]) {
+            selectionBoxLabels.node[n.type][d] = nodelabels[n.type][d];
+          }
+          else {
+            selectionBoxLabels.node[n.type][d] = false;
+          }
+        }
+        else {
+          ;
+        }
+      })
+
+      for (var key in n[gvis.settings.attrs]) {
+        try {
+          if (typeof nodelabels[n.type] == 'object' && key in nodelabels[n.type]) {
+            selectionBoxLabels.node[n.type][key] = nodelabels[n.type][key];
+          }
+          else {
+            //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == 'undefined') ? false : filteringStatus.node[key];
+            selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[n.type][key] == 'undefined') ? false : filteringStatus.node[n.type][key];
+          }
+        }
+        catch (err) {
+          selectionBoxLabels.node[n.type][key] = false;
+          //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == 'undefined') ? false : filteringStatus.node[key];
+          //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[n.type][key] == 'undefined') ? false : filteringStatus.node[n.type][key];
+        }   
+      }
+    })
+
+    // if there is not a links in the graph, skip the labels generation process for links
+    if (graph.links().length === 0) {
+      ;
+    }
+
+    // store the previous status of the selectionBoxLabels of edge. The status is like whether a label is selected or not.
+    edgelabels = selectionBoxLabels.edge;
+    selectionBoxLabels.edge = {};
+
+    // initialize the selectionBoxLabels of edge.
+    // "__key" is the type for "type" and "id", which is the key of a edge.
+    // for each nodes 'type','id' are default for every edges.
+    // Then get what attribtues each type of edge has.
+    graph.links().forEach(function(n){
+      if (n.type in selectionBoxLabels.edge) {
+        ;
+      }
+      else {
+        selectionBoxLabels.edge[n.type] = {};
+      }
+
+      ['type', 'id'].forEach(function(d, i) {
+        if (d in n) {
+          if (edgelabels[n.type] !== undefined && d in edgelabels[n.type]) {
+            selectionBoxLabels.edge[n.type][d] = edgelabels[n.type][d];
+          }
+          else {
+            selectionBoxLabels.edge[n.type][d] = false;
+          }
+        }
+        else {
+          ;
+        }
+      })
+
+      for (var key in n.attr) {
+        try {
+          if (edgelabels[n.type] !== undefined && key in edgelabels[n.type]) {
+            selectionBoxLabels.edge[n.type][key] = edgelabels[n.type][key];
+          }
+          else {
+            selectionBoxLabels.edge[n.type][key] = false;
+          }
+        }
+        catch (err) {
+          //selectionBoxLabels.edge[n.type][key] = false;
+          selectionBoxLabels.edge[n.type][key] = (typeof filteringStatus.edge[key] == 'undefined') ? false : filteringStatus.edge[key];
+        }   
+      }
+    })
+
+    // update node label list box.
+    // 1. Get the multi-selection list box container (.parent());
+    // 2. Remove the next sibling of multi-selection list box.
+    // 3. Remove the multi-selection list box itself.
+    // 4. Append a new multi-selection list box.
+    // 5. Append keys in the begin of the list box.
+    // 6. Append attribute for each type in the list box.
+    // 7. call the multi-selection box initialization.
+
+    //1.2.3
+    parent = $('#node_label_filtering').parent();
+    $('#node_label_filtering').next().remove();
+    $('#node_label_filtering').remove();
+
+    //4.
+    parent.append('<select id="node_label_filtering" multiple="multiple">')
+
+
+    //5.
+    for (var key in selectionBoxLabels.node.__key) {
+      var tempOptionHTML = '<option value="' + key + '"';
+      if (selectionBoxLabels.node.__key[key]) {
+        tempOptionHTML += 'selected="selected">'
+      }
+      else {
+        tempOptionHTML += '>'
+      }
+
+      if (key == 'id') {
+        tempOptionHTML += toLanguage('Node id', "ui_component", "label") + '</option>'
+      }
+      else {
+        tempOptionHTML += toLanguage(key, "ui_component", "label") + '</option>'
+      }
+      
+      $('#node_label_filtering').append(tempOptionHTML)
+    } 
+
+    //6.
+    for (var type in selectionBoxLabels.node) {
+
+      if (Object.keys(selectionBoxLabels.node[type]).length == 0) {
+        continue;
+      }
+
+      var groupList;
+
+      if (type == "__key") {
+        continue;
+      } 
+      else {
+        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type', "ui_component", "label")+': ' + toLanguage(type, type, type) + '"></optgroup>')
+        $('#node_label_filtering').append(groupList);
+      }
+
+      for (var key in selectionBoxLabels.node[type]) {
+        var tempOptionHTML = '<option value="' + key +'&'+type + '"';
+        if (selectionBoxLabels.node[type][key]) {
+          tempOptionHTML += 'selected="selected">'
+        }
+        else {
+          tempOptionHTML += '>'
+        }
+
+        tempOptionHTML += toLanguage(key, type, key) + '</option>'
+        groupList.append(tempOptionHTML)
+      } 
+
+
+    }
+
+    // Call the multiselec function for node label filtering.
+    $('#node_label_filtering').multiselect(nodeLabelFiltering);
+
+    // update edge label list box.
+    // 1. Get the multi-selection list box container (.parent());
+    // 2. Remove the next sibling of multi-selection list box.
+    // 3. Remove the multi-selection list box itself.
+    // 4. Append a new multi-selection list box.
+    // 5. Append keys in the begin of the list box.
+    // 6. Append attribute for each type in the list box.
+    // 7. call the multi-selection box initialization.
+
+    //1.2.3
+    parent = $('#edge_label_filtering').parent();
+    $('#edge_label_filtering').next().remove();
+    $('#edge_label_filtering').remove();
+
+    //4.
+    parent.append('<select id="edge_label_filtering" multiple="multiple">') 
+
+    //5.
+    for (var key in selectionBoxLabels.edge.__key) {
+      var tempOptionHTML = '<option value="' + key + '"';
+      if (selectionBoxLabels.edge.__key[key]) {
+        tempOptionHTML += 'selected="selected">'
+      }
+      else {
+        tempOptionHTML += '>'
+      }
+
+      tempOptionHTML += toLanguage(key, "ui_component", "label") + '</option>'
+      $('#edge_label_filtering').append(tempOptionHTML)
+    } 
+
+    //6.
+    for (var type in selectionBoxLabels.edge) {
+
+      if (Object.keys(selectionBoxLabels.edge[type]).length == 0) {
+        continue;
+      }
+
+      var groupList;
+
+      if (type == "__key") {
+        continue;
+      } 
+      else {
+        groupList = $('<optgroup value="'+type+'" label="' + toLanguage('type', "ui_component", "label")+': ' + toLanguage(type, type, type) + '"></optgroup>')
+        $('#edge_label_filtering').append(groupList);
+      }
+
+      for (var key in selectionBoxLabels.edge[type]) {
+        var tempOptionHTML = '<option value="' + key +'&'+type + '"';
+        if (selectionBoxLabels.edge[type][key]) {
+          tempOptionHTML += 'selected="selected">'
+        }
+        else {
+          tempOptionHTML += '>'
+        }
+
+        tempOptionHTML += toLanguage(key, type, key) + '</option>'
+        groupList.append(tempOptionHTML)
+      }   
+    }
+
+    //7.
+    $('#edge_label_filtering').multiselect(edgeLabelFiltering);
+  }
+
+  //onkeypress="onkeypress_submit()"
+  this.onkeypress_submit = function() {
+
+    //enter key
+    if (event.keyCode == 13) {
+      onclick_submit(page_index);
+    }
+  }
+
   this.onclick_submit = function(index) {
 
 
@@ -294,15 +907,6 @@ require([], function(){
         submit_URL = temp_event.URL_head;
 
         URL_attrs =  temp_event.URL_attrs
-
-        /*
-        if ("id" in URL_attrs) {
-          submit_URL += "/" + document.getElementsByName(URL_attrs.id.name)[0].value + "?";
-        }
-        else {
-          submit_URL += "?";
-        }
-        */
 
         for (var attr in URL_attrs.vars) {
           submit_URL += "/" + document.getElementsByName(URL_attrs.vars[attr].name)[0].value.trim();
@@ -432,11 +1036,6 @@ require([], function(){
         //  a. create rootNode id.
         //  b. set root node by id.
         //  c. rootNode is = Type + "&" + ID;
-        var rootNodeType;
-        var rootNodeID;
-
-        var targetNodeType;
-        var targetNodeID;
 
         // Get type from Input box. Sometimes, we don't use type as input for query.
         // But type is another key for the retrieve the node in graph. Default is '0';
@@ -494,14 +1093,6 @@ require([], function(){
             }
           }
         }
-
-        var initRootNode = rootNodeType + "&" + rootNodeID;
-        var initTargetNode = targetNodeType + "&" + targetNodeID;
-        /*document.getElementsByName(URL_attrs.type.name)[0].value +
-             "&" + document.getElementsByName(URL_attrs.id.name)[0].value;
-             */
-        // mygv.rootNode(initRootNode);
-        // mygv.targetNode(initTargetNode);
       }
       else {
 
@@ -569,8 +1160,16 @@ require([], function(){
           // .data(newData)
           // .run()
 
+          newData = refineDataName(newData);
+
+          visualization
+          .read(newData)
+          .layout(UIObject.setting.layout)
+          .setRootNode(rootNodeType, rootNodeID)
+          .render()
+
           // update the multi-selection lable box base on the graph data.
-          //updateLabelFilteringListBox(mygv.data());
+          updateLabelFilteringListBox(visualization.data());
 
           // store the new message in the messageArray.
           messageArray.push(message);
@@ -601,125 +1200,6 @@ require([], function(){
     })
   }
 
-  // The configure object of the node label multiselecting list box.
-  var nodeLabelFiltering = {
-    maxHeight: 600,
-    buttonWidth: '100%',
-    enableClickableOptGroups: true,
-    // Call back function once the selection changed.
-    buttonText: function(options, select) {
-      var labels = [];
-
-      // if (mygv.data().nodes.length != 0)
-      //   for (var key in selectionBoxLabels.node){
-      //     for (var item in selectionBoxLabels.node[key]) {
-      //       selectionBoxLabels.node[key][item] = false;
-      //     }   
-      //   } 
-
-      options.each(function() {      
-        var key = $(this).val();
-        var type = "";
-
-         if ($(this).parent().is('select')) {
-          type = "__key"
-          key = key;
-        }
-        else if ($(this).parent().is('optgroup')){
-          type = $(this).parent().attr("value");
-          key = key.split('&')[0]
-        }
-        else {
-          type = "";
-        }
-
-        try {
-          selectionBoxLabels.node[type][key] = true;
-        }
-        catch (err) {
-          console.log(err);
-        }
-
-        labels.push(key);      
-      });
-
-      // mygv.label(selectionBoxLabels);
-      // mygv.redraw();
-
-      if (options.length === 0) {
-        return toLanguage('No option selected ...', "ui_component", "label");
-      }
-      else if (options.length > 3) {
-        return toLanguage('More than 3 options selected!', "ui_component", "label");
-      }
-      else {
-        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(',') + '';
-      }
-    },
-      //includeSelectAllOption: true,
-      //selectAllText: 'Check all!'
-  }
-
-
-    // The configure object of the edge label multiselecting list box.
-  var edgeLabelFiltering = {
-    maxHeight: 600,
-    buttonWidth: '100%',
-    enableClickableOptGroups: true,
-    // Call back function once the selection changed
-    buttonText: function(options, select) {
-      var labels = [];
-
-      // if (mygv.data().links.length != 0)
-      //   for (var key in selectionBoxLabels.edge){
-      //     for (var item in selectionBoxLabels.edge[key]) {
-      //       selectionBoxLabels.edge[key][item] = false;
-      //     }   
-      //   }
-
-      options.each(function() {      
-        var key = $(this).val();
-        var type = "";
-
-         if ($(this).parent().is('select')) {
-          type = "__key"
-          key = key;
-        }
-        else if ($(this).parent().is('optgroup')){
-          type = $(this).parent().attr("value");
-          key = key.split('&')[0]
-        }
-        else {
-          type = "";
-        }
-
-        try {
-          selectionBoxLabels.edge[type][key] = true;
-        }
-        catch (err) {
-          console.log(err);
-        }
-
-        labels.push(key);      
-      });
-
-      // mygv.label(selectionBoxLabels);
-      // mygv.redraw();
-
-      if (options.length === 0) {
-        return toLanguage('No option selected ...', "ui_component", "label");
-      }
-      else if (options.length > 4) {
-        return toLanguage('More than 4 options selected!', "ui_component", "label");
-      }
-      else {
-        return labels.map(function(d){return toLanguage(d, "ui_component", "label")}).join(', ') + '';
-      }
-    },
-    //includeSelectAllOption: true,
-    //selectAllText: 'Check all!'
-  }
-
   this.updateQueryInputInfoBox = function(payload, page_index) {
     var table = "<h3>"+toLanguage(window.pages_obj[page_index]['tabname'], 'tab', 'tab name')+"</h3>"
     if (typeof payload != 'object' || Object.keys(payload).length >= 0) {
@@ -738,6 +1218,12 @@ require([], function(){
     $('#queryInputInfoBox').html(table);
 
     $('#tableBox').height($('#left_side').height() - $('#layoutport').height() - $('#queryInputInfoBox').height() - 20)
+  }
+
+  this.layoutChanged = function(newLayout) {
+    visualization
+    .layout(newLayout)
+    .render(1000, 500)
   }
 
 
@@ -801,6 +1287,85 @@ require([], function(){
 
     $("#navbar ul").append(tabline);  
   }
+
+  this.outputTableforSelectedElements = function(nodes, links) {
+    var selectedNodes = nodes;
+    var selectedEdges = links;
+
+    var result = ''
+
+    if (selectedNodes.length == 0 && selectedEdges.length == 0) {
+      result += '<span style="color:#636363;font-size:15px;font-family: Times">'+toLanguage('No Selected Node', "ui_component", "label")+'</span>\n';
+      return result;
+    }
+
+    for (var node in selectedNodes) {
+      node = selectedNodes[node];
+
+      var nodeItem = '<table class="table table-hover table-bordered" style="table-layout: fixed;word-wrap: break-word">';
+      nodeItem += '<tr name="element_name" onclick="onClick_table_head(this,\'node\',\''
+        +node.id+'\',\''+node.type
+        +'\')"><td style="color: #fff;background-color: #337ab7;border-color: #2e6da4;width:25%;line-height:1.0;padding:4px">' 
+        +toLanguage('Node Name', "ui_component", "label")+'</td><td style="width:75%;line-height:1.0;padding:4px">'
+        +toLanguage(node.id)+'</td></tr>';
+      //nodeItem += '<tr><th>Attribute Name</th><th>Value</th></tr>'; //style="color: #fff;background-color: #337ab7;border-color: #2e6da4;"
+
+      nodeItem += '<tr name="attribute_name" onclick="onClick_table(this,\'node\')"><td style="line-height:1.0;padding:4px">'
+        + toLanguage('type', "ui_component", "label") +'</td><td style="line-height:1.0;padding:4px">' 
+        + toLanguage(node.type) + '</td></tr>'
+      for (var key in Object.keys(node[gvis.settings.attrs])) {
+        key = Object.keys(node[gvis.settings.attrs])[key];
+        nodeItem += '<tr name="attribute_name" onclick="onClick_table(this,\'node\')"><td style="line-height:1.0;padding:4px">'
+        + toLanguage(key, node.type) +'</td><td style="line-height:1.0;padding:4px">' 
+        + toLanguage(node[gvis.settings.attrs][key], node.type, key) + '</td></tr>'
+      }
+
+      nodeItem += '</table>';
+      result += nodeItem;
+      
+    }
+
+    for (var link in selectedEdges) {
+      link = selectedEdges[link]
+
+      var linkItem = '<table class="table table-hover table-bordered" style="table-layout: fixed;word-wrap: break-word">';
+      linkItem += '<tr name="element_name" onclick="onClick_table_head(this,\'link\',\''
+        +link.source.id+'\',\''+link.source.type+'\',\''+link.target.id+'\',\''+link.target.type+'\',\''+link.type+
+        '\')"><td style="color: #fff;background-color: #5bc0de;border-color: #46b8da;width:25%;line-height:1.0;padding:4px">'+toLanguage('Link Name', "ui_component", "label")+'</td><td style="width:75%;line-height:1.0;padding:4px">'+link.source.id+'=>'+link.target.id+'</td></tr>';
+      //linkItem += '<tr><th>Attribute Name</th><th>Value</th></tr>';
+      linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td style="line-height:1.0;padding:4px">'+toLanguage('type', "ui_component", "label")+'</td><td style="line-height:1.0;padding:4px">' + toLanguage(link.type) + '</td></tr>';
+
+      for (var key in Object.keys(link[gvis.settings.attrs])) {
+        key = Object.keys(link[gvis.settings.attrs])[key];
+
+        if (link[gvis.settings.attrs][key] instanceof Array) {
+          link[gvis.settings.attrs][key] = link[gvis.settings.attrs][key].join(",<br>");
+        }
+
+        linkItem += '<tr name="attribute_name" onclick="onClick_table(this,\'link\')"><td style="line-height:1.0;padding:4px">'+toLanguage(key, link.type)+'</td><td style="line-height:1.0;padding:4px">' + toLanguage(link[gvis.settings.attrs][key],link.type, key) + '</td></tr>'
+      }
+
+      linkItem += "</table>"
+      result += linkItem;
+    }
+
+    return result;
+  }
+
+  //initialize the color picker.
+  // set the colorchange event for changing the color of selected nodes and edges.
+  $('#colorpicker').colorpicker({
+      color: "#1f77b4"  //bodyStyle.backgroundColor
+  }).on('changeColor', function(ev) {
+      //bodyStyle.backgroundColor = ev.color.toHex();
+      coloringNodes(ev.color.toHex())
+  });
+
+  // window.addEventListener('resize', function() {
+  //   console.log('resizing')
+  //   d3.select('#prototype1').style('height', $(window).height()-220+'px');
+  //   visualization.update(0, 0);
+  // });
 });
 
 
