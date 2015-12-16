@@ -169,12 +169,12 @@
         var converged = _this._this.layouts.runLayoutIteratively(between_delay*0.2);
 
         _this.update(between_delay*0.8);
-        _this.autoFit(500, between_delay*0.8);
+        _this.autoFit(300, between_delay*0.8);
 
         end = new Date().getTime();
         time = end - start;
 
-        if (!!converged || time > total_time) {
+        if (!!converged || time >= total_time) {
           window.clearInterval(myRender);
         }
       }
@@ -360,15 +360,6 @@
     
       // ENTER
       // Create new elements as needed.
-        
-      d_links
-      .enter()
-      .append('g')
-      .classed('link', true)
-      .attr('id', function(d) {return 'link_'+d[gvis.settings.key]})
-      .call(this.addLinkRenderer, this)
-
-
       d_nodes
       .enter()
       .append('g')
@@ -382,11 +373,19 @@
       .classed('legend', true)
       .call(this.addLegendRenderer, this)
 
+      d_links
+      .enter()
+      .append('g')
+      .classed('link', true)
+      .attr('id', function(d) {return 'link_'+d[gvis.settings.key]})
+      .call(this.addLinkRenderer, this)
+
       // EXIT
       // Remove old elements as needed.
-      d_links.exit().remove();
+      
       d_nodes.exit().remove();
       d_legends.exit().remove();
+      d_links.exit().remove();
 
 
       // ENTER + UPDATE
@@ -394,9 +393,10 @@
       // entering elements; so, operations on the update selection after appending to
       // the enter selection will apply to both entering and updating nodes.
       // Updating current elements
-      d_links.call(this.updateLinkRenderer, this, duration, delay)
+      
       d_nodes.call(this.updateNodeRenderer, this, duration, delay);
       d_legends.call(this.updateLegendRenderer, this, duration, delay);
+      d_links.call(this.updateLinkRenderer, this, duration, delay)
 
 
       // remove tipsy
@@ -424,7 +424,14 @@
       // adding node
       var node = d3.select(n)
       .append('g')
-      .classed('node_container', true)
+      .classed('node_container', true);
+
+      var data = node.data()[0];
+
+      if (data.x == undefined) data.x = 0;
+      if (data.y == undefined) data.y = 0;
+
+      node
       .attr("transform", function(d) {
         return "translate(" + _svg.renders.xScale(d.x) + "," + _svg.renders.yScale(d.y) + ")"; 
       })
@@ -432,7 +439,7 @@
       .on("click", _svg.events.nodeClick)
       .call(_svg.drag)
 
-      var data = node.data()[0];
+      
 
       // bacground circle for node icon
       node
@@ -635,6 +642,11 @@
 
 
       var data = link.data()[0]
+
+      if (data.source.x == undefined) data.source.x = 0;
+      if (data.source.y == undefined) data.source.y = 0;
+      if (data.target.x == undefined) data.target.x = 0;
+      if (data.target.y == undefined) data.target.y = 0;
 
       var points = _svg.renders.generateCurvedLinkPoints(data);
 

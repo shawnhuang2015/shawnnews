@@ -45,7 +45,7 @@
     var _this = this.scope;
 
     _this.graph.read(data);
-    _this.layouts.random();
+    //_this.layouts.allZero();
 
     console.log(_this.graph.data())
 

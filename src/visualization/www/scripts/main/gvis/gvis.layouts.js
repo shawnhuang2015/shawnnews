@@ -26,8 +26,15 @@
 
     this.addLayout('random', function() {
       this._graph.data().array.nodes.forEach(function(n) {
-        n.x = 0//Math.random();
-        n.y = 0//Math.random();
+        n.x = Math.random();
+        n.y = Math.random();
+      })
+    });
+
+    this.addLayout('allZero', function() {
+      this._graph.data().array.nodes.forEach(function(n) {
+        n.x = 0
+        n.y = 0
       })
     });
 

@@ -94,7 +94,7 @@ require([], function(){
         phone : {type:true, id:true},
         client : {type:true, id:true},
         user : {type:true, id:true},
-        bankcard : {type:true, id:true}
+        bankcard : {type:true, id:true, name:true, idCard:true}
         // app:{score:false, name:true}, 
         // friend:{count:true},
         // location:{count:true},
