@@ -1,0 +1,2687 @@
+{
+    "project": {},
+    "files": {
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ar.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ar.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.bg.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.bg.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ca.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ca.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.cs.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.cs.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.da.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.da.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.de.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.de.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ee.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ee.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.el.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.el.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.es.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.es.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fi.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fi.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fr.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fr.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.he.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.he.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hr.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hr.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hu.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hu.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hy.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hy.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.id.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.id.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.is.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.is.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.it.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.it.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ja.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ja.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ko.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ko.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lt.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lt.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lv.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lv.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ms.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ms.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nb.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nb.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nl.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nl.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.no.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.no.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pl.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pl.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt-BR.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt-BR.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ro.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ro.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs-latin.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs-latin.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ru.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ru.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sk.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sk.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sl.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sl.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sv.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sv.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sw.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sw.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.th.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.th.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.tr.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.tr.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ua.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ua.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.uk.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.uk.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-CN.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-CN.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-TW.js": {
+            "name": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-TW.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/bootstrap-multiselect.js": {
+            "name": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/bootstrap/js/bootstrap-slider.js": {
+            "name": "scripts/bootstrap/js/bootstrap-slider.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/lib/jquery-2.1.3.js": {
+            "name": "scripts/lib/jquery-2.1.3.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/lib/jquery.tipsy.js": {
+            "name": "scripts/lib/jquery.tipsy.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/lib/require.js": {
+            "name": "scripts/lib/require.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.behaviors.js": {
+            "name": "scripts/main/gvis/gvis.behaviors.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.core.js": {
+            "name": "scripts/main/gvis/gvis.core.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.events.js": {
+            "name": "scripts/main/gvis/gvis.events.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.graph.js": {
+            "name": "scripts/main/gvis/gvis.graph.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.js": {
+            "name": "scripts/main/gvis/gvis.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.layouts.js": {
+            "name": "scripts/main/gvis/gvis.layouts.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.renders.js": {
+            "name": "scripts/main/gvis/gvis.renders.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.settings.js": {
+            "name": "scripts/main/gvis/gvis.settings.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/gvis/gvis.utils.js": {
+            "name": "scripts/main/gvis/gvis.utils.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/language.js": {
+            "name": "scripts/main/language.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "scripts/main/ui.js": {
+            "name": "scripts/main/ui.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {},
+    "elements": {},
+    "classitems": [
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ar.js",
+            "line": 1,
+            "description": "Arabic translation for bootstrap-datetimepicker\nAla' Mohammad <amohammad@birzeit.ecu>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.bg.js",
+            "line": 1,
+            "description": "Bulgarian translation for bootstrap-datetimepicker\nApostol Apostolov <apostol.s.apostolov@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ca.js",
+            "line": 1,
+            "description": "Catalan translation for bootstrap-datetimepicker\nJ. Garcia <jogaco.en@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.cs.js",
+            "line": 1,
+            "description": "Czech translation for bootstrap-datetimepicker\nMatěj Koubík <matej@koubik.name>\nFixes by Michal Remiš <michal.remis@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.da.js",
+            "line": 1,
+            "description": "Danish translation for bootstrap-datetimepicker\nChristian Pedersen <http://github.com/chripede>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.de.js",
+            "line": 1,
+            "description": "German translation for bootstrap-datetimepicker\nSam Zurcher <sam@orelias.ch>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ee.js",
+            "line": 1,
+            "description": "Estonian translation for bootstrap-datetimepicker\nRene Korss <http://rene.korss.ee>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.el.js",
+            "line": 1,
+            "description": "Greek translation for bootstrap-datetimepicker",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.es.js",
+            "line": 1,
+            "description": "Spanish translation for bootstrap-datetimepicker\nBruno Bonamin <bruno.bonamin@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fi.js",
+            "line": 1,
+            "description": "Finnish translation for bootstrap-datetimepicker\nJaakko Salonen <https://github.com/jsalonen>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.fr.js",
+            "line": 1,
+            "description": "French translation for bootstrap-datetimepicker\nNico Mollet <nico.mollet@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.he.js",
+            "line": 1,
+            "description": "Hebrew translation for bootstrap-datetimepicker\nSagie Maoz <sagie@maoz.info>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hr.js",
+            "line": 1,
+            "description": "Croatian localisation",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hu.js",
+            "line": 1,
+            "description": "Hungarian translation for bootstrap-datetimepicker\ndarevish <http://github.com/darevish>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.hy.js",
+            "line": 1,
+            "description": "Armenian translation for bootstrap-datepicker\nHayk Chamyan <hamshen@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.id.js",
+            "line": 1,
+            "description": "Bahasa translation for bootstrap-datetimepicker\nAzwar Akbar <azwar.akbar@gmail.com>\nAddtional by Yulian Sutopo <yuliansutopo@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.is.js",
+            "line": 1,
+            "description": "Icelandic translation for bootstrap-datetimepicker\nHinrik Örn Sigurðsson <hinrik.sig@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.it.js",
+            "line": 1,
+            "description": "Italian translation for bootstrap-datetimepicker\nEnrico Rubboli <rubboli@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ja.js",
+            "line": 1,
+            "description": "Japanese translation for bootstrap-datetimepicker\nNorio Suzuki <https://github.com/suzuki/>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ko.js",
+            "line": 1,
+            "description": "Korean translation for bootstrap-datetimepicker\nGu Youn <http://github.com/guyoun>\nBaekjoon Choi <http://github.com/Baekjoon>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lt.js",
+            "line": 1,
+            "description": "Lithuanian translation for bootstrap-datetimepicker\nŠarūnas Gliebus <ssharunas@yahoo.co.uk>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.lv.js",
+            "line": 1,
+            "description": "Latvian translation for bootstrap-datetimepicker\nArtis Avotins <artis@apit.lv>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ms.js",
+            "line": 1,
+            "description": "Malay translation for bootstrap-datetimepicker\nAteman Faiz <noorulfaiz@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nb.js",
+            "line": 1,
+            "description": "Norwegian (bokmål) translation for bootstrap-datetimepicker\nFredrik Sundmyhr <http://github.com/fsundmyhr>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.nl.js",
+            "line": 1,
+            "description": "Dutch translation for bootstrap-datetimepicker\nReinier Goltstein <mrgoltstein@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.no.js",
+            "line": 1,
+            "description": "Norwegian translation for bootstrap-datetimepicker\nRune Warhuus <rune@dinkdonkd.no>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pl.js",
+            "line": 1,
+            "description": "Polish translation for bootstrap-datetimepicker\nRobert <rtpm@gazeta.pl>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt-BR.js",
+            "line": 1,
+            "description": "Brazilian translation for bootstrap-datetimepicker\nCauan Cabral <cauan@radig.com.br>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt.js",
+            "line": 1,
+            "description": "Portuguese translation for bootstrap-datetimepicker\nOriginal code: Cauan Cabral <cauan@radig.com.br>\nTiago Melo <tiago.blackcode@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ro.js",
+            "line": 1,
+            "description": "Romanian translation for bootstrap-datetimepicker\nCristian Vasile <cristi.mie@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs-latin.js",
+            "line": 1,
+            "description": "Serbian latin translation for bootstrap-datetimepicker\nBojan Milosavlević <milboj@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs.js",
+            "line": 1,
+            "description": "Serbian cyrillic translation for bootstrap-datetimepicker\nBojan Milosavlević <milboj@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ru.js",
+            "line": 1,
+            "description": "Russian translation for bootstrap-datetimepicker\nVictor Taranenko <darwin@snowdale.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sk.js",
+            "line": 1,
+            "description": "Slovak translation for bootstrap-datetimepicker\nMarek Lichtner <marek@licht.sk>\nFixes by Michal Remiš <michal.remis@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sl.js",
+            "line": 1,
+            "description": "Slovene translation for bootstrap-datetimepicker\nGregor Rudolf <gregor.rudolf@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sv.js",
+            "line": 1,
+            "description": "Swedish translation for bootstrap-datetimepicker\nPatrik Ragnarsson <patrik@starkast.net>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.sw.js",
+            "line": 1,
+            "description": "Swahili translation for bootstrap-datetimepicker\nEdwin Mugendi <https://github.com/edwinmugendi>\nSource: http://scriptsource.org/cms/scripts/page.php?item_id=entry_detail&uid=xnfaqyzcku",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.th.js",
+            "line": 1,
+            "description": "Thai translation for bootstrap-datetimepicker\nSuchau Jiraprapot <seroz24@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.tr.js",
+            "line": 1,
+            "description": "Turkish translation for bootstrap-datetimepicker\nSerkan Algur <kaisercrazy_2@hotmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.ua.js",
+            "line": 1,
+            "description": "Ukrainian translation for bootstrap-datepicker\nIgor Polynets",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.uk.js",
+            "line": 1,
+            "description": "Ukrainian translation for bootstrap-datetimepicker\nAndrey Vityuk <andrey [dot] vityuk [at] gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-CN.js",
+            "line": 1,
+            "description": "Simplified Chinese translation for bootstrap-datetimepicker\nYuan Cheung <advanimal@gmail.com>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-TW.js",
+            "line": 1,
+            "description": "Traditional Chinese translation for bootstrap-datetimepicker\nRung-Sheng Jang <daniel@i-trend.co.cc>",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1,
+            "description": "Bootstrap Multiselect (https://github.com/davidstutz/bootstrap-multiselect)\n\nApache License, Version 2.0:\nCopyright (c) 2012 - 2015 David Stutz\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not\nuse this file except in compliance with the License. You may obtain a\ncopy of the License at http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT\nWARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the\nLicense for the specific language governing permissions and limitations\nunder the License.\n\nBSD 3-Clause License:\nCopyright (c) 2012 - 2015 David Stutz\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n   - Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n   - Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n   - Neither the name of David Stutz nor the names of its contributors may be\n     used to endorse or promote products derived from this software without\n     specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\nAND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,\nTHE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\nPURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR\nCONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\nEXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\nPROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;\nOR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,\nWHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR\nOTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\nADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 131,
+            "description": "Constructor to create a new multiselect using the given select.",
+            "params": [
+                {
+                    "name": "select",
+                    "description": "",
+                    "type": "JQuery"
+                },
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Multiselect"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 178,
+            "description": "Default text function will either print 'None selected' in case no\noption is selected or a list of the selected options up to a length\nof 3 selected options.",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "JQuery"
+                },
+                {
+                    "name": "select",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 213,
+            "description": "Updates the title of the button similar to the buttonText function.",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "JQuery"
+                },
+                {
+                    "name": "select",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "@exp;selected@call;substr"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 232,
+            "description": "Create a label.",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 241,
+            "description": "Triggered on change of the multiselect.\n\nNot triggered when selecting/deselecting options manually.",
+            "params": [
+                {
+                    "name": "option",
+                    "description": "",
+                    "type": "JQuery"
+                },
+                {
+                    "name": "checked",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 252,
+            "description": "Triggered when the dropdown is shown.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 260,
+            "description": "Triggered when the dropdown is hidden.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 268,
+            "description": "Triggered after the dropdown is shown.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 276,
+            "description": "Triggered after the dropdown is hidden.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 284,
+            "description": "Triggered on select all.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 332,
+            "description": "Builds the container of the multiselect.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 343,
+            "description": "Builds the button of the multiselect.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 380,
+            "description": "Builds the ul representing the dropdown menu.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 405,
+            "description": "Build the dropdown options and binds all nessecary events.\n\nUses createDivider and createOptionValue to create the necessary options.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 649,
+            "description": "Create an option using the given select option.",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 707,
+            "description": "Creates a divider using the given select option.",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 717,
+            "description": "Creates an optgroup.",
+            "params": [
+                {
+                    "name": "group",
+                    "description": "",
+                    "type": "JQuery"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 745,
+            "description": "Build the selct all.\n\nChecks if a select all has already been created.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 790,
+            "description": "Builds the filter.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 893,
+            "description": "Unbinds the whole plugin.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 902,
+            "description": "Refreshs the multiselect based on the selected options of the select.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 945,
+            "description": "Select all options of the given values.\n\nIf triggerOnChange is set to true, the on change event is triggered if\nand only if one value is passed.",
+            "params": [
+                {
+                    "name": "selectValues",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "triggerOnChange",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 994,
+            "description": "Clears all selected items.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1003,
+            "description": "Deselects all options of the given values.\n\nIf triggerOnChange is set to true, the on change event is triggered, if\nand only if one value is passed.",
+            "params": [
+                {
+                    "name": "deselectValues",
+                    "description": "",
+                    "type": "Array"
+                },
+                {
+                    "name": "triggerOnChange",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1048,
+            "description": "Selects all enabled & visible options.\n\nIf justVisible is true or not specified, only visible options are selected.",
+            "params": [
+                {
+                    "name": "justVisible",
+                    "description": "",
+                    "type": "Boolean"
+                },
+                {
+                    "name": "triggerOnSelectAll",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1090,
+            "description": "Deselects all options.\n\nIf justVisible is true or not specified, only visible options are deselected.",
+            "params": [
+                {
+                    "name": "justVisible",
+                    "description": "",
+                    "type": "Boolean"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1126,
+            "description": "Rebuild the plugin.\n\nRebuilds the dropdown, the filter and the select all option.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1156,
+            "description": "The provided data will be used to build the dropdown.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1201,
+            "description": "Enable the multiselect.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1210,
+            "description": "Disable the multiselect.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1219,
+            "description": "Set the options.",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1228,
+            "description": "Merges the given options with the default options.",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Array"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1238,
+            "description": "Checks whether a select all checkbox is present.",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1247,
+            "description": "Updates the select all checkbox based on the currently displayed and selected checkboxes.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1270,
+            "description": "Update the button text and its title based on the currently selected options.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1283,
+            "description": "Get all selected options.",
+            "return": {
+                "description": "",
+                "type": "JQUery"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1292,
+            "description": "Gets a select option by its value.",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JQuery"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1311,
+            "description": "Get the input (radio/checkbox) by its value.",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "JQuery"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-multiselect.js",
+            "line": 1330,
+            "description": "Used for knockout integration.",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 28,
+            "description": "Bridget makes jQuery widgets\nv1.0.1\nMIT license",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 77,
+            "description": "adds option method -> $().plugin('option', {...})",
+            "params": [
+                {
+                    "name": "PluginClass",
+                    "description": "- constructor class",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 107,
+            "description": "jQuery plugin bridge, access methods like $elem.plugin('method')",
+            "params": [
+                {
+                    "name": "namespace",
+                    "description": "- plugin name",
+                    "type": "String"
+                },
+                {
+                    "name": "PluginClass",
+                    "description": "- constructor class",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 170,
+            "description": "converts a Prototypical class into a proper jQuery plugin\n  the class must have a ._init method",
+            "params": [
+                {
+                    "name": "namespace",
+                    "description": "- plugin name, used in $().pluginName",
+                    "type": "String"
+                },
+                {
+                    "name": "PluginClass",
+                    "description": "- constructor class",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 191,
+            "description": "BOOTSTRAP-SLIDER SOURCE CODE",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 295,
+            "description": "CONSTRUCTOR",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 329,
+            "description": "Process Options",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 383,
+            "description": "Create Markup",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 508,
+            "description": "Setup",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 635,
+            "description": "Bind Event Listeners",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 689,
+            "description": "INSTANCE PROPERTIES/METHODS\n\n\t\t- Any methods bound to the prototype are considered\n\t\tpart of the plugin's `public` interface",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 897,
+            "description": "HELPERS\n\n\t\t\t- Any method that is not part of the public interface.\n\t\t\t- Place it underneath this comment block and write its signature like so:\n\n\t\t\t  \t\t\t\t\t_fnName : function() {...}",
+            "class": ""
+        },
+        {
+            "file": "scripts/bootstrap/js/bootstrap-slider.js",
+            "line": 1521,
+            "description": "Attach to global namespace",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 853,
+            "description": "Create key-value caches of limited size",
+            "return": {
+                "description": "Returns the Object data after storing it on itself with\n\tproperty name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)\n\tdeleting the oldest entry",
+                "type": "Function(string, Object)"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 873,
+            "description": "Mark a function for special use by Sizzle",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "The function to mark",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 882,
+            "description": "Support testing using an element",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "Passed the created div and expects a boolean result",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 903,
+            "description": "Adds the same handler for all of the specified attrs",
+            "params": [
+                {
+                    "name": "attrs",
+                    "description": "Pipe-separated list of attributes",
+                    "type": "String"
+                },
+                {
+                    "name": "handler",
+                    "description": "The method that will be applied",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 917,
+            "description": "Checks document order of two siblings",
+            "params": [
+                {
+                    "name": "a",
+                    "description": "",
+                    "type": "Element"
+                },
+                {
+                    "name": "b",
+                    "description": "",
+                    "type": "Element"
+                }
+            ],
+            "return": {
+                "description": "Returns less than 0 if a precedes b, greater than 0 if a follows b",
+                "type": "Number"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 946,
+            "description": "Returns a function to use in pseudos for input types",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 957,
+            "description": "Returns a function to use in pseudos for buttons",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 968,
+            "description": "Returns a function to use in pseudos for positionals",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 990,
+            "description": "Checks a node for validity as a Sizzle context",
+            "params": [
+                {
+                    "name": "context",
+                    "description": "",
+                    "type": "Element|Object="
+                }
+            ],
+            "return": {
+                "description": "The input node if acceptable, otherwise a falsy value",
+                "type": "Element|Object|Boolean"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 1002,
+            "description": "Detects XML nodes",
+            "params": [
+                {
+                    "name": "elem",
+                    "description": "An element or a document",
+                    "type": "Element|Object"
+                }
+            ],
+            "return": {
+                "description": "True iff elem is a non-HTML XML node",
+                "type": "Boolean"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 1014,
+            "description": "Sets document-related variables once based on the current document",
+            "params": [
+                {
+                    "name": "doc",
+                    "description": "An element or document object to use to set the document",
+                    "type": "Element|Object",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "Returns the current document",
+                "type": "Object"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 1456,
+            "description": "Document sorting and removing duplicates",
+            "params": [
+                {
+                    "name": "results",
+                    "description": "",
+                    "type": "ArrayLike"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 1489,
+            "description": "Utility function for retrieving the text value of an array of DOM nodes",
+            "params": [
+                {
+                    "name": "elem",
+                    "description": "",
+                    "type": "Array|Element"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 2462,
+            "description": "A low-level selection function that works with Sizzle's compiled\n selector functions",
+            "params": [
+                {
+                    "name": "selector",
+                    "description": "A selector or a pre-compiled\n selector function built with Sizzle.compile",
+                    "type": "String|Function"
+                },
+                {
+                    "name": "context",
+                    "description": "",
+                    "type": "Element"
+                },
+                {
+                    "name": "results",
+                    "description": "",
+                    "type": "Array",
+                    "optional": true
+                },
+                {
+                    "name": "seed",
+                    "description": "A set of elements to match against",
+                    "type": "Array",
+                    "optional": true
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 3422,
+            "description": "The ready event handler and self cleanup method",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 3515,
+            "description": "Determines whether an object can have data",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 5473,
+            "description": "Retrieve the actual display of a element",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "nodeName of the element",
+                    "type": "String"
+                },
+                {
+                    "name": "doc",
+                    "description": "Document object",
+                    "type": "Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 5497,
+            "description": "Try to determine the default display value of an element",
+            "params": [
+                {
+                    "name": "nodeName",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 8825,
+            "description": "Load a url into a page",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery-2.1.3.js",
+            "line": 8909,
+            "description": "Gets a window from an element",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/jquery.tipsy.js",
+            "line": 258,
+            "description": "yields a closure of the supplied parameters, producing a function that takes\nno arguments and is suitable for use as an autogravity function like so:",
+            "params": [
+                {
+                    "name": "margin",
+                    "description": "(int) - distance from the viewable region edge that an\n       element should be before setting its tooltip's gravity to be away\n       from that edge."
+                },
+                {
+                    "name": "prefer",
+                    "description": "(string, e.g. 'n', 'sw', 'w') - the direction to prefer\n       if there are no viewable region edges effecting the tooltip's\n       gravity. It will try to vary from this minimally, for example,\n       if 'sw' is preferred and an element is near the right viewable \n       region edge, but not the top edge, it will set the gravity for\n       that element's tooltip to be 'se', preserving the southern\n       component."
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1,
+            "license": "RequireJS 2.1.20 Copyright (c) 2010-2015, The Dojo Foundation All Rights Reserved.\nAvailable via the MIT or new BSD license.\nsee: http://github.com/jrburke/requirejs for details",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 48,
+            "description": "Helper function for iterating over an array. If the func returns\na true value, it will break out of the loop.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 63,
+            "description": "Helper function for iterating over an array backwards. If the func\nreturns a true value, it will break out of the loop.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 86,
+            "description": "Cycles over properties in an object and calls a function for each\nproperty value. If the function returns a truthy value, then the\niteration is stopped.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 102,
+            "description": "Simple function to mix in properties from source into target,\nbut only if target does not already have a property of the same name.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 156,
+            "description": "Constructs an error with a pointer to an URL with more information.",
+            "params": [
+                {
+                    "name": "id",
+                    "description": "the error ID that maps to an ID on a web page.",
+                    "type": "String"
+                },
+                {
+                    "name": "message",
+                    "description": "human readable error.",
+                    "type": "String"
+                },
+                {
+                    "name": "err",
+                    "description": "the original error, if there is one.",
+                    "type": "Error",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Error"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 224,
+            "description": "Trims the . and .. from an array of path segments.\nIt will keep a leading path segment if a .. will become\nthe first path segment, to help with module name lookups,\nwhich act like paths, but can be remapped. But the end result,\nall paths that use this function should look normalized.\nNOTE: this method MODIFIES the input array.",
+            "params": [
+                {
+                    "name": "ary",
+                    "description": "the array of path segments.",
+                    "type": "Array"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 256,
+            "description": "Given a relative module name, like ./something, normalize it to\na real name that can be mapped to a path.",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "the relative name",
+                    "type": "String"
+                },
+                {
+                    "name": "baseName",
+                    "description": "a real name that the name arg is relative\nto.",
+                    "type": "String"
+                },
+                {
+                    "name": "applyMap",
+                    "description": "apply the map config to the value. Should\nonly be done if this normalization is for a dependency ID.",
+                    "type": "Boolean"
+                }
+            ],
+            "return": {
+                "description": "normalized name",
+                "type": "String"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 398,
+            "description": "Creates a module mapping that includes plugin prefix, module\nname, and path. If parentModuleMap is provided it will\nalso normalize the name via require.normalize()",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "the module name",
+                    "type": "String"
+                },
+                {
+                    "name": "parentModuleMap",
+                    "description": "parent module map\nfor the module name, used to resolve relative names.",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "isNormalized:",
+                    "description": "is the ID already normalized.\nThis is true if this call is done for a define() module ID.",
+                    "type": "Boolean"
+                },
+                {
+                    "name": "applyMap:",
+                    "description": "apply the map config to the ID.\nShould only be true if this map is for a dependency.",
+                    "type": "Boolean"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 549,
+            "description": "Internal method to transfer globalQueue items to this context's\ndefQueue.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 833,
+            "description": "Checks if the module is ready to define itself, and if so,\ndefine it.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1211,
+            "description": "Given an event from a script node, get the requirejs info from it,\nand then removes the event listeners on the node.",
+            "params": [
+                {
+                    "name": "evt",
+                    "description": "",
+                    "type": "Event"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1267,
+            "description": "Set a configuration for the context.",
+            "params": [
+                {
+                    "name": "cfg",
+                    "description": "config object to integrate.",
+                    "type": "Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1454,
+            "description": "Converts a module name + .extension into an URL path.\n*Requires* the use of a module name. It does not support using\nplain URLs like nameToUrl.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1529,
+            "description": "Called to enable a module if it is still in the registry\nawaiting enablement. A second arg, parent, the parent module,\nis passed in for context, when this method is overridden by\nthe optimizer. Not shown here to keep code compact.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1542,
+            "description": "Internal method used by environment adapters to complete a load event.\nA load event could be a script load or just a load pass from a synchronous\nload call.",
+            "params": [
+                {
+                    "name": "moduleName",
+                    "description": "the name of the module to potentially complete.",
+                    "type": "String"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1599,
+            "description": "Converts a module name to a file path. Supports cases where\nmoduleName may actually be just an URL.\nNote that it **does not** call normalize on the moduleName,\nit is assumed to have already been normalized. This is an\ninternal API, not a public one. Use toUrl for the public API.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1670,
+            "description": "Executes a module callback function. Broken out as a separate function\nsolely to allow the build system to sequence the files in the built\nlayer in the right sequence.",
+            "access": "private",
+            "tagname": "",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1681,
+            "description": "callback for script loads, used to check status of loading.",
+            "params": [
+                {
+                    "name": "evt",
+                    "description": "the event from the browser for the script\nthat was loaded.",
+                    "type": "Event"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1703,
+            "description": "Callback for script errors.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1718,
+            "description": "Main entry point.\n\nIf the only argument to require is a string, then the module that\nis represented by that string is fetched for the appropriate context.\n\nIf the first argument is an array, then it will be treated as an array\nof dependency string names to fetch. An optional function callback can\nbe specified to execute when all of those dependencies are available.\n\nMake a local req variable to help Caja compliance (it assumes things\non a require that are not standardized), and to give a short\nname for minification/local scope use.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1768,
+            "description": "Support require.config() to make it easier to cooperate with other\nAMD loaders on globally agreed names.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1776,
+            "description": "Execute something after the current tick\nof the event loop. Override for other envs\nthat have a better solution than setTimeout.",
+            "params": [
+                {
+                    "name": "fn",
+                    "description": "function to execute later.",
+                    "type": "Function"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1786,
+            "description": "Export require as a global, but only if it does not already exist.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1833,
+            "description": "Any errors that require explicitly generates will be passed to this\nfunction. Intercept/override it if you want custom error handling.",
+            "params": [
+                {
+                    "name": "err",
+                    "description": "the error object.",
+                    "type": "Error"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1840,
+            "description": "Creates the node for the load command. Only used in browser envs.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 1853,
+            "description": "Does the request to load a module for the browser case.\nMake this a separate function to allow other environments\nto override it.",
+            "params": [
+                {
+                    "name": "context",
+                    "description": "the require context to find state.",
+                    "type": "Object"
+                },
+                {
+                    "name": "moduleName",
+                    "description": "the name of the module.",
+                    "type": "String"
+                },
+                {
+                    "name": "url",
+                    "description": "the URL to the module.",
+                    "type": "Object"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 2012,
+            "description": "The function that handles definitions of modules. Differs from\nrequire() in that a string for the module should be the first argument,\nand the function to execute after dependencies are loaded should\nreturn a value to define the module corresponding to the first argument's\nname.",
+            "class": ""
+        },
+        {
+            "file": "scripts/lib/require.js",
+            "line": 2090,
+            "description": "Executes the text. Normally just uses eval, but can be modified\nto use a better, environment-specific call. Only used for transpiling\nloader plugins, not for plain JS modules.",
+            "params": [
+                {
+                    "name": "text",
+                    "description": "the text to execute/evaluate.",
+                    "type": "String"
+                }
+            ],
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.behaviors.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.core.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.events.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.graph.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.layouts.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.renders.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.renders.js",
+            "line": 189,
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.renders.js",
+            "line": 191,
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.renders.js",
+            "line": 1240,
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.renders.js",
+            "line": 1246,
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.settings.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.utils.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/gvis/gvis.utils.js",
+            "line": 36,
+            "description": "This function takes any number of objects as arguments, copies from each\nof these objects each pair key/value into a new object, and finally\nreturns this object.\n\nThe arguments are parsed from the last one to the first one, such that\nwhen several objects have keys in common, the \"earliest\" object wins.\n\nExample:\n********\n > var o1 = {\n >       a: 1,\n >       b: 2,\n >       c: '3'\n >     },\n >     o2 = {\n >       c: '4',\n >       d: [ 5 ]\n >     };\n > gvis.utils.extend(o1, o2);\n > // Returns: {\n > //   a: 1,\n > //   b: 2,\n > //   c: '3',\n > //   d: [ 5 ]\n > // };",
+            "params": [
+                {
+                    "name": "Any",
+                    "description": "number of objects.",
+                    "type": "Object+"
+                }
+            ],
+            "return": {
+                "description": "The merged object.",
+                "type": "Object"
+            },
+            "class": ""
+        },
+        {
+            "file": "scripts/main/language.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        },
+        {
+            "file": "scripts/main/ui.js",
+            "line": 1,
+            "description": "Copyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:131"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:178"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:213"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:232"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1228"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1238"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1283"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1292"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1311"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/jquery-2.1.3.js:853"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/jquery-2.1.3.js:917"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/jquery-2.1.3.js:990"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/jquery-2.1.3.js:1002"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/jquery-2.1.3.js:1014"
+        },
+        {
+            "message": "unknown tag: license",
+            "line": " scripts/lib/require.js:1"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/require.js:156"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/require.js:256"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/require.js:398"
+        },
+        {
+            "message": "replacing incorrect tag: returns with return",
+            "line": " scripts/lib/require.js:1211"
+        },
+        {
+            "message": "Missing item type\nArabic translation for bootstrap-datetimepicker\nAla' Mohammad <amohammad@birzeit.ecu>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ar.js:1"
+        },
+        {
+            "message": "Missing item type\nBulgarian translation for bootstrap-datetimepicker\nApostol Apostolov <apostol.s.apostolov@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.bg.js:1"
+        },
+        {
+            "message": "Missing item type\nCatalan translation for bootstrap-datetimepicker\nJ. Garcia <jogaco.en@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ca.js:1"
+        },
+        {
+            "message": "Missing item type\nCzech translation for bootstrap-datetimepicker\nMatěj Koubík <matej@koubik.name>\nFixes by Michal Remiš <michal.remis@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.cs.js:1"
+        },
+        {
+            "message": "Missing item type\nDanish translation for bootstrap-datetimepicker\nChristian Pedersen <http://github.com/chripede>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.da.js:1"
+        },
+        {
+            "message": "Missing item type\nGerman translation for bootstrap-datetimepicker\nSam Zurcher <sam@orelias.ch>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.de.js:1"
+        },
+        {
+            "message": "Missing item type\nEstonian translation for bootstrap-datetimepicker\nRene Korss <http://rene.korss.ee>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ee.js:1"
+        },
+        {
+            "message": "Missing item type\nGreek translation for bootstrap-datetimepicker",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.el.js:1"
+        },
+        {
+            "message": "Missing item type\nSpanish translation for bootstrap-datetimepicker\nBruno Bonamin <bruno.bonamin@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.es.js:1"
+        },
+        {
+            "message": "Missing item type\nFinnish translation for bootstrap-datetimepicker\nJaakko Salonen <https://github.com/jsalonen>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.fi.js:1"
+        },
+        {
+            "message": "Missing item type\nFrench translation for bootstrap-datetimepicker\nNico Mollet <nico.mollet@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.fr.js:1"
+        },
+        {
+            "message": "Missing item type\nHebrew translation for bootstrap-datetimepicker\nSagie Maoz <sagie@maoz.info>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.he.js:1"
+        },
+        {
+            "message": "Missing item type\nCroatian localisation",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.hr.js:1"
+        },
+        {
+            "message": "Missing item type\nHungarian translation for bootstrap-datetimepicker\ndarevish <http://github.com/darevish>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.hu.js:1"
+        },
+        {
+            "message": "Missing item type\nArmenian translation for bootstrap-datepicker\nHayk Chamyan <hamshen@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.hy.js:1"
+        },
+        {
+            "message": "Missing item type\nBahasa translation for bootstrap-datetimepicker\nAzwar Akbar <azwar.akbar@gmail.com>\nAddtional by Yulian Sutopo <yuliansutopo@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.id.js:1"
+        },
+        {
+            "message": "Missing item type\nIcelandic translation for bootstrap-datetimepicker\nHinrik Örn Sigurðsson <hinrik.sig@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.is.js:1"
+        },
+        {
+            "message": "Missing item type\nItalian translation for bootstrap-datetimepicker\nEnrico Rubboli <rubboli@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.it.js:1"
+        },
+        {
+            "message": "Missing item type\nJapanese translation for bootstrap-datetimepicker\nNorio Suzuki <https://github.com/suzuki/>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ja.js:1"
+        },
+        {
+            "message": "Missing item type\nKorean translation for bootstrap-datetimepicker\nGu Youn <http://github.com/guyoun>\nBaekjoon Choi <http://github.com/Baekjoon>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ko.js:1"
+        },
+        {
+            "message": "Missing item type\nLithuanian translation for bootstrap-datetimepicker\nŠarūnas Gliebus <ssharunas@yahoo.co.uk>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.lt.js:1"
+        },
+        {
+            "message": "Missing item type\nLatvian translation for bootstrap-datetimepicker\nArtis Avotins <artis@apit.lv>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.lv.js:1"
+        },
+        {
+            "message": "Missing item type\nMalay translation for bootstrap-datetimepicker\nAteman Faiz <noorulfaiz@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ms.js:1"
+        },
+        {
+            "message": "Missing item type\nNorwegian (bokmål) translation for bootstrap-datetimepicker\nFredrik Sundmyhr <http://github.com/fsundmyhr>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.nb.js:1"
+        },
+        {
+            "message": "Missing item type\nDutch translation for bootstrap-datetimepicker\nReinier Goltstein <mrgoltstein@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.nl.js:1"
+        },
+        {
+            "message": "Missing item type\nNorwegian translation for bootstrap-datetimepicker\nRune Warhuus <rune@dinkdonkd.no>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.no.js:1"
+        },
+        {
+            "message": "Missing item type\nPolish translation for bootstrap-datetimepicker\nRobert <rtpm@gazeta.pl>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.pl.js:1"
+        },
+        {
+            "message": "Missing item type\nBrazilian translation for bootstrap-datetimepicker\nCauan Cabral <cauan@radig.com.br>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt-BR.js:1"
+        },
+        {
+            "message": "Missing item type\nPortuguese translation for bootstrap-datetimepicker\nOriginal code: Cauan Cabral <cauan@radig.com.br>\nTiago Melo <tiago.blackcode@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.pt.js:1"
+        },
+        {
+            "message": "Missing item type\nRomanian translation for bootstrap-datetimepicker\nCristian Vasile <cristi.mie@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ro.js:1"
+        },
+        {
+            "message": "Missing item type\nSerbian latin translation for bootstrap-datetimepicker\nBojan Milosavlević <milboj@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs-latin.js:1"
+        },
+        {
+            "message": "Missing item type\nSerbian cyrillic translation for bootstrap-datetimepicker\nBojan Milosavlević <milboj@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.rs.js:1"
+        },
+        {
+            "message": "Missing item type\nRussian translation for bootstrap-datetimepicker\nVictor Taranenko <darwin@snowdale.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ru.js:1"
+        },
+        {
+            "message": "Missing item type\nSlovak translation for bootstrap-datetimepicker\nMarek Lichtner <marek@licht.sk>\nFixes by Michal Remiš <michal.remis@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.sk.js:1"
+        },
+        {
+            "message": "Missing item type\nSlovene translation for bootstrap-datetimepicker\nGregor Rudolf <gregor.rudolf@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.sl.js:1"
+        },
+        {
+            "message": "Missing item type\nSwedish translation for bootstrap-datetimepicker\nPatrik Ragnarsson <patrik@starkast.net>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.sv.js:1"
+        },
+        {
+            "message": "Missing item type\nSwahili translation for bootstrap-datetimepicker\nEdwin Mugendi <https://github.com/edwinmugendi>\nSource: http://scriptsource.org/cms/scripts/page.php?item_id=entry_detail&uid=xnfaqyzcku",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.sw.js:1"
+        },
+        {
+            "message": "Missing item type\nThai translation for bootstrap-datetimepicker\nSuchau Jiraprapot <seroz24@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.th.js:1"
+        },
+        {
+            "message": "Missing item type\nTurkish translation for bootstrap-datetimepicker\nSerkan Algur <kaisercrazy_2@hotmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.tr.js:1"
+        },
+        {
+            "message": "Missing item type\nUkrainian translation for bootstrap-datepicker\nIgor Polynets",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.ua.js:1"
+        },
+        {
+            "message": "Missing item type\nUkrainian translation for bootstrap-datetimepicker\nAndrey Vityuk <andrey [dot] vityuk [at] gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.uk.js:1"
+        },
+        {
+            "message": "Missing item type\nSimplified Chinese translation for bootstrap-datetimepicker\nYuan Cheung <advanimal@gmail.com>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-CN.js:1"
+        },
+        {
+            "message": "Missing item type\nTraditional Chinese translation for bootstrap-datetimepicker\nRung-Sheng Jang <daniel@i-trend.co.cc>",
+            "line": " scripts/bootstrap/js/locales/bootstrap-datetimepicker.zh-TW.js:1"
+        },
+        {
+            "message": "Missing item type\nBootstrap Multiselect (https://github.com/davidstutz/bootstrap-multiselect)\n\nApache License, Version 2.0:\nCopyright (c) 2012 - 2015 David Stutz\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not\nuse this file except in compliance with the License. You may obtain a\ncopy of the License at http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT\nWARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the\nLicense for the specific language governing permissions and limitations\nunder the License.\n\nBSD 3-Clause License:\nCopyright (c) 2012 - 2015 David Stutz\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are met:\n   - Redistributions of source code must retain the above copyright notice,\n     this list of conditions and the following disclaimer.\n   - Redistributions in binary form must reproduce the above copyright notice,\n     this list of conditions and the following disclaimer in the documentation\n     and/or other materials provided with the distribution.\n   - Neither the name of David Stutz nor the names of its contributors may be\n     used to endorse or promote products derived from this software without\n     specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\nAND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,\nTHE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\nPURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR\nCONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,\nEXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,\nPROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;\nOR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,\nWHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR\nOTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF\nADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1"
+        },
+        {
+            "message": "Missing item type\nConstructor to create a new multiselect using the given select.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:131"
+        },
+        {
+            "message": "Missing item type\nDefault text function will either print 'None selected' in case no\noption is selected or a list of the selected options up to a length\nof 3 selected options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:178"
+        },
+        {
+            "message": "Missing item type\nUpdates the title of the button similar to the buttonText function.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:213"
+        },
+        {
+            "message": "Missing item type\nCreate a label.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:232"
+        },
+        {
+            "message": "Missing item type\nTriggered on change of the multiselect.\n\nNot triggered when selecting/deselecting options manually.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:241"
+        },
+        {
+            "message": "Missing item type\nTriggered when the dropdown is shown.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:252"
+        },
+        {
+            "message": "Missing item type\nTriggered when the dropdown is hidden.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:260"
+        },
+        {
+            "message": "Missing item type\nTriggered after the dropdown is shown.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:268"
+        },
+        {
+            "message": "Missing item type\nTriggered after the dropdown is hidden.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:276"
+        },
+        {
+            "message": "Missing item type\nTriggered on select all.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:284"
+        },
+        {
+            "message": "Missing item type\nBuilds the container of the multiselect.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:332"
+        },
+        {
+            "message": "Missing item type\nBuilds the button of the multiselect.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:343"
+        },
+        {
+            "message": "Missing item type\nBuilds the ul representing the dropdown menu.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:380"
+        },
+        {
+            "message": "Missing item type\nBuild the dropdown options and binds all nessecary events.\n\nUses createDivider and createOptionValue to create the necessary options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:405"
+        },
+        {
+            "message": "Missing item type\nCreate an option using the given select option.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:649"
+        },
+        {
+            "message": "Missing item type\nCreates a divider using the given select option.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:707"
+        },
+        {
+            "message": "Missing item type\nCreates an optgroup.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:717"
+        },
+        {
+            "message": "Missing item type\nBuild the selct all.\n\nChecks if a select all has already been created.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:745"
+        },
+        {
+            "message": "Missing item type\nBuilds the filter.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:790"
+        },
+        {
+            "message": "Missing item type\nUnbinds the whole plugin.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:893"
+        },
+        {
+            "message": "Missing item type\nRefreshs the multiselect based on the selected options of the select.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:902"
+        },
+        {
+            "message": "Missing item type\nSelect all options of the given values.\n\nIf triggerOnChange is set to true, the on change event is triggered if\nand only if one value is passed.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:945"
+        },
+        {
+            "message": "Missing item type\nClears all selected items.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:994"
+        },
+        {
+            "message": "Missing item type\nDeselects all options of the given values.\n\nIf triggerOnChange is set to true, the on change event is triggered, if\nand only if one value is passed.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1003"
+        },
+        {
+            "message": "Missing item type\nSelects all enabled & visible options.\n\nIf justVisible is true or not specified, only visible options are selected.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1048"
+        },
+        {
+            "message": "Missing item type\nDeselects all options.\n\nIf justVisible is true or not specified, only visible options are deselected.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1090"
+        },
+        {
+            "message": "Missing item type\nRebuild the plugin.\n\nRebuilds the dropdown, the filter and the select all option.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1126"
+        },
+        {
+            "message": "Missing item type\nThe provided data will be used to build the dropdown.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1156"
+        },
+        {
+            "message": "Missing item type\nEnable the multiselect.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1201"
+        },
+        {
+            "message": "Missing item type\nDisable the multiselect.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1210"
+        },
+        {
+            "message": "Missing item type\nSet the options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1219"
+        },
+        {
+            "message": "Missing item type\nMerges the given options with the default options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1228"
+        },
+        {
+            "message": "Missing item type\nChecks whether a select all checkbox is present.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1238"
+        },
+        {
+            "message": "Missing item type\nUpdates the select all checkbox based on the currently displayed and selected checkboxes.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1247"
+        },
+        {
+            "message": "Missing item type\nUpdate the button text and its title based on the currently selected options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1270"
+        },
+        {
+            "message": "Missing item type\nGet all selected options.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1283"
+        },
+        {
+            "message": "Missing item type\nGets a select option by its value.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1292"
+        },
+        {
+            "message": "Missing item type\nGet the input (radio/checkbox) by its value.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1311"
+        },
+        {
+            "message": "Missing item type\nUsed for knockout integration.",
+            "line": " scripts/bootstrap/js/bootstrap-multiselect.js:1330"
+        },
+        {
+            "message": "Missing item type\nBridget makes jQuery widgets\nv1.0.1\nMIT license",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:28"
+        },
+        {
+            "message": "Missing item type\nadds option method -> $().plugin('option', {...})",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:77"
+        },
+        {
+            "message": "Missing item type\njQuery plugin bridge, access methods like $elem.plugin('method')",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:107"
+        },
+        {
+            "message": "Missing item type\nconverts a Prototypical class into a proper jQuery plugin\n  the class must have a ._init method",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:170"
+        },
+        {
+            "message": "Missing item type\nBOOTSTRAP-SLIDER SOURCE CODE",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:191"
+        },
+        {
+            "message": "Missing item type\nCONSTRUCTOR",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:295"
+        },
+        {
+            "message": "Missing item type\nProcess Options",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:329"
+        },
+        {
+            "message": "Missing item type\nCreate Markup",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:383"
+        },
+        {
+            "message": "Missing item type\nSetup",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:508"
+        },
+        {
+            "message": "Missing item type\nBind Event Listeners",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:635"
+        },
+        {
+            "message": "Missing item type\nINSTANCE PROPERTIES/METHODS\n\n\t\t- Any methods bound to the prototype are considered\n\t\tpart of the plugin's `public` interface",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:689"
+        },
+        {
+            "message": "Missing item type\nHELPERS\n\n\t\t\t- Any method that is not part of the public interface.\n\t\t\t- Place it underneath this comment block and write its signature like so:\n\n\t\t\t  \t\t\t\t\t_fnName : function() {...}",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:897"
+        },
+        {
+            "message": "Missing item type\nAttach to global namespace",
+            "line": " scripts/bootstrap/js/bootstrap-slider.js:1521"
+        },
+        {
+            "message": "Missing item type\nCreate key-value caches of limited size",
+            "line": " scripts/lib/jquery-2.1.3.js:853"
+        },
+        {
+            "message": "Missing item type\nMark a function for special use by Sizzle",
+            "line": " scripts/lib/jquery-2.1.3.js:873"
+        },
+        {
+            "message": "Missing item type\nSupport testing using an element",
+            "line": " scripts/lib/jquery-2.1.3.js:882"
+        },
+        {
+            "message": "Missing item type\nAdds the same handler for all of the specified attrs",
+            "line": " scripts/lib/jquery-2.1.3.js:903"
+        },
+        {
+            "message": "Missing item type\nChecks document order of two siblings",
+            "line": " scripts/lib/jquery-2.1.3.js:917"
+        },
+        {
+            "message": "Missing item type\nReturns a function to use in pseudos for input types",
+            "line": " scripts/lib/jquery-2.1.3.js:946"
+        },
+        {
+            "message": "Missing item type\nReturns a function to use in pseudos for buttons",
+            "line": " scripts/lib/jquery-2.1.3.js:957"
+        },
+        {
+            "message": "Missing item type\nReturns a function to use in pseudos for positionals",
+            "line": " scripts/lib/jquery-2.1.3.js:968"
+        },
+        {
+            "message": "Missing item type\nChecks a node for validity as a Sizzle context",
+            "line": " scripts/lib/jquery-2.1.3.js:990"
+        },
+        {
+            "message": "Missing item type\nDetects XML nodes",
+            "line": " scripts/lib/jquery-2.1.3.js:1002"
+        },
+        {
+            "message": "Missing item type\nSets document-related variables once based on the current document",
+            "line": " scripts/lib/jquery-2.1.3.js:1014"
+        },
+        {
+            "message": "Missing item type\nDocument sorting and removing duplicates",
+            "line": " scripts/lib/jquery-2.1.3.js:1456"
+        },
+        {
+            "message": "Missing item type\nUtility function for retrieving the text value of an array of DOM nodes",
+            "line": " scripts/lib/jquery-2.1.3.js:1489"
+        },
+        {
+            "message": "Missing item type\nA low-level selection function that works with Sizzle's compiled\n selector functions",
+            "line": " scripts/lib/jquery-2.1.3.js:2462"
+        },
+        {
+            "message": "Missing item type\nThe ready event handler and self cleanup method",
+            "line": " scripts/lib/jquery-2.1.3.js:3422"
+        },
+        {
+            "message": "Missing item type\nDetermines whether an object can have data",
+            "line": " scripts/lib/jquery-2.1.3.js:3515"
+        },
+        {
+            "message": "Missing item type\nRetrieve the actual display of a element",
+            "line": " scripts/lib/jquery-2.1.3.js:5473"
+        },
+        {
+            "message": "Missing item type\nTry to determine the default display value of an element",
+            "line": " scripts/lib/jquery-2.1.3.js:5497"
+        },
+        {
+            "message": "Missing item type\nLoad a url into a page",
+            "line": " scripts/lib/jquery-2.1.3.js:8825"
+        },
+        {
+            "message": "Missing item type\nGets a window from an element",
+            "line": " scripts/lib/jquery-2.1.3.js:8909"
+        },
+        {
+            "message": "Missing item type\nyields a closure of the supplied parameters, producing a function that takes\nno arguments and is suitable for use as an autogravity function like so:",
+            "line": " scripts/lib/jquery.tipsy.js:258"
+        },
+        {
+            "message": "Missing item type",
+            "line": " scripts/lib/require.js:1"
+        },
+        {
+            "message": "Missing item type\nHelper function for iterating over an array. If the func returns\na true value, it will break out of the loop.",
+            "line": " scripts/lib/require.js:48"
+        },
+        {
+            "message": "Missing item type\nHelper function for iterating over an array backwards. If the func\nreturns a true value, it will break out of the loop.",
+            "line": " scripts/lib/require.js:63"
+        },
+        {
+            "message": "Missing item type\nCycles over properties in an object and calls a function for each\nproperty value. If the function returns a truthy value, then the\niteration is stopped.",
+            "line": " scripts/lib/require.js:86"
+        },
+        {
+            "message": "Missing item type\nSimple function to mix in properties from source into target,\nbut only if target does not already have a property of the same name.",
+            "line": " scripts/lib/require.js:102"
+        },
+        {
+            "message": "Missing item type\nConstructs an error with a pointer to an URL with more information.",
+            "line": " scripts/lib/require.js:156"
+        },
+        {
+            "message": "Missing item type\nTrims the . and .. from an array of path segments.\nIt will keep a leading path segment if a .. will become\nthe first path segment, to help with module name lookups,\nwhich act like paths, but can be remapped. But the end result,\nall paths that use this function should look normalized.\nNOTE: this method MODIFIES the input array.",
+            "line": " scripts/lib/require.js:224"
+        },
+        {
+            "message": "Missing item type\nGiven a relative module name, like ./something, normalize it to\na real name that can be mapped to a path.",
+            "line": " scripts/lib/require.js:256"
+        },
+        {
+            "message": "Missing item type\nCreates a module mapping that includes plugin prefix, module\nname, and path. If parentModuleMap is provided it will\nalso normalize the name via require.normalize()",
+            "line": " scripts/lib/require.js:398"
+        },
+        {
+            "message": "Missing item type\nInternal method to transfer globalQueue items to this context's\ndefQueue.",
+            "line": " scripts/lib/require.js:549"
+        },
+        {
+            "message": "Missing item type\nChecks if the module is ready to define itself, and if so,\ndefine it.",
+            "line": " scripts/lib/require.js:833"
+        },
+        {
+            "message": "Missing item type\nGiven an event from a script node, get the requirejs info from it,\nand then removes the event listeners on the node.",
+            "line": " scripts/lib/require.js:1211"
+        },
+        {
+            "message": "Missing item type\nSet a configuration for the context.",
+            "line": " scripts/lib/require.js:1267"
+        },
+        {
+            "message": "Missing item type\nConverts a module name + .extension into an URL path.\n*Requires* the use of a module name. It does not support using\nplain URLs like nameToUrl.",
+            "line": " scripts/lib/require.js:1454"
+        },
+        {
+            "message": "Missing item type\nCalled to enable a module if it is still in the registry\nawaiting enablement. A second arg, parent, the parent module,\nis passed in for context, when this method is overridden by\nthe optimizer. Not shown here to keep code compact.",
+            "line": " scripts/lib/require.js:1529"
+        },
+        {
+            "message": "Missing item type\nInternal method used by environment adapters to complete a load event.\nA load event could be a script load or just a load pass from a synchronous\nload call.",
+            "line": " scripts/lib/require.js:1542"
+        },
+        {
+            "message": "Missing item type\nConverts a module name to a file path. Supports cases where\nmoduleName may actually be just an URL.\nNote that it **does not** call normalize on the moduleName,\nit is assumed to have already been normalized. This is an\ninternal API, not a public one. Use toUrl for the public API.",
+            "line": " scripts/lib/require.js:1599"
+        },
+        {
+            "message": "Missing item type\nExecutes a module callback function. Broken out as a separate function\nsolely to allow the build system to sequence the files in the built\nlayer in the right sequence.",
+            "line": " scripts/lib/require.js:1670"
+        },
+        {
+            "message": "Missing item type\ncallback for script loads, used to check status of loading.",
+            "line": " scripts/lib/require.js:1681"
+        },
+        {
+            "message": "Missing item type\nCallback for script errors.",
+            "line": " scripts/lib/require.js:1703"
+        },
+        {
+            "message": "Missing item type\nMain entry point.\n\nIf the only argument to require is a string, then the module that\nis represented by that string is fetched for the appropriate context.\n\nIf the first argument is an array, then it will be treated as an array\nof dependency string names to fetch. An optional function callback can\nbe specified to execute when all of those dependencies are available.\n\nMake a local req variable to help Caja compliance (it assumes things\non a require that are not standardized), and to give a short\nname for minification/local scope use.",
+            "line": " scripts/lib/require.js:1718"
+        },
+        {
+            "message": "Missing item type\nSupport require.config() to make it easier to cooperate with other\nAMD loaders on globally agreed names.",
+            "line": " scripts/lib/require.js:1768"
+        },
+        {
+            "message": "Missing item type\nExecute something after the current tick\nof the event loop. Override for other envs\nthat have a better solution than setTimeout.",
+            "line": " scripts/lib/require.js:1776"
+        },
+        {
+            "message": "Missing item type\nExport require as a global, but only if it does not already exist.",
+            "line": " scripts/lib/require.js:1786"
+        },
+        {
+            "message": "Missing item type\nAny errors that require explicitly generates will be passed to this\nfunction. Intercept/override it if you want custom error handling.",
+            "line": " scripts/lib/require.js:1833"
+        },
+        {
+            "message": "Missing item type\nCreates the node for the load command. Only used in browser envs.",
+            "line": " scripts/lib/require.js:1840"
+        },
+        {
+            "message": "Missing item type\nDoes the request to load a module for the browser case.\nMake this a separate function to allow other environments\nto override it.",
+            "line": " scripts/lib/require.js:1853"
+        },
+        {
+            "message": "Missing item type\nThe function that handles definitions of modules. Differs from\nrequire() in that a string for the module should be the first argument,\nand the function to execute after dependencies are loaded should\nreturn a value to define the module corresponding to the first argument's\nname.",
+            "line": " scripts/lib/require.js:2012"
+        },
+        {
+            "message": "Missing item type\nExecutes the text. Normally just uses eval, but can be modified\nto use a better, environment-specific call. Only used for transpiling\nloader plugins, not for plain JS modules.",
+            "line": " scripts/lib/require.js:2090"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.behaviors.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.core.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.events.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.graph.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.layouts.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.renders.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " scripts/main/gvis/gvis.renders.js:189"
+        },
+        {
+            "message": "Missing item type",
+            "line": " scripts/main/gvis/gvis.renders.js:191"
+        },
+        {
+            "message": "Missing item type",
+            "line": " scripts/main/gvis/gvis.renders.js:1240"
+        },
+        {
+            "message": "Missing item type",
+            "line": " scripts/main/gvis/gvis.renders.js:1246"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.settings.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/gvis/gvis.utils.js:1"
+        },
+        {
+            "message": "Missing item type\nThis function takes any number of objects as arguments, copies from each\nof these objects each pair key/value into a new object, and finally\nreturns this object.\n\nThe arguments are parsed from the last one to the first one, such that\nwhen several objects have keys in common, the \"earliest\" object wins.\n\nExample:\n********\n > var o1 = {\n >       a: 1,\n >       b: 2,\n >       c: '3'\n >     },\n >     o2 = {\n >       c: '4',\n >       d: [ 5 ]\n >     };\n > gvis.utils.extend(o1, o2);\n > // Returns: {\n > //   a: 1,\n > //   b: 2,\n > //   c: '3',\n > //   d: [ 5 ]\n > // };",
+            "line": " scripts/main/gvis/gvis.utils.js:36"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/language.js:1"
+        },
+        {
+            "message": "Missing item type\nCopyright (c) 2015, GraphSQL Inc.                                          *\nAll rights reserved                                                        *\nUnauthorized copying of this file, via any medium is strictly prohibited   *\nProprietary and confidential                                               *",
+            "line": " scripts/main/ui.js:1"
+        }
+    ]
+}

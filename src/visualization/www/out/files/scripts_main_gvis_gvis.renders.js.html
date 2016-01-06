@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>scripts/main/gvis/gvis.renders.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: scripts/main/gvis/gvis.renders.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/******************************************************************************
+ * Copyright (c) 2015, GraphSQL Inc.                                          *
+ * All rights reserved                                                        *
+ * Unauthorized copying of this file, via any medium is strictly prohibited   *
+ * Proprietary and confidential                                               *
+ ******************************************************************************/
+(function(undefined) {
+  &quot;use strict&quot;;
+  // Doing somthing for renders
+  console.log(&#x27;Loading gvis.render&#x27;)
+
+  gvis.renders = function(_this) {
+
+    this._this = _this; // gvis pointer.
+    this.graph = _this.graph;
+
+    this.render_container = _this.conf.container;
+    this.render_type = !_this.conf.render_type ? &#x27;svg&#x27; : _this.conf.render_type;    
+
+    this.domain_width = gvis.settings.domain_width;
+    this.domain_height = gvis.settings.domain_height;
+
+    this.range_width = +d3.select(&#x27;#&#x27;+this.render_container).style(&#x27;width&#x27;).slice(0, -2);
+    this.range_height = +d3.select(&#x27;#&#x27;+this.render_container).style(&#x27;height&#x27;).slice(0, -2);
+
+    this.zoomRange = [0.1, 10];
+
+    this.xScale = d3.scale.linear()
+    .domain([0, this.domain_width])
+    .range([0, this.range_width]);
+
+    this.yScale = d3.scale.linear()
+    .domain([0, this.domain_height])
+    .range([0, this.range_height])
+
+
+    switch (this.render_type) {
+      case &#x27;canvas&#x27;:
+        this.renderer = &#x27;render &#x27; + this.render_container + &#x27; by using canvas. Coming soon.&#x27;;
+      break;
+      case &#x27;map&#x27;:
+        this.renderer = &#x27;render &#x27; + this.render_container + &#x27; by using map. Coming soon.&#x27;;
+      break;
+      case &#x27;svg&#x27;:
+      default:
+        this.renderer = new gvis.renders.svg(this);
+      break;
+    }
+
+    this.setEventHandler = function(eventName, fn) {
+      this.renderer.events.setEventHandler(eventName, fn)
+    }
+
+    this.generateCurvedLinkPoints = function(link) {
+      var a = 0.25;
+      var b = gvis.behaviors.render.nodeRadius * 2; // initNodeSetting.r * 4;
+      var edgeMargin = gvis.behaviors.render.nodeRadius * 1.2;
+      var markMargin = 0//gvis.behaviors.render.nodeRadius / 10;
+
+      var C0 = [0, 0]
+      var C1 = [0, 0]
+
+      var x0 = this.xScale(link.source.x)
+      var y0 = this.yScale(link.source.y)
+      var x1 = this.xScale(link.target.x)
+      var y1 = this.yScale(link.target.y)
+
+      var n = 0;
+      var i = -1;
+
+      var graph = this.graph.data();
+
+      var source_key = link.source[gvis.settings.key];
+      var target_key = link.target[gvis.settings.key];
+
+      var link_key = link[gvis.settings.key];
+
+      n = Object.keys(graph.neighbors.all[source_key][target_key]).length;
+
+      i = Object.keys(graph.neighbors.out[source_key][target_key]).indexOf(link_key)
+
+      if (n == 0 || i == -1) {
+        return [];
+      }
+      else if (n == 2) {
+        // customize two line case.
+        n = 3;
+        if (i == 1) {
+          i = 2
+        }
+      }
+
+      var t = (n-1-2*i) * b / 2;
+      var td = Math.sqrt((x0-x1)*(x0-x1)+(y0-y1)*(y0-y1));
+      var t0 = a * (td - edgeMargin) + edgeMargin * 0.5;
+      var t1 = (1-a) * (td - edgeMargin) + edgeMargin * 0.5;
+
+      var angle = Math.atan2(y1-y0, x1-x0)*180/Math.PI;
+
+      C0[0] = x0 + t0;
+      C0[1] = y0 + t;
+      C1[0] = x0 + t1;
+      C1[1] = y0 + t;
+
+      C0 = gvis.utils.rotate(x0, y0, C0[0], C0[1], angle);
+      C1 = gvis.utils.rotate(x0, y0, C1[0], C1[1], angle);
+
+
+      link._C0 = C0;
+      link._C1 = C1;
+
+      var tdc = Math.sqrt((C1[0]-x1)*(C1[0]-x1)+(C1[1]-y1)*(C1[1]-y1));
+
+      var tx0 = x0 - edgeMargin * (x0 - C0[0]) / tdc
+      var ty0 = y0 - edgeMargin * (y0 - C0[1]) / tdc;
+
+      var tx1 = x1 - (edgeMargin+markMargin) * (x1 - C1[0]) / tdc
+      var ty1 = y1 - (edgeMargin+markMargin) * (y1 - C1[1]) / tdc;
+
+      if (td &lt; 2*(edgeMargin+markMargin)) {
+        return []
+      }
+
+      if (tdc &lt; edgeMargin+markMargin) {
+        C1[0] = x1 * 0.5 + x0 *0.5;
+        C1[1] = y1 * 0.5 + y0 * 0.5;
+        C0 = C1;
+      }
+
+      return [[tx0, ty0], C0, C1, [tx1, ty1]]
+    }
+  }
+
+  gvis.renders.prototype.update = function(duration, delay) {
+    duration = duration != undefined ? duration : 500;
+    delay = delay != undefined ? delay : 0;
+
+    this.renderer.update(duration, delay);
+
+    return this;
+  }
+
+  gvis.renders.prototype.autoFit = function(duration, delay) {
+    duration = duration != undefined ? duration : 500;
+    delay = delay != undefined ? delay : 0;
+    this.renderer.autoFit(duration, delay);
+
+    return this
+  }
+
+  gvis.renders.prototype.render = function(total_time, between_delay, init_delay) {
+    var _this = this;
+
+    if (!this.graph.nodes().length) {
+      this.update(); 
+      return;
+    }
+
+    setTimeout(function() {
+      var start = new Date().getTime();
+      var end = new Date().getTime();
+      var time = end - start;
+
+      renderFunction();
+
+      var myRender = setInterval(renderFunction, between_delay);
+
+      function renderFunction() {
+        var converged = _this._this.layouts.runLayoutIteratively(between_delay*0.2);
+
+        _this.update(between_delay*0.8);
+        _this.autoFit(300, between_delay*0.8);
+
+        end = new Date().getTime();
+        time = end - start;
+
+        if (!!converged || time &gt;= total_time) {
+          window.clearInterval(myRender);
+        }
+      }
+    }, init_delay);
+  }
+
+  gvis.renders.prototype.clear = function() {
+    this.renderer.clear();
+  }
+
+
+  /********** renders sub class **********/
+
+  /********** renders.svg **********/
+  gvis.renders.svg = function(renders) {
+    this.renders = renders;
+
+    this.events = new gvis.events.svg(this);
+
+    var _this = renders._this;
+
+    var container_id = &quot;#&quot; + renders.render_container
+
+    this.zoom = d3.behavior.zoom()
+    .scaleExtent(renders.zoomRange)
+    .on(&quot;zoomstart&quot;, this.events.zoomstart)
+    .on(&quot;zoom&quot;, this.events.zoomed)
+    .on(&quot;zoomend&quot;, this.events.zoomend)
+
+    this.brush = d3.svg.brush()
+    .x(this.renders.xScale)
+    .y(this.renders.yScale)
+    .on(&quot;brushstart&quot;, this.events.brushstart)
+    .on(&quot;brush&quot;, this.events.brush)
+    .on(&quot;brushend&quot;, this.events.brushend);
+
+    this.drag = d3.behavior.drag()
+    .origin(function(d) { return d; })
+    .on(&quot;dragstart&quot;, this.events.dragstarted)
+    .on(&quot;drag&quot;, this.events.dragging)
+    .on(&quot;dragend&quot;, this.events.dragended);
+
+    var svg = d3.select(container_id)
+    .append(&quot;svg&quot;)
+    .attr(&quot;width&quot;, &quot;100%&quot;)
+    .attr(&quot;height&quot;, &quot;100%&quot;)
+    .attr(&quot;tabindex&quot;, 1)
+    .on(&quot;keydown&quot;, this.events.keydown)
+    .on(&quot;keyup&quot;, this.events.keyup)
+    .on(&quot;contextmenu&quot;, this.events.contextmenu)
+    .call(this.zoom)
+    .on(&quot;dblclick.zoom&quot;, null);
+
+    var defs = svg.append(&quot;defs&quot;);
+
+    defs.append(&quot;svg:clipPath&quot;)
+    .attr(&quot;id&quot;, &quot;node-mask&quot;)
+    .append(&quot;svg:circle&quot;)
+    .attr(&quot;r&quot;, gvis.behaviors.render.nodeMaskRadius-1)
+    .attr(&quot;cx&quot;, 0)
+    .attr(&quot;cy&quot;, 0);
+
+    defs.append(&#x27;g&#x27;)
+    .attr(&#x27;id&#x27;, &#x27;filter_group&#x27;)
+    .html(function(){
+      return &#x27;\
+        &lt;!-- a transparent grey drop-shadow that blends with the background colour --&gt;\
+        &lt;filter id=&quot;filter_shadow&quot; width=&quot;1.5&quot; height=&quot;1.5&quot; x=&quot;-.25&quot; y=&quot;-.25&quot;&gt;\
+            &lt;feGaussianBlur in=&quot;SourceAlpha&quot; stdDeviation=&quot;2.5&quot; result=&quot;blur&quot;/&gt;\
+            &lt;feColorMatrix result=&quot;bluralpha&quot; type=&quot;matrix&quot; values=\
+                    &quot;1 0 0 0   0\
+                     0 1 0 0   0\
+                     0 0 1 0   0\
+                     0 0 0 0.4 0 &quot;/&gt;\
+            &lt;feOffset in=&quot;bluralpha&quot; dx=&quot;3&quot; dy=&quot;3&quot; result=&quot;offsetBlur&quot;/&gt;\
+            &lt;feMerge&gt;\
+                &lt;feMergeNode in=&quot;offsetBlur&quot;/&gt;\
+                &lt;feMergeNode in=&quot;SourceGraphic&quot;/&gt;\
+            &lt;/feMerge&gt;\
+        &lt;/filter&gt;\
+        \
+        &lt;!-- a transparent grey glow with no offset --&gt;\
+        &lt;filter id=&quot;filter_black-glow&quot;&gt;\
+            &lt;feColorMatrix type=&quot;matrix&quot; values=\
+                        &quot;0 0 0 0   0\
+                         0 0 0 0   0\
+                         0 0 0 0   0\
+                         0 0 0 0.7 0&quot;/&gt;\
+            &lt;feGaussianBlur stdDeviation=&quot;2.5&quot; result=&quot;coloredBlur&quot;/&gt;\
+            &lt;feMerge&gt;\
+                &lt;feMergeNode in=&quot;coloredBlur&quot;/&gt;\
+                &lt;feMergeNode in=&quot;SourceGraphic&quot;/&gt;\
+            &lt;/feMerge&gt;\
+        &lt;/filter&gt;\
+        \
+        &lt;!-- a transparent glow that takes on the colour of the object it\&#x27;s applied to --&gt;\
+        &lt;filter id=&quot;filter_glow&quot;&gt;\
+            &lt;feGaussianBlur stdDeviation=&quot;2.5&quot; result=&quot;coloredBlur&quot;/&gt;\
+            &lt;feMerge&gt;\
+                &lt;feMergeNode in=&quot;coloredBlur&quot;/&gt;\
+                &lt;feMergeNode in=&quot;SourceGraphic&quot;/&gt;\
+            &lt;/feMerge&gt;\
+        &lt;/filter&gt;\
+        &#x27;
+    })
+
+
+    svg.append(&#x27;rect&#x27;)
+    .classed(&#x27;background_rect&#x27;, true) 
+    .attr(&quot;width&quot;, &quot;100%&quot;)
+    .attr(&quot;height&quot;, &quot;100%&quot;)
+    .attr(&quot;fill&quot;, gvis.behaviors.render.viewportBackgroundColor)
+    .attr(&quot;opacity&quot;, gvis.behaviors.render.viewportBackgroundOpacity)
+    .attr(&quot;stroke&quot;, &quot;transparent&quot;)
+
+    var g_brush = svg.append(&#x27;g&#x27;)
+    .classed(&#x27;brush&#x27;, true)
+    .datum(function() {
+      return {selected: false, preSlected: false};
+    })
+    .call(this.brush)
+
+    g_brush
+    .on(&quot;mousedown.brush&quot;, null)
+    .on(&quot;touchstart.brush&quot;, null)
+    .on(&quot;touchmove.brush&quot;, null)
+    .on(&quot;touchend.brush&quot;, null)
+    .select(&#x27;.background&#x27;).style(&#x27;cursor&#x27;, &#x27;auto&#x27;);
+
+    var g_zoomer = svg.append(&#x27;g&#x27;)
+
+    var g_links = g_zoomer.append(&#x27;g&#x27;).classed(&#x27;links_group&#x27;, true)
+
+    var g_nodes = g_zoomer.append(&#x27;g&#x27;).classed(&#x27;nodes_group&#x27;, true)
+
+    var g_legends = svg.append(&#x27;g&#x27;).classed(&#x27;legends_group&#x27;, true)
+
+    this.g_svg = svg;
+
+    this.g_brush = g_brush;
+
+    this.g_zoomer = g_zoomer;
+
+    this.g_links = g_links
+
+    this.g_nodes = g_nodes
+
+    this.g_legends = g_legends
+
+    this.update = function(duration, delay) {
+      //console.log(&#x27;render.svg.update &#x27; + container_id)
+
+      duration = duration != undefined ? duration : 500;
+      delay = delay != undefined ? delay : 0;
+
+      this.renders.range_width = +d3.select(container_id).style(&#x27;width&#x27;).slice(0, -2);
+      this.renders.range_height = +d3.select(container_id).style(&#x27;height&#x27;).slice(0, -2);
+
+      this.renders.xScale = d3.scale.linear()
+      .domain([0, this.renders.domain_width])
+      .range([0, this.renders.range_width]);
+
+      this.renders.yScale = d3.scale.linear()
+      .domain([0, this.renders.domain_height])
+      .range([0, this.renders.range_height]);
+
+      this.brush
+      .x(this.renders.xScale)
+      .y(this.renders.yScale)
+
+      // DATA BINDING
+      // Binding new data with old elements, if any.
+      var d_links = g_links.selectAll(&#x27;.link&#x27;).data(_this.graph.data().array.links, function(d) {
+        return d[gvis.settings.key]
+      })
+
+      var d_nodes = g_nodes.selectAll(&#x27;.node&#x27;).data(_this.graph.data().array.nodes, function(d) {
+        return d[gvis.settings.key]
+      })
+
+      var d_legends = g_legends.selectAll(&#x27;.legend&#x27;).data(Object.keys(_this.graph.data().idMap.nodesType))
+
+    
+      // ENTER
+      // Create new elements as needed.
+      d_nodes
+      .enter()
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;node&#x27;, true)
+      .attr(&#x27;id&#x27;, function(d) {return &#x27;node_&#x27;+d[gvis.settings.key]})
+      .call(this.addNodeRenderer, this)
+
+      d_legends
+      .enter()
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;legend&#x27;, true)
+      .call(this.addLegendRenderer, this)
+
+      d_links
+      .enter()
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;link&#x27;, true)
+      .attr(&#x27;id&#x27;, function(d) {return &#x27;link_&#x27;+d[gvis.settings.key]})
+      .call(this.addLinkRenderer, this)
+
+      // EXIT
+      // Remove old elements as needed.
+      
+      d_nodes.exit().remove();
+      d_legends.exit().remove();
+      d_links.exit().remove();
+
+
+      // ENTER + UPDATE
+      // Appending to the enter selection expands the update selection to include
+      // entering elements; so, operations on the update selection after appending to
+      // the enter selection will apply to both entering and updating nodes.
+      // Updating current elements
+      
+      d_nodes.call(this.updateNodeRenderer, this, duration, delay);
+      d_legends.call(this.updateLegendRenderer, this, duration, delay);
+      d_links.call(this.updateLinkRenderer, this, duration, delay)
+
+
+      // remove tipsy
+      d3.selectAll(&#x27;.tipsy&#x27;).remove();
+    }   
+  }
+
+  gvis.renders.svg.prototype.clear = function() {
+    this.g_links.selectAll(&#x27;*&#x27;).remove();
+    this.g_nodes.selectAll(&#x27;*&#x27;).remove();
+    this.g_legends.selectAll(&#x27;*&#x27;).remove();
+  }
+
+  gvis.renders.svg.prototype.addNodeRenderer = function() {
+    //console.log(&quot;addNodeRenderer&quot;, this, arguments)
+
+    var nodes = arguments[0];
+    var _svg = arguments[1];
+
+    nodes[0].forEach(function(n) {
+      if (!n) {
+        return;
+      }
+
+      // adding node
+      var node = d3.select(n)
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;node_container&#x27;, true);
+
+      var data = node.data()[0];
+
+      if (data.x == undefined) data.x = 0;
+      if (data.y == undefined) data.y = 0;
+
+      node
+      .attr(&quot;transform&quot;, function(d) {
+        return &quot;translate(&quot; + _svg.renders.xScale(d.x) + &quot;,&quot; + _svg.renders.yScale(d.y) + &quot;)&quot;; 
+      })
+      .on(&quot;dblclick&quot;, _svg.events.nodeDblClick)
+      .on(&quot;click&quot;, _svg.events.nodeClick)
+      .call(_svg.drag)
+
+      
+
+      // bacground circle for node icon
+      node
+      .append(&#x27;circle&#x27;)
+      .classed(&#x27;node_background_circle&#x27;, true)
+      .attr(&#x27;stroke-opacity&#x27;, gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+      .attr(&#x27;stroke-width&#x27;, gvis.behaviors.render.nodeBackgroundStrokeWidth)
+      .attr(&#x27;stroke&#x27;, gvis.behaviors.render.nodeBackgroundStrokeColor)
+      .attr(&#x27;fill&#x27;, gvis.behaviors.render.nodeBackgroundFillColor)
+      .attr(&#x27;fill-opacity&#x27;, gvis.behaviors.render.nodeBackgroundFillOpacity)
+      .attr(&#x27;r&#x27;, gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)
+      .attr(&#x27;filter&#x27;, &#x27;url(#filter_&#x27;+gvis.behaviors.render.nodeBackgroundFilter+&#x27;)&#x27;)
+
+      // add node icon
+      var icon = gvis.utils.icons(gvis.behaviors.icons[data.type]);
+
+      //transform=&quot;matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)&quot;
+      //Where sx is the scaling factor in the x-axis, sy in the y-axis.
+
+      var matrix = [];
+
+      var sx = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.nodeRadius-gvis.behaviors.render.nodeRadiusMargin)*1.5/icon.height;
+
+      var scale = sx &lt; sy ? sx : sy
+
+      var cx = icon.width/2;
+      var cy = icon.height/2;
+
+      var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
+
+      node
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;icon&#x27;, true)
+      .html(icon.svg)
+      .attr(&#x27;transform&#x27;, &#x27;matrix(&#x27;+matrix+&#x27;)&#x27;)
+      .attr(&#x27;fill&#x27;, function(d) {
+        return d[gvis.settings.styles].fill
+      })
+
+      var label = node
+                  .append(&#x27;g&#x27;)
+
+      // add node labels
+      var text = label.append(&#x27;text&#x27;)
+      .attr(&#x27;id&#x27;, function(d) {
+        return &#x27;label_&#x27; + d[gvis.settings.key];
+      })
+      .attr(&quot;text-anchor&quot;, &quot;middle&quot;)
+      .attr(&#x27;y&#x27;, gvis.behaviors.render.nodeRadius + gvis.behaviors.render.nodeLabelsFontSize / 1.5 - gvis.behaviors.render.nodeLabelsFontSize)
+
+      var bbox = text[0][0].getBBox();
+
+      // add node label background rectangle
+      label.insert(&#x27;rect&#x27;, &#x27;#label_&#x27; + data[gvis.settings.key])
+      //label.append(&#x27;rect&#x27;)
+      .classed(&#x27;label_background_rect&#x27;, true)
+      .attr(&#x27;rx&#x27;, 4)
+      .attr(&#x27;ry&#x27;, 4)
+      .attr(&#x27;x&#x27;, bbox.x)
+      .attr(&#x27;y&#x27;, bbox.y)
+      .attr(&#x27;width&#x27;, bbox.width)
+      .attr(&#x27;height&#x27;, bbox.height)
+      .attr(&#x27;fill&#x27;, &#x27;red&#x27;)
+      .attr(&#x27;opacity&#x27;, 0.2)
+      
+      $(node[0][0]).tipsy({ 
+        gravity: &#x27;w&#x27;,  // n s e w
+        html: true,
+        title: function() {
+          var d = this.__data__;
+
+          if (!!gvis.behaviors.style.nodeToolTips.customized) {
+            return gvis.behaviors.style.nodeToolTips.customized(d.type, d.id, d[gvis.settings.attrs], d);
+          }
+          else {
+            return gvis.behaviors.style.nodeToolTips.default(d.type, d.id, d[gvis.settings.attrs], d);
+          }
+        }
+      });
+    })
+  }
+
+  gvis.renders.svg.prototype.updateNodeRenderer = function() {
+    var nodes = arguments[0];
+    var _svg = arguments[1];
+    var duration = arguments[2] || 0;
+    var delay = arguments[3] || 0;
+
+    nodes[0].forEach(function(n) {
+      if (!n) {
+        return;
+      }
+
+      // select node
+      var node = d3.select(n);
+
+      node
+      .select(&#x27;.node_container&#x27;)
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&quot;transform&quot;, function(d) { 
+        return &quot;translate(&quot; + _svg.renders.xScale(d.x) + &quot;,&quot; + _svg.renders.yScale(d.y) + &quot;)&quot;; 
+      })
+
+      // get data
+      var data = node.data()[0];
+
+
+      // update icon
+      node.select(&#x27;.icon&#x27;)
+      .attr(&#x27;fill&#x27;, function(d) {
+        return d[gvis.settings.styles].fill
+      })
+
+      // select label
+      var text = node.select(&#x27;#label_&#x27; + data[gvis.settings.key])
+
+      text
+      .attr(&quot;font-size&quot;, gvis.behaviors.render.nodeLabelsFontSize)
+      .each(function(d) {
+        nodeLabelGenerator(this, d);
+      })
+      // .text(function(d) {
+      //   return d.type+&#x27;:&#x27;+d.id;
+      // })
+
+      var bbox = text[0][0].getBBox();
+
+      //label.insert(&#x27;rect&#x27;, &#x27;#label_&#x27; + data[gvis.settings.key])
+      node.select(&#x27;.label_background_rect&#x27;)
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&#x27;x&#x27;, bbox.x)
+      .attr(&#x27;y&#x27;, bbox.y)
+      .attr(&#x27;width&#x27;, bbox.width)
+      .attr(&#x27;height&#x27;, bbox.height)
+    })
+
+    function nodeLabelGenerator(target, data) {
+      //var labels = _svg.renders.labels.nodes[data.type];
+      var labels = data[gvis.settings.styles].labels || {};
+
+      d3.select(target).selectAll(&#x27;tspan&#x27;).remove();
+
+      if (!labels || Object.keys(labels).length === 0) {
+        d3.select(target)
+        .append(&quot;tspan&quot;)
+        .attr(&quot;x&quot;, 0)
+        .attr(&quot;dy&quot;, gvis.behaviors.render.nodeLabelsFontSize)
+        .text(&#x27;ID:&#x27;+data.id)
+      }
+      else {
+        if (!!labels[&#x27;type&#x27;]) {
+          d3.select(target)
+          .append(&quot;tspan&quot;)
+          .attr(&quot;x&quot;, 0)
+          .attr(&quot;dy&quot;, gvis.behaviors.render.nodeLabelsFontSize)
+          .text(&#x27;Type:&#x27;+data.type)
+        }
+
+        if (!!labels[&#x27;id&#x27;]) {
+          d3.select(target)
+          .append(&quot;tspan&quot;)
+          .attr(&quot;x&quot;, 0)
+          .attr(&quot;dy&quot;, gvis.behaviors.render.nodeLabelsFontSize)
+          .text(&#x27;ID:&#x27;+data.id)
+        }
+
+        for (var attr in data[gvis.settings.attrs]) {
+          if (!!labels[attr]) {
+            d3.select(target)
+            .append(&quot;tspan&quot;)
+            .attr(&quot;x&quot;, 0)
+            .attr(&quot;dy&quot;, gvis.behaviors.render.nodeLabelsFontSize)
+            .text(attr+&#x27;:&#x27;+data[gvis.settings.attrs][attr])
+          }
+        }
+      }
+    }
+  }
+
+  gvis.renders.svg.prototype.addLinkRenderer = function() {
+    var links = arguments[0];
+    var _svg = arguments[1];
+
+    links[0].forEach(function(l) {
+      if (!l) {
+        return;
+      }
+
+      var link = d3.select(l)
+                 .append(&#x27;g&#x27;)
+                 .classed(&#x27;link_container&#x27;, true)
+                 .on(&quot;dblclick&quot;, _svg.events.linkDblClick)
+                 .on(&quot;click&quot;, _svg.events.linkClick)
+                 .on(&#x27;mousedown&#x27;, _svg.events.linkmousedown)
+
+
+      var data = link.data()[0]
+
+      if (data.source.x == undefined) data.source.x = 0;
+      if (data.source.y == undefined) data.source.y = 0;
+      if (data.target.x == undefined) data.target.x = 0;
+      if (data.target.y == undefined) data.target.y = 0;
+
+      var points = _svg.renders.generateCurvedLinkPoints(data);
+
+      var path = link.append(&#x27;g&#x27;)
+                 .classed(&#x27;link_path&#x27;, true)
+
+      var display;
+      var x;
+      var y; 
+
+      // base on points to determing whether show the links.
+      if (points.length == 0) {
+        display = &#x27;none&#x27;;
+
+        var x0 = _svg.renders.xScale(data.source.x)
+        var y0 = _svg.renders.yScale(data.source.y)
+        var x1 = _svg.renders.xScale(data.target.x)
+        var y1 = _svg.renders.yScale(data.target.y)
+        
+        points = [[x0, y0], [x0, y0], [x1, y1], [x1, y1]]
+      } 
+      else {
+        display = &#x27;&#x27;;
+      }
+
+      // if (points[0][0] == points[1][0] &amp;&amp;  points[1][0] == points[2][0] &amp;&amp; points[2][0] == points[3][0]) {
+      //   points[2][0] += 10;
+      //   points[3][0] += 10;
+      //   points[2][1] += 10;
+      //   points[3][1] += 10;
+      // }
+
+      x = 0.5 * points[1][0] + 0.5 * points[2][0];
+      y = 0.5 * points[1][1] + 0.5 * points[2][1];
+
+      path.append(&#x27;defs&#x27;)
+      .append(&quot;marker&quot;)
+      .classed(&#x27;link_marker&#x27;, true)
+      .attr(&quot;id&quot;, &quot;link_marker_&quot;+data[gvis.settings.key])
+      .each(function(d) {
+        var link_width = Math.sqrt(gvis.behaviors.render.linkStrokeWidth);
+
+        var template = &#x27;&lt;path d=&quot;M0,0 L0,{{a}} L{{b}},{{c}} L0,0&quot;/&gt;&#x27;;
+        var marker = gvis.utils.applyTemplate(template, {a:6*link_width, b:7*link_width, c:3*link_width});
+
+        d3.select(this)
+        .attr(&quot;markerWidth&quot;, 10*link_width)
+        .attr(&quot;markerHeight&quot;, 10*link_width)
+        .attr(&quot;refX&quot;, 5*link_width)
+        .attr(&quot;refY&quot;, 3*link_width)
+        .attr(&quot;orient&quot;, &quot;auto&quot;)
+        .attr(&quot;fill&quot;, &#x27;black&#x27;)
+        .attr(&quot;markerUnits&quot;, &quot;userSpaceOnUse&quot;) // User for &quot;strokeWidth&quot;
+        .attr(&quot;stroke-width&quot;, 3*link_width)
+        .html(marker)
+      })
+
+      path.append(&#x27;path&#x27;)
+      .classed(&#x27;link_line_background&#x27;, true)
+      .attr(&quot;id&quot;, &#x27;link_line_background_&#x27;+data[gvis.settings.key])
+      .attr(&quot;fill&quot;, &#x27;none&#x27;)
+      .attr(&quot;stroke&quot;, gvis.behaviors.render.highlightColor)
+      .attr(&quot;stroke-linecap&quot;, &quot;round&quot;)
+      .attr(&quot;stroke-width&quot;, gvis.behaviors.render.linkHighlightStrokeWidth)
+      .attr(&quot;stroke-opacity&quot;, 0)
+      .attr(&quot;d&quot;, function(d) {
+        var line = d3.svg.line().interpolate(&quot;basis&quot;);
+        return line(points);
+      })
+
+      path.append(&#x27;path&#x27;)
+      .classed(&#x27;link_line&#x27;, true)
+      .attr(&quot;id&quot;, &#x27;link_line_&#x27;+data[gvis.settings.key])
+      .attr(&quot;fill&quot;, &#x27;none&#x27;)
+      .attr(&quot;stroke&quot;, &#x27;black&#x27;)
+      .attr(&quot;stroke-width&quot;, function(d) {
+        var width = d[gvis.settings.styles][&#x27;stroke-width&#x27;] || gvis.behaviors.render.linkStrokeWidth;
+        return width;
+      })
+      .attr(&quot;stroke-linecap&quot;, &quot;round&quot;)
+      .attr(&quot;stroke-dasharray&quot;, function(d) {
+        if (!!d[gvis.settings.styles].dashed) {
+          var a = 5 * d[gvis.settings.styles][&#x27;stroke-dasharray&#x27;][0] * gvis.behaviors.render.linkStrokeWidth;
+          var b = 5 * d[gvis.settings.styles][&#x27;stroke-dasharray&#x27;][0] * gvis.behaviors.render.linkStrokeWidth;
+          return a + &#x27; &#x27; + b;
+        }
+        else {
+          return &quot;&quot;
+        }
+      })
+      .attr(&quot;opacity&quot;, function(d) {
+        var opacity = d[gvis.settings.styles][&#x27;stroke-opacity&#x27;] || gvis.behaviors.render.linkStrokeOpacity;
+        return opacity;
+      })
+      .attr(&quot;d&quot;, function(d) {
+        var line = d3.svg.line().interpolate(&quot;basis&quot;);
+        return line(points);
+      })
+      //.attr(&quot;marker-end&quot;, &quot;url(#link_marker_&quot;+data[gvis.settings.key] + &quot;)&quot;)
+      .attr(gvis.behaviors.render.linkMarker, function(d) {
+        if (!!d.directed)
+          return &quot;url(#link_marker_&quot;+data[gvis.settings.key] + &quot;)&quot;
+        else 
+          return &quot;&quot;;
+      })
+
+      // adding labels for links
+      var label = link.append(&#x27;g&#x27;)
+      .attr(&#x27;id&#x27;, &#x27;label_&#x27; + data[gvis.settings.key])
+      .attr(&quot;transform&quot;, function(d) { 
+        return &quot;translate(&quot; + x + &quot;,&quot; + (y-gvis.behaviors.render.linkLabelsFontSize) + &quot;)&quot;; 
+      })
+
+      link.attr(&#x27;display&#x27;, display);
+
+      var text = label.append(&#x27;text&#x27;)
+      .attr(&#x27;id&#x27;, &#x27;label_text_&#x27; + data[gvis.settings.key])
+      .attr(&quot;text-anchor&quot;, &quot;middle&quot;)
+
+      var bbox = text[0][0].getBBox();
+
+      label.insert(&#x27;rect&#x27;, &#x27;#label_text_&#x27; + data[gvis.settings.key])
+      //label.append(&#x27;rect&#x27;)
+      .classed(&#x27;label_background_rect&#x27;, true)
+      .attr(&#x27;rx&#x27;, 4)
+      .attr(&#x27;ry&#x27;, 4)
+      .attr(&#x27;x&#x27;, bbox.x)
+      .attr(&#x27;y&#x27;, bbox.y)
+      .attr(&#x27;width&#x27;, bbox.width)
+      .attr(&#x27;height&#x27;, bbox.height)
+      .attr(&#x27;fill&#x27;, &#x27;#9ecae1&#x27;)
+      .attr(&#x27;fill-opacity&#x27;, 0.5)
+      .attr(&#x27;stroke&#x27;, gvis.behaviors.render.highlightColor)
+      .attr(&#x27;stroke-width&#x27;, gvis.behaviors.render.linkHighlightStrokeWidth/2.0)
+      .attr(&#x27;stroke-opacity&#x27;, 0)
+      //.attr(&#x27;filter&#x27;, &#x27;url(#filter_&#x27;+gvis.behaviors.render.linkBackgroundFilter+&#x27;)&#x27;)
+
+      $(label[0][0]).tipsy({ 
+        gravity: &#x27;w&#x27;,  // n s e w
+        html: true,
+        title: function() {
+          var d = this.__data__;
+
+          if (!!gvis.behaviors.style.linkToolTips.customized) {
+            return gvis.behaviors.style.linkToolTips.customized(d.type, d[gvis.settings.attrs], d);
+          }
+          else {
+            return gvis.behaviors.style.linkToolTips.default(d.type, d[gvis.settings.attrs], d);
+          }
+        }
+      });
+    })
+  }
+
+  gvis.renders.svg.prototype.updateLinkRenderer = function() {
+    var links = arguments[0]
+    var _svg = arguments[1];
+    var duration = arguments[2] || 0;
+    var delay = arguments[3] || 0;
+
+    links[0].forEach(function(l) {
+      if (!l) {
+        return;
+      }
+
+      var link = d3.select(l)
+
+      var data = link.data()[0]
+
+      var points = _svg.renders.generateCurvedLinkPoints(data);
+
+      var x;
+      var y;
+      var display;
+      var visibility;
+
+      if (points.length == 0) {
+        display = &#x27;none&#x27;;
+        visibility = &#x27;hidden&#x27;;
+
+        var x0 = _svg.renders.xScale(data.source.x)
+        var y0 = _svg.renders.yScale(data.source.y)
+        var x1 = _svg.renders.xScale(data.target.x)
+        var y1 = _svg.renders.yScale(data.target.y)
+        
+        points = [[x0, y0], [x0, y0], [x1, y1], [x1, y1]]
+      } 
+      else {
+        display = &#x27;inline&#x27;;
+        visibility = &#x27;visible&#x27;;
+      }
+
+      // for label position.
+      x = 0.5 * points[1][0] + 0.5 * points[2][0];
+      y = 0.5 * points[1][1] + 0.5 * points[2][1];
+
+      link.select(&#x27;#link_line_&#x27;+data[gvis.settings.key])
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&quot;d&quot;, function(d) {
+        var line = d3.svg.line().interpolate(&quot;basis&quot;);
+        
+        return line(points);
+      })
+
+      link.select(&#x27;#link_line_background_&#x27;+data[gvis.settings.key])
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&quot;d&quot;, function(d) {
+        var line = d3.svg.line().interpolate(&quot;basis&quot;);
+        
+        return line(points);
+      })
+
+      var label = link.select(&#x27;#label_&#x27;+data[gvis.settings.key])
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&quot;transform&quot;, function(d) { 
+        return &quot;translate(&quot; + x + &quot;,&quot; + (y-gvis.behaviors.render.linkLabelsFontSize) + &quot;)&quot;; 
+      })
+
+      link.attr(&#x27;display&#x27;, display);
+      link.select(&#x27;.link_container&#x27;)
+      .attr(&#x27;display&#x27;, display);
+
+      var text = link.select(&#x27;#label_text_&#x27; + data[gvis.settings.key]);
+
+      text
+      .attr(&#x27;font-size&#x27;, gvis.behaviors.render.linkLabelsFontSize)
+      .each(function(d) {
+        linkLabelGenerator(this, d);
+      })
+
+      var bbox = text[0][0].getBBox();
+
+      //label.insert(&#x27;rect&#x27;, &#x27;#label_&#x27; + data[gvis.settings.key])
+      link.select(&#x27;.label_background_rect&#x27;)
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr(&#x27;x&#x27;, bbox.x)
+      .attr(&#x27;y&#x27;, bbox.y)
+      .attr(&#x27;width&#x27;, bbox.width)
+      .attr(&#x27;height&#x27;, bbox.height)
+    })
+
+    function linkLabelGenerator(target, data) {
+      //var labels = _svg.renders.labels.links[data.type];
+
+      var labels = data[gvis.settings.styles].labels || {};
+
+      d3.select(target).selectAll(&#x27;tspan&#x27;).remove();
+
+      if (!labels || Object.keys(labels).length === 0) {
+        // d3.select(target)
+        // .append(&quot;tspan&quot;)
+        // .attr(&quot;x&quot;, 0)
+        // .attr(&quot;dy&quot;, gvis.behaviors.render.linkLabelsFontSize)
+        // .text(&#x27;Type:&#x27;+data.type)
+      }
+      else {
+        if (!!labels[&#x27;type&#x27;]) {
+          d3.select(target)
+          .append(&quot;tspan&quot;)
+          .attr(&quot;x&quot;, 0)
+          .attr(&quot;dy&quot;, gvis.behaviors.render.linkLabelsFontSize)
+          .text(&#x27;Type:&#x27;+data.type)
+        }
+
+        for (var attr in data[gvis.settings.attrs]) {
+
+          if (!!labels[attr]) {
+            d3.select(target)
+            .append(&quot;tspan&quot;)
+            .attr(&quot;x&quot;, 0)
+            .attr(&quot;dy&quot;, gvis.behaviors.render.linkLabelsFontSize)
+            .text(attr+&#x27;:&#x27;+data[gvis.settings.attrs][attr])
+          }
+        }
+      }
+    }
+  }
+
+  gvis.renders.svg.prototype.addLegendRenderer = function() {
+    var legends = arguments[0] 
+    var _svg = arguments[1];
+
+    legends[0].forEach(function(l, i) {
+      if (!l) {
+        return;
+      }
+
+      // adding legend
+      var legend = d3.select(l)
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;legend_container&#x27;, true)
+
+      var type = legend.data()[0];
+
+      // bacground circle for legend node icon
+      legend
+      .append(&#x27;circle&#x27;)
+      .classed(&#x27;legend_background_circle&#x27;, true)
+      .attr(&#x27;stroke-opacity&#x27;, 0)
+      .attr(&#x27;fill&#x27;, gvis.behaviors.render.nodeBackgroundFillColor)
+      .attr(&#x27;fill-opacity&#x27;, gvis.behaviors.render.nodeBackgroundFillOpacity)
+      .attr(&#x27;r&#x27;, gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)
+
+      // add legend icon
+      var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
+
+      var matrix = [];
+
+      var sx = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.width;
+      var sy = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.height;
+
+      var scale = sx &lt; sy ? sx : sy
+
+      var cx = icon.width/2;
+      var cy = icon.height/2;
+
+      var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
+
+      legend
+      .append(&#x27;g&#x27;)
+      .classed(&#x27;icon&#x27;, true)
+      .html(icon.svg)
+      .attr(&#x27;transform&#x27;, &#x27;matrix(&#x27;+matrix+&#x27;)&#x27;)
+      .attr(&#x27;fill&#x27;, &#x27;red&#x27;)
+
+      var label = legend
+                  .append(&#x27;g&#x27;)
+
+      // add legend labels
+      var text = label.append(&#x27;text&#x27;)
+      .attr(&#x27;id&#x27;, function(d) {
+        return &#x27;legendLabel_&#x27; + d;
+      })
+      .attr(&quot;text-anchor&quot;, &quot;left&quot;)
+      .attr(&#x27;x&#x27;, gvis.behaviors.render.legendNodeRadius * 1.00)
+      .attr(&#x27;y&#x27;, gvis.behaviors.render.legendNodeRadius * 0.25)
+      .text(function(d) {
+        return d;
+      })
+
+      var bbox = text[0][0].getBBox();
+
+      // add node label background rectangle
+      label.insert(&#x27;rect&#x27;, &#x27;#legendLabel_&#x27; + type)
+      //label.append(&#x27;rect&#x27;)
+      .classed(&#x27;legendLabel_background_rect&#x27;, true)
+      .attr(&#x27;rx&#x27;, 4)
+      .attr(&#x27;ry&#x27;, 4)
+      .attr(&#x27;x&#x27;, bbox.x)
+      .attr(&#x27;y&#x27;, bbox.y)
+      .attr(&#x27;width&#x27;, bbox.width)
+      .attr(&#x27;height&#x27;, bbox.height)
+      .attr(&#x27;fill&#x27;, &#x27;#ccc&#x27;)
+      .attr(&#x27;opacity&#x27;, 0.9)
+    })
+  }
+
+  gvis.renders.svg.prototype.updateLegendRenderer = function() {
+    var legends = arguments[0] 
+    var _svg = arguments[1];
+    var duration = arguments[2] || 0
+    var delay = arguments[3] || 0
+
+    legends[0].forEach(function(l, i) {
+        if (!l) {
+          return;
+        }
+
+        // get legend
+        var legend = d3.select(l);
+
+        legend
+        .select(&#x27;.legend_container&#x27;)
+        .transition()
+        .delay(delay)
+        .duration(duration)
+        .attr(&quot;transform&quot;, function(d) {
+          return &quot;translate(&quot; + gvis.behaviors.render.legendNodeRadius + &quot;,&quot; + (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*(1+i*2) + &quot;)&quot;; 
+        })
+
+        var type = legend.data()[0];
+
+        // legend icon
+        var icon = gvis.utils.icons(gvis.behaviors.icons[type]);
+
+        var matrix = [];
+
+        var sx = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.width;
+        var sy = (gvis.behaviors.render.legendNodeRadius-gvis.behaviors.render.legendNodeRadiusMargin)*1.5/icon.height;
+
+        var scale = sx &lt; sy ? sx : sy
+
+        var cx = icon.width/2;
+        var cy = icon.height/2;
+
+        var matrix= [scale, 0, 0, scale, -sx*cx, -sy*cy]
+
+        legend
+        .select(&#x27;.icon&#x27;)
+        .html(icon.svg)
+        .attr(&#x27;transform&#x27;, &#x27;matrix(&#x27;+matrix+&#x27;)&#x27;)
+        .attr(&#x27;fill&#x27;, &#x27;red&#x27;)
+
+        // add legend labels
+        var text = legend.select(&#x27;text&#x27;)
+        .text(function(d) {
+          return d;
+        })
+
+        var bbox = text[0][0].getBBox();
+
+        // add node label background rectangle
+        //label.insert(&#x27;rect&#x27;, &#x27;#label_&#x27; + data[gvis.settings.key])
+        legend.select(&#x27;.legendLabel_background_rect&#x27;)
+        .attr(&#x27;x&#x27;, bbox.x)
+        .attr(&#x27;y&#x27;, bbox.y)
+        .attr(&#x27;width&#x27;, bbox.width)
+        .attr(&#x27;height&#x27;, bbox.height)
+    })
+  }
+
+  gvis.renders.svg.prototype.autoFit = function(duration, delay) {
+    duration = duration != undefined ? duration : 0;
+    delay = delay != undefined ? delay : 0;
+
+    var nodes = this.renders.graph.data().array.nodes;
+    var width = this.renders.domain_width;
+    var height = this.renders.domain_height;
+
+    //no molecules, nothing to do
+    if (nodes.length === 0)
+    return;
+
+    // Get the bounding box
+    var min_x = d3.min(nodes.map(function(d) {return d.x;}));
+    var min_y = d3.min(nodes.map(function(d) {return d.y;}));
+
+    var max_x = d3.max(nodes.map(function(d) {return d.x;}));
+    var max_y = d3.max(nodes.map(function(d) {return d.y;}));
+
+
+    // The width and the height of the graph
+    var mol_width = max_x - min_x;
+    var mol_height = max_y - min_y;
+
+    // how much larger the drawing area is than the width and the height
+    var width_ratio = width / mol_width;
+    var height_ratio = height / mol_height;
+
+    // we need to fit it in both directions, so we scale according to
+    // the direction in which we need to shrink the most
+    var min_ratio = Math.min(width_ratio, height_ratio) * 0.75;
+    if (min_ratio &gt; this.renders.zoomRange[1]) min_ratio = this.renders.zoomRange[1];
+    if (min_ratio &lt; this.renders.zoomRange[0]) min_ratio = this.renders.zoomRange[0];
+
+    // the new dimensions of the molecule
+    var new_mol_width = mol_width * min_ratio;
+    var new_mol_height = mol_height * min_ratio;
+
+    // translate so that it&#x27;s in the center of the window
+    var x_trans = -(min_x) * min_ratio + (width - new_mol_width) / 2;
+    var y_trans = -(min_y) * min_ratio + (height - new_mol_height) / 2;
+
+    // do the actual moving
+    this.g_zoomer
+    .transition()
+    .delay(delay)
+    .duration(duration)
+    .attr(&quot;transform&quot;, &quot;translate(&quot; + [this.renders.xScale(x_trans), this.renders.yScale(y_trans)] + &quot;)&quot; + &quot; scale(&quot; + min_ratio + &quot;)&quot;);
+
+    // tell the zoomer what we did so that next we zoom, it uses the
+    // transformation we entered here
+    this.zoom.translate([this.renders.xScale(x_trans), this.renders.yScale(y_trans)]);
+    this.zoom.scale(min_ratio);
+  }
+
+  gvis.renders.svg.prototype.centerView = function(duration, delay) {
+
+    duration = duration != undefined ? duration : 0;
+    delay = delay != undefined ? delay : 0
+
+    var xMass=0;
+    var yMass=0;
+
+    var nodes = this.renders.graph.data().array.nodes.filter(function(n) {
+      return n.selected;
+    });
+
+    if (nodes.length == 0) {
+      nodes = this.renders.graph.data().array.nodes;
+    }
+
+    if (nodes.length == 0) {
+      return;
+    }
+
+    nodes.forEach(function(n) {
+      xMass += n.x;
+      yMass += n.y;
+    })
+
+    xMass /= nodes.length;
+    yMass /= nodes.length;
+
+    var scale = this.zoom.scale();
+
+    var x_trans = this.renders.xScale(this.renders.domain_width/2 - xMass*scale) ;
+    var y_trans = this.renders.yScale(this.renders.domain_height/2 - yMass*scale) ;
+
+    this.g_zoomer
+    .transition()
+    .delay(delay)
+    .duration(duration)
+    .attr(&quot;transform&quot;, &quot;translate(&quot; + [x_trans, y_trans] + &quot;)&quot; + &quot; scale(&quot; + scale + &quot;)&quot;);
+
+    // tell the zoomer what we did so that next we zoom, it uses the
+    // transformation we entered here
+    this.zoom.translate([x_trans, y_trans]);
+  }
+
+  gvis.renders.svg.prototype.unselectAllElements = function() {
+    this.renders.graph.nodes().forEach(function(n) {
+      n.preSlected = n.selected = false;
+    })
+
+    this.renders.graph.links().forEach(function(n) {
+      n.preSlected = n.selected = false;
+    })
+
+    this.updateSelectedNodes();
+    this.updateSelectedLinks();
+  }
+
+  gvis.renders.svg.prototype.updateSelectedNodes = function() {
+
+    this.g_svg.selectAll(&#x27;.node&#x27;)
+    .each(function(d) {
+      if (d.selected) {
+        d3.select(this)
+        .select(&#x27;.node_background_circle&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, gvis.behaviors.render.nodeHighlightStrokeOpacity)
+        .attr(&#x27;stroke-width&#x27;, gvis.behaviors.render.nodeHighlightStrokeWidth)
+        .attr(&#x27;stroke&#x27;, &#x27;red&#x27;)
+        .attr(&#x27;filter&#x27;, &#x27;url(#filter_glow)&#x27;)
+      }
+      else {
+        d3.select(this)
+        .select(&#x27;.node_background_circle&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, gvis.behaviors.render.nodeBackgroundStrokeOpacity)
+        .attr(&#x27;stroke-width&#x27;, gvis.behaviors.render.nodeBackgroundStrokeWidth)
+        .attr(&#x27;stroke&#x27;, gvis.behaviors.render.nodeBackgroundStrokeColor)
+        .attr(&#x27;filter&#x27;, &#x27;url(#filter_&#x27;+gvis.behaviors.render.nodeBackgroundFilter+&#x27;)&#x27;)
+      }
+    }) 
+  }
+
+  gvis.renders.svg.prototype.updateSelectedLinks = function() {
+
+    this.g_svg
+    .selectAll(&#x27;.link&#x27;)
+    .each(function(d) {
+      if (d.selected) {
+        d3.select(this).select(&#x27;.link_line_background&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, gvis.behaviors.render.linkHighlightStrokeOpacity)
+
+        d3.select(this).select(&#x27;.label_background_rect&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, gvis.behaviors.render.linkHighlightStrokeOpacity)
+        //.attr(&#x27;filter&#x27;, &#x27;url(#filter_glow)&#x27;)
+      }
+      else {
+        d3.select(this).select(&#x27;.link_line_background&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, 0)
+
+        d3.select(this).select(&#x27;.label_background_rect&#x27;)
+        .attr(&#x27;stroke-opacity&#x27;, 0)
+        //.attr(&#x27;filter&#x27;, &#x27;url(#filter_&#x27;+gvis.behaviors.render.linkBackgroundFilter+&#x27;)&#x27;)
+      }
+    })   
+  }
+
+
+
+  /********** renders.canvas **********/
+  gvis.renders.canvas = function(renders) {
+
+  }
+
+
+  /********** renders.map **********/
+  gvis.renders.map = function(renders) {
+
+  }
+  
+}).call(this)
+
+
+
+
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
