@@ -1,55 +1,240 @@
-AttributeEnumerators: 1
 EdgeTypes: 
 - Attributes: 
-  - AttributeName: role
+  - AttributeName: CID
     AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
   EdgeId: 0
-  FromVertexTypeName: person
+  FromVertexTypeName: BUS
   InitVersionAttributes: 
-  - AttributeName: role
+  - AttributeName: CID
     AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
   IsDirected: true
-  Name: roles
-  ToVertexTypeName: movie
-GraphConfigVersion: 1
+  Name: BRANCH
+  ToVertexTypeName: BUS
+GraphConfigVersion: 0
 GraphId: 0
-GraphName: person_movie
+GraphName: PowerFlow
+InitVersionEdgeTypes: 
+- Attributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  EdgeId: 0
+  FromVertexTypeName: BUS
+  InitVersionAttributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  IsDirected: true
+  Name: BRANCH
+  ToVertexTypeName: BUS
+InitVersionVertexTypes: 
+- Attributes: 
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  InitVersionAttributes: 
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  Name: BUS
+  PrimaryId: 
+    AttributeName: BusId
+    AttributeType: STRING
+  VertexId: 0
+  VertexStatisticsType: 2
+LatestEdgeId: 1
+LatestVertexId: 1
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
-  - AttributeName: name
+  - AttributeName: BusName
     AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
   InitVersionAttributes: 
-  - AttributeName: name
+  - AttributeName: BusName
     AttributeType: STRING
-  Name: person
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  Name: BUS
   PrimaryId: 
-    AttributeName: id
-    AttributeType: UINT
-  SecondaryIds: 
-  - AttributeName: sid
-    AttributeType: UINT
+    AttributeName: BusId
+    AttributeType: STRING
   VertexId: 0
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: title
-    AttributeType: STRING
-  - AttributeName: country
-    AttributeType: UINT
-    Enumerator: 1
-  - AttributeName: year
-    AttributeType: UINT
-  InitVersionAttributes: 
-  - AttributeName: title
-    AttributeType: STRING
-  - AttributeName: country
-    AttributeType: UINT
-    Enumerator: 2147483647
-  - AttributeName: year
-    AttributeType: UINT
-  Name: movie
-  PrimaryId: 
-    AttributeName: id
-    AttributeType: UINT
-  VertexId: 1
-  VertexStatisticsType: 1
+  VertexStatisticsType: 2
