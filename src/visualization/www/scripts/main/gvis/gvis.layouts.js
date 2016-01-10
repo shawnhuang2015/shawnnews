@@ -38,7 +38,6 @@
       })
     });
 
-
     this.addLayout('tree', function() {
       var size = this.createTreeBFS();
 
@@ -110,7 +109,10 @@
       })
       .nodes(this._tree)
 
-      treeNodes.forEach(function(node) {
+      treeNodes.forEach(function(node, i) {
+        node.x = isNaN(node.x) ? 0 : node.x;
+        node.y = isNaN(node.y) ? i * 30: node.y;
+
         var position = gvis.utils.rotate(0, 0, node.y, 0, node.x-Math.PI/2.0)
         node.node.x = position[0] + gvis.settings.domain_width / 2.0;
         node.node.y = position[1] + gvis.settings.domain_height / 2.0;

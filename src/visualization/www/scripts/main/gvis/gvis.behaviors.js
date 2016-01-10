@@ -36,13 +36,13 @@
     nodeLabelsFontSize : 15,
     linkLabelsFontSize : 13,
 
-    linkStrokeWidth : 1,
+    linkStrokeWidth : 2,
     linkStrokeOpacity : 0.6,
 
     highlightColor : '#ff0000',
     nodeHighlightStrokeWidth : 5,
     nodeHighlightStrokeOpacity : 0.6,
-    linkHighlightStrokeWidth : 5,
+    linkHighlightStrokeWidth : 15,
     linkHighlightStrokeOpacity : 0.6,
 
 

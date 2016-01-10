@@ -780,7 +780,7 @@
       .attr('fill', '#9ecae1')
       .attr('fill-opacity', 0.5)
       .attr('stroke', gvis.behaviors.render.highlightColor)
-      .attr('stroke-width', gvis.behaviors.render.linkHighlightStrokeWidth/2.0)
+      .attr('stroke-width', Math.pow(gvis.behaviors.render.linkHighlightStrokeWidth, 0.5))
       .attr('stroke-opacity', 0)
       //.attr('filter', 'url(#filter_'+gvis.behaviors.render.linkBackgroundFilter+')')
 
