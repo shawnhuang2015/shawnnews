@@ -1264,6 +1264,9 @@ require(['ol'], function(ol){
     var styleFunction = function(feature, resolution){
       var type = feature.getGeometry().getType();
       var level = feature.getProperties().level;
+      var rgbcolor = d3.rgb(that.color(level));
+      var opacityColor = [rgbcolor.r, rgbcolor.g, rgbcolor.b, 0.5]
+
       switch (type) {
         case 'Circle':
           return new ol.style.Style({
@@ -1296,7 +1299,7 @@ require(['ol'], function(ol){
                   stroke: new ol.style.Stroke({color: '#fff', width: 2}),
                 }),
           stroke: new ol.style.Stroke({
-            color: that.color(level),
+            color: opacityColor,
             width: 2
           })
         })
