@@ -609,6 +609,14 @@
               return data.index.links[inMap.key]; 
             } 
           }
+          else if (typeof array === 'string') {
+            if (!data.index.links[array]) {
+              throw 'link ' + array + ' does not exist.'
+            }
+            else {
+              return data.index.links[array]; 
+            } 
+          }
           else {
             throw array + ' not an array or an object.'
           }

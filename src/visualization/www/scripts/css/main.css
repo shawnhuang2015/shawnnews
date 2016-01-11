@@ -5,6 +5,7 @@
 @import url("../bootstrap/css/bootstrap-datetimepicker.css");
 @import url("../bootstrap/css/bootstrap-slider.css");
 @import url("tipsy.css");
+@import url("ol.css");
 
 .axis line {
   fill: none;

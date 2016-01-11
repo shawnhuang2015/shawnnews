@@ -10,6 +10,7 @@ require.config({
     urlArgs: /*isDebugging*/ false ? "bust=" + (new Date()).getTime() : "",
     baseUrl: 'scripts',
     paths: {
+        ol: 'lib/ol',
         jquery: 'lib/jquery-2.1.3',
         d3: 'lib/d3.v3',
         dataToExcel : 'lib/dataToExcel',
@@ -37,6 +38,9 @@ require.config({
         gvis: 'main/gvis/gvis'
     },
     shim: {
+        ol: {
+            exports: 'ol'
+        },
         ui: {
             deps: ['core', 'multiselect', 'datetime_zhCN', 'colorpicker', 'slider']
         },
@@ -50,7 +54,7 @@ require.config({
             deps: ['utils']
         },
         renders: {
-            deps: ['utils']
+            deps: ['utils', 'ol']
         },
         layouts: {
             deps: ['utils']

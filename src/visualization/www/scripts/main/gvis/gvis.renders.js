@@ -4,7 +4,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited   *
  * Proprietary and confidential                                               *
  ******************************************************************************/
-(function(undefined) {
+require(['ol'], function(ol){
   "use strict";
   // Doing somthing for renders
   console.log('Loading gvis.render')
@@ -39,7 +39,8 @@
         this.renderer = 'render ' + this.render_container + ' by using canvas. Coming soon.';
       break;
       case 'map':
-        this.renderer = 'render ' + this.render_container + ' by using map. Coming soon.';
+        //this.renderer = 'render ' + this.render_container + ' by using map. Coming soon.';
+        this.renderer = new gvis.renders.map(this);
       break;
       case 'svg':
       default:
@@ -1245,10 +1246,242 @@
 
   /********** renders.map **********/
   gvis.renders.map = function(renders) {
+    var that = this;
+    this.renders = renders;
 
+    this.events = new gvis.events.svg(this);
+
+    var _this = renders._this;
+
+    var container_id = renders.render_container;
+
+    
+    //this.format = new ol.format.GeoJSON();
+
+    this.color = d3.scale.sqrt().domain([0, 1]).range(['blue','red']);
+    this.nodeColor = d3.scale.linear().domain([0, 100, 200]).range(['blue', 'green', 'red']).clamp(true);
+
+    var styleFunction = function(feature, resolution){
+      var type = feature.getGeometry().getType();
+      var level = feature.getProperties().level;
+      switch (type) {
+        case 'Circle':
+          return new ol.style.Style({
+            text: textStyle(feature, resolution),
+            stroke: new ol.style.Stroke({
+              color: 'black',
+              width: 1
+            }),
+            fill: new ol.style.Fill({
+              color: that.nodeColor(level)//'rgba(0, 255, 0, 1)'
+            })
+          })
+        break;
+        case 'LineString':
+        return new ol.style.Style({
+          text: //textStyle(feature, resolution),
+          new ol.style.Text({
+                  text: function(feature, resolution) {
+                    if (resolution > 400) {
+                      return ''
+                    }
+                    else {
+                      return feature.getProperties().level.toString();
+                    }
+                  }.call(this, feature, resolution),
+                  offsetY: 0, 
+                  textAlign: 'center',
+                  textBaseline : 'middle',
+                  font: '13px',
+                  stroke: new ol.style.Stroke({color: '#fff', width: 2}),
+                }),
+          stroke: new ol.style.Stroke({
+            color: that.color(level),
+            width: 2
+          })
+        })
+        break;
+        default:
+        break;
+      }
+    }
+
+    var getText = function(feature, resolution) {
+      if (resolution > 250) {
+        return ''
+      }
+      else {
+        return feature.getProperties().name
+      }
+    }
+
+    var textStyle = function(feature, resolution) {
+      return new ol.style.Text({
+        text: getText(feature, resolution),
+        offsetY: 3,
+        textAlign: 'center',
+        textBaseline : 'top',
+        font: '13px',
+        stroke: new ol.style.Stroke({color: '#fff', width: 2})
+      })
+    }
+
+    this.vectorSource = new ol.source.Vector();
+
+    this.vectorLayer = new ol.layer.Vector({
+      source: this.vectorSource,
+      style: styleFunction
+    });
+
+    this.vectorNodeSource = new ol.source.Vector();
+
+    this.vectorNodeLayer = new ol.layer.Vector({
+      source: this.vectorNodeSource,
+      style: styleFunction
+    });
+
+    var map = new ol.Map({
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        }),
+        this.vectorLayer,
+        this.vectorNodeLayer
+      ],
+      target: container_id,
+      controls: ol.control.defaults({
+        attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+          collapsible: false
+        })
+      }),
+      view: new ol.View({
+        center: [0, 0]/*ol.proj.fromLonLat([-68.75, 44.74])*/,
+        zoom: 1
+      })
+    });
+
+    this.map = map;
+
+    map.getView().on('propertychange', function(e) {
+
+      switch (e.key) {
+        case 'resolution':
+          console.log(e.oldValue, this.getZoom());
+          if (this.getZoom() )
+          break;
+      }
+    })
+
+    map.on('pointermove', function(evt) {
+      if (evt.dragging) {
+        return;
+      }
+      var pixel = map.getEventPixel(evt.originalEvent);
+      var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+            return feature;
+          });
+      if(feature) {
+        //console.log(feature);
+      }
+    });
+
+    map.on('click', function(evt) {
+      //console.log(evt.pixel);
+      var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            return feature;
+          });
+      if(feature) {
+        var prop = feature.getProperties();
+        var type = prop.type;
+        if(type == 'link') {
+          var link = that.renders.graph.links(prop.key);
+          that.events.linkClick(link);
+        }
+        else if (type == 'node'){
+          var node = that.renders.graph.nodes(prop.key);
+          that.events.nodeClick(node);
+        }
+      }
+    });
+
+    map.getView().setZoom(4);
+    map.getView().setCenter([-10703629.944829801, 4236445.855677608])
+
+    this.update = function() {
+      //console.log("Map Update");
+      var graph = this.renders.graph;
+      var that = this;
+      that.vectorSource.clear();
+      that.vectorNodeSource.clear();
+
+      var linkLevel = [+Number.MAX_VALUE, -Number.MAX_VALUE];
+      var nodeLevel = [+Number.MAX_VALUE, -Number.MAX_VALUE];
+
+      graph.links().forEach(function(l) {
+        var source = l.source[gvis.settings.attrs];
+        var target = l.target[gvis.settings.attrs];
+        var attrs = l[gvis.settings.attrs]
+
+        var level = parseFloat(attrs['hB']); //parseFloat(attrs['MVALimitA'])
+
+        linkLevel[0] = Math.min(linkLevel[0], level);
+        linkLevel[1] = Math.max(linkLevel[1], level);
+
+        var newLinkFeature = new ol.Feature({
+          geometry: new ol.geom.LineString([ol.proj.fromLonLat([parseFloat(source.Longitude), parseFloat(source.Latitude)]), ol.proj.fromLonLat([parseFloat(target.Longitude), parseFloat(target.Latitude)])]),
+            key: l[gvis.settings.key],
+            level: level,
+            type: 'link'
+        })
+
+        that.vectorSource.addFeature(newLinkFeature);
+      })
+
+      //that.color.domain([linkLevel[0], linkLevel[0]*0.6+linkLevel[1]*0.4, linkLevel[1]]);
+
+      console.log(linkLevel)
+      that.color.domain(linkLevel)
+      that.vectorLayer.setStyle(styleFunction);
+
+      graph.nodes().forEach(function(n) {
+        var attrs = n[gvis.settings.attrs];
+        var id = n.id;
+        var level = parseFloat(attrs.NominalV)
+
+        nodeLevel[0] = Math.min(nodeLevel[0], level);
+        nodeLevel[1] = Math.max(nodeLevel[1], level);
+
+        var newNodeFeature = new ol.Feature({
+          geometry: new ol.geom.Circle(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)]), 500),
+          key: n[gvis.settings.key],
+          name: attrs.BusName,
+          level: level,
+          type: 'node'
+        })
+
+        that.vectorNodeSource.addFeature(newNodeFeature);
+      })
+
+      // var nodeFeature = new ol.Feature({
+      //   geometry: new ol.geom.Circle(ol.proj.fromLonLat([-68.85, 44.74]), 500),
+      //   color: '#0000ff'
+      // })
+
+      // var linkFeature = new ol.Feature({
+      //   geometry: new ol.geom.LineString([ol.proj.fromLonLat([-68.85, 44.74]), ol.proj.fromLonLat([-67.85, 45.74])]),
+      //     color: '#00ff00'
+      // })
+
+
+      // this.vectorSource.addFeature(nodeFeature);
+      // this.vectorSource.addFeature(linkFeature);
+    }
+
+    this.autoFit = function() {
+      console.log("Map Auto Fit")
+    }
   }
-  
-}).call(this)
+})
 
 
 

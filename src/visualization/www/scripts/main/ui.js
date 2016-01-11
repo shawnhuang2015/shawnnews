@@ -12,7 +12,7 @@ require([], function(){
   this.visualization = new gvis({
     configure: config,
     container: 'prototype1',
-    //render_type: 'svg',
+    render_type: 'map', // 'svg'
   });
 
 
