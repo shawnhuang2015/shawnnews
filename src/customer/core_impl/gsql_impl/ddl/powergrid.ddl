@@ -20,7 +20,8 @@ create loading job load_PowerFlow_data for graph PowerFlow
 {  
   load "$sys.data_root/Bus_info.csv"
     to vertex BUS values($2, $2, $3, $5, $6, $8, $9, $10, $11, $12, $13, $14, $15, 0, 0, $18, $19)
-  using Separator=",", Header="true";
+    where $0 != "NaN"
+  using Separator=",", Header="true", Quote="double";
 
   load "$sys.data_root/Branch_info.csv"
     to edge BRANCH values($0, $2, $4, $8, $9, $10, $14, $15, $17, $11, $12, $13)
