@@ -43,7 +43,7 @@ EdgeTypes:
     AttributeType: REAL
   - AttributeName: MVALimitC
     AttributeType: REAL
-  IsDirected: true
+  IsDirected: false
   Name: BRANCH
   ToVertexTypeName: BUS
 GraphConfigVersion: 0
@@ -94,11 +94,13 @@ InitVersionEdgeTypes:
     AttributeType: REAL
   - AttributeName: MVALimitC
     AttributeType: REAL
-  IsDirected: true
+  IsDirected: false
   Name: BRANCH
   ToVertexTypeName: BUS
 InitVersionVertexTypes: 
 - Attributes: 
+  - AttributeName: exId
+    AttributeType: STRING
   - AttributeName: BusName
     AttributeType: STRING
   - AttributeName: NominalV
@@ -130,6 +132,8 @@ InitVersionVertexTypes:
   - AttributeName: Longitude
     AttributeType: REAL
   InitVersionAttributes: 
+  - AttributeName: exId
+    AttributeType: STRING
   - AttributeName: BusName
     AttributeType: STRING
   - AttributeName: NominalV
@@ -171,6 +175,8 @@ LatestVertexId: 1
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
+  - AttributeName: exId
+    AttributeType: STRING
   - AttributeName: BusName
     AttributeType: STRING
   - AttributeName: NominalV
@@ -202,6 +208,8 @@ VertexTypes:
   - AttributeName: Longitude
     AttributeType: REAL
   InitVersionAttributes: 
+  - AttributeName: exId
+    AttributeType: STRING
   - AttributeName: BusName
     AttributeType: STRING
   - AttributeName: NominalV

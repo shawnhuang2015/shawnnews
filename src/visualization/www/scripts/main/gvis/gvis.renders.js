@@ -1346,7 +1346,8 @@ require(['ol'], function(ol){
     var map = new ol.Map({
       layers: [
         new ol.layer.Tile({
-          source: new ol.source.OSM()
+          source: new ol.source.OSM(),
+          opacity: 0.5
         }),
         this.vectorLayer,
         this.vectorNodeLayer
