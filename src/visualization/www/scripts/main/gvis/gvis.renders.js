@@ -1431,6 +1431,13 @@ require(['ol'], function(ol){
         linkLevel[0] = Math.min(linkLevel[0], level);
         linkLevel[1] = Math.max(linkLevel[1], level);
 
+        if (parseFloat(source.Longitude) < 1 && parseFloat(source.Longitude) > -1) {
+          return;
+        }
+        if (parseFloat(target.Longitude) < 1 && parseFloat(target.Longitude) > -1) {
+          return;
+        }
+
         var newLinkFeature = new ol.Feature({
           geometry: new ol.geom.LineString([ol.proj.fromLonLat([parseFloat(source.Longitude), parseFloat(source.Latitude)]), ol.proj.fromLonLat([parseFloat(target.Longitude), parseFloat(target.Latitude)])]),
             key: l[gvis.settings.key],
@@ -1454,6 +1461,10 @@ require(['ol'], function(ol){
 
         nodeLevel[0] = Math.min(nodeLevel[0], level);
         nodeLevel[1] = Math.max(nodeLevel[1], level);
+
+        if (parseFloat(attrs.Longitude) < 1 && parseFloat(attrs.Longitude) > -1) {
+          return;
+        }
 
         var newNodeFeature = new ol.Feature({
           geometry: new ol.geom.Circle(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)]), 500),

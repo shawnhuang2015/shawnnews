@@ -1141,6 +1141,8 @@ require([], function(){
 
           updateQueryInputInfoBox(submit_payload, page_index);
 
+          newData.neighborhood_size = newData.vertices.length;
+
           if (newData.neighborhood_size > maxNumberOfNodes) {
             switch (language) {
               case "chinese":
