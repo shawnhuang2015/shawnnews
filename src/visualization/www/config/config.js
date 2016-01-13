@@ -7,7 +7,7 @@ var config =
             { "label": { "name": "ID" } }, { "textbox": {"name" : "id", "length" : 20, "placeholder": "input id"} },
             { "label": { "name" : "Type"} }, { "textbox": {"name" : "type", "length" : 20, "placeholder": "input type" } },
             { "label": { "name": "Depth" } }, { "textbox": {"name" : "depth", "length" : 10, "placeholder": "1" } },
-            { "label": { "name": "Max" } }, { "textbox": {"name" : "max", "length" : 10, "placeholder": "500" } }
+            { "label": { "name": "Max" } }, { "textbox": {"name" : "max", "length" : 10, "placeholder": "50" } }
         ],
         "attributes": {
           "depth" : 1,
