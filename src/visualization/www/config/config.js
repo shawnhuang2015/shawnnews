@@ -5,13 +5,14 @@ var config =
         "index": 0,
         "elements": [ 
             { "label": { "name": "ID" } }, { "textbox": {"name" : "id", "length" : 20, "placeholder": "input id"} },
-            { "label": { "name" : "Type"} }, { "textbox": {"name" : "type", "length" : 20, "placeholder": "input type" } },
+            // { "label": { "name" : "Type"} }, { "textbox": {"name" : "type", "length" : 20, "placeholder": "input type" } },
             { "label": { "name": "Depth" } }, { "textbox": {"name" : "depth", "length" : 10, "placeholder": "1" } },
             { "label": { "name": "Max" } }, { "textbox": {"name" : "max", "length" : 10, "placeholder": "50" } }
         ],
         "attributes": {
           "depth" : 1,
-          "max" : 35
+          "max" : 35,
+          "type" : "BUS"
         },
         "setting" : {
           "layout" : "circle",
@@ -32,7 +33,7 @@ var config =
               "vars" : [
               ],
               "maps" : [
-                {"attr":"type", "usage":"input", "name":"type"},
+                {"attr":"type", "usage":"attributes", "name":"type"},
                 {"attr":"id", "usage":"input", "name":"id"},
                 {"attr":"depth", "usage":"input", "name":"depth"},
                 {"attr":"max", "usage":"input", "name":"max"}
