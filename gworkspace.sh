@@ -437,7 +437,7 @@ if [ "G$(basename `pwd`)" = "Ggdk" ]
 then
     for i in "${!DIRECTORY[@]}"; do
         dir=${DIRECTORY[$i]#../}
-        if grep -q "$dir" ../config/proj.config
+        if grep -q -- "- $dir" ../config/proj.config
         then
             line=$(grep "$dir" ../config/proj.config | sed -e '/^#/d')
             REPO[$i]=$(echo $line | awk '{print $3}')
