@@ -1255,19 +1255,38 @@ require(['ol'], function(ol){
 
     var container_id = renders.render_container;
 
+    var UIObject = _this.UIObject;
+
     
     //this.format = new ol.format.GeoJSON();
 
-    this.color = d3.scale.sqrt().domain([0, 1]).range(['blue','red']);
-    this.nodeColor = d3.scale.linear().domain([0, 100, 200]).range(['blue', 'green', 'red']).clamp(true);
+    this.color = d3.scale.sqrt().domain([0, 1]).range(['blue','red']); // link color
+    this.nodeColor = d3.scale.linear().domain([0, 345, 765]).range(['blue', 'green', 'red']).clamp(true);
 
     var styleFunction = function(feature, resolution){
       var type = feature.getGeometry().getType();
       var level = feature.getProperties().level;
-      var rgbcolor = d3.rgb(that.color(level));
-      var opacityColor = [rgbcolor.r, rgbcolor.g, rgbcolor.b, 0.5]
+
+      var nodergbcolor = d3.rgb(that.nodeColor(level));
+      var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.6]
+
+      var linkrgbcolor = d3.rgb(that.color(level));
+      var opacityLinkColor = [linkrgbcolor.r, linkrgbcolor.g, linkrgbcolor.b, 0.7]
 
       switch (type) {
+        case 'Point':
+          var image = new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: opacityNodeColor
+              }),
+            stroke: new ol.style.Stroke({color: '#000', width: 0.1})
+          });
+          return new ol.style.Style({
+                    image: image,
+                    text: textStyle(feature, resolution)
+                  });
+          break
         case 'Circle':
           return new ol.style.Style({
             text: textStyle(feature, resolution),
@@ -1285,7 +1304,7 @@ require(['ol'], function(ol){
           text: //textStyle(feature, resolution),
           new ol.style.Text({
                   text: function(feature, resolution) {
-                    if (resolution > 400) {
+                    if (resolution > 9000) {
                       return ''
                     }
                     else {
@@ -1299,7 +1318,7 @@ require(['ol'], function(ol){
                   stroke: new ol.style.Stroke({color: '#fff', width: 2}),
                 }),
           stroke: new ol.style.Stroke({
-            color: opacityColor,
+            color: opacityLinkColor,
             width: 2
           })
         })
@@ -1314,7 +1333,7 @@ require(['ol'], function(ol){
         return ''
       }
       else {
-        return feature.getProperties().name
+        return feature.getProperties().name + '-' + feature.getProperties().level
       }
     }
 
@@ -1366,14 +1385,122 @@ require(['ol'], function(ol){
 
     this.map = map;
 
-    map.getView().on('propertychange', function(e) {
+    map.on(['moveend', 'zoomend'], onInteractEnd);
 
+    function onInteractEnd(evt) {
+      var map = evt.map;
+      var UIObject = _this.currentObj;
+
+      if (UIObject.setting.customized) {
+        if (typeof visualization == 'undefined') return;
+        var map = visualization.scope.renderer.renderer.map;
+        var extent = map.getView().calculateExtent(map.getSize());
+        extent = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+
+        extent = function(oldExtent) {
+          var lonmin=oldExtent[0] 
+          var latmin=oldExtent[1] 
+          var lonmax=oldExtent[2] 
+          var latmax=oldExtent[3]
+
+          var a,b,c,d;
+
+          var alpha = 0.5;
+
+          a = lonmin - (lonmax - lonmin)*alpha;
+          b = latmin - (latmax - latmin)*alpha;
+          c = lonmax + (lonmax - lonmin)*alpha;
+          d = latmax + (latmax - latmin)*alpha;
+
+          return [a,b,c,d];
+        }(extent)
+        
+        var scale = d3.scale.linear()
+        .domain([11,10, 9,8,7,6,5])
+        .range([0,70,100,135,160,220,340])
+        .clamp(true);
+
+        console.log(scale(map.getView().getZoom()));
+
+        var template = UIObject.initialization.urlTemplate;
+        
+        var value = {minlevel:scale(map.getView().getZoom()), lonmin:extent[0], latmin:extent[1], lonmax:extent[2], latmax:extent[3]};
+
+        var initialurl = gvis.utils.applyTemplate(template, value);
+
+        $.ajax({
+          url : initialurl,
+          type : "get",
+          data : {},//JSON.stringify(submit_payload),//'{"function":"vattr", "translate_ids": ["1", "25", "27"]}',
+          dataType   : 'json',
+          error: function(jqXHR, textStatus, errorThrown){
+            // will fire when timeout is reached
+            // mygv.clean();
+            if (jqXHR.responseText.indexOf('error_: invalid / deleted') != -1) {
+              alert("输入的节点不存在，请重新输入。");
+            }
+            else if (jqXHR.responseText.indexOf('Adding ID failed.') != -1) {
+              alert("输入的节点类型不存在，请重新输入。");
+            }
+            else {
+              alert(jqXHR.responseText);
+            }   
+          },
+          success: function(message, textStatus, jqXHR){
+            if (message.error) {
+              console.log("query language error.")
+            }
+            else {
+              var length = message.results.length
+              var graph = visualization.scope.graph;
+
+              graph.clear();
+
+              for (var i=0; i<length-1; ++i) {
+                var rawnode = message.results[i];
+                var node = {id:rawnode['all.id'], type:'BUS'}
+                node[gvis.settings.attrs] = {}
+                for (var key in rawnode['all.att']) {
+                  var newKey = key.split('.')[1];
+                  node[gvis.settings.attrs][newKey] = rawnode['all.att'][key];
+                }
+
+                graph.addNode(node);
+              }
+
+              var links = message.results[length-1]['@@edgeSet'].split(' ');
+              links = links.map(function(l) {
+                return l.split(',');
+              })
+
+              for (var i in links) {
+                if (links[i][0] > links[i][1] || links[i][0] == "" || links[i][1] == "") continue;
+                var link = {source:{id:links[i][0], type:'BUS'}, target:{id:links[i][1], type:'BUS'}, type:'BRANCH'}
+
+                link[gvis.settings.attrs] = {hB:links[i][2]}
+
+                graph.addLink(link);
+              }
+
+              var stop = 0;
+              visualization.render();
+            }
+          }
+        })
+      }// end customied.
+    }
+
+    map.getView().on('propertychange', function(e) {
       switch (e.key) {
         case 'resolution':
-          console.log(e.oldValue, this.getZoom());
-          if (this.getZoom() )
+          //console.log(e.oldValue, this.getZoom());
           break;
       }
+
+      // var extent = map.getView().calculateExtent(map.getSize());
+      // extent = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+
+      // console.log(extent, this.getZoom());
     })
 
     map.on('pointermove', function(evt) {
@@ -1406,10 +1533,22 @@ require(['ol'], function(ol){
           that.events.nodeClick(node);
         }
       }
+
+      var lonlat = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+      console.log(map.getView().getResolution());
+      console.log(map.getView().getZoom());
+      console.log(lonlat);
     });
 
     map.getView().setZoom(4);
     map.getView().setCenter([-10703629.944829801, 4236445.855677608])
+
+    this.clear = function() {
+      var that = this;
+      that.renders.graph.clear();
+      that.vectorSource.clear();
+      that.vectorNodeSource.clear();
+    }
 
     this.update = function() {
       //console.log("Map Update");
@@ -1450,7 +1589,7 @@ require(['ol'], function(ol){
 
       //that.color.domain([linkLevel[0], linkLevel[0]*0.6+linkLevel[1]*0.4, linkLevel[1]]);
 
-      console.log(linkLevel)
+      //console.log(linkLevel)
       that.color.domain(linkLevel)
       that.vectorLayer.setStyle(styleFunction);
 
@@ -1466,13 +1605,29 @@ require(['ol'], function(ol){
           return;
         }
 
-        var newNodeFeature = new ol.Feature({
-          geometry: new ol.geom.Circle(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)]), 500),
-          key: n[gvis.settings.key],
-          name: attrs.BusName,
-          level: level,
-          type: 'node'
-        })
+        
+        var newNodeGeom;
+        var UIObject = _this.currentObj;
+        if (UIObject.setting.customized) {
+          newNodeGeom = {
+            geometry : new ol.geom.Point(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)])),
+            key: n[gvis.settings.key],
+            name: attrs.BusName,
+            level: level,
+            type: 'node'
+          }
+        }
+        else {
+          newNodeGeom = {
+            geometry: new ol.geom.Circle(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)]), 500),
+            key: n[gvis.settings.key],
+            name: attrs.BusName,
+            level: level,
+            type: 'node'
+          }
+        }
+
+        var newNodeFeature = new ol.Feature(newNodeGeom);
 
         that.vectorNodeSource.addFeature(newNodeFeature);
       })
@@ -1493,7 +1648,7 @@ require(['ol'], function(ol){
     }
 
     this.autoFit = function() {
-      console.log("Map Auto Fit")
+      //console.log("Map Auto Fit")
     }
   }
 })

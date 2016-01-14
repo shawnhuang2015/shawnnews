@@ -11,6 +11,16 @@
 
   console.log('Loading gvis.core')
 
+  gvis.prototype.UIObject = function(x) {
+    var _this = this.scope;
+    if (arguments.length == 0) {
+      return _this.currentObj;
+    }
+    else {
+      _this.currentObj = x;
+    }
+  }
+
   gvis.prototype.data = function(newData) {
     var _this = this.scope;
 
@@ -270,6 +280,12 @@
     })
 
     return this;
+  }
+
+  gvis.prototype.clear = function() {
+    var _this = this.scope;
+
+    _this.renderer.clear();
   }
 
   gvis.prototype.test = function() {

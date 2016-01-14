@@ -4,6 +4,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited   *
  * Proprietary and confidential                                               *
  ******************************************************************************/
+ /**/
 (function(undefined) {
   "use strict";
   // Doing somthing for events which can be customized.

@@ -4,7 +4,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited   *
  * Proprietary and confidential                                               *
  ******************************************************************************/
-require([], function(){
+require(['ol'], function(ol){
   //test();
 
   d3.select('#prototype1').style('height', ($(window).height()-220)+'px');
@@ -459,6 +459,11 @@ require([], function(){
         s += '<input id="slider_'+elements[i]["slider"]['name']+'" type="text"/>'
         s += '&nbsp;&nbsp;&nbsp;&nbsp;'
       }
+
+      if (elements[i]["button"]) {
+        var template = '&nbsp;&nbsp;<button type = "submit" name="{{name}}" class="btn btn-info" onclick=console.log("test")>{{label}}</button>&nbsp;&nbsp;'
+        s += gvis.utils.applyTemplate(template, elements[i]["button"]);
+      }
     }
     s += '&nbsp;&nbsp;<button type = "submit" class="btn btn-primary"'
 
@@ -537,6 +542,7 @@ require([], function(){
   }
 
   this.initializeUIComponent = function(d) {
+
     // initializing label filtering selection box.
     var parent = $('#node_label_filtering').parent();
     $('#node_label_filtering').next().remove();
@@ -604,6 +610,78 @@ require([], function(){
         forceParse: 1,
         showMeridian: 0
     });
+
+    if (UIObject.setting.customized) {
+
+      var map = visualization.scope.renderer.renderer.map;
+      var extent = map.getView().calculateExtent(map.getSize());
+      extent = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+
+      //console.log(extent); //=> [lonmin, latmin, lonmax, latmax]
+
+      var template = UIObject.initialization.urlTemplate;
+      var value = {minlevel:340, lonmin:extent[0], latmin:extent[1], lonmax:extent[2], latmax:extent[3]};
+
+      var initialurl = gvis.utils.applyTemplate(template, value);
+
+      $.ajax({
+        url : initialurl,
+        type : "get",
+        data : {},//JSON.stringify(submit_payload),//'{"function":"vattr", "translate_ids": ["1", "25", "27"]}',
+        dataType   : 'json',
+        error: function(jqXHR, textStatus, errorThrown){
+          // will fire when timeout is reached
+          // mygv.clean();
+          if (jqXHR.responseText.indexOf('error_: invalid / deleted') != -1) {
+            alert("输入的节点不存在，请重新输入。");
+          }
+          else if (jqXHR.responseText.indexOf('Adding ID failed.') != -1) {
+            alert("输入的节点类型不存在，请重新输入。");
+          }
+          else {
+            alert(jqXHR.responseText);
+          }   
+        },
+        success: function(message, textStatus, jqXHR){
+          if (message.error) {
+            console.log("query language error.")
+          }
+          else {
+            var length = message.results.length
+            var graph = visualization.scope.graph;
+
+            for (var i=0; i<length-1; ++i) {
+              var rawnode = message.results[i];
+              var node = {id:rawnode['all.id'], type:'BUS'}
+              node[gvis.settings.attrs] = {}
+              for (var key in rawnode['all.att']) {
+                var newKey = key.split('.')[1];
+                node[gvis.settings.attrs][newKey] = rawnode['all.att'][key];
+              }
+
+              graph.addNode(node);
+            }
+
+            var links = message.results[length-1]['@@edgeSet'].split(' ');
+            links = links.map(function(l) {
+              return l.split(',');
+            })
+
+            for (var i in links) {
+              if (links[i][0] > links[i][1] || links[i][0] == "" || links[i][1] == "") continue;
+              var link = {source:{id:links[i][0], type:'BUS'}, target:{id:links[i][1], type:'BUS'}, type:'BRANCH'}
+
+              link[gvis.settings.attrs] = {hB:links[i][2]}
+
+              graph.addLink(link);
+            }
+
+            var stop = 0;
+            visualization.render();
+          }
+        }
+      })
+    }// end customied.
   }
 
   this.updateLabelFilteringListBox = function(graph) {
@@ -965,6 +1043,9 @@ require([], function(){
           }
           else if (attr.usage == "attributes") {
             submit_URL += name+ "=" + myObject.attributes[attr.name] + "&";
+            if (name == "max") {
+              maxNumberOfNodes = myObject.attributes[attr.name]
+            } 
           }
         }
 
@@ -1234,6 +1315,8 @@ require([], function(){
   //sort on index
   window.pages_obj.sort(function(a,b) {return (a.index - b.index);});
 
+  var UIObject;
+
   for (var i=0; i < window.pages_obj.length; i++) {
     var tabname = window.pages_obj[i].tabname;
     var removedSpaces = removeSpaces(tabname);
@@ -1255,9 +1338,12 @@ require([], function(){
       $('#content-page').empty();
       $('#content-page').append(window.pages_obj[event.target.id]);
 
-      var UIObject = window.pages_obj[window.page_index];
+      UIObject = window.pages_obj[window.page_index];
 
+      visualization.clear();
+      visualization.UIObject(UIObject);
       initializeUIComponent(UIObject);
+      updateQueryInputInfoBox({}, page_index);
     })
 
     if (i == 0) {

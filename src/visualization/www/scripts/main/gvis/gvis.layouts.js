@@ -31,6 +31,10 @@
       })
     });
 
+    this.addLayout('map', function() {
+      //do nothing;
+    })
+
     this.addLayout('allZero', function() {
       this._graph.data().array.nodes.forEach(function(n) {
         n.x = 0

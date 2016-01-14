@@ -37,7 +37,9 @@
     })
 
     _this.settings = gvis.settings;
+
     _this.conf = conf;
+    _this.currentObj = conf.configure[0];
 
     _this.graph = new gvis.graph(_this);
     _this.layouts = new gvis.layouts(_this);
