@@ -461,8 +461,31 @@ require(['ol'], function(ol){
       }
 
       if (elements[i]["button"]) {
-        var template = '&nbsp;&nbsp;<button type = "submit" name="{{name}}" class="btn btn-info" onclick=console.log("test")>{{label}}</button>&nbsp;&nbsp;'
+        var template = '&nbsp;&nbsp;<button type = "submit" name="{{name}}" class="btn btn-info" onclick=onclick_UIpagesButton("{{name}}")>{{label}}</button>&nbsp;&nbsp;'
         s += gvis.utils.applyTemplate(template, elements[i]["button"]);
+      }
+
+      if (elements[i]["buttongroup"]) {
+        var groupTemplate = '<div class="btn-group" data-toggle="buttons" id="{{name}}">{{items}}</div>'
+        var itemTemplate = '<label class="btn btn-info {{active}}" onclick=onclick_UIpagesButton("{{name}}")>\
+<input type="radio" name="options" id="{{name}}" autocomplete="off"> {{label}}</label>'
+        
+        var items = ""
+        for (var j in elements[i]["buttongroup"].items) {
+          var item = elements[i]["buttongroup"].items[j];
+
+          if (item.active) {
+            item.active = 'active';
+          }
+          else {
+            item.active = '';
+          }
+          items += gvis.utils.applyTemplate(itemTemplate, item)
+        }
+
+        elements[i]["buttongroup"].items = items;
+
+        s += gvis.utils.applyTemplate(groupTemplate, elements[i]["buttongroup"]);
       }
     }
     s += '&nbsp;&nbsp;<button type = "submit" class="btn btn-primary"'
@@ -596,6 +619,9 @@ require(['ol'], function(ol){
       else if (e.slider) {
         e = e.slider;
         $("#slider_"+e.name).slider(e.value);
+      }
+      else if (e.buttongroup) {
+        e = e.buttongroup;
       }
     })
 
@@ -939,6 +965,20 @@ require(['ol'], function(ol){
     }
   }
 
+  this.onclick_UIpagesButton = function(name) {
+    if (name == 'level') {
+      visualization.scope.renderer.renderer.linkvaluename = 'hB'
+      visualization.update();
+    }
+    else if (name == 'percentage') {
+      visualization.scope.renderer.renderer.linkvaluename = 'somethingelse'
+      visualization.update();
+    }
+    else {
+      return;
+    }
+  }
+
   this.onclick_submit = function(index) {
 
 
@@ -1243,22 +1283,56 @@ require(['ol'], function(ol){
           // .data(newData)
           // .run()
 
-          newData = refineDataName(newData);
+          if (UIObject.setting.customized) {
+            newData = refineDataName(newData);
 
-          visualization
-          .read(newData)
-          .layout(UIObject.setting.layout)
-          .setRootNode(rootNodeType, rootNodeID)
-          .render()
+            var node = newData.nodes[0] || undefined;
 
-          // update the multi-selection lable box base on the graph data.
-          updateLabelFilteringListBox(visualization.data());
+            if (node != undefined) {
+              var attr = node[gvis.settings.attrs];
+              var center = ol.proj.fromLonLat([parseFloat(attr.Longitude), parseFloat(attr.Latitude)]);
+              var zoom = 7;
 
-          // store the new message in the messageArray.
-          messageArray.push(message);
+              var duration = 1000;
 
-          // out put the JSON message in the json tab.
-          JSONMessageOutput()
+              var map = visualization.scope.renderer.renderer.map;
+              var view = map.getView();
+
+              var bounce = ol.animation.bounce({
+                duration: duration,
+                resolution: 4900,//4 * view.getResolution(),
+                start: +new Date()
+              });
+
+              var pan = ol.animation.pan({
+                duration: duration,
+                source: /** @type {ol.Coordinate} */ (view.getCenter())
+              });
+
+              map.beforeRender(pan,bounce);
+              view.setCenter(center);
+              view.setZoom(zoom);
+            }
+
+          }
+          else {
+            newData = refineDataName(newData);
+
+            visualization
+            .read(newData)
+            .layout(UIObject.setting.layout)
+            .setRootNode(rootNodeType, rootNodeID)
+            .render()
+
+            // update the multi-selection lable box base on the graph data.
+            updateLabelFilteringListBox(visualization.data());
+
+            // store the new message in the messageArray.
+            messageArray.push(message);
+
+            // out put the JSON message in the json tab.
+            JSONMessageOutput()
+          }  
         }
         else { // if is error message
           if (language == "chinese") {

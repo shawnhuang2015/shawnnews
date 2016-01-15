@@ -1257,26 +1257,31 @@ require(['ol'], function(ol){
 
     var UIObject = _this.UIObject;
 
+    this.linkvaluename = 'hB';
     
     //this.format = new ol.format.GeoJSON();
 
-    this.color = d3.scale.sqrt().domain([0, 1]).range(['blue','red']); // link color
+    this.color = d3.scale.pow().exponent(0.6).domain([0, 1]).range(['blue','red']); // link color
     this.nodeColor = d3.scale.linear().domain([0, 345, 765]).range(['blue', 'green', 'red']).clamp(true);
+
+    var radiusScale = d3.scale.linear().domain([4000, 100]).range([3, 10]).clamp(true)
 
     var styleFunction = function(feature, resolution){
       var type = feature.getGeometry().getType();
       var level = feature.getProperties().level;
 
       var nodergbcolor = d3.rgb(that.nodeColor(level));
-      var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.6]
+      var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.4]
 
       var linkrgbcolor = d3.rgb(that.color(level));
-      var opacityLinkColor = [linkrgbcolor.r, linkrgbcolor.g, linkrgbcolor.b, 0.7]
+      var opacityLinkColor = [linkrgbcolor.r, linkrgbcolor.g, linkrgbcolor.b, 0.5]
 
       switch (type) {
         case 'Point':
           var image = new ol.style.Circle({
-            radius: 7,
+            radius: function(r){
+              return radiusScale(r);
+            }(resolution),
             fill: new ol.style.Fill({
                 color: opacityNodeColor
               }),
@@ -1304,7 +1309,7 @@ require(['ol'], function(ol){
           text: //textStyle(feature, resolution),
           new ol.style.Text({
                   text: function(feature, resolution) {
-                    if (resolution > 9000) {
+                    if (resolution > 2000) {
                       return ''
                     }
                     else {
@@ -1319,7 +1324,7 @@ require(['ol'], function(ol){
                 }),
           stroke: new ol.style.Stroke({
             color: opacityLinkColor,
-            width: 2
+            width: 3
           })
         })
         break;
@@ -1340,7 +1345,7 @@ require(['ol'], function(ol){
     var textStyle = function(feature, resolution) {
       return new ol.style.Text({
         text: getText(feature, resolution),
-        offsetY: 3,
+        offsetY: 8,
         textAlign: 'center',
         textBaseline : 'top',
         font: '13px',
@@ -1362,12 +1367,50 @@ require(['ol'], function(ol){
       style: styleFunction
     });
 
+
+    var resolutions = [];
+    var tileSize = 256;
+    var projection = ol.proj.get("EPSG:3857");
+    for (var i = 0; i < 19; i++) {
+        resolutions[i] = Math.pow(2, 18 - i);
+    }
+    var projectionExtent = projection.getExtent();// [-tileSize*resolusions[1],-tileSize*resolusions[1],tileSize*resolusions[1],tileSize*resolusions[1]];//projection.getExtent();
+    var tilegrid = new ol.tilegrid.TileGrid({
+        origin: [0,0],
+        resolutions: resolutions
+    });
+    var tilesource = new ol.source.TileImage({
+        projection: projection,
+        tileGrid: tilegrid,
+        tileUrlFunction: function (xyz, obj1, obj2) {
+            if (!xyz) {
+                return "";
+            }
+            var z = xyz[0];
+            var x = xyz[1];
+            var y = xyz[2];
+//            y = -y - 1;  默认轴方向是右下的，但是百度的轴方向是右上。 所以y值 应该变的，但是为何没有 ？
+            if (x < 0) {
+                x = "M" + (-x);
+            }
+            if (y < 0) {
+                y = "M" + (-y);
+            }
+            return "http://online3.map.bdimg.com/tile/?qt=tile&x=" + x + "&y=" + y + "&z=" + z + "&styles=pl&udt=20141119&scaler=1";
+        }
+    });
+
     var map = new ol.Map({
       layers: [
         new ol.layer.Tile({
           source: new ol.source.OSM(),
-          opacity: 0.5
+          opacity: 0.9
         }),
+        // new ol.layer.Tile({
+        //     extent: projectionExtent,
+        //     source: tilesource,
+        //     opacity: 0.2
+        // }),
         this.vectorLayer,
         this.vectorNodeLayer
       ],
@@ -1381,7 +1424,7 @@ require(['ol'], function(ol){
         center: [0, 0]/*ol.proj.fromLonLat([-68.75, 44.74])*/,
         zoom: 1
       })
-    });
+    }); 
 
     this.map = map;
 
@@ -1503,17 +1546,52 @@ require(['ol'], function(ol){
       // console.log(extent, this.getZoom());
     })
 
+    var info = $('#info');
+    info.tooltip({
+      animation: false,
+      trigger: 'manual'
+    });
+
+    var displayFeatureInfo = function(pixel) {
+      info.css({
+        left: (pixel[0] + 13) + 'px',
+        top: (pixel[1] + 60) + 'px'
+      });
+      var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+        return feature;
+      });
+      if (feature && feature.get('type') == 'node') {
+        info.tooltip('hide')
+            .attr('data-original-title', feature.get('name')+'-'+feature.get('level'))
+            .tooltip('fixTitle')
+            .tooltip('show');
+      } else {
+        info.tooltip('hide');
+      }
+    };
+
     map.on('pointermove', function(evt) {
       if (evt.dragging) {
+        
         return;
       }
-      var pixel = map.getEventPixel(evt.originalEvent);
-      var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-            return feature;
-          });
-      if(feature) {
-        //console.log(feature);
+      
+    });
+
+    map.on('pointermove', function(evt) {
+      if (evt.dragging) {
+        info.tooltip('hide');
+        return;
       }
+      // var pixel = map.getEventPixel(evt.originalEvent);
+      // var feature = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+      //       return feature;
+      //     });
+      // if(feature) {
+      //   //console.log(feature);
+      // }
+      displayFeatureInfo(map.getEventPixel(evt.originalEvent));
+
     });
 
     map.on('click', function(evt) {
@@ -1560,15 +1638,22 @@ require(['ol'], function(ol){
       var linkLevel = [+Number.MAX_VALUE, -Number.MAX_VALUE];
       var nodeLevel = [+Number.MAX_VALUE, -Number.MAX_VALUE];
 
-      graph.links().forEach(function(l) {
+      graph.links().forEach(function(l, i) {
         var source = l.source[gvis.settings.attrs];
         var target = l.target[gvis.settings.attrs];
         var attrs = l[gvis.settings.attrs]
 
-        var level = parseFloat(attrs['hB']); //parseFloat(attrs['MVALimitA'])
+        //var level = parseFloat(attrs['hB']); //parseFloat(attrs['MVALimitA'])
+        var level = parseFloat(attrs[that.linkvaluename]);
+
+        if (isNaN(level)) {
+          var p = 0.3;
+          level = (parseFloat(l.source.id[l.source.id.length-2]) / 10.0 * (1-p) +p+0.1).toFixed(2);
+        }
 
         linkLevel[0] = Math.min(linkLevel[0], level);
         linkLevel[1] = Math.max(linkLevel[1], level);
+
 
         if (parseFloat(source.Longitude) < 1 && parseFloat(source.Longitude) > -1) {
           return;
@@ -1590,7 +1675,16 @@ require(['ol'], function(ol){
       //that.color.domain([linkLevel[0], linkLevel[0]*0.6+linkLevel[1]*0.4, linkLevel[1]]);
 
       //console.log(linkLevel)
-      that.color.domain(linkLevel)
+      if (linkLevel[0] == -Number.MAX_VALUE || linkLevel[1] == +Number.MAX_VALUE) {
+        linkLevel[0] = 0;
+        linkLevel[1] = 1;
+
+        that.color = d3.scale.linear().domain([0, 0.5, 1]).range(['blue','green', 'red']);
+      }
+      else {
+        that.color = d3.scale.pow().exponent(0.6).domain(linkLevel).range(['blue','red']);
+      }
+
       that.vectorLayer.setStyle(styleFunction);
 
       graph.nodes().forEach(function(n) {

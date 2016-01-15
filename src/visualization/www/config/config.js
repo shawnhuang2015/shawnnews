@@ -6,8 +6,8 @@ var config =
         "elements": [ 
             { "label": { "name": "ID" } }, 
             { "textbox": {"name" : "id", "length" : 20, "placeholder": "input id"} },
-            { "button": {"name" : "level", "label" : "Color Level"}},
-            { "button": {"name" : "percentage", "label" : "Color Max Percentage"}},
+            { "buttongroup": {"name":"colorfunction", "items":[{"name" : "level", "label" : "Color Voltage Level", "active":true},
+            {"name" : "percentage", "label" : "Color Max Percentage"}]}},
         ],
         "attributes": {
           "depth" : 1,
