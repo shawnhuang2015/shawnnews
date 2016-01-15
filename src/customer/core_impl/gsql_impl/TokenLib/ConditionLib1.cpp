@@ -42,6 +42,7 @@
 
 #include <ConditionLib1.hpp>
 
+
 /* This funtion compares two strings, and returns true if they are equal */
 static inline bool compareStrIgnoreCase (std::string s1, std::string s2) {
 
@@ -105,6 +106,110 @@ extern "C"  bool gsql_is_not_empty_string(const char* const iToken, uint32_t iTo
            return true;
          }
   }
+  //empty or all space, return false
+  return false;
+}
+
+/**
+ * Get a int from a timestamp string year, month or day.
+ *
+ * We only supports 3 formats.
+ *
+ * "%Y-%m-%d %H:%M:%S"
+ * "%Y/%m/%d %H:%M:%S"
+ * "%Y-%m-%dT%H:%M:%S.000z" // ignores text after .
+ * e.g.
+ * "2014-4-17 12:22:23"
+ * "2014/4/17 12:22:23"
+ *
+ * Since  each field range is 
+ *  YYYY should be [0,10000]
+ *  MM   should be [0,12]
+ *  DD   should be [0,31]
+ *  HH   should be [0,24]
+ *  MM   should be [0,60]
+ *  SS   should be [0,60]
+ *
+ *  So, we should make nextInt fall between [0,10000]
+ *
+ */
+static inline uint32_t nextTSInt(char*& timestamp_ptr, 
+    const char* timestamp_end_ptr) {
+
+  uint32_t int_value = 0;
+  while (*timestamp_ptr != ' ' && *timestamp_ptr != ':' &&
+      *timestamp_ptr != '-' && *timestamp_ptr != '/' &&
+      *timestamp_ptr != 'T' && *timestamp_ptr != '.' &&
+      *timestamp_ptr != '\n' && *timestamp_ptr != '\r' &&
+      timestamp_ptr < timestamp_end_ptr) {
+
+    //1. digit validity check.
+    if (*timestamp_ptr < '0' || *timestamp_ptr > '9') {
+      return std::numeric_limits<uint32_t>::max();
+    } 
+
+    int_value = int_value * 10 + *timestamp_ptr - '0';
+
+    //2. validity check.
+    if (int_value > 10000) {
+      return std::numeric_limits<uint32_t>::max();
+    } 
+
+    timestamp_ptr++;
+  }
+  timestamp_ptr++;  // jump over separator
+  return int_value;
+}
+
+/**
+ * This function checks if a given token is a valid timestamp 
+ * format.
+ *
+ * @par  Example
+ *       load "source_file" to vertex v values ($0, $1) 
+ *           where gsql_is_valid_timestamp($2);
+ */
+extern "C"  bool gsql_is_valid_timestamp(const char* const iToken, 
+    uint32_t iTokenLen) {
+
+  if (iTokenLen <= 0) {
+    return false;
+  }
+
+  char* timestamp_ptr_ = const_cast<char*>(iToken);
+  char* timestamp_end_ptr_ = timestamp_ptr_ + iTokenLen;
+
+  uint32_t _year = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_year == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
+  uint32_t _mon = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_mon == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
+  uint32_t _day = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_day == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
+  uint32_t _hour = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_hour == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
+
+  uint32_t _min = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_min == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
+  uint32_t _sec = nextTSInt(timestamp_ptr_, timestamp_end_ptr_);
+  if (_sec == std::numeric_limits<uint32_t>::max()) {
+    return false;
+  }
+
   //empty or all space, return false
   return false;
 }
