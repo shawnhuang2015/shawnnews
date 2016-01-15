@@ -1306,7 +1306,7 @@ require(['ol'], function(ol){
 
               var bounce = ol.animation.bounce({
                 duration: duration,
-                resolution: 4900,//4 * view.getResolution(),
+                resolution: 5000,//4 * view.getResolution(),
                 start: +new Date()
               });
 
