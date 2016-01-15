@@ -65,6 +65,7 @@ LDFLAGS += -lrdkafka
 LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS +=-lfcgi
+LDFLAGS +=-lcurl
 LDFLAGS += -lpthread -ldl
 
 UNAME_S := $(shell uname -s)
