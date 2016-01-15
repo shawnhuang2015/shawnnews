@@ -213,7 +213,7 @@ extern "C"  bool gsql_is_valid_timestamp(const char* const iToken,
   }
 
   //empty or all space, return false
-  return false;
+  return true;
 }
 
 
