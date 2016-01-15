@@ -1460,7 +1460,7 @@ require(['ol'], function(ol){
         
         var scale = d3.scale.linear()
         .domain([11,10, 9,8,7,6,5])
-        .range([0,70,100,135,160,220,340])
+        .range([0,60,100,135,160,220,340])
         .clamp(true);
 
         console.log(scale(map.getView().getZoom()));
@@ -1561,8 +1561,11 @@ require(['ol'], function(ol){
         return feature;
       });
       if (feature && feature.get('type') == 'node') {
+        var template = 'Name:{{name}} Level:{{level}}'
+
         info.tooltip('hide')
-            .attr('data-original-title', feature.get('name')+'-'+feature.get('level'))
+            .attr('data-html','true')
+            .attr('data-original-title', gvis.utils.applyTemplate(template, {name:feature.get('name'), level:feature.get('level')}))//feature.get('name')+'-'+feature.get('level'))
             .tooltip('fixTitle')
             .tooltip('show');
       } else {

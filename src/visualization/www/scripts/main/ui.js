@@ -1290,8 +1290,14 @@ require(['ol'], function(ol){
 
             if (node != undefined) {
               var attr = node[gvis.settings.attrs];
+              var level = parseFloat(attr.NominalV);
               var center = ol.proj.fromLonLat([parseFloat(attr.Longitude), parseFloat(attr.Latitude)]);
-              var zoom = 7;
+
+              var scale = d3.scale.linear()
+              .domain([10, 9,8])
+              .range([60,100,135])
+              .clamp(true);
+              var zoom = Math.round(scale.invert(level)+0.5);
 
               var duration = 1000;
 
