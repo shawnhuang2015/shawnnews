@@ -1758,6 +1758,8 @@ require(['ol'], function(ol){
 
     this.setCenterNode = function(id, type) {
       this.centerNode = {id:id, type:type};
+
+      this.vectorNodeLayer.setStyle(styleFunction);
     }
 
     this.autoFit = function() {
