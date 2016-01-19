@@ -1257,6 +1257,8 @@ require(['ol'], function(ol){
 
     var UIObject = _this.UIObject;
 
+    this.centerNode = {id:'', type:''};
+
     this.linkvaluename = 'hB';
     
     //this.format = new ol.format.GeoJSON();
@@ -1269,6 +1271,7 @@ require(['ol'], function(ol){
     var styleFunction = function(feature, resolution){
       var type = feature.getGeometry().getType();
       var level = feature.getProperties().level;
+      var id = feature.getProperties().id;
 
       var nodergbcolor = d3.rgb(that.nodeColor(level));
       var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.4]
@@ -1280,12 +1283,24 @@ require(['ol'], function(ol){
         case 'Point':
           var image = new ol.style.Circle({
             radius: function(r){
-              return radiusScale(r);
+              if (id == that.centerNode.id) {
+                return 2 * radiusScale(r);
+              }
+              else {
+                return radiusScale(r);
+              }
             }(resolution),
             fill: new ol.style.Fill({
                 color: opacityNodeColor
               }),
-            stroke: new ol.style.Stroke({color: '#000', width: 0.1})
+            stroke: function() {
+              if (id == that.centerNode.id) {
+                return new ol.style.Stroke({color: '#f00', width: 2})
+              }
+              else {
+                return new ol.style.Stroke({color: '#000', width: 0.1})
+              }
+            }()
           });
           return new ol.style.Style({
                     image: image,
@@ -1575,14 +1590,6 @@ require(['ol'], function(ol){
 
     map.on('pointermove', function(evt) {
       if (evt.dragging) {
-        
-        return;
-      }
-      
-    });
-
-    map.on('pointermove', function(evt) {
-      if (evt.dragging) {
         info.tooltip('hide');
         return;
       }
@@ -1605,6 +1612,7 @@ require(['ol'], function(ol){
       if(feature) {
         var prop = feature.getProperties();
         var type = prop.type;
+        that.centerNode = {id:prop.id, type:prop.type};
         if(type == 'link') {
           var link = that.renders.graph.links(prop.key);
           that.events.linkClick(link);
@@ -1613,6 +1621,8 @@ require(['ol'], function(ol){
           var node = that.renders.graph.nodes(prop.key);
           that.events.nodeClick(node);
         }
+
+        that.vectorNodeLayer.setStyle(styleFunction);
       }
 
       var lonlat = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
@@ -1688,7 +1698,7 @@ require(['ol'], function(ol){
         that.color = d3.scale.pow().exponent(0.6).domain(linkLevel).range(['blue','red']);
       }
 
-      that.vectorLayer.setStyle(styleFunction);
+      //that.vectorLayer.setStyle(styleFunction);
 
       graph.nodes().forEach(function(n) {
         var attrs = n[gvis.settings.attrs];
@@ -1709,6 +1719,8 @@ require(['ol'], function(ol){
           newNodeGeom = {
             geometry : new ol.geom.Point(ol.proj.fromLonLat([parseFloat(attrs.Longitude), parseFloat(attrs.Latitude)])),
             key: n[gvis.settings.key],
+            id: n.id,
+            type: n.type,
             name: attrs.BusName,
             level: level,
             type: 'node'
@@ -1742,6 +1754,10 @@ require(['ol'], function(ol){
 
       // this.vectorSource.addFeature(nodeFeature);
       // this.vectorSource.addFeature(linkFeature);
+    }
+
+    this.setCenterNode = function(id, type) {
+      this.centerNode = {id:id, type:type};
     }
 
     this.autoFit = function() {

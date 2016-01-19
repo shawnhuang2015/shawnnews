@@ -1070,13 +1070,19 @@ require(['ol'], function(ol){
                 catch (err) {
                   ;
                 }
+              }
+              else if (name == "max") {
+                var string = document.getElementsByName(attr.name)[0].value.trim();
 
+                if (parseInt(string) > 2500) {
+                  string = "2500";
+                }
+
+                maxNumberOfNodes = parseInt(string);
+                submit_URL += name + "=" + string +"&";
               }
               else {
                 submit_URL += name + "=" + document.getElementsByName(attr.name)[0].value.trim() +"&";
-                if (name == "max") {
-                  maxNumberOfNodes = parseInt(document.getElementsByName(attr.name)[0].value.trim());
-                }  
               } 
             } 
             //submit_URL += name + "=" + (document.getElementsByName(attr.name)[0].value==""?1:document.getElementsByName(attr.name)[0].value) +"&";
@@ -1292,6 +1298,11 @@ require(['ol'], function(ol){
               var attr = node[gvis.settings.attrs];
               var level = parseFloat(attr.NominalV);
               var center = ol.proj.fromLonLat([parseFloat(attr.Longitude), parseFloat(attr.Latitude)]);
+
+              var id = node.id;
+              var type = node.type;
+
+              visualization.scope.renderer.renderer.setCenterNode(id, type);
 
               var scale = d3.scale.linear()
               .domain([10, 9,8])
