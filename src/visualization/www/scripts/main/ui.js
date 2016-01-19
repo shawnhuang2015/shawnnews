@@ -1303,6 +1303,7 @@ require(['ol'], function(ol){
               var type = node.type;
 
               visualization.scope.renderer.renderer.setCenterNode(id, type);
+              visualization.scope.renderer.renderer.events.nodeClick(node);
 
               var scale = d3.scale.linear()
               .domain([10, 9,8])
