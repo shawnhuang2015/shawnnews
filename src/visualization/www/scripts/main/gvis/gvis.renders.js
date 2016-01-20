@@ -1475,7 +1475,7 @@ require(['ol'], function(ol){
         
         var scale = d3.scale.linear()
         .domain([11,10, 9,8,7,6,5])
-        .range([0,60,100,135,160,220,340])
+        .range([0,60,100,135,160,190,220])
         .clamp(true);
 
         console.log(scale(map.getView().getZoom()));
@@ -1632,7 +1632,7 @@ require(['ol'], function(ol){
     });
 
     map.getView().setZoom(4);
-    map.getView().setCenter([-10703629.944829801, 4236445.855677608])
+    map.getView().setCenter(ol.proj.fromLonLat([-93.75, 40.74]))//[-10703629.944829801, 4236445.855677608])
 
     this.clear = function() {
       var that = this;
