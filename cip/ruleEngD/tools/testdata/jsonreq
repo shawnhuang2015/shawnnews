@@ -1,0 +1,18 @@
+{
+    "RuleEngReq":{
+        "actor":{
+            "flow_type":"lakala risk",
+            "entry_point":"email",
+            "client_id":"000",
+            "ip":"192.168.33.70",
+            "session_id":"LDSFYIYWEWE987S"
+        },
+        "ruleUri":"http://risk.lakla.com/rule_suite/001",
+        "rule_resolution":"HPW",
+        "check_point":"onTransaction",
+        "context":{
+            "userid":"001",
+            "cardNo":"7888-0098-0087-5546"
+        }
+    }
+}

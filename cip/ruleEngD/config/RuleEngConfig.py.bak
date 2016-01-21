@@ -1,0 +1,15 @@
+import yaml
+
+confRoot='/home/feng.chen/experiments/cip/ruleEngD'
+
+class RuleEngConfig(object):
+    def __init__(self):
+        confFile = open("%s/config/ruleEng.yaml" % confRoot)
+        self.cfg = yaml.dump(yaml.load(confFile))
+
+    def getCfg(self):
+        return self.cfg
+
+#TODO: config validation using python Decorator
+if __name__ == "__main__":
+   print RuleEngConfig().getCfg() 
