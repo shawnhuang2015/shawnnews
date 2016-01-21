@@ -18,7 +18,7 @@ class RuleSuiteManager(object):
                 break
             self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
 
-    def runWithContext(self, checkpoint, requestContext = {}):
+    def runWithContext(self, checkpoint, requestContext = {'context':{}}):
         if not checkpoint in self.processors.keys():
             if len(self.processors) == self.capacity:
                 self.processors.popitem()
@@ -30,6 +30,6 @@ class RuleSuiteManager(object):
         return self.processors[checkpoint].context.context
 
 if __name__ == "__main__":
-    rsm = RuleSuiteManager("/home/feng.chen/experiments/cip/ruleEngD/rulesuites", 10) 
-    ret = rsm.runWithContext("testcheckpoint", requestContext = {'hello': 'world'})
+    rsm = RuleSuiteManager("/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites", 10) 
+    ret = rsm.runWithContext("testcheckpoint", requestContext = {'context': {'hello':'world'}})
     print ret

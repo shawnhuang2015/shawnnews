@@ -1,4 +1,5 @@
 import zipfile
+import yaml
 import os
 import threading
 from RuleTaskBuilder import RuleTaskBuilder
@@ -18,14 +19,21 @@ class RuleSuiteProcessor(object):
 
         self.waitToFinish = threading.Event()
         self.context = RuleContext() 
+        self.context.set("result",{})
+        self.context.set("ruleMeta",{})
         self.jobs = self.loadRuleSuite(checkpointFolder)
 
     def loadRuleSuite(self, checkpointFolder):
         builder = RuleTaskBuilder()
         builder.loadRuleSuite(checkpointFolder, "rulesuite")
         builder.loadTopo("%s/%s" % (checkpointFolder, "topo.yaml"))
+        self.loadRuleSuiteMeta(checkpointFolder)
         builder.build(self.waitToFinish,self.context)
         return builder.jobTopo
+
+    def loadRuleSuiteMeta(self,checkpointFolder):
+        ruleMeta = yaml.load(open("%s/rulesuite.meta" % checkpointFolder).read())
+        self.context.set("ruleMeta", ruleMeta)
 
 
     def execute(self):
@@ -43,7 +51,7 @@ class RuleSuiteProcessor(object):
                     #  self.rule = z.read(file.filename)
 
 if __name__ == '__main__':
-    mgr = RuleSuiteProcessor("/home/feng.chen/experiments/cip/ruleEngD/rulesuites/testcheckpoint",  timeout=9)
+    mgr = RuleSuiteProcessor("/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites/testcheckpoint",  timeout=9)
     mgr.execute()
     print "return context:"
     print mgr.context.context

@@ -6,7 +6,7 @@ sys.path.append("../ruletask")
 from RuleSuiteManager import RuleSuiteManager
 
 #TODO:config
-ruleRoot="/home/feng.chen/experiments/cip/ruleEngD/rulesuites"
+ruleRoot="/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites"
 
 app = Flask(__name__)
 
@@ -23,9 +23,7 @@ def execute():
     checkpoint = req['rule_suite']['check_point']
     rsm = RuleSuiteManager(ruleRoot, 10) 
     ret = rsm.runWithContext(checkpoint, requestContext = req)
-    return "hello"
-
-    #return jsonify(ret['result']['R3'])
+    return jsonify({"result":ret.get("result")})
 
 
 if __name__ == '__main__':

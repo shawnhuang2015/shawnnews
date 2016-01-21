@@ -50,7 +50,7 @@ class RuleTaskBuilder(object):
 
 if __name__ == '__main__':
     builder = RuleTaskBuilder()
-    builder.loadRuleSuite("/home/feng.chen/experiments/cip/ruleEngD/rulesuites/testcheckpoint","rulesuite")
+    builder.loadRuleSuite("/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites/testcheckpoint","rulesuite")
     builder.loadTopo("topo.yaml")
     context = RuleContext()
     e = threading.Event()

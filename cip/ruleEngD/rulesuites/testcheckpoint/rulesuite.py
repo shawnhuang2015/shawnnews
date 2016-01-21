@@ -1,9 +1,17 @@
 import json
 from Context import RuleContext
 from BizObjBase import BizObjectBase 
-import time
+import time, sys
+sys.path.append("../")
+from algorithm import RuleConfltSol 
+
 def set_rule_result(context, rule_name, result):
-    context.set("result",{rule_name:result})
+    context.setRuleResult(rule_name, result)
+
+def resolve_conflict(context):
+    RuleConfltSol.default_sol_conflict(context)
+    # User can place their own conflict resolution here
+
 
 '''context is mandatory for all rules including the dummy start and end'''
 def start(context):
@@ -12,11 +20,9 @@ def start(context):
 
 def end(context):
     print "execute end"
-    #User can place rule result conflict resolution here
-    pass
+    resolve_conflict(context)
 ############Data load segment#################
 def load1(context):
-    print context.context
     #context.set('L1','L1 done')
     print "loading 1"
 
@@ -30,28 +36,29 @@ def load3(context):
 
 ############Rule segment#################
 
-def rule1(context):
+def rule3(context):
     #context.set('R1','R1 done')
     print "this is rule1"
 
-    request = context["requestContext"]
+    request = context.get("requestContext")
     reqContext = request["context"]
+    print reqContext
     if reqContext["name"] == "Will Smith"  and reqContext["gender"]=="Male":
-        set_rule_result(context, "rule1", "Approve")
-    else
-        set_rule_result(context, "rule1", "Deny")
+        set_rule_result(context, "rule3", "Approve")
+    else:
+        set_rule_result(context, "rule3", "Deny")
 
 def rule2(context):
     #context.set('R2','R2 done')
     print "this is rule2"
-    request = context["requestContext"]
+    request = context.get("requestContext")
     reqContext = request["context"]
     if reqContext["age"] == "86"  and reqContext["gender"]=="Male":
         set_rule_result(context, "rule2", "Deny")
-    else
+    else:
         set_rule_result(context, "rule2", "Approve")
 
-def rule3(context):
+def rule1(context):
     time.sleep(2)
     obj = '''
         {
@@ -66,12 +73,17 @@ def rule3(context):
 #      result = json.loads(obj)
     #  context.set('result',{'R3':result})
 #      #context.set('R3','R3 done')
-    print "this is rule3"
+    print "this is rule1"
+    set_rule_result(context, "rule1", "Approve")
 
 def rule4(context):
-    #context.set('R4','R4 done')
     print "this is rule4"
-    print "reading from context : L1:%s" % context.get('L1')
+    request = context.get("requestContext")
+    reqContext = request["context"]
+    if reqContext["age"] == "86" :
+        set_rule_result(context, "rule4", "Review")
+    else:
+        set_rule_result(context, "rule4", "Review")
 
 
 if __name__ == '__main__':

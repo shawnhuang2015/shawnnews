@@ -1,5 +1,5 @@
 import ConfigParser
-confRoot='/home/feng.chen/experiments/cip/ruleEngD'
+confRoot='/home/feng.chen/gitrepo/product/cip/ruleEngD'
 
 class RuleEngConfig(object):
     def __init__(self):
