@@ -1263,10 +1263,23 @@ require(['ol'], function(ol){
     
     //this.format = new ol.format.GeoJSON();
 
-    this.color = d3.scale.pow().exponent(0.6).domain([0, 1]).range(['blue','red']); // link color
-    this.nodeColor = d3.scale.linear().domain([0, 345, 765]).range(['blue', 'green', 'red']).clamp(true);
+    //this.color = d3.scale.pow().exponent(0.6).domain([0, 1]).range(['blue','red']); // link color
 
-    var radiusScale = d3.scale.linear().domain([4000, 100]).range([3, 10]).clamp(true)
+    this.linkColor = {}
+    this.linkColor.updateColor = function() {
+      if (that.linkColor.type == 'level') {
+        return d3.scale.pow().exponent(0.6).domain([0, 1]).range(['blue','red']);
+      }
+      else if (that.linkColor.type == 'percentage') {
+        return d3.scale.pow().exponent(0.6).domain([0, 1]).range(['green','yellow']);
+      }
+    }
+
+    this.nodeColor = d3.scale.linear().domain([0, 345, 765]).range(['blue', 'green', 'red']).clamp(true);
+    this.linkwidth = d3.scale.linear().domain([3000, 100]).range([1, 3]).clamp(true)
+    this.linkwidthEnhance = d3.scale.linear().domain([0, 0.1, 0.2, 0.5, 2]).range([0, 0, 1, 2, 3]).clamp(true)
+
+    var radiusScale = d3.scale.linear().domain([800, 100]).range([1, 5]).clamp(true)
 
     var styleFunction = function(feature, resolution){
       var type = feature.getGeometry().getType();
@@ -1274,9 +1287,9 @@ require(['ol'], function(ol){
       var id = feature.getProperties().id;
 
       var nodergbcolor = d3.rgb(that.nodeColor(level));
-      var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.4]
+      var opacityNodeColor = [nodergbcolor.r, nodergbcolor.g, nodergbcolor.b, 0.8]
 
-      var linkrgbcolor = d3.rgb(that.color(level));
+      var linkrgbcolor = d3.rgb(that.linkColor(level));
       var opacityLinkColor = [linkrgbcolor.r, linkrgbcolor.g, linkrgbcolor.b, 0.5]
 
       switch (type) {
@@ -1324,7 +1337,7 @@ require(['ol'], function(ol){
           text: //textStyle(feature, resolution),
           new ol.style.Text({
                   text: function(feature, resolution) {
-                    if (resolution > 2000) {
+                    if (resolution > 650) {
                       return ''
                     }
                     else {
@@ -1334,13 +1347,17 @@ require(['ol'], function(ol){
                   offsetY: 0, 
                   textAlign: 'center',
                   textBaseline : 'middle',
-                  font: '13px',
+                  font: '5px Arial',
                   stroke: new ol.style.Stroke({color: '#fff', width: 2}),
                 }),
-          stroke: new ol.style.Stroke({
-            color: opacityLinkColor,
-            width: 3
-          })
+          stroke: function(r) {
+            var width = that.linkwidth(r) + that.linkwidthEnhance(level);
+            return new ol.style.Stroke({color: opacityLinkColor, width: width})
+          }(resolution)
+          // stroke: new ol.style.Stroke({
+          //   color: opacityLinkColor,
+          //   width: 3
+          //})
         })
         break;
         default:
@@ -1349,7 +1366,7 @@ require(['ol'], function(ol){
     }
 
     var getText = function(feature, resolution) {
-      if (resolution > 250) {
+      if (resolution > 350) {
         return ''
       }
       else {
@@ -1360,11 +1377,10 @@ require(['ol'], function(ol){
     var textStyle = function(feature, resolution) {
       return new ol.style.Text({
         text: getText(feature, resolution),
-        offsetY: 8,
-        textAlign: 'center',
+        offsetY: 2,
         textBaseline : 'top',
-        font: '13px',
-        stroke: new ol.style.Stroke({color: '#fff', width: 2})
+        font: 'normal 6px Arial',
+        stroke: new ol.style.Stroke({color: '#aaa', width: 1})
       })
     }
 
@@ -1383,6 +1399,7 @@ require(['ol'], function(ol){
     });
 
 
+    //start baidu map.
     var resolutions = [];
     var tileSize = 256;
     var projection = ol.proj.get("EPSG:3857");
@@ -1415,12 +1432,64 @@ require(['ol'], function(ol){
         }
     });
 
+    //end baidumap
+
+    var openCycleMapLayer = new ol.layer.Tile({
+      source: new ol.source.OSM({
+        attributions: [
+          new ol.Attribution({
+            html: 'All maps &copy; ' +
+                '<a href="http://www.opencyclemap.org/">OpenCycleMap</a>'
+          }),
+          ol.source.OSM.ATTRIBUTION
+        ],
+        url: 'http://{a-c}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png'
+      }),
+      opacity: 0.0
+    });
+
+    // var graylayer = new OpenLayers.Layer.OSM('Simple OSM Map', null, {
+    //     eventListeners: {
+    //         tileloaded: function(evt) {
+    //             var ctx = evt.tile.getCanvasContext();
+    //             if (ctx) {
+    //                 var imgd = ctx.getImageData(0, 0, evt.tile.size.w, evt.tile.size.h);
+    //                 var pix = imgd.data;
+    //                 for (var i = 0, n = pix.length; i < n; i += 4) {
+    //                     pix[i] = pix[i + 1] = pix[i + 2] = (3 * pix[i] + 4 * pix[i + 1] + pix[i + 2]) / 8;
+    //                 }
+    //                 ctx.putImageData(imgd, 0, 0);
+    //                 evt.tile.imgDiv.removeAttribute("crossorigin");
+    //                 evt.tile.imgDiv.src = ctx.canvas.toDataURL();
+    //             }
+    //         }
+    //     }
+    // });
+
+    
+    var grayLayer = new ol.layer.Tile({
+      source: new ol.source.OSM(),
+      opacity: 0.5
+    });
+
+    grayLayer.on('postcompose', function(event) {
+      var context = event.context;
+      var canvas = context.canvas;
+      var image = context.getImageData(0, 0, canvas.width, canvas.height);
+      var data = image.data;
+      for (var i = 0, ii = data.length; i < ii; i += 4) {
+        data[i] = data[i + 1] = data[i + 2] = (3 * data[i] + 4 * data[i + 1] + data[i + 2]) / 8;
+      }
+      context.putImageData(image, 0, 0);
+    });
+
     var map = new ol.Map({
       layers: [
-        new ol.layer.Tile({
-          source: new ol.source.OSM(),
-          opacity: 0.9
-        }),
+        grayLayer,
+        // new ol.layer.Tile({
+        //   source: new ol.source.OSM(),
+        //   opacity: 0.1
+        // }),
         // new ol.layer.Tile({
         //     extent: projectionExtent,
         //     source: tilesource,
@@ -1463,7 +1532,7 @@ require(['ol'], function(ol){
 
           var a,b,c,d;
 
-          var alpha = 0.5;
+          var alpha = 0.2;
 
           a = lonmin - (lonmax - lonmin)*alpha;
           b = latmin - (latmax - latmin)*alpha;
@@ -1474,8 +1543,9 @@ require(['ol'], function(ol){
         }(extent)
         
         var scale = d3.scale.linear()
-        .domain([11,10, 9,8,7,6,5])
-        .range([0,60,100,135,160,190,220])
+        .domain([11,10,9,8,7,6,5,4])
+        //.range([0,60,100,135,160,190,220])
+        .range([0,60,100,135,160,190,220,220]) //340
         .clamp(true);
 
         console.log(scale(map.getView().getZoom()));
@@ -1661,7 +1731,7 @@ require(['ol'], function(ol){
 
         if (isNaN(level)) {
           var p = 0.3;
-          level = (parseFloat(l.source.id[l.source.id.length-2]) / 10.0 * (1-p) +p+0.1).toFixed(2);
+          level = (parseFloat(l.source.id[l.source.id.length-2]) / 10.0 + 0.1).toFixed(2);
         }
 
         linkLevel[0] = Math.min(linkLevel[0], level);
@@ -1685,20 +1755,24 @@ require(['ol'], function(ol){
         that.vectorSource.addFeature(newLinkFeature);
       })
 
-      //that.color.domain([linkLevel[0], linkLevel[0]*0.6+linkLevel[1]*0.4, linkLevel[1]]);
-
       //console.log(linkLevel)
-      if (linkLevel[0] == -Number.MAX_VALUE || linkLevel[1] == +Number.MAX_VALUE) {
-        linkLevel[0] = 0;
-        linkLevel[1] = 1;
-
-        that.color = d3.scale.linear().domain([0, 0.5, 1]).range(['blue','green', 'red']);
+      if (that.linkvaluename != 'hB') {
+        //'percentage'
+        that.linkColor = d3.scale.linear()
+        .domain([0, 0.3, 0.5, 0.7, 1])
+        .range(['#0f0', '#0c6', '#f90', '#c60', '#f00'])
+        .clamp(true)
+        
       }
       else {
-        that.color = d3.scale.pow().exponent(0.6).domain(linkLevel).range(['blue','red']);
+        that.linkColor = d3.scale.linear()
+        .domain([0, 0.1, 0.2, 0.5, 2])
+        .range(['#00F', '#06c', '#0F0','#F90','#F0F'])
+        .clamp(true)
+        //= 'level'
       }
 
-      //that.vectorLayer.setStyle(styleFunction);
+      that.vectorLayer.setStyle(styleFunction);
 
       graph.nodes().forEach(function(n) {
         var attrs = n[gvis.settings.attrs];

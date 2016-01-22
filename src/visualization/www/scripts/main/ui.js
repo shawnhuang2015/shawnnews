@@ -646,7 +646,7 @@ require(['ol'], function(ol){
       //console.log(extent); //=> [lonmin, latmin, lonmax, latmax]
 
       var template = UIObject.initialization.urlTemplate;
-      var value = {minlevel:250, lonmin:extent[0], latmin:extent[1], lonmax:extent[2], latmax:extent[3]};
+      var value = {minlevel:340, lonmin:extent[0], latmin:extent[1], lonmax:extent[2], latmax:extent[3]};
 
       var initialurl = gvis.utils.applyTemplate(template, value);
 
