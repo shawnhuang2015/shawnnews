@@ -1485,11 +1485,11 @@ require(['ol'], function(ol){
 
     var map = new ol.Map({
       layers: [
-        grayLayer,
-        // new ol.layer.Tile({
-        //   source: new ol.source.OSM(),
-        //   opacity: 0.1
-        // }),
+        //grayLayer,
+        new ol.layer.Tile({
+          source: new ol.source.OSM(),
+          opacity: 0.5
+        }),
         // new ol.layer.Tile({
         //     extent: projectionExtent,
         //     source: tilesource,
