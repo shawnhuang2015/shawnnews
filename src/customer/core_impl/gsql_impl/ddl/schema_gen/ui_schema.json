@@ -1,11 +1,79 @@
 {
-  "graph": {
-    "vertex": [
-      {"type": "user", "attr": [{"name": "name", "dtype": "string"}, {"name": "age", "dtype": "int"}]},
-      {"type": "product", "attr": [{"name": "title", "dtype": "string"}, {"name": "price", "dtype": "float"}]}
-    ],
     "edge": [
-      {"type": "", "source": "user", "target": "product", "directed": false, "behavior": true, "attr": []}
+        {
+            "attr": [
+                {
+                    "dtype": "int",
+                    "name": "dtime"
+                },
+                {
+                    "dtype": "float",
+                    "name": "weight"
+                }
+            ],
+            "behavior": true,
+            "directed": false,
+            "source": "user",
+            "target": "product",
+            "type": "click"
+        },
+        {
+            "attr": [],
+            "behavior": false,
+            "directed": false,
+            "source": "product",
+            "target": "keyword",
+            "type": "product_to_keyword"
+        }
+    ],
+    "vertex": [
+        {
+            "attr": [
+                {
+                    "dtype": "string",
+                    "name": "name"
+                },
+                {
+                    "dtype": "int",
+                    "name": "age"
+                }
+            ],
+            "type": "user"
+        },
+        {
+            "attr": [
+                {
+                    "dtype": "string",
+                    "name": "title"
+                },
+                {
+                    "dtype": "bool",
+                    "name": "on_sale"
+                },
+                {
+                    "dtype": "float",
+                    "name": "price"
+                }
+            ],
+            "type": "product"
+        },
+        {
+            "attr": [
+                {
+                    "dtype": "string",
+                    "name": "desc"
+                }
+            ],
+            "type": "page"
+        },
+        {
+            "attr": [
+                {
+                    "dtype": "string",
+                    "name": "keyword"
+                }
+            ],
+            "type": "keyword"
+        }
     ]
-  }
 }

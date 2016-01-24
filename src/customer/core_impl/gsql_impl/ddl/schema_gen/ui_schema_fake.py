@@ -53,5 +53,4 @@ def create_graph(vl, el):
   graph['edge'] = json.loads(create_edge(el))
   return graph
 
-#print create_edge(l1)
 print create_graph(l, l1)
