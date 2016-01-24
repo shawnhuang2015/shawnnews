@@ -8,7 +8,7 @@ def tojson(func, *args, **kwargs):
 
 l = [
   ('user', [('name', 'string'), ('age', 'int')]),
-  ('product', [('title', 'string'), ('on_sale', 'bool'), ('price', 'float')]),
+  ('product', [('title', 'string'), ('on_sale', 'bool', True), ('price', 'float')]),
   ('page', [('desc', 'string')]),
   ('keyword', [('keyword', 'string')]),
 ]
@@ -26,7 +26,7 @@ def create_vertex(l):
     v['type'] = i[0]
     v['attr'] = []
     for j in i[1]:
-      v['attr'].append(dict(zip(('name', 'dtype'), j)))
+      v['attr'].append(dict(zip(('name', 'dtype', 'default'), j)))
     vertices.append(v)
   return vertices
 
