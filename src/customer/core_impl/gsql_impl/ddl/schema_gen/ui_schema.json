@@ -1,0 +1,11 @@
+{
+  "graph": {
+    "vertex": [
+      {"type": "user", "attr": [{"name": "name", "dtype": "string"}, {"name": "age", "dtype": "int"}]},
+      {"type": "product", "attr": [{"name": "title", "dtype": "string"}, {"name": "price", "dtype": "float"}]}
+    ],
+    "edge": [
+      {"type": "", "source": "user", "target": "product", "directed": false, "behavior": true, "attr": []}
+    ]
+  }
+}
