@@ -1,5 +1,10 @@
 import json
 
+'''
+Based on a tuple (vtype name, attr list), generate a json object.
+Support dtype and default value on UI.
+'''
+
 def tojson(func, *args, **kwargs):
   def _wrapper(*args, **kwargs):
     rez = func(*args, **kwargs)
