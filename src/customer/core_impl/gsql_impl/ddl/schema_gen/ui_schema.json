@@ -47,6 +47,7 @@
                     "name": "title"
                 },
                 {
+                    "default": 1,
                     "dtype": "bool",
                     "name": "on_sale"
                 },

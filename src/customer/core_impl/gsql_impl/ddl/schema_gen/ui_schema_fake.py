@@ -13,11 +13,12 @@ def tojson(func, *args, **kwargs):
 
 l = [
   ('user', [('name', 'string'), ('age', 'int')]),
-  ('product', [('title', 'string'), ('on_sale', 'bool', True), ('price', 'float')]),
+  ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
   ('page', [('desc', 'string')]),
   ('keyword', [('keyword', 'string')]),
 ]
 
+# type, source, target, directed, behavior, attr
 l1 = [
   ('click', 'user', 'product', False, True, [('dtime', 'int'), ('weight', 'float')]),
   ('', 'product', 'keyword', False, False, []),
