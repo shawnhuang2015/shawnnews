@@ -2,7 +2,7 @@ from collections import defaultdict
 import json
 
 def create_vertex(l):
-  v_template = 'create vertex {vtype} (primary_id {vtype}_id string not null, {attrs}) with stats="outdegree_by_edgetype"'
+  v_template = 'create vertex {vtype} (primary_id {vtype}_id string not null {attrs}) with stats="outdegree_by_edgetype"'
   attr_template = '{name} {dtype}'
 
   vtypes = []
@@ -14,13 +14,16 @@ def create_vertex(l):
       if 'default' in _:
         a += ' default {}'.format(_['default'])
       attrs.append(a)
-    attrs = ', '.join(attrs)
+    if len(attrs) > 0:
+      attrs = ', ' + ', '.join(attrs)
+    else:
+      attrs = ''
     vs.append(v_template.format(vtype=i['type'], attrs=attrs))
     vtypes.append(i['type'])
   return vs, vtypes
 
 def create_edge(l):
-  e_template = 'create {directed} edge {etype} (from {source}, to {target}, {attrs})'
+  e_template = 'create {directed} edge {etype} (from {source}, to {target} {attrs})'
   attr_template = '{name} {dtype}'
 
   etypes = []
@@ -32,7 +35,10 @@ def create_edge(l):
       if 'default' in _:
         a += ' default {}'.format(_['default'])
       attrs.append(a)
-    attrs = ', '.join(attrs)
+    if len(attrs) > 0:
+      attrs = ', ' + ', '.join(attrs)
+    else:
+      attrs = ''
     es.append(e_template.format(
       directed='directed' if i['directed'] else 'undirected', 
       etype=i['type'], 
