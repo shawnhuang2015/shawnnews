@@ -15,7 +15,7 @@ l = [
   ('user', [('name', 'string'), ('age', 'uint')]),
   ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
   ('page', [('desc_', 'string')]),
-  ('keyword_', [('keyword_', 'string')]),
+  ('keyword_', [('word', 'string')]),
 ]
 
 # type, source, target, directed, behavior, attr
