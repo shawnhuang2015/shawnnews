@@ -12,16 +12,16 @@ def tojson(func, *args, **kwargs):
   return _wrapper
 
 l = [
-  ('user', [('name', 'string'), ('age', 'int')]),
+  ('user', [('name', 'string'), ('age', 'uint')]),
   ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
-  ('page', [('desc', 'string')]),
-  ('keyword', [('keyword', 'string')]),
+  ('page', [('desc_', 'string')]),
+  ('keyword_', [('keyword_', 'string')]),
 ]
 
 # type, source, target, directed, behavior, attr
 l1 = [
-  ('click', 'user', 'product', False, True, [('dtime', 'int'), ('weight', 'float')]),
-  ('', 'product', 'keyword', False, False, []),
+  ('click', 'user', 'product', False, True, [('dtime', 'uint'), ('weight', 'float')]),
+  ('', 'product', 'keyword_', False, False, []),
 ]
 
 @tojson
