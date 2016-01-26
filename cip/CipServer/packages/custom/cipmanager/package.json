@@ -1,7 +1,7 @@
 {
-  "name": "crowd",
+  "name": "cipmanager",
   "version": "0.0.1",
-  "description": "Some description of crowd",
+  "description": "Some description of cipmanager",
   "author": {
     "name": "mean scaffold"
   },
