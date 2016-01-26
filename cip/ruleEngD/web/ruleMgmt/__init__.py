@@ -9,8 +9,8 @@ from flask.ext.mongoengine import MongoEngine
 db = MongoEngine(app)
 
 # View
-from ruleMgmt.views import rule 
-app.register_blueprint(rule)
+from ruleMgmt.views import controler 
+app.register_blueprint(controler)
 
 if __name__ == "__main__":
     app.run()
