@@ -49,8 +49,6 @@ def create_edge(l):
   return es, etypes
 
 def create_graph(schema_json):
-  builtin = [
-      ]
   with open('ui_schema.json', 'r') as fp:
     f = json.load(fp)
     vs, vtypes = create_vertex(f['vertex'])
