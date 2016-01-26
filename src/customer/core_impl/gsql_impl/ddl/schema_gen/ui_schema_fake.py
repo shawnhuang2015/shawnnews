@@ -16,12 +16,21 @@ l = [
   ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
   ('page', [('desc_', 'string')]),
   ('keyword_', [('word', 'string')]),
+
+  # builtin vertex
+  ('__hierarchy', [('weight', 'float')]),
+  ('__behavior', [('subtype', 'string')]),
+  ('__index', []),
 ]
 
 # type, source, target, directed, behavior, attr
 l1 = [
   ('click', 'user', 'product', False, True, [('dtime', 'uint'), ('weight', 'float')]),
   ('', 'product', 'keyword_', False, False, []),
+
+  # builtin edge
+  ('__to_hierarchy', '*', '__hierarchy', False, False, []),
+  ('__to_index', '*', '__index', False, False, []),
 ]
 
 @tojson
