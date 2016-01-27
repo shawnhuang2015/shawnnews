@@ -7,13 +7,15 @@ reserved = {
         'then':'THEN',
         'else':'ELSE',
         'true':'TRUE',
+        'while':'WHILE',
+        'do':'DO',
         'false':'FALSE',
         'and':'AND',
         'or':'OR',
         'not':'NOT'
         }
 tokens = [
-        'DIVIDE','TIMES','PLUS','MINUS','DOT','LPAREN','RPAREN','COMMA',
+        'DIVIDE','TIMES','PLUS','MINUS','DOT','LPAREN','RPAREN','COMMA','LBRACE','RBRACE',
         'EQUALS','ASSIGN',
         'QUOTE',
         'NUMBER',
@@ -46,6 +48,8 @@ t_DOT = r'\.'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_COMMA = r','
+t_LBRACE = r'{'
+t_RBRACE = r'}'
 
 t_BEGIN = r'begin'
 t_END = r'end'
@@ -53,6 +57,8 @@ t_QUOTE = r'"'
 t_WHEN = r'when'
 t_THEN = r'then'
 t_ELSE = r'else'
+t_WHILE = r'while'
+t_DO = r'do'
 t_NUMBER = r'\d+'
 
 
@@ -66,7 +72,7 @@ lex.lex()
 data = '''rule "myrule"
 begin 
 when x=2 * 2 
-then x = 2*2 
+then {x = 2*2 }
 end'''
 lex.input(data)
 while True:
