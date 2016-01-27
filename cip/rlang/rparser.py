@@ -23,6 +23,7 @@ def normalize(source):
 
 def p_error(p):
     print "syntax error !!!!!!!!!!"
+    print p
     print "error line:'%s' val:'%s'" % (p.lexer.lineno, p.value())
 
 # RULE ##############
@@ -37,8 +38,7 @@ def p_section_stmt(p):
 
 def p_section_empty(p):
     '''section : '''
-    # TODO if the content is empty, set it to "pass"
-    p[0] = ""
+    p[0] = "pass\n"
 
 def p_section_if(p):
     '''section : WHEN expr THEN LBRACE section RBRACE section''' 
@@ -83,14 +83,21 @@ def p_arguments(p):
 
 def p_expr(p):
     '''expr : LPAREN expr RPAREN
-            | expr PLUS expr 
-            | expr MINUS expr 
-            | expr TIMES expr 
-            | expr DIVIDE expr
-            | expr AND expr
-            | expr OR expr
-            | expr ASSIGN expr
-            | expr EQUALS expr
+            | VARIABLE PLUS expr 
+            | NUMBER PLUS expr 
+            | VARIABLE MINUS expr 
+            | NUMBER MINUS expr 
+            | VARIABLE TIMES expr 
+            | NUMBER TIMES expr 
+            | VARIABLE DIVIDE expr
+            | NUMBER DIVIDE expr
+            | VARIABLE AND expr
+            | NUMBER AND expr
+            | VARIABLE OR expr
+            | NUMBER OR expr
+            | VARIABLE ASSIGN expr
+            | VARIABLE EQUALS expr
+            | NUMBER EQUALS expr
             | NOT expr
             | TRUE
             | FALSE
@@ -113,6 +120,11 @@ begin
     {
             b = 4*5
     }else{
+        when nested
+        then
+        {
+           bbbbb = cc 
+        }
         k = 7
     }
 
@@ -130,6 +142,11 @@ begin
     while True
     do{
         a = a+5
+        when nested
+        then
+        {
+            a = 5
+        }
     }
 end'''
 t = yacc.parse(data)
