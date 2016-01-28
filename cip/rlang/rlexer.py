@@ -16,7 +16,8 @@ reserved = {
         }
 tokens = [
         'DIVIDE','TIMES','PLUS','MINUS','DOT','LPAREN','RPAREN','COMMA','LBRACE','RBRACE',
-        'EQUALS','ASSIGN',
+        'EQUALS','LESS','MORE','LESSEQUAL','MOREEQUAL',
+        'ASSIGN',
         'QUOTE',
         'NUMBER',
         'VARIABLE'
@@ -31,48 +32,40 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
 
-t_TRUE = r'true'
-t_FALSE = r'false'
-t_AND = r'and'
-t_OR = r'or'
-t_NOT = r'not'
-
-t_RULE = r'rule'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_ASSIGN = r'='
 t_EQUALS = r'=='
+t_LESS = r'<'
+t_MORE = r'>'
+t_LESSEQUAL = r'<='
+t_MOREEQUAL = r'>='
 t_DOT = r'\.'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_COMMA = r','
 t_LBRACE = r'{'
 t_RBRACE = r'}'
-
-t_BEGIN = r'begin'
-t_END = r'end'
 t_QUOTE = r'"'
-t_WHEN = r'when'
-t_THEN = r'then'
-t_ELSE = r'else'
-t_WHILE = r'while'
-t_DO = r'do'
 t_NUMBER = r'\d+'
 
 
 def t_VARIABLE(t): 
-    r'[a-zA-Z][a-zA-Z_]*'
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
     if t.value in reserved:
         t.type = reserved[t.value]
     return t
 
 lex.lex()
-data = '''rule "myrule"
+data = '''rule "rule1"
 begin 
+a=__REQ_CTX
 when x=2 * 2 
-then {x = 2*2 }
+then {x = 2*2 
+__bb = 3
+}
 end'''
 lex.input(data)
 while True:

@@ -63,19 +63,29 @@ def p_stmt(p):
 
 def p_function(p):
     '''function : VARIABLE LPAREN arguments RPAREN''' 
-    p[0] = "%s(%s)\n" %(p[1],p[3])
+    fun = p[1]
+    if fun == "__REQ_CTX":
+        p[0] = 'context.get("requestContext")\n'
+    elif fun == "__RET":
+        p[0] = "set_rule_result(context, __rule__, %s)\n" % (p[3])
+    elif fun == "__WS":
+        p[0] = "set_workspace(context, %s)\n" % (p[3])
+    else:
+        p[0] = "%s(%s)\n" %(p[1],p[3])
 
 def p_function_class(p):
     '''function_class : VARIABLE DOT VARIABLE LPAREN arguments RPAREN'''
     p[0] = "%s.%s(%s)\n" %(p[1],p[3],p[5])
 
 def p_assignment(p):
-    '''assignment : VARIABLE ASSIGN expr'''
+    '''assignment : VARIABLE ASSIGN expr
+                | VARIABLE ASSIGN function
+                | VARIABLE ASSIGN function_class'''
     p[0] = "%s = %s\n" %(p[1],p[3])
 
 def p_arguments(p):
-    '''arguments : VARIABLE COMMA arguments
-                | VARIABLE 
+    '''arguments : literal COMMA arguments
+                | literal 
                 |'''
     p[0] = ''.join(p[1:])
 
@@ -83,26 +93,28 @@ def p_arguments(p):
 
 def p_expr(p):
     '''expr : LPAREN expr RPAREN
-            | VARIABLE PLUS expr 
-            | NUMBER PLUS expr 
-            | VARIABLE MINUS expr 
-            | NUMBER MINUS expr 
-            | VARIABLE TIMES expr 
-            | NUMBER TIMES expr 
-            | VARIABLE DIVIDE expr
-            | NUMBER DIVIDE expr
-            | VARIABLE AND expr
-            | NUMBER AND expr
-            | VARIABLE OR expr
-            | NUMBER OR expr
+            | literal PLUS expr 
+            | literal MINUS expr 
+            | literal TIMES expr 
+            | literal DIVIDE expr
+            | literal AND expr
+            | literal OR expr
             | VARIABLE ASSIGN expr
-            | VARIABLE EQUALS expr
-            | NUMBER EQUALS expr
+            | literal EQUALS expr
+            | literal LESS expr
+            | literal LESSEQUAL expr
+            | literal MORE expr
+            | literal MOREEQUAL expr
             | NOT expr
             | TRUE
             | FALSE
-            | NUMBER
-            | VARIABLE'''
+            | literal '''
+    p[0] = ' '.join(p[1:])
+
+def p_literal(p):
+    '''literal : VARIABLE
+                | NUMBER
+                | QUOTE literal QUOTE'''
     p[0] = ''.join(p[1:])
 
 yacc.yacc()
@@ -115,7 +127,7 @@ begin
     b = c
     b = 4
     b = 1*4+5*(4-1)
-    when 456
+    when 456 and 678< cc
     then
     {
             b = 4*5
@@ -128,7 +140,7 @@ begin
         k = 7
     }
 
-    when (True)
+    when (k >= 9)
     then
     {
         c = d * 5
@@ -149,7 +161,25 @@ begin
         }
     }
 end'''
-t = yacc.parse(data)
+data2 = '''rule "rule4"
+begin
+    reqCtx = __REQ_CTX()
+    f.fun()
+    d = f.fun(a,b,4)
+    user.setresult()
+    when reqCtx == "86"
+    then
+    {
+        __WS("key","val")
+        __WS("key2",123)
+        __RET("REVIEW")
+    }else{
+        __RET("APPROVE")
+    }
+
+end
+'''
+t = yacc.parse(data2)
 # print t
 print  normalize(t)
 
