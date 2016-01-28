@@ -6,7 +6,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-
 /**
  * Crowd Schema
  */
@@ -17,18 +16,15 @@ var CrowdSchema = new Schema({
     },
     crowd_name: {
         type: String,
-        required: true,
-        trim: true
+        unique: true
     },
     description: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     type: {
         type: String,
-        required: true,
-        trim: true
+        enum:['static','dynamic']
     },
     selector: {
         demographic: {
@@ -61,11 +57,21 @@ var CrowdSchema = new Schema({
             tag_id: {
                 type: String,
                 required: true,
-                trime: true
+                trim: true
             },
             conditions: [
                 {
                     category: {
+                        type: String,
+                        required: true,
+                        trim: true
+                    },
+                    operator: {
+                        type: String,
+                        required: true,
+                        trim: true
+                    },
+                    weight: {
                         type: String,
                         required: true,
                         trim: true
