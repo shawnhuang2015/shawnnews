@@ -51,7 +51,7 @@ module.exports = function(MeanUser) {
          */
         signin: function(req, res) {
           if (req.isAuthenticated()) {
-            return res.redirect('/');
+            return res.redirect('/admin/modules');
           }
           res.redirect('/login');
         },

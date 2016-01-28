@@ -7,5 +7,12 @@ angular.module('mean.cipmanager').controller('CipmanagerController', ['$scope', 
     $scope.package = {
       name: 'cipmanager'
     };
+
+    $scope.find = function() {
+      Crowd.query(function(crowds) {
+        $scope.crowds = crowds;
+      });
+    };
+
   }
 ]);

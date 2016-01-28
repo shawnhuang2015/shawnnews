@@ -17,13 +17,7 @@ Cipmanager.register(function(app, auth, database) {
   Cipmanager.routes(app, auth, database);
 
   //We are adding a link to the main menu for all authenticated users
-  Cipmanager.menus.add({
-    title: 'cipmanager example page',
-    link: 'cipmanager example page',
-    roles: ['authenticated'],
-    menu: 'main'
-  });
-  
+
   Cipmanager.aggregateAsset('css', 'cipmanager.css');
 
   /**

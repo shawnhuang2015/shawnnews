@@ -21,19 +21,18 @@ Admin.register(function(app, auth, database, circles) {
         roles: ['admin'],
         menu: 'main'
     });
-
     Admin.menus.add({
+        title: 'CROWD_MANAGER',
+        link: 'crowd',
         roles: ['admin'],
-        title: 'MODULES',
-        link: 'modules',
-        icon: icons + 'modules.png',
+        icon: icons + 'users.png',
         menu: 'admin'
     });
     Admin.menus.add({
+        title: 'BRAIN_BUILDER',
+        link: 'brain',
         roles: ['admin'],
-        title: 'THEMES',
-        link: 'themes',
-        icon: icons + 'themes.png',
+        icon: icons + 'modules.png',
         menu: 'admin'
     });
     Admin.menus.add({
@@ -41,13 +40,6 @@ Admin.register(function(app, auth, database, circles) {
         title: 'SETTINGS',
         link: 'settings',
         icon: icons + 'settings.png',
-        menu: 'admin'
-    });
-    Admin.menus.add({
-        roles: ['admin'],
-        title: 'USERS',
-        link: 'users',
-        icon: icons + 'users.png',
         menu: 'admin'
     });
 

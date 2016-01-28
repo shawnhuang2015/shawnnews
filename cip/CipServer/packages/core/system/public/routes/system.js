@@ -56,7 +56,11 @@ angular.module('mean.system').config(['$meanStateProvider', '$urlRouterProvider'
     $meanStateProvider
       .state('home', {
         url: '/',
-        templateUrl: 'system/views/index.html'
+        templateUrl: 'system/views/index.html',
+        requiredCircles : {
+          circles: ['authenticated'],
+          denyState: 'auth.login'
+        }
       });
   }
 ]).config(['$locationProvider',

@@ -54,7 +54,7 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
         isAdmin: false
       };
       queryMenu('main', defaultMainMenu);
-      $state.go('home');
+      $state.go('auth.login');
     });
 
   }

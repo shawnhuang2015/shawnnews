@@ -1,27 +1,21 @@
-<div class="" data-ng-controller="CipmanagerController">
-  <h1>Example view from your new awesome package</h1>
-  <h2>Package: {{package.name}}</h2>
-  <ol>
-    <li>
-      <a href="/api/cipmanager/example/anyone" target="_self">Server route that anyone can access</a>
-    </li>
-    <li>
-      <a href="/api/cipmanager/example/auth" target="_self">Server route that requires authentication</a>
-    </li>
-    <li>
-      <a href="/api/cipmanager/example/admin" target="_self">Server route that requires admin user</a>
-    </li>
-    <li>
-      <a href="/api/cipmanager/example/render" target="_self">Raw Html rendering example from using swig</a>
-    </li>
-  </ol>
-  <h3><img src="/cipmanager/assets/img/logo.png" /></h3>
-  </br>
-  <p class="alert alert-info">You can find your package in /packages/cipmanager</p>
-  </br>
-  <p class="alert alert-warning">MEAN versions prior to 0.3.2 will be in /node_modules/cipmanager</p>
-  </br>
-  <h3><a href="http://learn.mean.io">Documentation</a></h3>
-  </br>
-</div>
-
+<section data-ng-controller="CipmanagerController" data-ng-init="find()">
+    <ul class="crowds unstyled">
+      <li data-ng-repeat="crowd in crowds">
+        <span>{{crowd.created | date:'medium'}}</span> /
+        <span>{{crowd.user.name}}</span>
+        <h2>
+          <a data-ng-href="/crowds/{{crowd._id}}">{{crowd.title}}</a>
+        <span data-ng-if="hasAuthorization(article)">
+          <a class="btn" href="/crowds/{{crowd._id}}/edit">
+            <i class="glyphicon glyphicon-edit"></i>
+          </a>
+          <a class="btn" data-ng-click="remove(article);">
+            <i class="glyphicon glyphicon-trash"></i>
+          </a>
+        </span>
+        </h2>
+        <div>{{crowd.content}}</div>
+      </li>
+    </ul>
+    <h1 data-ng-hide="!crowds || crowds.length">No crowds yet. <br> Why don't you <a href="/crowds/create">Create One</a>?</h1>
+</section>
