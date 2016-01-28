@@ -56,17 +56,11 @@ class Task(threading.Thread):
 
     def triggerServants(self):
         for name, servant in self.servants.getAll().iteritems():
-            #print "%s checking servant %s, holeNum:%s" % (self.name, name, servant.triggers.holeNum)
             servant.triggers.activate(self.name)
             if servant.triggers.holeNum == 0:
                 servant.start()
 
     def run(self):
-#          print "*******\n"
-        #  print "rulename:%s" % self.name
-        #  print "triggers:%s" % self.triggers.triggers
-        #  print "servants:%s" % self.servants.servants
-        #  print "----\n"
         self.target(self.context)
         self.triggerServants()
 

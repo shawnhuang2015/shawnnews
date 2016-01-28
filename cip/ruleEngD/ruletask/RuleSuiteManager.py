@@ -1,6 +1,9 @@
 import os
 from multiprocessing import Process
 from RuleSuiteProcessor import RuleSuiteProcessor
+import sys
+sys.path.append("../rulebase")
+from BizObjBase import BizObjBase
 
 #TODO: change to config
 defaultTimeOut=10
@@ -16,20 +19,29 @@ class RuleSuiteManager(object):
             cnt += 1
             if cnt > self.capacity:
                 break
+
             self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
 
-    def runWithContext(self, checkpoint, requestContext = {'context':{}}):
-        if not checkpoint in self.processors.keys():
+    def runWithRequest(self, request):
+        actor =  BizObjBase(request["actor"])
+        cp = BizObjBase(request["checkpoint"])
+        event  = BizObjBase(request["event"])
+
+        if not cp.name in self.processors.keys():
             if len(self.processors) == self.capacity:
                 self.processors.popitem()
-            self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
+            self.processors[cp.name] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, cp.name), timeout=defaultTimeOut);
 
-        self.processors[checkpoint].context.set('requestContext', requestContext)
-        self.processors[checkpoint].execute()
-        #TODO: only need return result
-        return self.processors[checkpoint].context.context
+        self.processors[cp.name].populateCtxWithReq(actor,cp,event)
+        self.processors[cp.name].execute()
+        return self.processors[cp.name].getResult()
 
 if __name__ == "__main__":
     rsm = RuleSuiteManager("/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites", 10) 
-    ret = rsm.runWithContext("testcheckpoint", requestContext = {'context': {'hello':'world'}})
+    req = {
+        'actor':'hello',
+        'checkpoint':{'name':'testcheckpoint'},
+        'event':'test'
+        }
+    ret = rsm.runWithRequest( request = req)
     print ret

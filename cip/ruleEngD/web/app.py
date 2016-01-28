@@ -4,6 +4,10 @@ import json
 
 sys.path.append("../ruletask")
 from RuleSuiteManager import RuleSuiteManager
+sys.path.append("../rulebase")
+from BizObjBase import BizObjBase
+from RestBizObj import RestBizObj
+from JsonBizObj import JsonBizObj
 
 #TODO:config
 ruleRoot="/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites"
@@ -19,11 +23,15 @@ def execute():
     # Parse request json to Python Dict
     req = json.loads(request.data)
     validateRequest(request)
-    # Fetch checkpoint name
-    checkpoint = req['rule_suite']['check_point']
     rsm = RuleSuiteManager(ruleRoot, 10) 
-    ret = rsm.runWithContext(checkpoint, requestContext = req)
-    return jsonify({"result":ret.get("result")})
+    ret = rsm.runWithRequest(request = req)
+    return jsonify({"result":ret})
+
+
+@app.route('/testrest', methods = ['GET'])
+def test():
+    content = {"products":[{"item":"cup"},{"item":"bottle"},{"item":"ipad"}]}
+    return jsonify(content)
 
 
 if __name__ == '__main__':

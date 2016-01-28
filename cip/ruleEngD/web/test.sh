@@ -4,20 +4,20 @@ request_body=$(cat <<-EOF
 {
     "actor":
     {
-        "flow_type":"Lakala Riks",
-        "entry_point":"http://lakala.payment",
+        "flow":"Lakala Riks",
+        "entry":"http://lakala.payment",
         "client_id":"001",
         "ip":"192.168.1.33",
         "session_id":"898SDFI89SEF"
     },
-    "rule_suite":
+    "checkpoint":
     {
+        "name":"testcheckpoint",
         "uri":"http://cip.graphsql.com/lakla/testrulesuite",
-        "conflict_resolution":"HPW",
-        "check_point":"testcheckpoint",
+        "conflict":"HPW",
         "summary":"fraud check"
     },
-    "context":
+    "event":
     {
         "user_id":"190012381",
         "name":"Will Smith",

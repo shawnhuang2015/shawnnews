@@ -6,10 +6,6 @@ class Topology(object):
         self.topo = yaml.load(open(topoFile).read())
         self.topo["start"]=[]
 
-#      def sort(self):
-        #  toposort(self.topo)
-
-
 if __name__ == '__main__':
     topo = Topology()
     topo.init("topo.yaml")
