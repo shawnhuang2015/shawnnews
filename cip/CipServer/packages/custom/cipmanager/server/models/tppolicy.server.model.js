@@ -10,7 +10,7 @@ var mongoose = require('mongoose'),
 /**
  * TPPolicy Schema
  */
-var TPPolicy = new Schema({
+var TPPolicySchema = new Schema({
     created: {
         type: Date,
         default: Date.now
@@ -39,5 +39,5 @@ var TPPolicy = new Schema({
     }
 });
 
-mongoose.model('TPPolicy', CrowdSchema);
+mongoose.model('TPPolicy', TPPolicySchema);
 

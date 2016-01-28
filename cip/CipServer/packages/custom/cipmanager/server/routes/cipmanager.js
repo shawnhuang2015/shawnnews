@@ -1,8 +1,16 @@
 'use strict';
 
+var crowd = require('../controllers/crowd.server.controller');
+
 /* jshint -W098 */
 // The Package is past automatically as first parameter
 module.exports = function(Cipmanager, app, auth, database) {
+
+  app.route("/api/crowd").get(crowd.list).post(crowd.create);
+
+  app.route("/api/crowd/:crowd_name").get(crowd.read).put(crowd.update).delete(crowd.delete);
+
+  app.param('crowd_name', crowd.crowdByName);
 
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');
