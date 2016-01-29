@@ -50,6 +50,13 @@ class RuleSuiteProcessor(object):
     def getResult(self):
         return self.context.ctx["__RET__"]
 
+    def clrResult(self):
+        self.context.ctx["__RET__"] = None
+        self.context.ctx["__WS__"] = None
+        self.context.ctx["__REQ_ACTOR__"] = None
+        self.context.ctx["__REQ_CP__"] = None
+        self.context.ctx["__REQ_EVT__"] = None
+
 if __name__ == '__main__':
 
     context = RuleContext({

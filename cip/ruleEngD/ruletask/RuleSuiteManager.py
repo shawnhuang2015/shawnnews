@@ -33,7 +33,9 @@ class RuleSuiteManager(object):
 
         self.processors[cp.name].populateCtxWithReq(actor,cp,event)
         self.processors[cp.name].execute()
-        return self.processors[cp.name].getResult()
+        ret = self.processors[cp.name].getResult()
+        self.processors[cp.name].clrResult()
+        return ret
 
 if __name__ == "__main__":
     rsm = RuleSuiteManager("/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites", 10) 

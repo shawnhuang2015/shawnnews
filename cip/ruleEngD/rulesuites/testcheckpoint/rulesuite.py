@@ -18,25 +18,21 @@ from ruletask.Context import __RULE_RET
 from rulebase.BizObjBase import BizObjBase
 from rulebase.JsonBizObj import JsonBizObj 
 from rulebase.RestBizObj import RestBizObj 
+from rulebase.util.func  import __R_SUM_DICT_ARRAY
+from rulebase.util.func  import __R_MERGE_DICT_ARRAY
+
 #########   customization biz objects ################
 from cust.sample.LakalaRecommendProxy import LakalaRecommendProxy
 
 def use_my_conflict(context):
     prod1 = __RULE_RET(context,"rule2")
     prod2 = __RULE_RET(context,"rule3")
-    _set = set()
-    for item in prod1:
-        for k,v in item.iteritems():
-            _set.add(v)
-    for item in prod2:
-        for k,v in item.iteritems():
-            _set.add(v)
-
-    __W_RET(context,list(_set))
+    prods = __R_MERGE_DICT_ARRAY(prod1, prod2) 
+    __W_RET(context,prods)
 
 def resolve_conflict(context):
-    RuleConfltSol.default_sol_conflict(context)
-    #use_my_conflict(context)
+    # RuleConfltSol.default_sol_conflict(context)
+    use_my_conflict(context)
 
 
 def start(context):
