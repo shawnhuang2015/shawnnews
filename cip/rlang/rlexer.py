@@ -14,6 +14,8 @@ reserved = {
         'or':'OR',
         'not':'NOT'
         }
+reserved_cip_ctx_macro = ("__REQ_ACTOR","__REQ_CP", "__REQ_EVT","__RULE_META","__RET" )
+
 tokens = [
         'DIVIDE','TIMES','PLUS','MINUS','DOT','LPAREN','RPAREN','COMMA','LBRACE','RBRACE',
         'EQUALS','LESS','MORE','LESSEQUAL','MOREEQUAL',
@@ -31,6 +33,10 @@ def t_error(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
+
+def t_COMMENT(t):
+    r'\#.*'
+    pass
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -56,6 +62,8 @@ def t_VARIABLE(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     if t.value in reserved:
         t.type = reserved[t.value]
+    elif t.value in reserved_cip_ctx_macro:
+        t.value = "%s(context)" % t.value
     return t
 
 lex.lex()
