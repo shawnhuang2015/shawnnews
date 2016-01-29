@@ -1,7 +1,7 @@
 #rule priority: HPW,MW,ALL
 resolution: ALL
 #resolution: HPW
-#resolution: MW
+# supressed resolution: MW
 #Pri is only meaningful in case resolution is HPW
 pri:
 -   rule4

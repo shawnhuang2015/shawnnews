@@ -16,5 +16,6 @@ rule2:
 -   load2
 rule3:
 -   load2
+-   load1
 end:
 -   rule4
