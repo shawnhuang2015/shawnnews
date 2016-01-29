@@ -68,8 +68,6 @@ class Task(threading.Thread):
         if self.finishEvent is not None:
             self.finishEvent.set()
 
-def runjob():
-    print "job done"
 if __name__ == "__main__":
     pass
 #      t1 = Task("t1",__import__("rulesuite.rule1"))

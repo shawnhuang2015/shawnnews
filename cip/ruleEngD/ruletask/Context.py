@@ -1,5 +1,6 @@
 import threading
 import time
+import inspect
 ##############
 # Context contains 3 parts:
 # 1. Request : read only, no mutex needed
@@ -29,20 +30,45 @@ def __REQ_CP(ctx):
 def __REQ_EVT(ctx):
     return ctx.ctx["__REQ_EVT__"]
 
+# Used as getter
+def __RULE_META(ctx):
+    return ctx.ctx["__RULE_META__"]
+
 # Used as getter/setter
-def __WS(ctx):
-    return ctx.ctx["__WS__"]
+def __WS(ctx, key):
+    if key in ctx.ctx["__WS__"]:
+        return ctx.ctx["__WS__"][key]
+    return None
 
-
-def __W_WS(ctx, key, value):
+# Lock write
+def __LW_WS(ctx, key, value):
     if type(ctx) == RuleContext:
         ctx.ws_mutex.acquire(1)
         ctx.ctx["__WS__"][key] = value
         ctx.ws_mutex.release()
-# Use as setter
-def __W_RET(ctx, rule, ret):
-    print "writing ret"
-    ctx.ctx["__RET__"][rule] = ret
+
+def __W_WS(ctx, key, value):
+    ctx.ctx["__WS__"][key] = value
+    if type(ctx) == RuleContext:
+        ctx.ctx["__WS__"][key] = value
+
+# Use as setter/getter
+def __W_RULE_RET(ctx, ret):
+    # rule name is the name of function who calls __W_RET
+    rulename = inspect.stack()[1][3]
+    ctx.ctx["__RET__"][rulename] = ret
+
+def __RULE_RET(ctx, rule):
+    return ctx.ctx["__RET__"][rule]
+
+# Use to overwrite the result after resolution conflict
+def __W_RET(ctx,ret):
+    ctx.ctx["__RET__"] = ret
+
+def __RET(ctx):
+    return ctx.ctx["__RET__"] 
+
+
 
 #  import sys
 #  sys.path.append("../rulebase")

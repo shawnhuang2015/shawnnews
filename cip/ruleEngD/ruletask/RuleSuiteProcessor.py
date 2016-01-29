@@ -4,6 +4,9 @@ import os
 import threading
 from RuleTaskBuilder import RuleTaskBuilder
 from Context import RuleContext
+import sys
+sys.path.append("../rulebase")
+from BizObjBase import BizObjBase
 
 class RuleSuiteProcessor(object):
     # timeout should never be 0 
@@ -33,7 +36,7 @@ class RuleSuiteProcessor(object):
 
     def loadRuleSuiteMeta(self):
         ruleMeta = yaml.load(open("%s/rulesuite.meta" % self.cpRoot).read())
-        self.context.ctx["__RULE_META__"] = ruleMeta
+        self.context.ctx["__RULE_META__"] = BizObjBase(ruleMeta)
 
     def populateCtxWithReq(self, actor, cp, event):
         self.context.ctx["__REQ_ACTOR__"] = actor
@@ -48,9 +51,6 @@ class RuleSuiteProcessor(object):
         return self.context.ctx["__RET__"]
 
 if __name__ == '__main__':
-    import sys
-    sys.path.append("../rulebase")
-    from BizObjBase import BizObjBase
 
     context = RuleContext({
         "__REQ_ACTOR__" : BizObjBase({}),

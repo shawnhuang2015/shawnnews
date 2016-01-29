@@ -15,7 +15,6 @@ class RuleSuiteManager(object):
         self.processors= {}
         cnt = 0
         for checkpoint in os.listdir(root):
-            print  checkpoint
             cnt += 1
             if cnt > self.capacity:
                 break

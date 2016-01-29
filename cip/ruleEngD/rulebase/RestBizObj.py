@@ -2,10 +2,10 @@ from BizObjBase import BizObjBase
 import requests
 
 class RestBizObj(BizObjBase):
-    def __init__(self, restUri):
+    def __init__(self, restUri, payload = None):
         self.obj = None
         try:
-            response = requests.get(restUri,timeout = 0.1)
+            response = requests.get(restUri,data = payload, timeout = 0.1)
             if response.status_code == 200:
                 super(RestBizObj,self).__init__ (response.json())
             else:
@@ -21,4 +21,9 @@ if __name__ == "__main__":
     print rest.isValid
     if rest.isValid:
         print rest.products
+    rest = RestBizObj("http://192.168.33.70:5000/cip/api/2.0/recommend", '{"alg":"advanced"}')
+    print rest.isValid
+    if rest.isValid:
+        print rest.products
+
 

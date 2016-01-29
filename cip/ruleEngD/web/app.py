@@ -27,12 +27,24 @@ def execute():
     ret = rsm.runWithRequest(request = req)
     return jsonify({"result":ret})
 
-
+########################Below for test purpose only #######################
 @app.route('/testrest', methods = ['GET'])
 def test():
     content = {"products":[{"item":"cup"},{"item":"bottle"},{"item":"ipad"}]}
     return jsonify(content)
 
+@app.route('/cip/api/2.0/recommend', methods = ['GET'])
+def recommend():
+    req = json.loads(request.data)
+    content = {"products":[{"item":"cup"},{"item":"bottle"},{"item":"beer"}]}
+    if req["alg"] == "advanced":
+        content = {"products":[{"item":"Benz"},{"item":"Palace"},{"item":"Girls"}]}
+    return jsonify(content)
+
+@app.route('/cip/api/4.0/gstore', methods = ['GET'])
+def gstore():
+    content = {"products":[{"item":"cup"},{"item":"bottle"},{"item":"ipad"}]}
+    return jsonify(content)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", processes=10)

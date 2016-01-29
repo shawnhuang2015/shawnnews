@@ -7,6 +7,9 @@ class BizObjBase(object):
             self.__dict__ = body
             self.isValid = True
         
+    def __str__(self):
+        return ",".join('{} = {}'.format(k,v) for k,v in self.__dict__.iteritems())
+
 
 if __name__ == '__main__':
     a = {'username':'Alce','age':18}
