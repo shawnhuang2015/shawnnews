@@ -1,0 +1,14 @@
+drop all
+create vertex user (primary_id user_id string not null , name string, age uint) with stats="outdegree_by_edgetype"
+create vertex product (primary_id product_id string not null , title string, on_sale bool default 1, price float) with stats="outdegree_by_edgetype"
+create vertex page (primary_id page_id string not null) with stats="outdegree_by_edgetype"
+create vertex keyword_ (primary_id keyword__id string not null , word string) with stats="outdegree_by_edgetype"
+create vertex __hierarchy (primary_id __hierarchy_id string not null , weight float) with stats="outdegree_by_edgetype"
+create vertex __behavior (primary_id __behavior_id string not null , subtype string) with stats="outdegree_by_edgetype"
+create vertex __index (primary_id __index_id string not null ) with stats="outdegree_by_edgetype"
+create undirected edge click (from user, to product , dtime uint, weight float)
+create undirected edge product_to_keyword_ (from product, to keyword_ )
+create undirected edge __to_hierarchy (from *, to __hierarchy )
+create undirected edge __to_index (from *, to __index )
+create graph cip (user,product,page,keyword_,__hierarchy,__behavior,__index,click,product_to_keyword_,__to_hierarchy,__to_index)
+export schema cip

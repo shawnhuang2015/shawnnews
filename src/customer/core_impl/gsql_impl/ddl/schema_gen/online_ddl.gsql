@@ -1,0 +1,14 @@
+@online_schema.gsql
+
+# json post api
+CREATE online_post JOB post_user FOR GRAPH cip {
+   load to vertex user values ($"user_id", $"name", $"age")
+      using json_file="true";
+}
+export job post_user
+
+# csv post api
+CREATE online_post JOB post_user1 FOR GRAPH cip {
+   load to vertex user values ($0, $1, $2);
+}
+export job post_user1
