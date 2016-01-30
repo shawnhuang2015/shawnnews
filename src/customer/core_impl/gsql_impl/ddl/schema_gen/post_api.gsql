@@ -1,0 +1,156 @@
+
+create online_post job post_user for graph cip {
+  load to vertex user values ($0, $1, $2, $3);
+}
+export job post_user
+  
+
+create online_post job post_user_json for graph cip {
+  load to vertex user values ($"user", $"name", $"age", $"gender")
+  using json_file="true";
+}
+export job post_user_json
+
+
+create online_post job post_product for graph cip {
+  load to vertex product values ($0, $1, $2, $3);
+}
+export job post_product
+  
+
+create online_post job post_product_json for graph cip {
+  load to vertex product values ($"product", $"title", $"on_sale", $"price")
+  using json_file="true";
+}
+export job post_product_json
+
+
+create online_post job post_page for graph cip {
+  load to vertex page values ($0, $1);
+}
+export job post_page
+  
+
+create online_post job post_page_json for graph cip {
+  load to vertex page values ($"page", $"description")
+  using json_file="true";
+}
+export job post_page_json
+
+
+create online_post job post_text for graph cip {
+  load to vertex text values ($0, $1);
+}
+export job post_text
+  
+
+create online_post job post_text_json for graph cip {
+  load to vertex text values ($"text", $"word")
+  using json_file="true";
+}
+export job post_text_json
+
+
+create online_post job post___hierarchy for graph cip {
+  load to vertex __hierarchy values ($0, $1);
+}
+export job post___hierarchy
+  
+
+create online_post job post___hierarchy_json for graph cip {
+  load to vertex __hierarchy values ($"__hierarchy", $"level")
+  using json_file="true";
+}
+export job post___hierarchy_json
+
+
+create online_post job post___behavior for graph cip {
+  load to vertex __behavior values ($0, $1);
+}
+export job post___behavior
+  
+
+create online_post job post___behavior_json for graph cip {
+  load to vertex __behavior values ($"__behavior", $"action")
+  using json_file="true";
+}
+export job post___behavior_json
+
+
+create online_post job post___index for graph cip {
+  load to vertex __index values ($0);
+}
+export job post___index
+  
+
+create online_post job post___index_json for graph cip {
+  load to vertex __index values ($"__index")
+  using json_file="true";
+}
+export job post___index_json
+
+
+create online_post job post_click for graph cip {
+  load to edge click values ($0, $1, $2);
+}
+export job post_click
+
+
+create online_post job post_click_json for graph cip {
+  load to edge click values ($"user", $"product", $"dtime")
+  using json_file="true";
+}
+export job post_click_json
+
+
+create online_post job post_product_to_text for graph cip {
+  load to edge product_to_text values ($0, $1);
+}
+export job post_product_to_text
+
+
+create online_post job post_product_to_text_json for graph cip {
+  load to edge product_to_text values ($"product", $"text")
+  using json_file="true";
+}
+export job post_product_to_text_json
+
+
+create online_post job post___to_hierarchy for graph cip {
+  load to edge __to_hierarchy values ($0, $1);
+}
+export job post___to_hierarchy
+
+
+create online_post job post___to_hierarchy_json for graph cip {
+  load to edge __to_hierarchy values ($"any", $"__hierarchy")
+  using json_file="true";
+}
+export job post___to_hierarchy_json
+
+
+create online_post job post___to_behavior for graph cip {
+  load to edge __to_behavior values ($0, $1);
+}
+export job post___to_behavior
+
+
+create online_post job post___to_behavior_json for graph cip {
+  load to edge __to_behavior values ($"any", $"__behavior")
+  using json_file="true";
+}
+export job post___to_behavior_json
+
+
+create online_post job post___to_index for graph cip {
+  load to edge __to_index values ($0, $1);
+}
+export job post___to_index
+
+
+create online_post job post___to_index_json for graph cip {
+  load to edge __to_index values ($"any", $"__index")
+  using json_file="true";
+}
+export job post___to_index_json
+
