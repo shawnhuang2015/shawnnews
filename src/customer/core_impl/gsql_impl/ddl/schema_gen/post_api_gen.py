@@ -10,19 +10,19 @@ A_PATTERN = '\s*(\w+)[^,]*,*'
 
 def post_vertex(m, csv=True):
   csv_job = '''
-  create online_post job post_{type} for graph cip {{
-    load to vertex {type} values ({id_and_attrs});
-  }}
-  export job post_{type}
+create online_post job post_{type} for graph cip {{
+  load to vertex {type} values ({id_and_attrs});
+}}
+export job post_{type}
   '''
 
   json_job = '''
-  create online_post job post_{type} for graph cip {{
-    load to vertex {type} values ({id_and_attrs})
-    using json_file="true";
-  }}
-  export job post_{type}
-  '''
+create online_post job post_{type} for graph cip {{
+  load to vertex {type} values ({id_and_attrs})
+  using json_file="true";
+}}
+export job post_{type}
+'''
 
   attrs = []
   if m.group('attrs') is not None:
@@ -44,19 +44,19 @@ def post_vertex(m, csv=True):
 
 def post_edge(m, csv=True):
   csv_job = '''
-  create online_post job post_{type} for graph cip {{
-    load to edge {type} values ({id_and_attrs});
-  }}
-  export job post_{type}
-  '''
+create online_post job post_{type} for graph cip {{
+  load to edge {type} values ({id_and_attrs});
+}}
+export job post_{type}
+'''
 
   json_job = '''
-  create online_post job post_{type} for graph cip {{
-    load to edge {type} values ({id_and_attrs})
-    using json_file="true";
-  }}
-  export job post_{type}
-  '''
+create online_post job post_{type} for graph cip {{
+  load to edge {type} values ({id_and_attrs})
+  using json_file="true";
+}}
+export job post_{type}
+'''
 
   attrs = []
   if m.group('attrs') is not None:
