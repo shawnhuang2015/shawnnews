@@ -1,5 +1,6 @@
 from collections import defaultdict
 import json
+import sys
 
 def create_vertex(l):
   v_template = 'create vertex {vtype} (primary_id {vtype}_id string not null {attrs}) with stats="outdegree_by_edgetype"'
@@ -62,4 +63,4 @@ def create_graph(schema_json):
 
 
 if __name__ == '__main__':
-  print '\n'.join(create_graph('ui_schema.json'))
+  print '\n'.join(create_graph(sys.argv[1]))

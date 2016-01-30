@@ -12,24 +12,25 @@ def tojson(func, *args, **kwargs):
   return _wrapper
 
 l = [
-  ('user', [('name', 'string'), ('age', 'uint')]),
+  ('user', [('name', 'string'), ('age', 'uint'), ('gender', 'string')]),
   ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
-  ('page', [('desc_', 'string')]),
-  ('keyword_', [('word', 'string')]),
+  ('page', [('description', 'string')]),
+  ('text', [('word', 'string')]),
 
   # builtin vertex
-  ('__hierarchy', [('weight', 'float')]),
-  ('__behavior', [('subtype', 'string')]),
+  ('__hierarchy', [('level', 'float')]),
+  ('__behavior', [('action', 'string')]),
   ('__index', []),
 ]
 
 # type, source, target, directed, behavior, attr
 l1 = [
-  ('click', 'user', 'product', False, True, [('dtime', 'uint'), ('weight', 'float')]),
-  ('', 'product', 'keyword_', False, False, []),
+  ('click', 'user', 'product', False, True, [('dtime', 'uint')]),
+  ('', 'product', 'text', False, False, []),
 
   # builtin edge
   ('__to_hierarchy', '*', '__hierarchy', False, False, []),
+  ('__to_behavior', '*', '__behavior', False, False, []),
   ('__to_index', '*', '__index', False, False, []),
 ]
 

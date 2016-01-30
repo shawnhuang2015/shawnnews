@@ -1,4 +1,5 @@
 
+import sys
 import re
 
 # sadly, re doesn't support repeated groups capture
@@ -79,15 +80,17 @@ export job post_{type}_json
 
 
 if __name__ == '__main__':
-  schema = 'schema.gsql'
+  schema = sys.argv[1]
   with open(schema, 'r') as fp:
     for l in fp:
       m = re.search(V_PATTERN, l)
       if m is not None:
+        print post_vertex(m, True)
         print post_vertex(m, False)
         continue
 
       m = re.search(E_PATTERN, l)
       if m is not None:
+        print post_edge(m, True)
         print post_edge(m, False)
         continue
