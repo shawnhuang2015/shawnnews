@@ -116,41 +116,28 @@ create online_post job post_product_to_text_json for graph cip {
 export job post_product_to_text_json
 
 
-create online_post job post___to_hierarchy for graph cip {
-  load to edge __to_hierarchy values ($0, $1);
+create online_post job post_user_to___hierarchy for graph cip {
+  load to edge user_to___hierarchy values ($0, $1, $2);
 }
-export job post___to_hierarchy
+export job post_user_to___hierarchy
 
 
-create online_post job post___to_hierarchy_json for graph cip {
-  load to edge __to_hierarchy values ($"any", $"__hierarchy")
+create online_post job post_user_to___hierarchy_json for graph cip {
+  load to edge user_to___hierarchy values ($"user", $"__hierarchy", $"weight")
   using json_file="true";
 }
-export job post___to_hierarchy_json
+export job post_user_to___hierarchy_json
 
 
-create online_post job post___to_behavior for graph cip {
-  load to edge __to_behavior values ($0, $1);
+create online_post job post_product_to___hierarchy for graph cip {
+  load to edge product_to___hierarchy values ($0, $1, $2);
 }
-export job post___to_behavior
+export job post_product_to___hierarchy
 
 
-create online_post job post___to_behavior_json for graph cip {
-  load to edge __to_behavior values ($"any", $"__behavior")
+create online_post job post_product_to___hierarchy_json for graph cip {
+  load to edge product_to___hierarchy values ($"product", $"__hierarchy", $"weight")
   using json_file="true";
 }
-export job post___to_behavior_json
-
-
-create online_post job post___to_index for graph cip {
-  load to edge __to_index values ($0, $1);
-}
-export job post___to_index
-
-
-create online_post job post___to_index_json for graph cip {
-  load to edge __to_index values ($"any", $"__index")
-  using json_file="true";
-}
-export job post___to_index_json
+export job post_product_to___hierarchy_json
 

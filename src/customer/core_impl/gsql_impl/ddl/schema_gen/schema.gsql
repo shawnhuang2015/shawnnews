@@ -8,8 +8,7 @@ create vertex __behavior (primary_id __behavior_id string not null , action stri
 create vertex __index (primary_id __index_id string not null ) with stats="outdegree_by_edgetype"
 create undirected edge click (from user, to product , dtime uint)
 create undirected edge product_to_text (from product, to text )
-create undirected edge __to_hierarchy (from *, to __hierarchy )
-create undirected edge __to_behavior (from *, to __behavior )
-create undirected edge __to_index (from *, to __index )
-create graph cip (user,product,page,text,__hierarchy,__behavior,__index,click,product_to_text,__to_hierarchy,__to_behavior,__to_index)
+create undirected edge user_to___hierarchy (from user, to __hierarchy , weight float)
+create undirected edge product_to___hierarchy (from product, to __hierarchy , weight float)
+create graph cip (user,product,page,text,__hierarchy,__behavior,__index,click,product_to_text,user_to___hierarchy,product_to___hierarchy)
 export schema cip

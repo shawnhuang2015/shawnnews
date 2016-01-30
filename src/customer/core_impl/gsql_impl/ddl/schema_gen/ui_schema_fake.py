@@ -28,10 +28,14 @@ l1 = [
   ('click', 'user', 'product', False, True, [('dtime', 'uint')]),
   ('', 'product', 'text', False, False, []),
 
-  # builtin edge
-  ('__to_hierarchy', '*', '__hierarchy', False, False, []),
-  ('__to_behavior', '*', '__behavior', False, False, []),
-  ('__to_index', '*', '__index', False, False, []),
+  # user profile
+  ('', 'user', '__hierarchy', False, False, [('weight', 'float')]),
+  ('', 'product', '__hierarchy', False, False, [('weight', 'float')]),
+
+#  # builtin edge
+#  ('__to_hierarchy', '*', '__hierarchy', False, False, []),
+#  ('__to_behavior', '*', '__behavior', False, False, []),
+#  ('__to_index', '*', '__index', False, False, []),
 ]
 
 @tojson

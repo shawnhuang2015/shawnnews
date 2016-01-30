@@ -22,28 +22,30 @@
             "type": "product_to_text"
         },
         {
-            "attr": [],
+            "attr": [
+                {
+                    "dtype": "float",
+                    "name": "weight"
+                }
+            ],
             "behavior": false,
             "directed": false,
-            "source": "*",
+            "source": "user",
             "target": "__hierarchy",
-            "type": "__to_hierarchy"
+            "type": "user_to___hierarchy"
         },
         {
-            "attr": [],
+            "attr": [
+                {
+                    "dtype": "float",
+                    "name": "weight"
+                }
+            ],
             "behavior": false,
             "directed": false,
-            "source": "*",
-            "target": "__behavior",
-            "type": "__to_behavior"
-        },
-        {
-            "attr": [],
-            "behavior": false,
-            "directed": false,
-            "source": "*",
-            "target": "__index",
-            "type": "__to_index"
+            "source": "product",
+            "target": "__hierarchy",
+            "type": "product_to___hierarchy"
         }
     ],
     "vertex": [
