@@ -17,11 +17,11 @@ export job post_{type}
   '''
 
   json_job = '''
-create online_post job post_{type} for graph cip {{
+create online_post job post_{type}_json for graph cip {{
   load to vertex {type} values ({id_and_attrs})
   using json_file="true";
 }}
-export job post_{type}
+export job post_{type}_json
 '''
 
   attrs = []
@@ -51,11 +51,11 @@ export job post_{type}
 '''
 
   json_job = '''
-create online_post job post_{type} for graph cip {{
+create online_post job post_{type}_json for graph cip {{
   load to edge {type} values ({id_and_attrs})
   using json_file="true";
 }}
-export job post_{type}
+export job post_{type}_json
 '''
 
   attrs = []
@@ -68,8 +68,8 @@ export job post_{type}
     job = csv_job.format(type=m.group('type'), id_and_attrs=id_and_attrs)
 
   else:
-    source_type = '$"{}"'.format(m.group('source_type'))
-    target_type = '$"{}"'.format(m.group('target_type'))
+    source_type = '$"{}"'.format('any' if m.group('source_type') == '*' else m.group('source_type'))
+    target_type = '$"{}"'.format('any' if m.group('target_type') == '*' else m.group('target_type'))
     attrs = ['$"{}"'.format(_) for _ in attrs]
     id_and_attrs = [source_type, target_type] + attrs
     id_and_attrs = ', '.join(id_and_attrs)
