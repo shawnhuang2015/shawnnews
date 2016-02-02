@@ -10,7 +10,8 @@ from Context import RuleContext
 class RuleTaskBuilder(object):
     def loadRuleSuite(self, cpRoot, ruleSuiteName):
         sys.path.append(cpRoot) 
-        self.rulePackage = importlib.import_module(ruleSuiteName)
+        # reload to force recompile pyc
+        self.rulePackage = reload(importlib.import_module(ruleSuiteName))
     def loadTopo(self, topoFile):
         self.topology = Topology()
         self.topology.init(topoFile)
