@@ -8,9 +8,9 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.route("/api/crowd").get(crowd.list).post(crowd.create);
 
-  app.route("/api/crowd/:crowd_name").get(crowd.read).put(crowd.update).delete(crowd.delete);
+  app.route("/api/crowd/:crowdName").get(crowd.read).put(crowd.update).delete(crowd.delete);
 
-  app.param('crowd_name', crowd.crowdByName);
+  app.param('crowdName', crowd.crowdByName);
 
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');

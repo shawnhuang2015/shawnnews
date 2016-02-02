@@ -14,7 +14,11 @@ var CrowdSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    crowd_name: {
+    crowdName: {
+        type: String,
+        unique: true
+    },
+    tagId: {
         type: String,
         unique: true
     },
@@ -26,14 +30,9 @@ var CrowdSchema = new Schema({
         type: String,
         enum:['static','dynamic']
     },
-    selector: {
-        demographic: {
-            tag_id: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            conditions: [
+    selector: [
+        {
+            demographic: [
                 {
                     factor: {
                         type: String,
@@ -42,24 +41,20 @@ var CrowdSchema = new Schema({
                     },
                     operator: {
                         type: String,
-                        required: true,
-                        trim: true
+                        enum:['>=','<=', ">", "<", "!=", "="]
                     },
-                    value: {
-                        type: String,
+                    weight: {
+                        type: Number,
                         required: true,
-                        trim: true
+                        min: 0,
+                        max: 1
+                    },
+                    sequence: {
+                        type: Number
                     }
                 }
-            ]
-        },
-        interest: {
-            tag_id: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            conditions: [
+            ],
+            interest: [
                 {
                     category: {
                         type: String,
@@ -68,55 +63,60 @@ var CrowdSchema = new Schema({
                     },
                     operator: {
                         type: String,
-                        required: true,
-                        trim: true
+                        enum:[">=","<=", ">", "<", "!=", "="]
                     },
                     weight: {
-                        type: String,
+                        type: Number,
                         required: true,
-                        trim: true
+                        min: 0,
+                        max: 1
+                    },
+                    sequence: {
+                        type: Number
                     }
                 }
-            ]
-        },
-        behavior: {
-            tag_id: {
-                type: String,
-                required: true,
-                trim: true
-            },
-            conditions: [
+            ],
+            behavior: [
                 {
                     action: {
                         type: String,
                         required: true,
                         trim: true
                     },
-                    object: {
+                    objectType: {
                         type: String,
-                        required: true,
-                        trim: true
+                        required: true
+                        //enum:['item','category', 'property']
+                    },
+                    objectId: {
+                        type: String,
+                        required: true
                     },
                     value: {
-                        type: String,
+                        type: Number,
+                        required: true
+                    },
+                    startTime: {
+                        type: Number,
                         required: true,
                         trim: true
                     },
-                    start_time: {
-                        type: String,
+                    endTime: {
+                        type: Number,
                         required: true,
                         trim: true
                     },
-                    end_time: {
+                    timeType: {
                         type: String,
-                        required: true,
-                        trim: true
+                        enum: ["absolute", "relative", "day", "week", "month", "year"]
+                    },
+                    sequence: {
+                        type: Number
                     }
                 }
             ]
         }
-    }
+    ]
 });
 
 mongoose.model('Crowd', CrowdSchema);
-

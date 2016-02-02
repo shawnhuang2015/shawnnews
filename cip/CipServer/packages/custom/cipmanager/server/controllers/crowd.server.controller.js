@@ -48,7 +48,7 @@ exports.list = function(req, res) {
 
 //read
 exports.crowdByName = function(req, res, next, name) {
-    Crowd.find({crowd_name: name}, function(err, crowd) {
+    Crowd.find({crowdName: name}, function(err, crowd) {
         if (err) return next(err);
         if (!crowd) return next(new Error('Failed to load crowd: ' + name));
 
@@ -70,7 +70,7 @@ exports.update = function(req, res) {
         crowd[field] = req.body[field]
     }
 
-    crowd.save(function(err){
+    crowd.save(function(err) {
         if (err) {
             return res.status(400).send({
                 message: getErrorMessage(err)
