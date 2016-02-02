@@ -15,6 +15,8 @@ from threading import Timer
 from init.Const import REST_OK
 from init.Const import REST_BAD_REQ
 from init.Const import REST_INTERNAL_ERROR
+sys.path.append("../logging")
+from Decorators import logTxn
 
 
 #TODO:config
@@ -48,8 +50,8 @@ def validateRequest(req):
     return True
 
 @app.route('/cip/api/1.0/ruleng', methods = ['POST'])
+@logTxn("API_CALL RULE_EXECUTE")
 def execute():
-    # Parse request json to Python Dict
     global rsm
     req = json.loads(request.data)
     if not validateRequest(request):

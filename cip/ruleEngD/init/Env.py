@@ -1,7 +1,7 @@
 import sys
 from Const import SUITE_ROOT
 
-MODULES = ("algorithm","cache","config","cust","init","rulebase","ruletask","threads","web")
+MODULES = ("algorithm","cache","config","cust","init","rulebase","ruletask","threads","web","logging")
 SUITES = ("testcheckpoint",)
 
 def initEnv():
