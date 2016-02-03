@@ -1,0 +1,166 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="findOne()">
+    <form name="crowdForm" class="form-horizontal" role="form" data-ng-submit="update(crowdForm.$valid)" novalidate>
+        <fieldset>
+            <legend>Basic Information</legend>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.crowd_name.$invalid }">
+                <label mean-token="'create-crowd_name'" class="col-md-2 control-label">Crowd Name</label>
+                <div class="col-md-4">
+                    <input name="crowd_name" type="text" class="form-control" data-ng-model="crowdDetail.crowdName"
+                           id="crowd_name" placeholder="Crowd Name" required>
+                    <div ng-show="submitted && crowdForm.crowd_name.$invalid" class="help-block">
+                        <p ng-show="crowdForm.crowd_name.$error.required">Crowd name is required</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
+                <label mean-token="'create-description'" class="col-md-2 control-label">Description</label>
+                <div class="col-md-4">
+                    <input name="description" type="text" class="form-control" data-ng-model="crowdDetail.description"
+                           id="description" placeholder="Description" required>
+                    <div ng-show="submitted && crowdForm.description.$invalid" class="help-block">
+                        <p ng-show="crowdForm.description.$error.required">Description is required</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" >
+                <label mean-token="'create-type'" class="col-md-2 control-label">Type</label>
+                <div class="col-md-4">
+                    <select class="form-control" ng-model="crowdDetail.type" ng-options="x.name as x.name for x in crowd_type"></select>
+                </div>
+            </div>
+            <div class="form-group" ng-show="crowdDetail.type == 'static'" ng-class="{ 'has-error' : submitted && crowdForm.tag_name.$invalid }">
+                <label mean-token="'create-tag-name'" class="col-md-2 control-label">Tag Name</label>
+                <div class="col-md-4">
+                    <input name="tag_name" type="text" class="form-control" data-ng-model="crowdDetail.tagId"
+                           id="tag_name" placeholder="Tag Name" required>
+                    <div ng-show="submitted && crowdForm.tag_name.$invalid" class="help-block">
+                        <p ng-show="crowdForm.tag_name.$error.required">Tag name is required</p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Factor</legend>
+            <label mean-token="'create-factor'" class="col-md-1 control-label">Condition</label>
+            <!-- Edit -->
+            <div class="form-group row">
+                <div class="col-md-2">
+                    <ui-select ng-model="factors.ontology_selected" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Ontology">{{factors.ontology_selected.name}}</ui-select-match>
+                        <ui-select-choices repeat=" x in ontology_type | filter:$select.search">{{x.name}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '1'">
+                    <ui-select ng-model="factors.factor" append-to-body="'true'" >
+                        <ui-select-match placeholder="Select Profile">{{factors.factor}}</ui-select-match>
+                        <ui-select-choices repeat=" x in profile | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '2'">
+                    <ui-select ng-model="factors.category" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Category">{{factors.category}}</ui-select-match>
+                        <ui-select-choices repeat=" x in category | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '1' || factors.ontology_selected.id == '2'">
+                    <ui-select ng-model="factors.operator" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Operator">{{factors.operator}}</ui-select-match>
+                        <ui-select-choices repeat=" x in operator | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '1' || factors.ontology_selected.id == '2'">
+                    <input name="weight" type="text" class="form-control" ng-model="factors.weight" placeholder="Weight" required>
+                </div>
+                <!-- Behavior -->
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <ui-select ng-model="factors.action" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Action">{{factors.action}}</ui-select-match>
+                        <ui-select-choices repeat=" x in action | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <ui-select ng-model="factors.objectType" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Object">{{factors.objectType}}</ui-select-match>
+                        <ui-select-choices repeat=" x in object | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <input name="item_id" type="text" class="form-control" ng-model="factors.objectId" placeholder="Item Id" required>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <input name="object_value" type="text" class="form-control" ng-model="factors.value" placeholder="Value" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-2 col-md-offset-3" ng-if="factors.ontology_selected.id == '3'">
+                    <ui-select ng-model="factors.timeType" append-to-body="'true'">
+                        <ui-select-match placeholder="Select Date Type">{{factors.timeType}}</ui-select-match>
+                        <ui-select-choices repeat=" x in date_type | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <input name="start_date" type="text" class="form-control" ng-model="factors.starTime" placeholder="Start Date" required>
+                </div>
+                <div class="col-md-2" ng-if="factors.ontology_selected.id == '3'">
+                    <input name="end_date" type="text" class="form-control" ng-model="factors.endTime" placeholder="End Date" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-2 col-md-offset-10">
+                    <button mean-token="'create-add-group'" type="button" ng-click="addGroup()" class="btn btn-info btn-block">Add Group</button>
+                </div>
+            </div>
+
+            <!-- Show -->
+            <ul class="list-group">
+                <li data-ng-repeat="groupfactor in crowdDetail.selector" class="list-group-item row" >
+                    <ul class="list-group">
+                        <a class="list-group-item active">Group {{$index}}</a>
+                        <a data-ng-repeat="factor in groupfactor.demographic" class="list-group-item row " >
+                            <div class="col-md-6 left">{{$index}}. demographic : {{factor.factor}}   {{factor.operator}}  {{factor.weight}}</div>
+                            <div class="col-md-1 col-md-offset-5">
+                                <button mean-token="'create-delete-factor'" type="button" ng-click="deleteFactor(groupfactor.demographic, $index)" class="btn btn-info btn-block right">Delete</button>
+                            </div>
+                        </a>
+                        <a data-ng-repeat="factor in groupfactor.interest" class="list-group-item row " >
+                            <div class="col-md-6 left">{{$index}}. interest : {{factor.category}}   {{factor.operator}}  {{factor.weight}}</div>
+                            <div class="col-md-1 col-md-offset-5">
+                                <button mean-token="'create-delete-factor'" type="button" ng-click="deleteFactor(groupfactor.interest, $index)" class="btn btn-info btn-block right">Delete</button>
+                            </div>
+                        </a>
+                        <a data-ng-repeat="factor in groupfactor.behavior" class="list-group-item row " >
+                            <div class="col-md-6 left">{{$index}}. behavior : {{factor.action}}   {{factor.objectType}}  {{factor.objectId}}  {{factor.value}}  {{factor.timeType}}  {{factor.startTime}}  {{factor.endTime}}</div>
+                            <div class="col-md-1 col-md-offset-5">
+                                <button mean-token="'create-delete-factor'" type="button" ng-click="deleteFactor(groupfactor.behavior, $index)" class="btn btn-info btn-block right">Delete</button>
+                            </div>
+                        </a>
+
+                    </ul>
+                    <div class="col-md-offset-8 col-md-2">
+                        <button mean-token="'create-add-factor'" type="button" ng-click="addFactor($index, factors.ontology_selected.name)" class="btn btn-info btn-block">Add Factor</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button mean-token="'create-delete-factor'" type="button" ng-click="deleteGroup($index)" class="btn btn-warning btn-block">Delete Group</button>
+                    </div>
+                </li>
+            </ul>
+
+        </fieldset>
+
+        <div class="form-group">
+            <div class="col-md-offset-5 col-md-2">
+                <button mean-token="'create-save'" type="submit" class="btn btn-success btn-block">Save</button>
+            </div>
+        </div>
+
+    </form>
+</section>
