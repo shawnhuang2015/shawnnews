@@ -25,3 +25,4 @@ init graph store for graph cip
 
 EOF
 
+cp /tmp/online_ddl.gsql .

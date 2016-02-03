@@ -14,28 +14,25 @@ def tojson(func, *args, **kwargs):
 l = [
   ('user', [('name', 'string'), ('age', 'uint'), ('gender', 'string')]),
   ('product', [('title', 'string'), ('on_sale', 'bool', 1), ('price', 'float')]),
-  ('page', [('description', 'string')]),
-  ('text', [('word', 'string')]),
+  ('pic', []),
 
-  # builtin vertex
-  ('__hierarchy', [('level', 'float')]),
-  ('__behavior', [('action', 'string')]),
-  ('__index', []),
+  ('profile', [('name', 'string')]),
+  ('cate', [('name', 'string')]),
+  ('tag', [('name', 'string')]),
 ]
 
+# FIXME: behavior is not needed now, since we could do all this in semantic layer thru an API
 # type, source, target, directed, behavior, attr
 l1 = [
   ('click', 'user', 'product', False, True, [('dtime', 'uint')]),
-  ('', 'product', 'text', False, False, []),
+  ('view_', 'user', 'product', False, True, [('dtime', 'uint')]),
+  ('order_', 'user', 'product', False, True, [('dtime', 'uint')]),
+  ('post', 'user', 'pic', False, True, [('dtime', 'uint')]),
 
-  # user profile
-  ('', 'user', '__hierarchy', False, False, [('weight', 'float')]),
-  ('', 'product', '__hierarchy', False, False, [('weight', 'float')]),
-
-#  # builtin edge
-#  ('__to_hierarchy', '*', '__hierarchy', False, False, []),
-#  ('__to_behavior', '*', '__behavior', False, False, []),
-#  ('__to_index', '*', '__index', False, False, []),
+  ('', 'user', 'profile', False, False, []),
+  ('', 'pic', 'tag', False, False, []),
+  ('', 'pic', 'cate', False, False, []),
+  ('', 'product', 'cate', False, False, []),
 ]
 
 @tojson

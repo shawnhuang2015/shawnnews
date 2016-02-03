@@ -1,0 +1,4 @@
+separator="," DATA_EOL="\n"
+post_user
+u0,u0_name,1,female
+u1,u1_name,2,male
