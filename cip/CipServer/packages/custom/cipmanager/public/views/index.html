@@ -1,21 +1,25 @@
 <section data-ng-controller="CipmanagerController" data-ng-init="find()">
-    <ul class="crowds unstyled">
-      <li data-ng-repeat="crowd in crowds">
-        <span>{{crowd.created | date:'medium'}}</span> /
-        <span>{{crowd.user.name}}</span>
-        <h2>
-          <a data-ng-href="/crowds/{{crowd._id}}">{{crowd.title}}</a>
-        <span data-ng-if="hasAuthorization(article)">
-          <a class="btn" href="/crowds/{{crowd._id}}/edit">
-            <i class="glyphicon glyphicon-edit"></i>
-          </a>
-          <a class="btn" data-ng-click="remove(article);">
-            <i class="glyphicon glyphicon-trash"></i>
-          </a>
-        </span>
-        </h2>
-        <div>{{crowd.content}}</div>
-      </li>
+    <ul class="list-group">
+        <li class="row list-group-item" data-ng-repeat="crowd in crowds">
+            <h4 class="col-md-12">
+                <a data-ng-href="/crowd/{{crowd.crowdName}}/edit">{{crowd.crowdName}}</a>
+                <span>
+                  <a class="btn" data-ng-href="/crowd/{{crowd.crowdName}}/edit">
+                      <i class="glyphicon glyphicon-edit"></i>
+                  </a>
+                  <a class="btn" data-ng-click="remove(crowd);">
+                      <i class="glyphicon glyphicon-trash"></i>
+                  </a>
+                </span>
+            </h4>
+            <div class="col-md-10">Description: {{crowd.description}}</div>
+            <div class="col-md-3">Type: {{crowd.type}}</div>
+            <div class="col-md-3" ng-show="crowd.type == 'static'">TagId: {{crowd.tagId}}</div>
+            <div class="col-md-3">{{crowd.created | date:'medium'}}</div>
+        </li>
     </ul>
-    <h1 data-ng-hide="!crowds || crowds.length">No crowds yet. <br> Why don't you <a href="/crowds/create">Create One</a>?</h1>
+    <div class="col-md-2">
+        <button mean-token="'create-c-crowd'" data-ng-click="goToCreate()" class="btn btn-info btn-block">Create One
+        </button>
+    </div>
 </section>
