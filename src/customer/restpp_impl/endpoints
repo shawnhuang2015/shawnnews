@@ -42,5 +42,16 @@
       },
       "summary":"This is an UDF to output N depth neighborhood subgraph."
     }
+   },
+
+   # API's for semantic layer
+   "semantic_set": {
+    "POST": {
+    }
+   },
+
+   "semantic_get": {
+    "GET": {
+    }
    }
 }
