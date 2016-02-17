@@ -45,12 +45,12 @@
    },
 
    # API's for semantic layer
-   "semantic_set": {
+   "semantic_def": {
     "POST": {
     }
    },
 
-   "semantic_get": {
+   "get_semantic_def": {
     "GET": {
     }
    }
