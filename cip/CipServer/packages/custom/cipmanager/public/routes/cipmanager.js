@@ -2,9 +2,27 @@
 
 angular.module('mean.cipmanager').config(['$stateProvider',
   function($stateProvider) {
-    $stateProvider.state('cipmanager example page', {
-      url: '/cipmanager/example',
-      templateUrl: 'cipmanager/views/index.html'
-    });
+    $stateProvider
+        .state('all crowds', {
+          url: '/crowd/main',
+          templateUrl: 'cipmanager/views/index.html',
+          requiredCircles: {
+            circles: ['admin']
+          }
+        })
+        .state('create crowd', {
+          url: '/crowd/create',
+          templateUrl: '/cipmanager/views/create.html',
+          requiredCircles : {
+            circles: ['admin']
+          }
+        })
+        .state('edit crowd', {
+          url: '/crowd/:crowdName/edit',
+          templateUrl: '/cipmanager/views/edit.html',
+          requiredCircles : {
+            circles: ['admin']
+          }
+        });
   }
 ]);

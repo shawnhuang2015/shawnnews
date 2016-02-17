@@ -1,9 +1,13 @@
 'use strict';
 
-angular.module('mean.cipmanager').factory('Cipmanager', [
-  function() {
-    return {
-      name: 'cipmanager'
-    };
+angular.module('mean.cipmanager').factory('Cipmanager', ['$resource',
+  function($resource) {
+    return $resource('api/crowd/:crowdName', {
+      crowdName: '@crowdName'
+    }, {
+      update: {
+        method: 'PUT'
+      }
+    });
   }
 ]);
