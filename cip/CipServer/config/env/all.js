@@ -60,5 +60,13 @@ module.exports = {
   bodyParser: {
     json: {limit: '100kb'},
     urlencoded: {limit: '100kb', extended: true}
+  },
+  remoteServer: {
+    ruleEngine: {
+    },
+    platform: {
+      host: '192.168.33.66',
+      port: 9000
+    }
   }
 };

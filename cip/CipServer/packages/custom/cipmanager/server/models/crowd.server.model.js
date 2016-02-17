@@ -32,7 +32,7 @@ var CrowdSchema = new Schema({
     },
     selector: [
         {
-            demographic: [
+            ontology: [
                 {
                     factor: {
                         type: String,
@@ -42,28 +42,6 @@ var CrowdSchema = new Schema({
                     operator: {
                         type: String,
                         enum:['>=','<=', ">", "<", "!=", "="]
-                    },
-                    weight: {
-                        type: Number,
-                        required: true,
-                        min: 0,
-                        max: 1
-                    },
-                    sequence: {
-                        type: Number
-                    }
-                }
-            ],
-            interest: [
-                {
-                    category: {
-                        type: String,
-                        required: true,
-                        trim: true
-                    },
-                    operator: {
-                        type: String,
-                        enum:[">=","<=", ">", "<", "!=", "="]
                     },
                     weight: {
                         type: Number,
@@ -94,7 +72,8 @@ var CrowdSchema = new Schema({
                     },
                     value: {
                         type: Number,
-                        required: true
+                        required: true,
+                        min: 0
                     },
                     startTime: {
                         type: Number,
