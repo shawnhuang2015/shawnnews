@@ -124,6 +124,10 @@ class UDFRunner : public ServiceImplBase {
         }
         payload[ONTO] = onto;
       }
+    } else {
+      request.error_ = true;
+      request.message_ += ONTO + " or " + OBJ_ONTO + " missing.";
+      invalid = true;
     }
  
     // check for "profile", should be present
