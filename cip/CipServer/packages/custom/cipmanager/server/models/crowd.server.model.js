@@ -18,10 +18,6 @@ var CrowdSchema = new Schema({
         type: String,
         unique: true
     },
-    tagId: {
-        type: String,
-        unique: true
-    },
     description: {
         type: String,
         required: true
@@ -48,6 +44,11 @@ var CrowdSchema = new Schema({
                         required: true,
                         min: 0,
                         max: 1
+                    },
+                    type: {
+                        type: String,
+                        required: true,
+                        trim: true
                     },
                     sequence: {
                         type: Number
@@ -87,7 +88,7 @@ var CrowdSchema = new Schema({
                     },
                     timeType: {
                         type: String,
-                        enum: ["absolute", "relative", "day", "week", "month", "year"]
+                        enum: ["absolute", "relative", "hour", "day", "week", "month", "year"]
                     },
                     sequence: {
                         type: Number

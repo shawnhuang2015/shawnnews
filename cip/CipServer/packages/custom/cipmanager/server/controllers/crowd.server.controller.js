@@ -1,5 +1,6 @@
 'use strict';
-
+var rest = require('../utility/restful');
+var util = require('util');
 /**
  * Module dependencies.
  */
@@ -24,7 +25,8 @@ exports.create = function(req, res) {
 
     crowd.save(function(err) {
         if (err) {
-            return res.status(400).send({
+            return res.send({
+                error: true,
                 message: getErrorMessage(err)
             });
         } else {
@@ -35,24 +37,53 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
+    var pageId = Number(req.query["pageId"]);
+    var pageSz = Number(req.query["pageSz"]);
     Crowd.find().sort("-created").exec(function(err, crowds) {
         if (err) {
-            return res.status(400).send({
+            return res.send({
+                error: true,
+                message: getErrorMessage(err)
+            });
+        } else if (crowds.length < (pageId + 1) * pageSz) {
+            return res.send({
+                error: true,
+                message: "Out of Bound"
+            });
+        } else {
+            return res.json(crowds.slice(pageId * pageSz, (pageId + 1) * pageSz));
+        }
+    });
+};
+
+//count
+exports.count = function(req, res) {
+    Crowd.find().sort("-created").exec(function(err, crowds) {
+        if (err) {
+            return res.send({
+                error: true,
                 message: getErrorMessage(err)
             });
         } else {
-            return res.json(crowds);
+            return res.send({
+                error: false,
+                message: "",
+                results: {
+                    count: crowds.length
+                }
+            });
         }
     });
 };
 
 //read
 exports.crowdByName = function(req, res, next, name) {
-    Crowd.find({crowdName: name}, function(err, crowd) {
-        if (err) return next(err);
-        if (!crowd) return next(new Error('Failed to load crowd: ' + name));
-
-        req.crowd = crowd[0];
+    Crowd.findOne({crowdName: name}, function(err, crowd) {
+        if (err) {
+            req.error = getErrorMessage(err);
+        } else {
+            req.crowd = crowd;
+        }
         next();
     });
 };
@@ -72,27 +103,37 @@ exports.update = function(req, res) {
 
     crowd.save(function(err) {
         if (err) {
-            return res.status(400).send({
+            return res.send({
+                error: true,
                 message: getErrorMessage(err)
             });
         } else {
-            res.json(crowd);
+            return res.json(crowd);
         }
     });
 };
 
 //delete
 exports.delete = function(req, res) {
+    if (req.error) {
+        console.log(req.error);
+        return res.send({
+            error: true,
+            message: req.error
+        });
+    }
+
     var crowd = req.crowd;
 
     crowd.remove(function(err) {
         if (err) {
-            return res.status(400).send({
+            return res.send({
+                error: true,
                 message: getErrorMessage(err)
             });
         } else {
-            res.json(crowd);
+            return res.json(crowd);
         }
     });
-};
+}
 
