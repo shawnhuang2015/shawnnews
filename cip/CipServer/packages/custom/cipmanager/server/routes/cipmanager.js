@@ -21,6 +21,8 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.route("/api/db/crowd").get(crowd.list).post(crowd.create);
 
+  app.route("/api/db/crowdcount").get(crowd.count);
+
   app.route("/api/db/crowd/:crowdName").get(crowd.read).put(crowd.update).delete(crowd.delete);
 
   app.param('crowdName', crowd.crowdByName);

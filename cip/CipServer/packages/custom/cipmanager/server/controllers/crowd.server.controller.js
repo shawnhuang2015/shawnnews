@@ -56,6 +56,26 @@ exports.list = function(req, res) {
     });
 };
 
+//count
+exports.count = function(req, res) {
+    Crowd.find().sort("-created").exec(function(err, crowds) {
+        if (err) {
+            return res.send({
+                error: true,
+                message: getErrorMessage(err)
+            });
+        } else {
+            return res.send({
+                error: false,
+                message: "",
+                results: {
+                    count: crowds.length
+                }
+            });
+        }
+    });
+};
+
 //read
 exports.crowdByName = function(req, res, next, name) {
     Crowd.findOne({crowdName: name}, function(err, crowd) {
