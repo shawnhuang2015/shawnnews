@@ -9,9 +9,19 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.route("/api/ontology").get(rest.readMetadata);
 
-  app.route("/api/crowd").get(crowd.list).post(crowd.create);
+  app.route("/api/rest/crowd/detail").get(rest.getCrowdDetailByGet).post(rest.getCrowdDetailByPost);
 
-  app.route("/api/crowd/:crowdName").get(crowd.read).put(crowd.update).delete(crowd.delete);
+  app.route("/api/rest/crowd/count").get(rest.getCrowdCountByGet).post(rest.getCrowdCountByPost);
+
+  app.route("/api/rest/crowd/delete").get(rest.deleteCrowd);
+
+  app.route("/api/rest/crowd/create").post(rest.createCrowd);
+
+  app.route("/api/rest/crowd/sample").get(rest.crowdSampleByGet).post(rest.crowdSampleByPost);
+
+  app.route("/api/db/crowd").get(crowd.list).post(crowd.create);
+
+  app.route("/api/db/crowd/:crowdName").get(crowd.read).put(crowd.update).delete(crowd.delete);
 
   app.param('crowdName', crowd.crowdByName);
 
