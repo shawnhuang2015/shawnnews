@@ -42,5 +42,15 @@
       },
       "summary":"This is an UDF to output N depth neighborhood subgraph."
     }
-   }
+   },
+
+  "semantic_def": {
+    "POST": {
+      "function": "semantic_def",
+      "parameters": {
+      },
+      "request_filter": "WrapPayloadFilter",
+      "summary": "json format definition of semantic layer."
+    }
+  }
 }
