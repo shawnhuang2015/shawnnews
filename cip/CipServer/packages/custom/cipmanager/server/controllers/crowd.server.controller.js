@@ -45,7 +45,7 @@ exports.list = function(req, res) {
                 error: true,
                 message: getErrorMessage(err)
             });
-        } else if (crowds.length < (pageId + 1) * pageSz) {
+        } else if (crowds.length <= pageId * pageSz) {
             return res.send({
                 error: true,
                 message: "Out of Bound"
