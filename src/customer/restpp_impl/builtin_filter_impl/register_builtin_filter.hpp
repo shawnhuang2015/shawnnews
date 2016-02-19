@@ -20,6 +20,7 @@
   Step 1:  Include your *.hpp.
 -----------------------------------------------------------------------------------------*/
 #include "builtin_filter_example.hpp"
+#include "../filter_impl/semantic_layer_request_filter.cpp"
 
 
 void RegisterBuiltinFilters(){
@@ -30,6 +31,7 @@ void RegisterBuiltinFilters(){
   ---------------------------------------------------------------------------------------*/
   RegisterBuiltinFilter("BuiltinRequestFilterExample", (RequestFilter)&BuiltinRequestFilterExample);
   RegisterBuiltinFilter("BuiltinResponseFilterExample", (RequestFilter)&BuiltinResponseFilterExample);
+  RegisterBuiltinFilter("WrapPayloadFilter", (RequestFilter)&WrapPayloadFilter);
 }
 
 
