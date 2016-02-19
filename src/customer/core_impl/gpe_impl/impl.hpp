@@ -124,7 +124,18 @@ class UDFRunner : public ServiceImplBase {
         }
         payload[ONTO] = onto;
       }
+    } else {
+      request.error_ = true;
+      request.message_ += ONTO + " or " + OBJ_ONTO + " missing.";
+      invalid = true;
     }
+
+    // TODO(@alan):
+    // diff old version "ontology" vs the above version to 
+    // figure out what ontology vertex/edge will be dropped and created
+    // or
+    // don't do diff here, just dump this new schema to a file
+    // let the external script do the diff and run schema change.
  
     // check for "profile", should be present
     if (payload.isMember(PROF) && payload[PROF].isArray()) {
@@ -134,9 +145,27 @@ class UDFRunner : public ServiceImplBase {
       invalid = true;
     }
 
+    // TODO(@alan):
+    // persist "payload" as semantic schema to disk or redis
     std::cout << payload << std::endl;
-    return ! invalid;
+
+    if (invalid) {
+      return false;
+    }
+
+    // trigger dynamic schema change job (external script)
+    // TODO(@alan):
+    // first write semantic schema diff into a file,
+    // then generate/run ddl job via an external script.
+//    std::string path("/tmp/semantic_diff.json");
+//    std::ofstream fp(path);
+//    fp << payload;
+//    fp.close();
+//    system(("/tmp/run.sh " + path).c_str());
+    return true;
   }
+
+
 };
 }  // namespace UDIMPL
 #endif  // SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
