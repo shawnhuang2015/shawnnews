@@ -26,6 +26,9 @@ var CrowdSchema = new Schema({
         type: String,
         enum:['static','dynamic']
     },
+    count: {
+        type: Number
+    },
     selector: [
         {
             ontology: [
@@ -37,7 +40,7 @@ var CrowdSchema = new Schema({
                     },
                     operator: {
                         type: String,
-                        enum:['>=','<=', ">", "<", "!=", "="]
+                        enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"]
                     },
                     weight: {
                         type: Number,
@@ -49,6 +52,9 @@ var CrowdSchema = new Schema({
                         type: String,
                         required: true,
                         trim: true
+                    },
+                    count: {
+                        type: Number
                     },
                     sequence: {
                         type: Number
@@ -65,11 +71,14 @@ var CrowdSchema = new Schema({
                     objectType: {
                         type: String,
                         required: true
-                        //enum:['item','category', 'property']
                     },
                     objectId: {
                         type: String,
                         required: true
+                    },
+                    operator: {
+                        type: String,
+                        enum:['>=','<=', ">", "<", "<>", "="]
                     },
                     value: {
                         type: Number,
@@ -89,6 +98,9 @@ var CrowdSchema = new Schema({
                     timeType: {
                         type: String,
                         enum: ["absolute", "relative", "hour", "day", "week", "month", "year"]
+                    },
+                    count: {
+                        type: Number
                     },
                     sequence: {
                         type: Number
