@@ -1,5 +1,5 @@
 /**
- * Created by xunyang on 2/2/16.
+ * Created on 2/2/16.
  */
 'use strict';
 var qs = require('querystring');
@@ -12,6 +12,12 @@ var mongoose = require('mongoose'),
     config = require('meanio').loadConfig(),
     _ = require('lodash');
 
+/*
+ Get the user id list which belong to the crowd.
+ Method: POST
+ Input: selector conditions - which express the crowding condition that the client choose on UI
+ Output: 1. user id list 2. user count
+ */
 exports.getCrowdDetailByPost = function(req, res) {
     if (!req.body["selector"]) {
         return res.send({
@@ -46,6 +52,13 @@ exports.getCrowdDetailByPost = function(req, res) {
     });
 }
 
+/*
+Get the user id list which belong to the crowd.
+It can be called just when the crowd has been create on crowding service.
+Method: GET
+Input: cname - crowd name
+Output: 1. user id list 2. user count
+ */
 exports.getCrowdDetailByGet = function(req, res) {
     var crowdName = req.query["cname"];
     if (!crowdName) {
@@ -75,6 +88,11 @@ exports.getCrowdDetailByGet = function(req, res) {
     });
 }
 
+/*
+Get the number of users which belong to the crowd.
+Method: POST
+Input: selector conditions - which express the crowding condition that the client choose on UI
+*/
 exports.getCrowdCountByPost = function(req, res) {
     if (!req.body["selector"]) {
         return res.send({
@@ -107,6 +125,12 @@ exports.getCrowdCountByPost = function(req, res) {
     });
 }
 
+/*
+Get the number of users which belong to the crowd.
+It can be called just when the crowd has been create on crowding service.
+Method: GET
+Input: cname - crowd name
+ */
 exports.getCrowdCountByGet = function(req, res) {
     var crowdName = req.query["cname"];
     if (!crowdName) {
@@ -135,6 +159,11 @@ exports.getCrowdCountByGet = function(req, res) {
     });
 }
 
+/*
+create a crowd on crowding service
+Input: 1. selector conditions - which express the crowding condition that the client choose on UI
+       2. crowd name
+ */
 exports.createCrowd = function(req, res) {
     if (!req.body["selector"]) {
         return res.send({
@@ -167,6 +196,12 @@ exports.createCrowd = function(req, res) {
     });
 }
 
+/*
+Method: POST
+Input: 1. selector conditions - which express the crowding condition that the client choose on UI
+       2. count - the number of persons that the client want to seee
+Output: Sample users in the crowd, the number of returned users' size equals to 'count'
+ */
 exports.crowdSampleByPost = function(req, res) {
     var selector = JSON.stringify(req.body);
     var count = req.query["count"];
@@ -205,6 +240,13 @@ exports.crowdSampleByPost = function(req, res) {
 
 }
 
+/*
+The API can be invoked just when the crowd has been created on crowding service
+Method: GET
+Input: 1. cname - crowd name
+       2. count - the number of persons that the client want to seee
+Output: Sample users in the crowd, the number of returned users' size equals to 'count'
+ */
 exports.crowdSampleByGet = function(req, res) {
     var crowdName = req.query["cname"];
     var count = req.query["count"];
@@ -241,6 +283,12 @@ exports.readCrowd = function(crowdName) {
 
 }
 
+/*
+The API will be invoked just when the crowd is static.
+It is used to delete the crowd on crowding service.
+Input: cname - crowd name
+Output: return the number of persons in the deleted crowd
+ */
 exports.deleteCrowd = function(req, res) {
     var crowdName = req.query["cname"];
     if (!crowdName) {
@@ -268,6 +316,12 @@ exports.analyzeCrowd = function(crowdName, param) {
 
 }
 
+/*
+Get Semantic Info and Ontology which will be used to select the crowd.
+We will store the information to mongodb in case sending a restful API each time.
+There is an expiration time for the information stored in mongodb,
+we will update the data if it exceed the expiration time.
+*/
 exports.readMetadata = function(req, res) {
     var curTime = new Date().getTime();
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {

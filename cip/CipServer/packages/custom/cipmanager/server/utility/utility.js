@@ -5,6 +5,10 @@
 var http = require('http');
 var qs = require('querystring');
 
+//http GET restful API
+//Input: 1. endpoint
+//       2. queryStr - the part after '?' in the url
+//       3. callback function - the format looks like callback(error, result)
 exports.get = function(endpoint, queryStr, cb) {
     //var content = qs.stringify(queryStr);
     var result = '';
@@ -43,6 +47,11 @@ exports.get = function(endpoint, queryStr, cb) {
     req.end();
 }
 
+//http POST restful API
+//Input: 1. endpoint
+//       2. queryStr - the part after '?' in the url
+//       3. data - data payload appear in the post data part
+//       4. callback function - the format looks like callback(error, result)
 exports.post = function(endpoint, queryStr, data, cb) {
     //var content = qs.stringify(queryStr);
     var result = '';
@@ -85,6 +94,7 @@ exports.post = function(endpoint, queryStr, data, cb) {
     req.end();
 }
 
+//validate whether the crowd conditions are correct or not
 exports.validateSelector = function(selector) {
     var ontology = selector["selector"]["ontology"];
     var behavior = selector["selector"]["behavior"];

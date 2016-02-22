@@ -8,6 +8,10 @@ var mongoose = require('mongoose'),
 
 /**
  * sementic meta data Schema
+ * which contains:
+ * 1. ontology information - one or more tree structure
+ * 2. record which item and user will use the every ontology
+ * 3. behavior definition
  */
 var SemanticMetaDataSchema = new Schema({
     name: {
