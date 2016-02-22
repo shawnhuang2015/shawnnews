@@ -145,23 +145,21 @@ class UDFRunner : public ServiceImplBase {
       invalid = true;
     }
 
-    // TODO(@alan):
-    // persist "payload" as semantic schema to disk or redis
-    std::cout << payload << std::endl;
-
     if (invalid) {
       return false;
     }
 
+    // TODO(@alan):
+    // persist "payload" as semantic schema to disk or redis
+    std::string path("/tmp/semantic.json");
+    std::ofstream fp(path.c_str());
+    fp << payload;
+    fp.close();
+
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
-    // first write semantic schema diff into a file,
-    // then generate/run ddl job via an external script.
-//    std::string path("/tmp/semantic_diff.json");
-//    std::ofstream fp(path);
-//    fp << payload;
-//    fp.close();
-//    system(("/tmp/run.sh " + path).c_str());
+    // generate/run ddl job via an external script.
+    system(("/tmp/run.sh " + path).c_str());
     return true;
   }
 
