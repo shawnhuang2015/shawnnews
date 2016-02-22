@@ -111,18 +111,40 @@ class UDFRunner : public ServiceImplBase {
           invalid = true;
         }
 
-        // assign vtype/etype names
+        // handle ONTOLOGY, assign vtype/etype names
         Json::Value onto;
         int size = payload[ONTO].size();
         for (int i = 0; i < size; ++i) {
+          Json::Value one;
           std::string name(payload[ONTO][i].asString());
-          onto[name] = Json::Value();
-          onto[name]["vtype"] = ONTO_VTYPE_PREF + name;
-          onto[name]["etype"] = Json::Value(Json::arrayValue);
-          onto[name]["etype"].append(ONTO_ETYPE_PREF_UP + name);
-          onto[name]["etype"].append(ONTO_ETYPE_PREF_DOWN + name);
+          one["name"] = name;
+          one["vtype"] = ONTO_VTYPE_PREF + name;
+          one["etype"].append(ONTO_ETYPE_PREF_UP + name);
+          one["etype"].append(ONTO_ETYPE_PREF_DOWN + name);
+          onto.append(one);
         }
         payload[ONTO] = onto;
+
+        // handle OBJ_ONTOLOGY, assign etype names
+        Json::Value obj_onto;
+        size = payload[OBJ_ONTO].size();
+        for (int i = 0; i < size; ++i) {
+          const Json::Value &js = payload[OBJ_ONTO][i];
+          Json::Value one;
+          std::string obj(js["object"].asString());
+          one["object"] = obj;
+
+          int size1 = js["ontology"].size();
+          for (int j = 0; j < size1; ++j) {
+            std::string name(js["ontology"][j].asString());
+            Json::Value two;
+            two["name"] = name;
+            two["etype"] = OBJ_ONTO_ETYPE_PREF + obj + "_to_" + name;
+            one["ontology"].append(two);
+          }
+          obj_onto.append(one);
+        }
+        payload[OBJ_ONTO] = obj_onto;
       }
     } else {
       request.error_ = true;
@@ -145,23 +167,21 @@ class UDFRunner : public ServiceImplBase {
       invalid = true;
     }
 
-    // TODO(@alan):
-    // persist "payload" as semantic schema to disk or redis
-    std::cout << payload << std::endl;
-
     if (invalid) {
       return false;
     }
 
+    // TODO(@alan):
+    // persist "payload" as semantic schema to disk or redis
+    std::string path("/tmp/semantic.json");
+    std::ofstream fp(path.c_str());
+    fp << payload;
+    fp.close();
+
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
-    // first write semantic schema diff into a file,
-    // then generate/run ddl job via an external script.
-//    std::string path("/tmp/semantic_diff.json");
-//    std::ofstream fp(path);
-//    fp << payload;
-//    fp.close();
-//    system(("/tmp/run.sh " + path).c_str());
+    // generate/run ddl job via an external script.
+    system(("/tmp/run.sh " + path).c_str());
     return true;
   }
 
