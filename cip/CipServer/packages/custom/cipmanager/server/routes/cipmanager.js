@@ -1,7 +1,7 @@
 'use strict';
 
 var crowd = require('../controllers/crowd.server.controller');
-var rest = require('../utility/restful');
+var rest = require('../controllers/rest.server.controller');
 
 /* jshint -W098 */
 // The Package is past automatically as first parameter

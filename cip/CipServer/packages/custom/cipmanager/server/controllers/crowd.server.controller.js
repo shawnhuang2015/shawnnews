@@ -1,6 +1,6 @@
 'use strict';
-var rest = require('../utility/restful');
 var util = require('util');
+var utility = require('../utility/utility');
 /**
  * Module dependencies.
  */
@@ -9,25 +9,16 @@ var mongoose = require('mongoose'),
     config = require('meanio').loadConfig(),
     _ = require('lodash');
 
-var getErrorMessage = function(err) {
-    if (err.errors) {
-        for (var errName in err.errors) {
-            if (err.errors[errName].message) return err.errors[errName].message;
-        }
-    } else {
-        return "Unknown server error";
-    }
-};
-
 //create
 exports.create = function(req, res) {
     var crowd = new Crowd(req.body);
+    console.log("crowd = " + JSON.stringify(req.body));
 
     crowd.save(function(err) {
         if (err) {
             return res.send({
                 error: true,
-                message: getErrorMessage(err)
+                message: utility.getErrorMessage(err)
             });
         } else {
             return res.json(crowd);
@@ -43,7 +34,7 @@ exports.list = function(req, res) {
         if (err) {
             return res.send({
                 error: true,
-                message: getErrorMessage(err)
+                message: utility.getErrorMessage(err)
             });
         } else if (crowds.length <= pageId * pageSz) {
             return res.send({
@@ -62,7 +53,7 @@ exports.count = function(req, res) {
         if (err) {
             return res.send({
                 error: true,
-                message: getErrorMessage(err)
+                message: utility.getErrorMessage(err)
             });
         } else {
             return res.send({
@@ -80,7 +71,7 @@ exports.count = function(req, res) {
 exports.crowdByName = function(req, res, next, name) {
     Crowd.findOne({crowdName: name}, function(err, crowd) {
         if (err) {
-            req.error = getErrorMessage(err);
+            req.error = utility.getErrorMessage(err);
         } else {
             req.crowd = crowd;
         }
@@ -105,7 +96,7 @@ exports.update = function(req, res) {
         if (err) {
             return res.send({
                 error: true,
-                message: getErrorMessage(err)
+                message: utility.getErrorMessage(err)
             });
         } else {
             return res.json(crowd);
@@ -129,7 +120,7 @@ exports.delete = function(req, res) {
         if (err) {
             return res.send({
                 error: true,
-                message: getErrorMessage(err)
+                message: utility.getErrorMessage(err)
             });
         } else {
             return res.json(crowd);

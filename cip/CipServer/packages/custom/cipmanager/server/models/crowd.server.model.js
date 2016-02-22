@@ -29,86 +29,79 @@ var CrowdSchema = new Schema({
     count: {
         type: Number
     },
-    selector: [
-        {
-            ontology: [
-                {
-                    factor: {
-                        type: String,
-                        required: true,
-                        trim: true
-                    },
-                    operator: {
-                        type: String,
-                        enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"]
-                    },
-                    weight: {
-                        type: Number,
-                        required: true,
-                        min: 0,
-                        max: 1
-                    },
-                    type: {
-                        type: String,
-                        required: true,
-                        trim: true
-                    },
-                    count: {
-                        type: Number
-                    },
-                    sequence: {
-                        type: Number
-                    }
-                }
-            ],
-            behavior: [
-                {
-                    action: {
-                        type: String,
-                        required: true,
-                        trim: true
-                    },
-                    objectType: {
-                        type: String,
-                        required: true
-                    },
-                    objectId: {
-                        type: String,
-                        required: true
-                    },
-                    operator: {
-                        type: String,
-                        enum:['>=','<=', ">", "<", "<>", "="]
-                    },
-                    value: {
-                        type: Number,
-                        required: true,
-                        min: 0
-                    },
-                    startTime: {
-                        type: Number,
-                        required: true,
-                        trim: true
-                    },
-                    endTime: {
-                        type: Number,
-                        required: true,
-                        trim: true
-                    },
-                    timeType: {
-                        type: String,
-                        enum: ["absolute", "relative", "hour", "day", "week", "month", "year"]
-                    },
-                    count: {
-                        type: Number
-                    },
-                    sequence: {
-                        type: Number
-                    }
-                }
-            ]
-        }
-    ]
+    selector: {
+        ontology: [
+            {
+                factor: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                operator: {
+                    type: String,
+                    enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"],
+                    required: true
+                },
+                weight: {
+                    type: Number,
+                    required: true,
+                    min: 0,
+                    max: 1
+                },
+                type: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                count: Number,
+                sequence: Number
+            }
+        ],
+        behavior: [
+            {
+                action: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                objectType: {
+                    type: String,
+                    required: true
+                },
+                objectId: {
+                    type: String,
+                    required: true
+                },
+                operator: {
+                    type: String,
+                    enum:['>=','<=', ">", "<", "<>", "="],
+                    required: true
+                },
+                value: {
+                    type: Number,
+                    required: true,
+                    min: 0
+                },
+                startTime: {
+                    type: Number,
+                    required: true,
+                    trim: true
+                },
+                endTime: {
+                    type: Number,
+                    required: true,
+                    trim: true
+                },
+                timeType: {
+                    type: String,
+                    enum: ["absolute", "relative", "hour", "day", "week", "month", "year"],
+                    required: true
+                },
+                count: Number,
+                sequence: Number
+            }
+        ]
+    }
 });
 
 mongoose.model('Crowd', CrowdSchema);
