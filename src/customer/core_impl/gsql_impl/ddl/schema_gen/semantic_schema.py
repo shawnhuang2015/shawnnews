@@ -1,7 +1,12 @@
 # parse semantic schema and do dynamic schema change
-import json, sys
+import json, sys, os.path
 
-PATH = '/tmp/semantic.json'
+GSQL_PATH = '~/graphsql/dev/gsql/gsql'
+
+BASIC_SCHEMA_PATH = '/tmp/basic.gsql'
+SEMANTIC_SCHEMA_PATH = '/tmp/semantic.json'
+SCHEMA_CHANGE_JOB_PATH = '/tmp/sc.gsql'
+
 ONTO = 'ontology'
 OBJ_ONTO = 'object_ontology'
 
@@ -10,7 +15,7 @@ OBJ_ONTO = 'object_ontology'
 #   {"name": "attr2", "dtype": "string", "default": "abc"}
 # ]
 def add_vertex(vtype, vattr):
-  pat = 'add vertex {} (primary_id id string not null {})'
+  pat = 'add vertex {} (primary_id id string not null {});'
   attrs = []
   for i in vattr:
     if not all('name' in i, 'dtype' in i):
@@ -26,15 +31,15 @@ def add_vertex(vtype, vattr):
   return pat.format(vtype, attrs)
 
 def add_edge(directed, etype, srcv, tgtv, eattr):
-  pat = 'add {} edge {} (from {}, to {} {})'
+  pat = 'add {} edge {} (from {}, to {} {});'
   attrs = []
   for i in eattr:
-    if not all('name' in i, 'dtype' in i):
+    if not all(('name' in i, 'dtype' in i)):
       continue
     j = [i['name'], i['dtype']]
     if 'default' in i:
       j.append('default')
-      j.append(i['default'])
+      j.append(str(i['default']))
     attrs.append(' '.join(j))
   attrs = ', '.join(attrs)
   if len(attrs) > 0:
@@ -42,9 +47,8 @@ def add_edge(directed, etype, srcv, tgtv, eattr):
   return pat.format('directed' if directed else 'undirected',
       etype, srcv, tgtv, attrs)
 
-
-if __name__ == '__main__':
-  with open(PATH, 'r') as fp:
+def create_schema_change(bs_path, ss_path, sc_path):
+  with open(ss_path, 'r') as fp:
     js = json.load(fp)
     if not all((ONTO in js, OBJ_ONTO in js)):
       print >> sys.stderr, '{}, {} not found'.format(ONTO, OBJ_ONTO)
@@ -53,16 +57,51 @@ if __name__ == '__main__':
   vertices = []
   edges = []
 
+  # ontology name -> vtype, etype mapping
+  mapping = {}
+
   # create vertices/edges for ONTOLOGY
   for onto in js[ONTO]:
-    vtype = js[ONTO][onto]['vtype']
+    vtype = onto['vtype']
     vertices.append(add_vertex(vtype, {}))
 
     # NOTE: all etype assumed to be DIRECTED
-    for etype in js[ONTO][onto]['etype']:
+    for etype in onto['etype']:
       edges.append(add_edge(True, etype, vtype, vtype, {}))
 
-  # create edges for OBJ_ONTOLOGY
+    mapping[onto['name']] = {
+        'vtype': onto['vtype'],
+        'etype': onto['etype']
+      }
 
-  print vertices
-  print edges
+  # create edges for OBJ_ONTOLOGY
+  for obj_onto in js[OBJ_ONTO]:
+    srcv = obj_onto['object']
+    for onto in obj_onto['ontology']:
+      if onto['name'] not in mapping:
+        # error, missing ontology
+        sys.exit(1)
+      tgtv = mapping[onto['name']]['vtype']
+      etype = onto['etype']
+      edges.append(add_edge(False, etype, srcv, tgtv, [{'name': 'weight', 'dtype': 'float', 'default': 1.0}]))
+
+  # create schema change job script
+  with open(sc_path, 'w') as fp:
+    lines = [
+        'drop all',
+        '@{}'.format(bs_path),
+        'create schema_change job sc for graph cip {',
+        '\n'.join(vertices),
+        '\n'.join(edges),
+        '}',
+        'run job sc'
+      ]
+    fp.write('\n'.join(lines))
+
+def run_schema_change(sc_path):
+  os.system(GSQL_PATH + ' ' + sc_path)
+
+
+if __name__ == '__main__':
+  create_schema_change(BASIC_SCHEMA_PATH, SEMANTIC_SCHEMA_PATH, SCHEMA_CHANGE_JOB_PATH)
+  run_schema_change(SCHEMA_CHANGE_JOB_PATH)
