@@ -1,0 +1,10 @@
+#rule priority: HPW,MW,ALL
+resolution: ALL
+#resolution: HPW
+# supressed resolution: MW
+#Pri is only meaningful in case resolution is HPW
+pri:
+-   r8_frequent_login
+checkpoint: OnUserLogin 
+owner:  Demo
+
