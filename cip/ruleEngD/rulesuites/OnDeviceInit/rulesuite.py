@@ -44,5 +44,7 @@ def r1_same_imsi_finger(context):
     evt = __REQ_EVT(context)
     result = BangcleDevEvtToMacImeiObj(evt.imsi, evt.ts - 3600*24, evt.ts)
 
-    if len(result.imeiList) > 10 or  len(result.macList) > 10:
+    # if len(result.imeiList) > 10 or  len(result.macList) > 10:
+    # TODO: for demo purpose only
+    if len(result.imeiList) > 2 or  len(result.macList) > 2:
         __W_RULE_RET(context , "ALERT: imsi-%s has more than 10 different eithor imsi:%d or mac:%d in past one day" %(evt.imsi, len(imei),len(mac)))

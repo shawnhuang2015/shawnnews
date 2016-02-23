@@ -42,7 +42,7 @@ def end(context):
 
 def r4_operation_without_fingerprint(context):
     bizEvt = __REQ_EVT(context)
-    udids = BangcleBizEvtToUdidObj(bizEvt.bizEvtId)
+    ret = BangcleBizEvtToUdidObj(bizEvt.bizEvtId)
 
-    if udids == []:
-        __W_RULE_RET(context , "ALERT: operation without fingureprint")
+    if ret.udids == []:
+        __W_RULE_RET(context , "ALERT: operation without fingureprint, bizEvtid:%s" % bizEvt.bizEvtId)

@@ -43,5 +43,7 @@ def end(context):
 def r8_frequent_login(context):
     bizEvt = __REQ_EVT(context)
     bizEvents = BangcleAcctToBizObj(bizEvt.account, bizEvt.ts - 5*60, bizEvt.ts)
-    if len(bizEvents.bizEvtList) > 10:
-        __W_RULE_RET("ALERT:account %s login exceeds 10 in past 5 minutes with %s times login", bizEvt.account, len(bizEvents))
+    # if len(bizEvents.bizEvtList) > 10:
+    # TODO: for demo only
+    if len(bizEvents.bizEvtList) > 1:
+        __W_RULE_RET(context, "ALERT:account %s login exceeds 10 in past 5 minutes with %s times login" % (bizEvt.account, len(bizEvents.bizEvtList)))
