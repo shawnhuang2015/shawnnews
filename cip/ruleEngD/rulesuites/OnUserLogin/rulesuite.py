@@ -22,7 +22,7 @@ from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
 #########   customization biz objects ################
-from cust.bangcle.BangcleDevEvtToMacImeiObj import BangcleDevEvtToMacImeiObj
+from cust.bangcle.BangcleBizObj import BangcleAcctToBizObj 
 
 def resolve_conflict(context):
     # RuleConfltSol.default_sol_conflict(context)
@@ -41,8 +41,9 @@ def end(context):
 ############Rule segment#################
 
 def r8_frequent_login(context):
-    evt = __REQ_EVT(context)
-    result = BangcleDevEvtToMacImeiObj(evt.imsi, evt.ts - 3600*24, evt.ts)
-
-    if len(result.imeiList) > 10 or  len(result.macList) > 10:
-        __W_RULE_RET(context , "ALERT: imsi-%s has more than 10 different eithor imsi:%d or mac:%d in past one day" %(evt.imsi, len(imei),len(mac)))
+    bizEvt = __REQ_EVT(context)
+    bizEvents = BangcleAcctToBizObj(bizEvt.account, bizEvt.ts - 5*60, bizEvt.ts)
+    # if len(bizEvents.bizEvtList) > 10:
+    # TODO: for demo only
+    if len(bizEvents.bizEvtList) > 1:
+        __W_RULE_RET(context, "ALERT:account %s login exceeds 10 in past 5 minutes with %s times login" % (bizEvt.account, len(bizEvents.bizEvtList)))
