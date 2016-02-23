@@ -31,7 +31,7 @@ def reloadRuleSuite():
     print "reloading ..........."
     global rsm
     rsm = RuleSuiteManager(ruleRoot, 10) 
-    Timer(3, reloadRuleSuite,()).start()
+    Timer(3600*12, reloadRuleSuite,()).start()
 
 reloadRuleSuite()
 

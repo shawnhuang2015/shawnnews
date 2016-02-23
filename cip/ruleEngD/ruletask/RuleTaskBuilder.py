@@ -1,4 +1,5 @@
 import importlib
+import imp
 import sys 
 import zipimport
 import threading
@@ -9,9 +10,11 @@ from Context import RuleContext
 
 class RuleTaskBuilder(object):
     def loadRuleSuite(self, cpRoot, ruleSuiteName):
-        sys.path.append(cpRoot) 
+        #sys.path.append(cpRoot) 
         # reload to force recompile pyc
-        self.rulePackage = reload(importlib.import_module(ruleSuiteName))
+        print "loading " + cpRoot
+        # TODO:self.rulePackage = reload(importlib.import_module(ruleSuiteName, cpRoot + ".py"))
+        self.rulePackage = imp.load_source(ruleSuiteName, cpRoot + "/rulesuite.py")
     def loadTopo(self, topoFile):
         self.topology = Topology()
         self.topology.init(topoFile)
