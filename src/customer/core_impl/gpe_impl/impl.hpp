@@ -33,6 +33,8 @@ class UDFRunner : public ServiceImplBase {
 #endif
     } else if (request.request_function_ == "semantic_def") {
       return SemanticDef(request);
+    } else if (request.request_function_ == "validate_object_ontology") {
+      return ValidateObjectOntology(request);
     }
     
     return false;  /// not a valid request
@@ -185,6 +187,11 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
+  bool ValidateObjectOntology(EngineServiceRequest& request) {
+    // lookup `obj_onto' map to find (obj, onto) pair
+    // lookup 'onto' map to find vtype/etype for onto
+    return true;
+  }
 
 };
 }  // namespace UDIMPL
