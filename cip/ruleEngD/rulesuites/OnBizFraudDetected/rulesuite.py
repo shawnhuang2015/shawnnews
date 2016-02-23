@@ -22,7 +22,7 @@ from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
 #########   customization biz objects ################
-from cust.bangcle.BangcleDevEvtToMacImeiObj import BangcleDevEvtToMacImeiObj
+from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj 
 
 def resolve_conflict(context):
     # RuleConfltSol.default_sol_conflict(context)
@@ -41,8 +41,8 @@ def end(context):
 ############Rule segment#################
 
 def r4_operation_without_fingerprint(context):
-    evt = __REQ_EVT(context)
-    result = BangcleDevEvtToMacImeiObj(evt.imsi, evt.ts - 3600*24, evt.ts)
+    bizEvt = __REQ_EVT(context)
+    udids = BangcleBizEvtToUdidObj(bizEvt.bizEvtId)
 
-    if len(result.imeiList) > 10 or  len(result.macList) > 10:
-        __W_RULE_RET(context , "ALERT: imsi-%s has more than 10 different eithor imsi:%d or mac:%d in past one day" %(evt.imsi, len(imei),len(mac)))
+    if udids == []:
+        __W_RULE_RET(context , "ALERT: operation without fingureprint")

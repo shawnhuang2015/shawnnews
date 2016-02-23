@@ -22,7 +22,7 @@ from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
 #########   customization biz objects ################
-from cust.bangcle.BangcleDevEvtToMacImeiObj import BangcleDevEvtToMacImeiObj
+from cust.bangcle.BangcleBizObj import BangcleDevEvtToMacImeiObj
 
 def resolve_conflict(context):
     # RuleConfltSol.default_sol_conflict(context)
