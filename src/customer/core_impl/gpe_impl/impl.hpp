@@ -33,8 +33,8 @@ class UDFRunner : public ServiceImplBase {
 #endif
     } else if (request.request_function_ == "semantic_def") {
       return SemanticDef(request);
-    } else if (request.request_function_ == "validate_object_ontology") {
-      return ValidateObjectOntology(request);
+    } else if (request.request_function_ == "ontology_import") {
+      return OntologyImport(request);
     }
     
     return false;  /// not a valid request
@@ -76,16 +76,6 @@ class UDFRunner : public ServiceImplBase {
   bool SemanticDef(EngineServiceRequest &request) {
     const Json::Value &jsoptions = request.jsoptions_;
 
-    if (! jsoptions.isMember("payload")) {
-      request.error_ = true;
-      request.message_ += "Payload missing.";
-      return true;
-    }
-
-    bool invalid = false;
-    // copy the payload, modify
-    Json::Value payload = jsoptions["payload"];
-
     const std::string OBJ("object");
     const std::string ONTO("ontology");
     const std::string OBJ_ONTO("object_ontology");
@@ -95,12 +85,21 @@ class UDFRunner : public ServiceImplBase {
     const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
     const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 
+    if (! jsoptions.isMember("payload")) {
+      request.error_ = true;
+      request.message_ += "Payload missing.";
+      return true;
+    }
+
+    // copy the payload, modify
+    Json::Value payload = jsoptions["payload"];
+
     // check for "object", should be present
     if (payload.isMember(OBJ) && payload[OBJ].isArray()) {
     } else {
       request.error_ = true;
       request.message_ += OBJ + " missing or not array.";
-      invalid = true;
+      return false;
     }
 
     // check for "ontology" & "object_ontology", might be absent
@@ -110,7 +109,7 @@ class UDFRunner : public ServiceImplBase {
         } else {
           request.error_ = true;
           request.message_ += ONTO + " or " + OBJ_ONTO + " not array.";
-          invalid = true;
+          return false;
         }
 
         // handle ONTOLOGY, assign vtype/etype names
@@ -151,7 +150,7 @@ class UDFRunner : public ServiceImplBase {
     } else {
       request.error_ = true;
       request.message_ += ONTO + " or " + OBJ_ONTO + " missing.";
-      invalid = true;
+      return false;
     }
 
     // TODO(@alan):
@@ -166,10 +165,6 @@ class UDFRunner : public ServiceImplBase {
     } else {
       request.error_ = true;
       request.message_ += PROF + " missing or not array.";
-      invalid = true;
-    }
-
-    if (invalid) {
       return false;
     }
 
@@ -187,9 +182,20 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool ValidateObjectOntology(EngineServiceRequest& request) {
+  bool OntologyImport(EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
     // lookup `obj_onto' map to find (obj, onto) pair
     // lookup 'onto' map to find vtype/etype for onto
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
+      return false;
+    }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    std::cout << obj << ", " << name << std::endl;
+
     return true;
   }
 

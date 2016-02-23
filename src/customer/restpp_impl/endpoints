@@ -58,13 +58,12 @@
       "function": "ontology_import",
       "parameters": {
         "object": {
-          "type": "TYPENAME"
+          "type": "STRING"
         },
         "name": {
           "type": "STRING"
         }
       },
-      "request_filter": "WrapPayloadFilter",
       "summary": "json format ontology tree."
     }
   }
