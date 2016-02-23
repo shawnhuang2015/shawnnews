@@ -18,6 +18,16 @@ using namespace gperun;
 
 namespace UDIMPL {
 
+// TODO(@alan): string const for semantic layer, move to somewhere else
+const std::string OBJ("object");
+const std::string ONTO("ontology");
+const std::string OBJ_ONTO("object_ontology");
+const std::string PROF("profile");
+const std::string ONTO_VTYPE_PREF = "__onto_v_";
+const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
+const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
+const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
+
 class UDFRunner : public ServiceImplBase {
  public:
   bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request) {
@@ -39,6 +49,9 @@ class UDFRunner : public ServiceImplBase {
     
     return false;  /// not a valid request
   }
+
+ private:
+  Json::Value semantic_schema;
 
  private:
   bool RunUDF_KNeighborSize(ServiceAPI& serviceapi,
@@ -75,15 +88,6 @@ class UDFRunner : public ServiceImplBase {
 
   bool SemanticDef(EngineServiceRequest &request) {
     const Json::Value &jsoptions = request.jsoptions_;
-
-    const std::string OBJ("object");
-    const std::string ONTO("ontology");
-    const std::string OBJ_ONTO("object_ontology");
-    const std::string PROF("profile");
-    const std::string ONTO_VTYPE_PREF = "__onto_v_";
-    const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
-    const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
-    const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 
     if (! jsoptions.isMember("payload")) {
       request.error_ = true;
@@ -168,6 +172,8 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    semantic_schema = payload;
+
     // TODO(@alan):
     // persist "payload" as semantic schema to disk or redis
     std::string path("/tmp/semantic.json");
@@ -195,6 +201,49 @@ class UDFRunner : public ServiceImplBase {
     const std::string name(jsoptions["name"][0].asString());
 
     std::cout << obj << ", " << name << std::endl;
+
+    // validate (obj, name) pair
+    bool valid = false;
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i][OBJ].asString() == obj) {
+        const Json::Value &onto = obj_onto[i][ONTO];
+        int size1 = onto.size();
+        for (int j = 0; j < size1; ++j) {
+          if (onto[j]["name"].asString() == name) {
+            valid = true;
+            break;
+          }
+        }
+        break;
+      }
+    }
+    if (! valid) {
+      request.error_ = true;
+      request.message_ += "(" + obj + ", " + name + ") not found in " + OBJ_ONTO;
+      return false;
+    }
+
+    // get vtype/etype for ontology tree
+    const Json::Value &onto = semantic_schema[ONTO];
+    size = onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (onto[i]["name"].asString() == name) {
+        request.outputwriter_->WriteStartObject();
+        request.outputwriter_->WriteName("vtype");
+        request.outputwriter_->WriteString(onto[i]["vtype"].asString());
+
+        int size1 = onto[i]["etype"].size();
+        request.outputwriter_->WriteName("etype");
+        request.outputwriter_->WriteStartArray();
+        for (int j = 0; j < size1; ++j) {
+          request.outputwriter_->WriteString(onto[i]["etype"][j].asString());
+        }
+        request.outputwriter_->WriteEndArray();
+        request.outputwriter_->WriteEndObject();
+      }
+    }
 
     return true;
   }
