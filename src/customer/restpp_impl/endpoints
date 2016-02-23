@@ -64,6 +64,7 @@
           "type": "STRING"
         }
       },
+       "response_filter":"OntologyVE",
       "summary": "json format ontology tree."
     }
   }

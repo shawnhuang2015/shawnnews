@@ -18,7 +18,7 @@ using namespace gperun;
 
 namespace UDIMPL {
 
-// TODO(@alan): string const for semantic layer, move to somewhere else
+// TODO(@alan): const for semantic layer, move to somewhere else
 const std::string OBJ("object");
 const std::string ONTO("ontology");
 const std::string OBJ_ONTO("object_ontology");
@@ -27,9 +27,26 @@ const std::string ONTO_VTYPE_PREF = "__onto_v_";
 const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
 const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
+const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
+const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/run.sh";
 
 class UDFRunner : public ServiceImplBase {
  public:
+  UDFRunner() {
+    // check and load semantic schema
+    std::ifstream f(SEMANTIC_SCHEMA_PATH.c_str());
+    if (f.good()) {
+      Json::Reader reader;
+      bool success = false;
+      success = reader.parse(f, semantic_schema);
+      if (! success) {
+        std::cout << "fail to parse semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+      }
+      std::cout << "parsed semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+    }
+
+  }
+
   bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     if (request.request_function_ == "kneighborsize") {
       return RunUDF_KNeighborSize(serviceapi, request);
@@ -176,7 +193,7 @@ class UDFRunner : public ServiceImplBase {
 
     // TODO(@alan):
     // persist "payload" as semantic schema to disk or redis
-    std::string path("/tmp/semantic.json");
+    std::string path(SEMANTIC_SCHEMA_PATH.c_str());
     std::ofstream fp(path.c_str());
     fp << payload;
     fp.close();
@@ -184,7 +201,7 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
     // generate/run ddl job via an external script.
-    system(("/tmp/run.sh " + path).c_str());
+    system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str());
     return true;
   }
 
@@ -199,8 +216,6 @@ class UDFRunner : public ServiceImplBase {
     }
     const std::string obj(jsoptions["object"][0].asString());
     const std::string name(jsoptions["name"][0].asString());
-
-    std::cout << obj << ", " << name << std::endl;
 
     // validate (obj, name) pair
     bool valid = false;
