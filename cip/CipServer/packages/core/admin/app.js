@@ -15,12 +15,12 @@ Admin.register(function(app, auth, database, circles) {
 
     var icons = 'admin/assets/img/icons/';
 
-    Admin.menus.add({
-        title: 'admin settings',
-        link: 'admin settings',
-        roles: ['admin'],
-        menu: 'main'
-    });
+    //Admin.menus.add({
+    //    title: 'admin settings',
+    //    link: 'admin settings',
+    //    roles: ['admin'],
+    //    menu: 'main'
+    //});
     Admin.menus.add({
         title: 'CROWD_MANAGER',
         link: 'crowd',
@@ -28,20 +28,20 @@ Admin.register(function(app, auth, database, circles) {
         icon: icons + 'users.png',
         menu: 'admin'
     });
-    Admin.menus.add({
-        title: 'BRAIN_BUILDER',
-        link: 'brain',
-        roles: ['admin'],
-        icon: icons + 'modules.png',
-        menu: 'admin'
-    });
-    Admin.menus.add({
-        roles: ['admin'],
-        title: 'SETTINGS',
-        link: 'settings',
-        icon: icons + 'settings.png',
-        menu: 'admin'
-    });
+    //Admin.menus.add({
+    //    title: 'BRAIN_BUILDER',
+    //    link: 'brain',
+    //    roles: ['admin'],
+    //    icon: icons + 'modules.png',
+    //    menu: 'admin'
+    //});
+    //Admin.menus.add({
+    //    roles: ['admin'],
+    //    title: 'SETTINGS',
+    //    link: 'settings',
+    //    icon: icons + 'settings.png',
+    //    menu: 'admin'
+    //});
 
     Admin.aggregateAsset('css', 'admin.css');
     Admin.aggregateAsset('js', '../lib/ng-clip/src/ngClip.js', {

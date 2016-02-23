@@ -2,9 +2,9 @@
 
 angular.module('mean.i18n').config(['$stateProvider',
   function($stateProvider) {
-    $stateProvider.state('i18n example page', {
-      url: '/i18n/example',
-      templateUrl: 'i18n/views/index.html'
+    $stateProvider.state('locales example page', {
+      url: '/locales/example',
+      templateUrl: 'locales/views/index.html'
     });
   }
 ]);

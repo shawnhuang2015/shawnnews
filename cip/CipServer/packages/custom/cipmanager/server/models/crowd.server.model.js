@@ -64,6 +64,10 @@ var CrowdSchema = new Schema({
                     required: true,
                     trim: true
                 },
+                objectCategory: {
+                    type: String,
+                    required: true
+                },
                 objectType: {
                     type: String,
                     required: true

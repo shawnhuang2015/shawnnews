@@ -23,6 +23,13 @@ angular.module('mean.cipmanager').config(['$stateProvider',
           requiredCircles : {
             circles: ['admin']
           }
+        })
+        .state('user list', {
+            url: '/crowd/:crowdName/userlist',
+            templateUrl: '/cipmanager/views/userlist.html',
+            requiredCircles : {
+                circles: ['admin']
+            }
         });
   }
 ]);

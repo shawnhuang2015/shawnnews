@@ -20,6 +20,8 @@ Cipmanager.register(function(app, auth, database) {
 
   Cipmanager.aggregateAsset('css', 'cipmanager.css');
 
+  Cipmanager.angularDependencies(['jm.i18next', 'mean.system']);
+
   /**
     //Uncomment to use. Requires meanio@0.3.7 or above
     // Save settings with callback

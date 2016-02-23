@@ -22,7 +22,6 @@ SystemPackage.register(function(app, auth, database, circles) {
   SystemPackage.aggregateAsset('css', 'common.css');
   SystemPackage.angularDependencies(['ui.router', 'mean-factory-interceptor']);
   
-
   // The middleware in config/express will run before this code
 
   // Set views path, template engine and default layout

@@ -1,0 +1,103 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="initUserList()">
+
+    <fieldset>
+        <!-- Show -->
+        <legend>条件列表</legend>
+
+        <table class="table table-hover">
+            <h5>Ontology</h5>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>标签体系</th>
+                <th>标签</th>
+                <th>逻辑</th>
+                <th>覆盖人数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
+                <td>{{$index+1}}</td>
+                <td>{{condition.type}}</td>
+                <td>{{condition.factor}}</td>
+                <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
+                    权重{{condition.operator}}{{condition.weight}}
+                </td>
+                <td ng-if="condition.operator=='dislike' || condition.operator=='like'">{{condition.operator}}</td>
+                <td>{{condition.count}}</td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-hover">
+            <h5>Behavior</h5>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>动作</th>
+                <th>对象类别</th>
+                <th>对象类型</th>
+                <th>对象</th>
+                <th>发生次数</th>
+                <th>发生时间</th>
+                <th>覆盖人数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="condition in crowdDetail.selector.behavior">
+                <td>{{$index+1}}</td>
+                <td>{{condition.action}}</td>
+                <td>{{condition.objectCategory}}</td>
+                <td>{{condition.objectType}}</td>
+                <td>{{condition.objectId}}</td>
+                <td>{{condition.operator}} {{condition.value}}次</td>
+                <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
+                <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
+                <td>{{condition.count}}</td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{crowdDetail.count}}人</h5></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>用户列表明细</legend>
+        <div class="col-md-6">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>UID</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="user in userList">
+                <td>{{$index+1}}</td>
+                <td>{{user}}</td>
+                <td>
+                        <span>
+                          <button class="btn btn-info btn-xs">探索此用户
+                          </button>
+                        </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </fieldset>
+
+    <div class="col-md-offset-2 row">
+        <uib-pagination boundary-links="true" total-items="userCount" ng-model="currentUserListPage" class="pagination-sm" ng-change="pageUserListChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+
+        </uib-pagination>
+    </div>
+    <div class="col-md-2">
+        <button mean-token="'create-c-crowd'" data-ng-click="" class="btn btn-info btn-block">下载UID集合
+        </button>
+    </div>
+</section>

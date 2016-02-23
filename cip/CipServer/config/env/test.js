@@ -13,7 +13,7 @@ module.exports = {
     format: 'common'
   },
   app: {
-    name: 'MEAN - A Modern Stack - Test'
+    name: 'CIP - A Modern Customer Intelligence Platform'
   },
   strategies: {
     local: {
