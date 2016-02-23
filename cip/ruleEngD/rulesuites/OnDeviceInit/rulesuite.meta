@@ -4,7 +4,7 @@ resolution: ALL
 # supressed resolution: MW
 #Pri is only meaningful in case resolution is HPW
 pri:
--   r1
+-   r1_same_imsi_finger
 checkpoint: OnDeviceInit
 owner:  Demo
 
