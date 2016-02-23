@@ -52,5 +52,20 @@
       "request_filter": "WrapPayloadFilter",
       "summary": "json format definition of semantic layer."
     }
+  },
+  "ontology_import": {
+    "POST": {
+      "function": "ontology_import",
+      "parameters": {
+        "object": {
+          "type": "TYPENAME"
+        },
+        "name": {
+          "type": "STRING"
+        }
+      },
+      "request_filter": "WrapPayloadFilter",
+      "summary": "json format ontology tree."
+    }
   }
 }
