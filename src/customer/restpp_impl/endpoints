@@ -95,5 +95,17 @@
       "request_filter":"ImportTree",
       "summary": "load the tree."
     }
+  },
+  "user_search": {
+    "POST": {
+      "function": "user_search",
+      "parameters": {
+        "limit": {
+          "type": "UINT32",
+          "min_count": 0
+        }
+      },
+      "request_filter": "UserSearchFilter"
+    }
   }
 }
