@@ -174,6 +174,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       }
       $scope.object_category = [];
       $scope.factors.objectCategory = '';
+      $scope.factors.objectId = '';
+      $scope.object_id = [];
       angular.forEach($scope.ontology_data.behaviour, function(val){
         if(val.name == nowSelected) {
           angular.forEach(val.object, function(object) {
@@ -187,15 +189,17 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       if(!nowSelected){
         return;
       }
-      $scope.factors.object_id = '';
+      $scope.factors.objectId = '';
+      $scope.object_id = [];
       angular.forEach($scope.ontology_data.object_ontology, function(val){
         if(val.object == nowSelected) {
-          $scope.object_id = [];
-          angular.forEach(val.ontologies, function(ontology) {
-            angular.forEach($scope.ontology_data.ontology, function(val){
-              if(ontology == nowSelected) {
-                $scope.traverseTree(val.tree, function(itemList) {
-                  $scope.object_id.push(itemList);
+          angular.forEach(val.ontology, function(ontology) {
+            angular.forEach($scope.ontology_data.ontology, function(ontology_val){
+              if(ontology.name == ontology_val.name) {
+                $scope.traverseTree(ontology_val.tree, function(itemList) {
+                  angular.forEach(itemList, function(item) {
+                    $scope.object_id.push(item);
+                  });
                 });
               }
             });

@@ -68,7 +68,8 @@
                 </div>
                 <div class="col-md-2"
                      ng-if="factors.condition_type == 'ontology' && factors.operator != 'like' && factors.operator != 'dislike'">
-                    <input name="weight" type="number" min=0 max=1 class="form-control" ng-model="factors.weight" placeholder="权重(0-1范围之间)">
+                    <input name="weight" type="number" min=0 max=1 class="form-control" ng-model="factors.weight"
+                           placeholder="权重(0-1范围之间)">
                 </div>
 
                 <!-- For behavior -->
@@ -79,28 +80,30 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && object_category.length>0">
                     <ui-select ng-model="factors.objectCategory" append-to-body="'true'">
                         <ui-select-match placeholder="对象分类">{{factors.objectCategory}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_category | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && object_category.length>0">
                     <ui-select ng-model="factors.objectType" append-to-body="'true'">
                         <ui-select-match placeholder="对象类型">{{factors.objectType}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_type | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category'">
+                <div class="col-md-2"
+                     ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category' && object_category.length>0">
                     <ui-select ng-model="factors.objectId" append-to-body="'true'">
                         <ui-select-match placeholder="对象值">{{factors.objectId}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_id | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType != 'Category'">
+                <div class="col-md-2"
+                     ng-if="factors.condition_type == 'behavior' && factors.objectType != 'Category' && object_category.length>0">
                     <input name="item_id" type="text" class="form-control" ng-model="factors.objectId"
                            placeholder="Item Id">
                 </div>
@@ -133,9 +136,10 @@
                         <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
                                ng-model="st" is-open="popup1.opened" min-date="minDate" max-date="maxDate"
                                datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                               close-text="Close" alt-input-formats="altInputFormats" />
+                               close-text="Close" alt-input-formats="altInputFormats"/>
                           <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-click="open1()"><i
+                                        class="glyphicon glyphicon-calendar"></i></button>
                           </span>
                     </p>
                 </div>
@@ -144,9 +148,10 @@
                         <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
                                ng-model="et" is-open="popup2.opened" min-date="minDate" max-date="maxDate"
                                datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-                               close-text="Close" alt-input-formats="altInputFormats" />
+                               close-text="Close" alt-input-formats="altInputFormats"/>
                         <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-click="open2()"><i
+                                        class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </p>
                 </div>
@@ -219,7 +224,9 @@
                     <td>{{condition.objectType}}</td>
                     <td>{{condition.objectId}}</td>
                     <td>{{condition.operator}} {{condition.value}}次</td>
-                    <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
+                    <td ng-if="condition.timeType=='absolute'">{{condition.startTime |
+                        date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}
+                    </td>
                     <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
                     <td>{{condition.count}}</td>
                     <td>
@@ -238,10 +245,13 @@
 
         <div class="form-group">
             <div class="col-md-offset-3 col-md-3">
-                <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block">保存人群</button>
+                <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid"
+                        class="btn btn-success btn-block">保存人群
+                </button>
             </div>
             <div class="col-md-3">
-                <a mean-token="'create-save'" type="button" class="btn btn-success btn-block" ng-href="/crowd/{{crowdDetail.crowdName}}/userlist">
+                <a mean-token="'create-save'" type="button" class="btn btn-success btn-block"
+                   ng-href="/crowd/{{crowdDetail.crowdName}}/userlist">
                     查看/下载UID集合
                 </a>
             </div>

@@ -79,28 +79,28 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && object_category.length>0">
                     <ui-select ng-model="factors.objectCategory" append-to-body="'true'">
                         <ui-select-match placeholder="对象分类">{{factors.objectCategory}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_category | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && object_category.length>0">
                     <ui-select ng-model="factors.objectType" append-to-body="'true'">
                         <ui-select-match placeholder="对象类型">{{factors.objectType}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_type | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category' && object_category.length>0">
                     <ui-select ng-model="factors.objectId" append-to-body="'true'">
                         <ui-select-match placeholder="对象值">{{factors.objectId}}</ui-select-match>
                         <ui-select-choices repeat=" x in object_id | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType != 'Category'">
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType != 'Category' && object_category.length>0">
                     <input name="item_id" type="text" class="form-control" ng-model="factors.objectId"
                            placeholder="Item Id">
                 </div>
