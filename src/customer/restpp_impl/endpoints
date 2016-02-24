@@ -67,5 +67,17 @@
        "response_filter":"PostOntologyTree",
       "summary": "json format ontology tree."
     }
+  },
+  "user_search": {
+    "POST": {
+      "function": "user_search",
+      "parameters": {
+        "limit": {
+          "type": "UINT32",
+          "min_count": 0
+        }
+      },
+      "request_filter": "UserSearchFilter"
+    }
   }
 }

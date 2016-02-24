@@ -62,6 +62,8 @@ class UDFRunner : public ServiceImplBase {
       return SemanticDef(request);
     } else if (request.request_function_ == "ontology_import") {
       return OntologyImport(request);
+    } else if (request.request_function_ == "user_search") {
+      return RunUDF_UserSearch(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -100,6 +102,18 @@ class UDFRunner : public ServiceImplBase {
     }
     request.outputwriter_->WriteEndObject();
     request.output_idservice_vids.push_back(local_start);
+    return true;
+  }
+
+  bool RunUDF_UserSearch(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+    Json::Value& jsoptions = request.jsoptions_;
+    std::cout << jsoptions.toStyledString() << std::endl;
+    std::cout << request.request_data_ << std::endl;
+    uint32_t limit = std::numeric_limits<uint32_t>::max(); 
+    if (jsoptions.isMember("limit") && jsoptions["limit"].size() > 0) {
+        limit = jsoptions["limit"][0].asUInt();
+    }
+
     return true;
   }
 
