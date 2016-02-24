@@ -88,20 +88,27 @@ def create_schema_change(bs_path, ss_path, sc_path):
       edges.append(add_edge(False, etype, srcv, tgtv, [{'name': 'weight', 'dtype': 'float', 'default': 1.0}]))
 
   # create schema change job script
-  with open(sc_path, 'w') as fp:
+  with open(sc_path + '.vertex', 'w') as fp:
     lines = [
-        'drop all',
-        '@{}'.format(bs_path),
-        'create schema_change job sc for graph cip {',
+        'create schema_change job sc_vertex for graph cip {',
         '\n'.join(vertices),
+        '}',
+        'run job sc_vertex'
+      ]
+    fp.write('\n'.join(lines))
+
+  with open(sc_path + '.edge', 'w') as fp:
+    lines = [
+        'create schema_change job sc_edge for graph cip {',
         '\n'.join(edges),
         '}',
-        'run job sc'
+        'run job sc_edge'
       ]
     fp.write('\n'.join(lines))
 
 def run_schema_change(sc_path):
-  os.system(GSQL_PATH + ' ' + sc_path)
+  os.system(GSQL_PATH + ' ' + sc_path + '.vertex')
+  os.system(GSQL_PATH + ' ' + sc_path + '.edge')
 
 
 if __name__ == '__main__':

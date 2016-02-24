@@ -28,7 +28,7 @@ const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
 const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
-const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/run.sh";
+const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
 
 class UDFRunner : public ServiceImplBase {
  public:
