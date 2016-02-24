@@ -87,15 +87,17 @@ extern "C" {
 
       // upsert the root of tree
       attr.SetString("name", name);
-      std::string id = name;
-      if (! gsql_request->UpsertVertex(attr, vtype, id, msg)) {
+      std::string root_id = name;
+      if (! gsql_request->UpsertVertex(attr, vtype, root_id, msg)) {
         gsql_request->Respond("fail to upsert vertex, " + msg);
         return;
       }
 
       // upsert tree
       std::string pref = "";
+      std::string parent_id = root_id;
       BOOST_FOREACH (const std::string &f, fields) {
+        // upsert vertex
         attr.Clear();
         attr.SetString("name", f);
         std::string id = pref + f;
@@ -103,6 +105,16 @@ extern "C" {
           gsql_request->Respond("fail to upsert vertex, " + msg);
           return;
         }
+
+        // upsert edge
+        attr.Clear();
+        if (! gsql_request->UpsertEdge(attr, vtype, parent_id, down_etype, vtype, id, msg) ||
+            ! gsql_request->UpsertEdge(attr, vtype, parent_id, up_etype, vtype, id, msg)) {
+          gsql_request->Respond("fail to upsert edge, " + msg);
+          return;
+        }
+
+        parent_id = id;
         pref += f;
         pref += ".";
       }
