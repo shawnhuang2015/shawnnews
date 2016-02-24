@@ -141,8 +141,12 @@ class UDFRunner : public ServiceImplBase {
           std::string name(payload[ONTO][i].asString());
           one["name"] = name;
           one["vtype"] = ONTO_VTYPE_PREF + name;
-          one["etype"].append(ONTO_ETYPE_PREF_UP + name);
-          one["etype"].append(ONTO_ETYPE_PREF_DOWN + name);
+
+          Json::Value two;
+          two["up"] = ONTO_ETYPE_PREF_UP + name;
+          two["down"] = ONTO_ETYPE_PREF_DOWN + name;
+          one["etype"] = two;
+
           onto.append(one);
         }
         payload[ONTO] = onto;
@@ -249,13 +253,14 @@ class UDFRunner : public ServiceImplBase {
         request.outputwriter_->WriteName("vtype");
         request.outputwriter_->WriteString(onto[i]["vtype"].asString());
 
-        int size1 = onto[i]["etype"].size();
         request.outputwriter_->WriteName("etype");
-        request.outputwriter_->WriteStartArray();
-        for (int j = 0; j < size1; ++j) {
-          request.outputwriter_->WriteString(onto[i]["etype"][j].asString());
-        }
-        request.outputwriter_->WriteEndArray();
+        request.outputwriter_->WriteStartObject();
+        request.outputwriter_->WriteName("up");
+        request.outputwriter_->WriteString(onto[i]["etype"]["up"].asString());
+        request.outputwriter_->WriteName("down");
+        request.outputwriter_->WriteString(onto[i]["etype"]["down"].asString());
+        request.outputwriter_->WriteEndObject();
+
         request.outputwriter_->WriteEndObject();
       }
     }
