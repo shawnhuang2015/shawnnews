@@ -50,17 +50,17 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
     req->params["down_etype"] = std::vector<std::string>();
     req->params["down_etype"].push_back(root["results"]["etype"]["down"].asString());
 
-    std::cout << "params: " << std::endl;
-    typedef std::map<std::string, std::vector<std::string> > map_t;
-    for (map_t::iterator it = req->params.begin(); it != req->params.end(); ++it) {
-      std::cout << it->first << ": ";
-      int size = it->second.size();
-      for (int i = 0; i < size; ++i) {
-        std::cout << it->second[i] << ", ";
-      }
-      std::cout << std::endl;
-    }
-    std::cout << "data: " << req->data << std::endl;
+//    std::cout << "params: " << std::endl;
+//    typedef std::map<std::string, std::vector<std::string> > map_t;
+//    for (map_t::iterator it = req->params.begin(); it != req->params.end(); ++it) {
+//      std::cout << it->first << ": ";
+//      int size = it->second.size();
+//      for (int i = 0; i < size; ++i) {
+//        std::cout << it->second[i] << ", ";
+//      }
+//      std::cout << std::endl;
+//    }
+//    std::cout << "data: " << req->data << std::endl;
 
     return NULL;
   } else {

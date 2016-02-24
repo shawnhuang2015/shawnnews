@@ -66,8 +66,10 @@ def create_schema_change(bs_path, ss_path, sc_path):
     vertices.append(add_vertex(vtype, {}))
 
     # NOTE: all etype assumed to be DIRECTED
-    for etype in onto['etype']:
-      edges.append(add_edge(True, etype, vtype, vtype, {}))
+    etype = onto['etype']['up']
+    edges.append(add_edge(True, etype, vtype, vtype, {}))
+    etype = onto['etype']['down']
+    edges.append(add_edge(True, etype, vtype, vtype, {}))
 
     mapping[onto['name']] = {
         'vtype': onto['vtype'],
