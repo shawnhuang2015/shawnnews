@@ -107,5 +107,16 @@
       },
       "request_filter": "UserSearchFilter"
     }
+  },
+  "get_ontology": {
+    "GET": {
+      "function": "get_ontology",
+      "parameters": {
+        "name": {
+          "type": "STRING"
+        }
+      },
+      "summary": "export the tree."
+    }
   }
 }

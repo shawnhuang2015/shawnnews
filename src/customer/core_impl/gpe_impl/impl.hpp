@@ -64,6 +64,8 @@ class UDFRunner : public ServiceImplBase {
       return OntologyImport(request);
     } else if (request.request_function_ == "user_search") {
       return RunUDF_UserSearch(serviceapi, request);
+    } else if (request.request_function_ == "get_ontology") {
+      return RunUDF_GetOntology(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -279,6 +281,21 @@ class UDFRunner : public ServiceImplBase {
       }
     }
 
+    return true;
+  }
+
+  bool RunUDF_GetOntology(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
+    if (! request.jsoptions_.isMember("name")) {
+      request.error_ = true;
+      request.message_ += "name missing.";
+      return false;
+    }
+
+    int size = request.jsoptions_["name"].size();
+    for (int i = 0; i < size; ++i) {
+      std::string name = request.jsoptions_["name"][i].asString();
+    }
     return true;
   }
 
