@@ -62,7 +62,7 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
 //    }
 //    std::cout << "data: " << req->data << std::endl;
 
-    return NULL;
+    return req;
   } else {
     user_response->content = str;
     return NULL;
