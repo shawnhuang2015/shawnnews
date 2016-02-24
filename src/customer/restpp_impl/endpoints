@@ -62,10 +62,38 @@
         },
         "name": {
           "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
         }
       },
-       "response_filter":"PostOntologyTree",
-      "summary": "json format ontology tree."
+      "response_filter":"PostOntologyTree",
+      "summary": "json format ontology tree, call import_tree."
+    }
+  },
+  "import_tree": {
+    "POST": {
+      "function": "import_tree",
+      "parameters": {
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "request_filter":"ImportTree",
+      "summary": "load the tree."
     }
   }
 }
