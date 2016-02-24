@@ -37,7 +37,12 @@ var SemanticMetaDataSchema = new Schema({
         object_ontology: [
             {
                 object: String,
-                ontologies: String
+                ontology: [
+                    {
+                        name: String,
+                        etype: String
+                    }
+                ]
             }
         ],
         behaviour: [

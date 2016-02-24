@@ -389,10 +389,10 @@ exports.readMetadata = function(req, res) {
                     ],
 
                     "object_ontology": [
-                        {"object": "pic", "ontologies": ["pic_type", "pic_tag"] },
-                        {"object": "user", "ontologies": ["demo", "interest", "pic_type"] },
-                        {"object": "theme", "ontologies": ["pic_tag"] },
-                        {"object": "channel", "ontologies": ["channel_tag"] }
+                        {"object": "pic", "ontology": [{"name": "pic_type", "etype": "pic_to_pic_type"}, {"name":"pic_tag", "etype": "pic_to_pic_tag"}] },
+                        {"object": "user", "ontology": [{"name": "demo", "etype": "user_to_demo"}, {"name": "interest", "etype": "user_to_interest"}] },
+                        {"object": "theme", "ontology": [{"name": "pic_tag", "etype": "theme_to_pic_tag"}] },
+                        {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
                     ],
                     "behaviour": [
                         {"name": "browse", "subject": [{"vtype": "user", "etype": "user_browse"}],
