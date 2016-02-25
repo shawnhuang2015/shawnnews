@@ -14,7 +14,7 @@ OBJ_ONTO = 'object_ontology'
 #   {"name": "attr1", "dtype": "float"}, 
 #   {"name": "attr2", "dtype": "string", "default": "abc"}
 # ]
-def add_vertex(vtype, vattr):
+def add_vertex(vtype, vattr={'name': 'string'}):
   pat = 'add vertex {} (primary_id id string not null {});'
   attrs = []
   for i in vattr:
@@ -63,7 +63,7 @@ def create_schema_change(bs_path, ss_path, sc_path):
   # create vertices/edges for ONTOLOGY
   for onto in js[ONTO]:
     vtype = onto['vtype']
-    vertices.append(add_vertex(vtype, {}))
+    vertices.append(add_vertex(vtype))
 
     # NOTE: all etype assumed to be DIRECTED
     etype = onto['etype']['up']

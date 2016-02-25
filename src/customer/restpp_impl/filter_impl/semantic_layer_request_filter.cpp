@@ -109,7 +109,7 @@ extern "C" {
         // upsert edge
         attr.Clear();
         if (! gsql_request->UpsertEdge(attr, vtype, parent_id, down_etype, vtype, id, msg) ||
-            ! gsql_request->UpsertEdge(attr, vtype, parent_id, up_etype, vtype, id, msg)) {
+            ! gsql_request->UpsertEdge(attr, vtype, id, up_etype, vtype, parent_id, msg)) {
           gsql_request->Respond("fail to upsert edge, " + msg);
           return;
         }

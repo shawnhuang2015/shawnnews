@@ -1,0 +1,12 @@
+
+curl -X POST 'http://localhost:9000/semantic_def' -d '{
+  "object": ["user", "pic"],
+  "profile": [],
+  "ontology": ["interest", "demo", "type"],
+  "object_ontology": [
+    {"object": "user", "ontology": ["interest", "demo"]},
+    {"object": "pic", "ontology": ["type"]}
+  ]
+}'
+
+curl -X POST 'http://localhost:9000/ontology_import?object=user&name=demo' --data-binary @demo.csv

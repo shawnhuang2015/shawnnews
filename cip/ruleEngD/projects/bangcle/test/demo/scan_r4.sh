@@ -5,7 +5,7 @@ request_body=$(cat <<-EOF
 {
     "query":"bizEvent=>.project{bizEvent._external_id}  as A >> out",
     "limit":{
-        "A":100
+        "A":1000
     }
 }
 EOF

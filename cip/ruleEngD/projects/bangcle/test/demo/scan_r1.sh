@@ -5,7 +5,7 @@ request_body=$(cat <<-EOF
 {
     "query":"imsi=>.project{imsi._external_id}  as A >> out",
     "limit":{
-        "A":100
+        "A":1000
     }
 }
 EOF
