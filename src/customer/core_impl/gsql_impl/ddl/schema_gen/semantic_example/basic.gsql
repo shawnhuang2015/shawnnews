@@ -1,0 +1,14 @@
+drop all
+
+create vertex user(primary_id id string not null)
+create vertex pic(primary_id id string not null)
+create vertex post(primary_id id string not null)
+
+create undirected edge user_post (from user, to post)
+create undirected edge post_pic (from post, to pic)
+
+create graph cip (*)
+
+clear graph store -HARD
+init graph store for graph cip
+

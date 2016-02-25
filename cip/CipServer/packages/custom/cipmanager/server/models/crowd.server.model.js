@@ -64,19 +64,20 @@ var CrowdSingleSchema = new Schema({
                     required: true,
                     trim: true
                 },
-                cateType: {
+                objectCategory: {
+                    type: String,
+                    enum:['Category','Item'],
+                    required: true
+                },
+                objectType: {
                     type: String,
                     required: true
                 },
-                cateId: {
-                    type: String,
-                    required: true
+                ontologyType: {
+                    type: String
+                    //required: true
                 },
-                itemType: {
-                    type: String,
-                    required: true
-                },
-                itemId: {
+                objectId: {
                     type: String,
                     required: true
                 },

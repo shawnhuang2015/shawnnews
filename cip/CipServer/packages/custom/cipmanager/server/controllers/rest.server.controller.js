@@ -375,8 +375,8 @@ exports.readMetadata = function(req, res) {
                         },
                         {"name": "pic_tag",
                             "tree": [
-                                {"parent": "pic_tag", "children": ["flower", "food"]},
-                                {"parent": "food", "children": ["apple", "orange"]}
+                                {"parent": "pic_tag", "children": ["flower2", "food2"]},
+                                {"parent": "food", "children": ["apple2", "orange2"]}
                             ]
                         },
                         {"name": "channel_tag",
@@ -396,7 +396,7 @@ exports.readMetadata = function(req, res) {
                     ],
                     "behaviour": [
                         {"name": "browse", "subject": [{"vtype": "user", "etype": "user_browse"}],
-                            "object": [{"vtype": "theme", "etype": "browse_theme"}]},
+                            "object": [{"vtype": "theme", "etype": "browse_theme"},{"vtype": "pic", "etype": "post_pic"}]},
                         {"name": "post", "subject": [{"vtype": "user", "etype": "user_post"}],
                             "object": [{"vtype": "pic", "etype": "post_pic"}]},
                         {"name": "visit", "subject": [{"vtype": "user", "etype": "user_visit"}],

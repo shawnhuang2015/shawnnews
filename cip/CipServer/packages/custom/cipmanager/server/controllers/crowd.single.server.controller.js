@@ -86,6 +86,13 @@ exports.read = function(req, res) {
 
 //update
 exports.update = function(req, res) {
+    if (req.error) {
+        console.log(req.error);
+        return res.send({
+            error: true,
+            message: req.error
+        });
+    }
     var crowd = req.crowd;
 
     for (var field in req.body) {

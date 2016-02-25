@@ -101,14 +101,25 @@ exports.read = function(req, res) {
 
 //update
 exports.update = function(req, res) {
+    if (req.error) {
+        console.log(req.error);
+        return res.send({
+            error: true,
+            message: req.error
+        });
+    }
     var crowdGroup = req.crowd;
+    //console.log("crowdGroup:  " + JSON.stringify(crowdGroup));
 
     for (var field in req.body) {
         console.log("field: " + field);
+        //console.log("body value: " + req.body[field]);
+        //console.log("crowdGroup value: " + crowdGroup[field]);
         crowdGroup[field] = req.body[field]
     }
 
     var selector = req.body.selector;
+    console.log('selector = ' + JSON.stringify(selector));
     CrowdSingle.find({crowdName: {$in: selector}}, function(err, crowds) {
         if (err) {
             return res.send({

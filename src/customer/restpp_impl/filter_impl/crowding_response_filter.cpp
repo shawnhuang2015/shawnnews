@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 
-RequestObject* PostOntologyTree(FilterHelper *filter_helper,
+RequestObject* PostOntologyTreeDeprecated(FilterHelper *filter_helper,
           GsqlResponse *gsql_response,
           UserResponse *user_response){
   std::string str(gsql_response->response);
@@ -62,7 +62,7 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
 //    }
 //    std::cout << "data: " << req->data << std::endl;
 
-    return req;
+    return NULL;
   } else {
     user_response->content = str;
     return NULL;
