@@ -12,7 +12,7 @@ angular.module('mean.cipmanager').config(['$stateProvider',
         })
         .state('create crowd', {
           url: '/crowd/create',
-          templateUrl: '/cipmanager/views/create.html',
+          templateUrl: '/cipmanager/views/edit.html',
           requiredCircles : {
             circles: ['admin']
           }
@@ -30,6 +30,27 @@ angular.module('mean.cipmanager').config(['$stateProvider',
             requiredCircles : {
                 circles: ['admin']
             }
-        });
+        })
+        .state('create group', {
+            url: '/crowd/group/',
+            templateUrl: '/cipmanager/views/createGroup.html',
+            requiredCircles : {
+                circles: ['admin']
+            }
+        })
+        .state('edit group', {
+            url: '/crowd/group/:groupName/edit',
+            templateUrl: '/cipmanager/views/createGroup.html',
+            requiredCircles : {
+                circles: ['admin']
+            }
+        })
+        .state('group user list', {
+            url: '/crowd/group/:groupName/userlist',
+            templateUrl: '/cipmanager/views/groupUserlist.html',
+            requiredCircles : {
+                circles: ['admin']
+            }
+        })
   }
 ]);

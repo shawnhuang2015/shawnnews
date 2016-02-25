@@ -64,12 +64,12 @@ var CrowdSingleSchema = new Schema({
                     required: true,
                     trim: true
                 },
-                objectCategory: {
+                objectType: {
                     type: String,
                     enum:['Category','Item'],
                     required: true
                 },
-                objectType: {
+                objectCategory: {
                     type: String,
                     required: true
                 },

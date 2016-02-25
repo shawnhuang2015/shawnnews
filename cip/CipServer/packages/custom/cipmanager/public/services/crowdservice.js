@@ -97,6 +97,50 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         }
 
+        var getGroupCount = function (callback) {
+            $http.get('/api/db/group/crowdcount').
+            success(function(data, status, headers, config) {
+                callback({
+                    success: true,
+                    length: data.results.count
+                });
+            }).
+            error(function(data, status, headers, config) {
+                callback({
+                    success: false
+                });
+            });
+        }
+
+        var createGroup = function(group, callback) {
+            $http.post('/api/db/group/crowd',group).
+            success(function(data, status, headers, config) {
+                callback({
+                    success: true
+                });
+            }).
+            error(function(data, status, headers, config) {
+                callback({
+                    success: false
+                });
+            });
+        }
+
+        var getGroupUserCount = function(factor, callback) {
+            $http.post('/api/rest/group/crowd/count',factor).
+            success(function(data, status, headers, config) {
+                callback({
+                    success: true,
+                    length: data.results.count
+                });
+            }).
+            error(function(data, status, headers, config) {
+                callback({
+                    success: false
+                });
+            });
+        }
+
         return {
             getCount: getCount,
             getUserCount: getUserCount,
@@ -104,6 +148,9 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             getOntology: getOntology,
             getUserCountByFactor: getUserCountByFactor,
             createCrowd: createCrowd,
+            getGroupCount: getGroupCount,
+            createGroup: createGroup,
+            getGroupUserCount: getGroupUserCount,
         };
     }
 ]);

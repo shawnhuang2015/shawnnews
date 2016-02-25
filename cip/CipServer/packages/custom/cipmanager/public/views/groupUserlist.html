@@ -1,0 +1,64 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="initGroupUserList()">
+
+    <fieldset>
+        <!-- Show -->
+        <div class="col-md-12 row">
+            <table class="table table-hover">
+                <h4>人群选择列表</h4>
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>人群名称</th>
+                    <th>覆盖人数</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="crowd in groupDetail.selector">
+                    <td>{{$index+1}}</td>
+                    <td>{{crowd.crowdName}}</td>
+                    <td>{{crowd.count}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{groupDetail.count}}人</h5></div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>用户列表明细</legend>
+        <div class="col-md-6">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>UID</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-ng-repeat="user in userList">
+                <td>{{$index+1}}</td>
+                <td>{{user}}</td>
+                <td>
+                        <span>
+                          <button class="btn btn-info btn-xs">探索此用户
+                          </button>
+                        </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </fieldset>
+
+    <div class="col-md-offset-2 row">
+        <uib-pagination boundary-links="true" total-items="userCount" ng-model="currentUserListPage" class="pagination-sm" ng-change="pageUserListChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+
+        </uib-pagination>
+    </div>
+    <div class="col-md-2">
+        <a mean-token="'create-c-crowd'" target="_blank" href="/api/download/uid.csv" class="btn btn-info btn-block">下载UID集合
+        </a>
+    </div>
+</section>

@@ -1,0 +1,101 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="findGroup()">
+
+    <form name="groupForm" class="form-horizontal" role="form" data-ng-submit="updateGroup(groupForm.$valid)" novalidate>
+        <fieldset>
+            <legend>基本信息</legend>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && groupForm.crowd_name.$invalid }">
+                <label mean-token="'create-group_name'" class="col-md-2 control-label">人群组合名称</label>
+                <div class="col-md-4">
+                    <input name="group_name" type="text" class="form-control" data-ng-model="groupDetail.crowdName"
+                           id="group_name" placeholder="Group Name" required>
+                    <div ng-show="submitted && groupForm.crowd_name.$invalid" class="help-block">
+                        <p ng-show="groupForm.crowd_name.$error.required">Crowd name is required</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
+                <label mean-token="'create-description'" class="col-md-2 control-label">描述</label>
+                <div class="col-md-4">
+                    <input name="description" type="text" class="form-control" data-ng-model="groupDetail.description"
+                           id="description" placeholder="Description" required>
+                    <div ng-show="submitted && groupForm.description.$invalid" class="help-block">
+                        <p ng-show="groupForm.description.$error.required">Description is required</p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+
+    <table class="table table-hover">
+        <h4>选择人群</h4>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>人群名称</th>
+            <th>类型</th>
+            <th>覆盖人数</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="crowd in crowds">
+            <td>{{$index+1}}</td>
+            <td>{{crowd.crowdName}}</td>
+            <td>{{crowd.type}}</td>
+            <td>{{crowd.count}}</td>
+            <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+            <td>
+                <span>
+                    <button class="btn btn-info btn-xs" type="button" data-ng-click="addToList(crowd);">添加</button>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="col-md-offset-4">
+        <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" ng-change="pageChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+
+        </uib-pagination>
+    </div>
+
+    <div class="col-md-offset-1 col-md-10 row" ng-if="groupDetail.selector.length>0">
+        <table class="table table-hover">
+            <caption>人群选择列表</caption>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>人群名称</th>
+                <th>覆盖人数</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="crowd in groupDetail.selector">
+                <td>{{$index+1}}</td>
+                <td>{{crowd.crowdName}}</td>
+                <td>{{crowd.count}}</td>
+                <td>
+                    <span>
+                        <button class="btn btn-danger btn-xs" type="button" data-ng-click="removeFromList($index);">移除</button>
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{groupDetail.count}}人</h5></div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-3">
+            <button mean-token="'create-save'" type="submit" ng-disabled="groupForm.$invalid" class="btn btn-success btn-block">保存组合</button>
+        </div>
+        <div class="col-md-3">
+            <a mean-token="'create-save'" type="button" ng-disabled="groupForm.$invalid" class="btn btn-success btn-block" ng-href="/crowd/group/{{groupDetail.crowdName}}/userlist">
+                查看/下载UID集合
+            </a>
+        </div>
+    </div>
+    </form>
+</section>

@@ -27,7 +27,7 @@ exports.create = function(req, res) {
             console.log("crowds = " + JSON.stringify(crowds));
             console.log("crowdGroup = " + JSON.stringify(body));
 
-            crowdGroup.save(function(err) {
+            crowdGroup.save(function(err)    {
                 if (err) {
                     return res.send({
                         error: true,

@@ -248,7 +248,7 @@
                 <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block">保存人群</button>
             </div>
             <div class="col-md-3">
-                <a mean-token="'create-save'" type="button" class="btn btn-success btn-block" ng-href="/crowd/{{crowdDetail.crowdName}}/userlist">
+                <a mean-token="'create-save'" type="button" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block" ng-href="/crowd/{{crowdDetail.crowdName}}/userlist">
                     查看/下载UID集合
                 </a>
             </div>
