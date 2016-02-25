@@ -9,7 +9,7 @@ var mongoose = require('mongoose'),
 /**
  * Crowd Schema
  */
-var CrowdSchema = new Schema({
+var CrowdSingleSchema = new Schema({
     created: {
         type: Date,
         default: Date.now
@@ -39,7 +39,7 @@ var CrowdSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"],
+                    enum:['>=','<=', ">", "<", "<>", "=", "sub", "like", "dislike"],
                     required: true
                 },
                 weight: {
@@ -64,21 +64,25 @@ var CrowdSchema = new Schema({
                     required: true,
                     trim: true
                 },
-                objectCategory: {
+                cateType: {
                     type: String,
                     required: true
                 },
-                objectType: {
+                cateId: {
                     type: String,
                     required: true
                 },
-                objectId: {
+                itemType: {
+                    type: String,
+                    required: true
+                },
+                itemId: {
                     type: String,
                     required: true
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "="],
+                    enum:['>=','<=', ">", "<", "<>", "=", "sub"],
                     required: true
                 },
                 value: {
@@ -108,4 +112,28 @@ var CrowdSchema = new Schema({
     }
 });
 
-mongoose.model('Crowd', CrowdSchema);
+var CrowdGroupSchema = new Schema({
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    crowdName: {
+        type: String,
+        unique: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: String,
+        enum:['static','dynamic']
+    },
+    count: {
+        type: Number
+    },
+    selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
+});
+
+mongoose.model('CrowdSingle', CrowdSingleSchema);
+mongoose.model('CrowdGroup', CrowdGroupSchema);
