@@ -94,6 +94,13 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
+                <div class="col-md-2" ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category' && object_category.length>0">
+                    <ui-select ng-model="factors.ontologyType" append-to-body="'true'">
+                        <ui-select-match placeholder="ontology类型">{{factors.ontologyType}}</ui-select-match>
+                        <ui-select-choices repeat=" x in behavior_ontology_type | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
                 <div class="col-md-2"
                      ng-if="factors.condition_type == 'behavior' && factors.objectType == 'Category' && object_category.length>0">
                     <ui-select ng-model="factors.objectId" append-to-body="'true'">
@@ -222,7 +229,7 @@
                     <td>{{condition.action}}</td>
                     <td>{{condition.objectCategory}}</td>
                     <td>{{condition.objectType}}</td>
-                    <td>{{condition.objectId}}</td>
+                    <td>{{condition.ontologyType}}/{{condition.objectId}}</td>
                     <td>{{condition.operator}} {{condition.value}}次</td>
                     <td ng-if="condition.timeType=='absolute'">{{condition.startTime |
                         date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}

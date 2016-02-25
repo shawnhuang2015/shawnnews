@@ -1,9 +1,11 @@
 import os
+import time
 from multiprocessing import Process
 from RuleSuiteProcessor import RuleSuiteProcessor
 import sys
-sys.path.append("../rulebase")
-from BizObjBase import BizObjBase
+sys.path.append("..")
+from rulebase.BizObjBase import BizObjBase
+from monitor.Perf import Perf
 
 #TODO: change to config
 defaultTimeOut=10
@@ -22,6 +24,9 @@ class RuleSuiteManager(object):
             self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
 
     def runWithRequest(self, request):
+        # TODO: hard code
+        perf = Perf("192.168.33.70","sla")
+        start = time.time()
         actor =  BizObjBase(request["actor"])
         cp = BizObjBase(request["checkpoint"])
         event  = BizObjBase(request["event"])
@@ -35,6 +40,10 @@ class RuleSuiteManager(object):
         self.processors[cp.name].execute()
         ret = self.processors[cp.name].getResult()
         self.processors[cp.name].clrResult()
+
+        end = time.time()
+        perf.post({"checkpoint":request["checkpoint"]["name"]}, end-start)
+
         return ret
 
 if __name__ == "__main__":

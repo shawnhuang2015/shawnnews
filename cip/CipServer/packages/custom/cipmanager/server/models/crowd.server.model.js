@@ -72,6 +72,10 @@ var CrowdSchema = new Schema({
                     type: String,
                     required: true
                 },
+                ontologyType: {
+                    type: String,
+                    required: true
+                },
                 objectId: {
                     type: String,
                     required: true

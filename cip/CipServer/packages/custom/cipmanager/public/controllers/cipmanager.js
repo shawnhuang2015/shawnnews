@@ -176,6 +176,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       $scope.factors.objectCategory = '';
       $scope.factors.objectId = '';
       $scope.object_id = [];
+      $scope.behavior_ontology_type = [];
       angular.forEach($scope.ontology_data.behaviour, function(val){
         if(val.name == nowSelected) {
           angular.forEach(val.object, function(object) {
@@ -191,18 +192,26 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       }
       $scope.factors.objectId = '';
       $scope.object_id = [];
+      $scope.behavior_ontology_type = [];
       angular.forEach($scope.ontology_data.object_ontology, function(val){
         if(val.object == nowSelected) {
           angular.forEach(val.ontology, function(ontology) {
-            angular.forEach($scope.ontology_data.ontology, function(ontology_val){
-              if(ontology.name == ontology_val.name) {
-                $scope.traverseTree(ontology_val.tree, function(itemList) {
-                  angular.forEach(itemList, function(item) {
-                    $scope.object_id.push(item);
-                  });
-                });
-              }
-            });
+            $scope.behavior_ontology_type.push(ontology.name);
+          });
+        }
+      });
+    });
+
+    $scope.$watch('factors.ontologyType', function(nowSelected){
+      if(!nowSelected){
+        return;
+      }
+      $scope.factors.objectId = '';
+      $scope.object_id = [];
+      angular.forEach($scope.ontology_data.ontology, function(val){
+        if(val.name == nowSelected) {
+          $scope.traverseTree(val.tree, function(itemList) {
+            $scope.object_id = itemList;
           });
         }
       });
