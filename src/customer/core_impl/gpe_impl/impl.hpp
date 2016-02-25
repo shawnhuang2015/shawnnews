@@ -13,6 +13,7 @@
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
+#include "export_ontology_tree.hpp"
 
 using namespace gperun;
 
@@ -31,8 +32,15 @@ const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
 
 class UDFRunner : public ServiceImplBase {
+ private:
+  Json::Value semantic_schema;
+  std::map<std::string, uint32_t> vertex_type_map;
+  std::map<uint32_t, std::string> vertex_type_reverse_map;
+  std::map<std::string, uint32_t> edge_type_map;
+  std::map<uint32_t, std::string> edge_type_reverse_map;
+
  public:
-  UDFRunner() {
+  void Init(ServiceAPI& serviceapi) {
     // check and load semantic schema
     std::ifstream f(SEMANTIC_SCHEMA_PATH.c_str());
     if (f.good()) {
@@ -43,6 +51,25 @@ class UDFRunner : public ServiceImplBase {
         std::cout << "fail to parse semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
       }
       std::cout << "parsed semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+    }
+
+    // create a map: vertex/edge type name to id
+    topology4::TopologyMeta* topology = serviceapi.GetTopologyMeta();
+    uint32_t num_vertex_types = topology->vertextypemeta_.size();
+
+    for (uint32_t i = 0; i < num_vertex_types; ++i) {
+      std::string vertex_type_name = std::string(
+          topology->GetVertexType(i).typename_);
+      vertex_type_map[vertex_type_name] = i;
+      vertex_type_reverse_map[i] = vertex_type_name;
+    }
+
+    uint32_t num_edge_types = topology->edgetypemeta_.size();
+    for (uint32_t i = 0; i < num_edge_types; ++i) {
+      std::string edge_type_name =
+        std::string(topology->GetEdgeType(i).typename_);
+      edge_type_map[edge_type_name] = i;
+      edge_type_reverse_map[i] = edge_type_name;
     }
 
   }
@@ -70,9 +97,6 @@ class UDFRunner : public ServiceImplBase {
     
     return false;  /// not a valid request
   }
-
- private:
-  Json::Value semantic_schema;
 
  private:
   bool RunUDF_KNeighborSize(ServiceAPI& serviceapi,
@@ -295,6 +319,11 @@ class UDFRunner : public ServiceImplBase {
     int size = request.jsoptions_["name"].size();
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
+
+      // run udf to get the tree
+      typedef ExportOntologyTree UDF_t;
+      UDF_t udf(3, 0, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
     }
     return true;
   }
