@@ -1,6 +1,8 @@
 import sys
 sys.path.append("../")
 import json
+sys.path.append("../logging")
+from Decorators import logTxn
 ########  common biz objects #########################
 from rulebase.BizObjBase import BizObjBase
 from rulebase.JsonBizObj import JsonBizObj 
@@ -12,6 +14,7 @@ class GPathConfig(object):
         self.port = port
 
 class GPathBizObj(object):
+    @logTxn("DEBUG GPATH_REST")
     def __init__(self, config, gpath):
         arguments = { "query" : "%s as RESULT >> out" % gpath}
         self.result = RestPostBizObj("http://%s:%s/gpath" % (config.host, config.port), json.dumps(arguments) )

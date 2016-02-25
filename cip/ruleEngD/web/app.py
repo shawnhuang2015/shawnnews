@@ -8,6 +8,8 @@ import json
 sys.path.append("../ruletask")
 from RuleSuiteManager import RuleSuiteManager
 sys.path.append("../rulebase")
+sys.path.append("../monitor")
+import time
 from BizObjBase import BizObjBase
 from RestBizObj import RestBizObj
 from JsonBizObj import JsonBizObj
@@ -17,6 +19,9 @@ from init.Const import REST_BAD_REQ
 from init.Const import REST_INTERNAL_ERROR
 sys.path.append("../logging")
 from Decorators import logTxn
+from Decorators import Performance 
+sys.path.append("..")
+from monitor.Perf import Perf
 
 
 #TODO:config
@@ -25,6 +30,7 @@ ruleRoot="/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites"
 app = Flask(__name__)
 
 rsm = RuleSuiteManager(ruleRoot, 10) 
+perf = Perf("192.168.33.70","sla")
 
 
 def reloadRuleSuite():
@@ -51,6 +57,7 @@ def validateRequest(req):
 
 @app.route('/cip/api/1.0/ruleng', methods = ['POST'])
 @logTxn("API_CALL RULE_EXECUTE")
+@Performance(perf,{"API_CALL":"RULE_EXECUTE"})
 def execute():
     global rsm
     req = json.loads(request.data)
@@ -62,6 +69,9 @@ def execute():
     except Exception as e:
         print e
         return buildRestAck(REST_INTERNAL_ERROR, e.message, e)
+    finally:
+        pass
+
 
 
 ########################Below for test purpose only #######################
