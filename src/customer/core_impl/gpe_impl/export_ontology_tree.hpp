@@ -9,8 +9,10 @@ namespace UDIMPL {
     typedef uint8_t V_VALUE;
     typedef VertexLocalId_t MESSAGE;
 
-    ExportOntologyTree(unsigned int limit, uint32_t vtype_id, JSONWriter* jsonwriter)
-      : SingleActiveBaseUDF(limit), vtype_id_(vtype_id), writer_(jsonwriter) {}
+    ExportOntologyTree(unsigned int limit, uint32_t vtype_id, 
+        uint32_t etype_id, JSONWriter* jsonwriter)
+      : SingleActiveBaseUDF(limit), vtype_id_(vtype_id), 
+        etype_id_(etype_id), writer_(jsonwriter) {}
 
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
       context->SetActiveFlagByType(vtype_id_, true);
@@ -36,6 +38,7 @@ namespace UDIMPL {
 
   private:
     uint32_t vtype_id_;
+    uint32_t etype_id_;
     JSONWriter* writer_;
   };
 }  // namepsace UDIMPL

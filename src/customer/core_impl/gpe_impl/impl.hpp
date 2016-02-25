@@ -284,6 +284,7 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    // TODO(@alan): replaced by GetOntologyVEType
     // get vtype/etype for ontology tree
     const Json::Value &onto = semantic_schema[ONTO];
     size = onto.size();
@@ -302,10 +303,26 @@ class UDFRunner : public ServiceImplBase {
         request.outputwriter_->WriteEndObject();
 
         request.outputwriter_->WriteEndObject();
+        break;
       }
     }
 
     return true;
+  }
+
+  int GetOntologyVEType(const std::string &name, std::map<std::string, std::string> &rez) {
+    // get vtype/etype for ontology tree
+    const Json::Value &onto = semantic_schema[ONTO];
+    int size = onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (onto[i]["name"].asString() == name) {
+        rez["vtype"] = onto[i]["vtype"].asString();
+        rez["up_etype"] = onto[i]["etype"]["up"].asString();
+        rez["down_etype"] = onto[i]["etype"]["down"].asString();
+        return 0;
+      }
+    }
+    return -1;
   }
 
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
@@ -319,10 +336,27 @@ class UDFRunner : public ServiceImplBase {
     int size = request.jsoptions_["name"].size();
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
+      std::map<std::string, std::string> rez;
+      if (! GetOntologyVEType(name, rez)) {
+        request.error_ = true;
+        request.message_ += name + " not found in " + ONTO;
+        return false;
+      }
+
+      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
+          (vertex_type_map.find(rez["up_etype"]) == vertex_type_map.end()) ||
+          (vertex_type_map.find(rez["down_etype"]) == vertex_type_map.end())) {
+        request.error_ = true;
+        request.message_ += "vtype or etype not found in graph meta.";
+        return false;
+      }
+
+      uint32_t vtype_id = vertex_type_map[rez["vtype"]];
+      uint32_t down_etype_id = edge_type_map[rez["down_etype"]];
 
       // run udf to get the tree
       typedef ExportOntologyTree UDF_t;
-      UDF_t udf(3, 0, request.outputwriter_);
+      UDF_t udf(1, vtype_id, down_etype_id, request.outputwriter_);
       serviceapi.RunUDF(&request, &udf);
     }
     return true;
