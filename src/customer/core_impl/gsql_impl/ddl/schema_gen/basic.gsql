@@ -10,5 +10,5 @@ create undirected edge post_pic (from post, to pic)
 create graph cip (*)
 
 clear graph store -HARD
-init graph store for cip
+init graph store for graph cip
 
