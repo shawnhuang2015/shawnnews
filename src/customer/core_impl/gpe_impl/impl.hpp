@@ -333,7 +333,13 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    JSONWriter* writer_ = request.outputwriter_;
     int size = request.jsoptions_["name"].size();
+
+    writer_->WriteStartArray();
+    typedef std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > tree_t;
+    tree_t tree;
+
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
       std::map<std::string, std::string> rez;
@@ -356,9 +362,35 @@ class UDFRunner : public ServiceImplBase {
 
       // run udf to get the tree
       typedef ExportOntologyTree UDF_t;
-      UDF_t udf(1, vtype_id, down_etype_id, request.outputwriter_);
+
+      tree.clear();
+      UDF_t udf(1, vtype_id, down_etype_id, tree);
       serviceapi.RunUDF(&request, &udf);
+
+      if (tree.size() > 0) {
+        writer_->WriteStartObject();
+        writer_->WriteName("name");
+        writer_->WriteString(name);
+        writer_->WriteName("tree");
+        writer_->WriteStartArray();
+        for (tree_t::iterator it = tree.begin(); it != tree.end(); ++it) {
+          writer_->WriteStartObject();
+          writer_->WriteName("parent");
+          writer_->WriteMarkVId(it->first);
+          writer_->WriteName("children");
+          writer_->WriteStartArray();
+          for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
+               it1 != it->second.end(); ++it1) {
+            writer_->WriteMarkVId(*it1);
+          }
+          writer_->WriteEndArray();
+          writer_->WriteEndObject();
+        }
+        writer_->WriteEndArray();
+        writer_->WriteEndObject();
+      }
     }
+    writer_->WriteEndArray();
     return true;
   }
 
