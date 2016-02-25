@@ -24,7 +24,7 @@ exports.getCrowdDetailByPost = function(req, res) {
             error: true,
             message: "Need Parameters 'selector'"
         });
-    } else if (!utility.validateSelector(req.body)) {
+    } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
             message: "wrong 'selector'"
@@ -42,6 +42,46 @@ exports.getCrowdDetailByPost = function(req, res) {
         }
     });
     */
+    res.send({
+        "results": {
+            "count": 3,
+            "userIds": ["user_1", "user_2", "user_3"]
+        },
+        "error": false,
+        "message": ""
+    });
+}
+
+/*
+ Get the user id list which belong to the multi-crowd.
+ Method: POST
+ Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
+ Output: 1. user id list 2. user count
+ */
+exports.getGroupCrowdDetailByPost = function(req, res) {
+    if (!req.body["selector"]) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelectorArray(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+    var selector = JSON.stringify(req.body);
+    /*
+     utility.post('getCrowd', '', selector, function(err, result) {
+     if (err) {
+     return res.send({
+     message: err.message
+     });
+     } else {
+     return res.send(result);
+     }
+     });
+     */
     res.send({
         "results": {
             "count": 3,
@@ -99,7 +139,7 @@ exports.getCrowdCountByPost = function(req, res) {
             error: true,
             message: "Need Parameters 'selector'"
         });
-    } else if (!utility.validateSelector(req.body)) {
+    } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
             message: "wrong 'selector'"
@@ -116,6 +156,43 @@ exports.getCrowdCountByPost = function(req, res) {
             return res.send(result);
         }
     }); */
+    res.send({
+        "results": {
+            "count": 3
+        },
+        "error": false,
+        "message": ""
+    });
+}
+
+/*
+ Get the number of users which belong to the multi-crowd.
+ Method: POST
+ Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
+ */
+exports.getGroupCrowdCountByPost = function(req, res) {
+    if (!req.body["selector"]) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelectorArray(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+    var selector = JSON.stringify(req.body);
+    /*
+     utility.post('getCrowdCount', '', selector, fucntion(err, result){
+     if (err) {
+     return res.send({
+     message: err.message
+     });
+     } else {
+     return res.send(result);
+     }
+     }); */
     res.send({
         "results": {
             "count": 3
@@ -170,7 +247,7 @@ exports.createCrowd = function(req, res) {
             error: true,
             message: "Need Parameters 'selector'"
         });
-    } else if (!utility.validateSelector(req.body)) {
+    } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
             message: "wrong 'selector'"
@@ -211,7 +288,7 @@ exports.crowdSampleByPost = function(req, res) {
             error: true,
             message: "Need Parameters 'selector', 'count'"
         });
-    } else if (!utility.validateSelector(req.body)) {
+    } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
             message: "wrong 'selector'"

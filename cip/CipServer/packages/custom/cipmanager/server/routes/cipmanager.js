@@ -15,6 +15,10 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.route("/api/rest/crowd/count").get(rest.getCrowdCountByGet).post(rest.getCrowdCountByPost);
 
+  app.route("/api/rest/group/crowd/detail").get(rest.getCrowdDetailByGet).post(rest.getGroupCrowdDetailByPost);
+
+  app.route("/api/rest/group/crowd/count").get(rest.getCrowdCountByGet).post(rest.getGroupCrowdCountByPost);
+
   app.route("/api/rest/crowd/delete").get(rest.deleteCrowd);
 
   app.route("/api/rest/crowd/create").post(rest.createCrowd);
