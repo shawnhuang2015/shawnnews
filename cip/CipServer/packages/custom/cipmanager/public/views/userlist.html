@@ -50,7 +50,7 @@
                 <td>{{condition.action}}</td>
                 <td>{{condition.objectCategory}}</td>
                 <td>{{condition.objectType}}</td>
-                <td>{{condition.objectId}}</td>
+                <td>{{condition.ontologyType}}/{{condition.objectId}}</td>
                 <td>{{condition.operator}} {{condition.value}}次</td>
                 <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
                 <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
