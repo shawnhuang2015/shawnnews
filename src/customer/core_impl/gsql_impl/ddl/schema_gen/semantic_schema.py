@@ -14,11 +14,11 @@ OBJ_ONTO = 'object_ontology'
 #   {"name": "attr1", "dtype": "float"}, 
 #   {"name": "attr2", "dtype": "string", "default": "abc"}
 # ]
-def add_vertex(vtype, vattr={'name': 'string'}):
+def add_vertex(vtype, vattr={'name': 'name', 'dtype': 'string'}):
   pat = 'add vertex {} (primary_id id string not null {});'
   attrs = []
   for i in vattr:
-    if not all('name' in i, 'dtype' in i):
+    if not all(('name' in i, 'dtype' in i)):
       continue
     j = [i['name'], i['dtype']]
     if 'default' in i:
