@@ -50,7 +50,7 @@
                 <td>{{condition.action}}</td>
                 <td>{{condition.objectCategory}}</td>
                 <td>{{condition.objectType}}</td>
-                <td>{{condition.objectId}}</td>
+                <td>{{condition.ontologyType}}/{{condition.objectId}}</td>
                 <td>{{condition.operator}} {{condition.value}}次</td>
                 <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
                 <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
@@ -97,7 +97,7 @@
         </uib-pagination>
     </div>
     <div class="col-md-2">
-        <button mean-token="'create-c-crowd'" data-ng-click="" class="btn btn-info btn-block">下载UID集合
-        </button>
+        <a mean-token="'create-c-crowd'" target="_blank" href="/api/download/uid.csv" class="btn btn-info btn-block">下载UID集合
+        </a>
     </div>
 </section>

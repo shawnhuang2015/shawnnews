@@ -1,13 +1,15 @@
 'use strict';
-angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','$stateParams','$location', 'Global', '$state', 'Cipmanager', 'CrowdService',
-  function($scope, $stateParams,$location, Global, $state, Cipmanager, CrowdService) {
+angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','$stateParams','$location', 'Global', '$state', 'Cipmanager','Groupmanager', 'CrowdService',
+  function($scope, $stateParams,$location, Global, $state, Cipmanager, Groupmanager, CrowdService) {
 
     //Initial variables
     $scope.page_size = 10;
     $scope.totalItems = 1;
+    $scope.totalGroupItems = 1;
     $scope.currentPage = 1;
+    $scope.currentGroupPage = 1;
     $scope.currentUserListPage = 1;
-
+    $scope.crowdTodoList = [];
     $scope.global = Global;
     $scope.factors = {};
     $scope.package = {
@@ -119,6 +121,33 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       $state.go('create crowd')
     };
 
+    $scope.goToCreateGroup = function () {
+      $state.go('create group')
+    };
+
+    $scope.goToSaveGroup = function () {
+      $state.go('save group')
+    };
+
+    $scope.addToList = function (crowd) {
+      for(var index in $scope.groupDetail.selector){
+        if(crowd == $scope.groupDetail.selector[index]) {
+          return;
+        }
+      }
+      $scope.getGroupUserCount(function(length) {
+        $scope.groupDetail.count = length;
+        $scope.groupDetail.selector.push(crowd)
+      });
+    };
+
+    $scope.removeFromList = function (index) {
+      $scope.getGroupUserCount(function(length) {
+        $scope.groupDetail.count = length;
+        $scope.groupDetail.selector.splice(index, 1);
+      });
+    };
+
     //////////////////////Local function///////////////////////
 
 
@@ -127,8 +156,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       $scope.getCrowdsByPageId($scope.currentPage - 1);
     };
 
+    $scope.pageGroupChanged = function() {
+      $scope.getGroupsByPageId($scope.currentGroupPage - 1);
+    };
+
     $scope.pageUserListChanged = function() {
-      $scope.getUserListByPageId($scope.currentUserListPage - 1);
+      $scope.getUserlistByPageId($scope.currentUserListPage - 1);
     };
 
 
@@ -176,6 +209,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       $scope.factors.objectCategory = '';
       $scope.factors.objectId = '';
       $scope.object_id = [];
+      $scope.behavior_ontology_type = [];
       angular.forEach($scope.ontology_data.behaviour, function(val){
         if(val.name == nowSelected) {
           angular.forEach(val.object, function(object) {
@@ -191,18 +225,26 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       }
       $scope.factors.objectId = '';
       $scope.object_id = [];
+      $scope.behavior_ontology_type = [];
       angular.forEach($scope.ontology_data.object_ontology, function(val){
         if(val.object == nowSelected) {
           angular.forEach(val.ontology, function(ontology) {
-            angular.forEach($scope.ontology_data.ontology, function(ontology_val){
-              if(ontology.name == ontology_val.name) {
-                $scope.traverseTree(ontology_val.tree, function(itemList) {
-                  angular.forEach(itemList, function(item) {
-                    $scope.object_id.push(item);
-                  });
-                });
-              }
-            });
+            $scope.behavior_ontology_type.push(ontology.name);
+          });
+        }
+      });
+    });
+
+    $scope.$watch('factors.ontologyType', function(nowSelected){
+      if(!nowSelected){
+        return;
+      }
+      $scope.factors.objectId = '';
+      $scope.object_id = [];
+      angular.forEach($scope.ontology_data.ontology, function(val){
+        if(val.name == nowSelected) {
+          $scope.traverseTree(val.tree, function(itemList) {
+            $scope.object_id = itemList;
           });
         }
       });
@@ -236,6 +278,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       Cipmanager.query({pageId:0,pageSz:$scope.page_size},function(crowds) {
         $scope.crowds = crowds;
       });
+
+      Groupmanager.query({pageId:0,pageSz:$scope.page_size},function(groups) {
+        $scope.grouplist = groups;
+      });
+
       CrowdService.getCount(function(data) {
         if (data.success) {
           $scope.totalItems = data.length;
@@ -243,15 +290,15 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           $scope.totalItems = 1;
         }
       });
-    };
 
-    $scope.initCreate = function() {
-      $scope.crowdDetail = {};
-      $scope.crowdDetail.selector = {};
-      $scope.crowdDetail.selector.ontology = [];
-      $scope.crowdDetail.selector.behavior = [];
-      $scope.initOntology();
-    }
+      CrowdService.getGroupCount(function(data) {
+        if (data.success) {
+          $scope.totalGroupItems = data.length;
+        } else {
+          $scope.totalGroupItems = 1;
+        }
+      });
+    };
 
     $scope.initUserList = function() {
       $scope.findOne();
@@ -271,19 +318,37 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       });
     };
 
+    $scope.initGroupUserList = function() {
+      $scope.findGroup();
+      CrowdService.getGroupUserList($stateParams.crowdName, 0, $scope.page_size, function(data) {
+        if (data.success) {
+          $scope.userList = data.userList;
+        } else {
+          $scope.userList = [];
+        }
+      });
+    };
+
     //Get crowds by page id
     $scope.getCrowdsByPageId = function(pageId) {
       Cipmanager.query({pageId:pageId,pageSz:$scope.page_size},function(crowds) {
         $scope.crowds = crowds;
       });
-    }
+    };
+
+    //Get groups by page id
+    $scope.getGroupsByPageId = function(pageId) {
+      Groupmanager.query({pageId:pageId,pageSz:$scope.page_size},function(grouplist) {
+        $scope.grouplist = grouplist;
+      });
+    };
 
     //Get userlist by page id
-    $scope.getCrowdsByPageId = function(pageId) {
+    $scope.getUserlistByPageId = function(pageId) {
       CrowdService.getUserList($stateParams.crowdName, pageId, $scope.page_size, function(crowds) {
         $scope.crowds = crowds;
       });
-    }
+    };
 
     //Remove crowd from server
     $scope.remove = function(crowd) {
@@ -294,30 +359,47 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
               $scope.crowds.splice(i, 1);
             }
           }
-          $location.path('crowds');
         });
       }
-    }
+    };
 
     //Get crowd details from server
     $scope.findOne = function() {
-      Cipmanager.get({
-        crowdName: $stateParams.crowdName
-      }, function(crowdDetail) {
-        $scope.crowdDetail = crowdDetail;
-      });
-      $scope.initOntology();
+      if(!$stateParams.crowdName) {
+        $scope.crowdDetail = {};
+        $scope.crowdDetail.selector = {};
+        $scope.crowdDetail.selector.ontology = [];
+        $scope.crowdDetail.selector.behavior = [];
+        $scope.initOntology();
+      } else {
+        Cipmanager.get({
+          crowdName: $stateParams.crowdName
+        }, function(crowdDetail) {
+          $scope.crowdDetail = crowdDetail;
+        });
+        $scope.initOntology();
+      }
     };
 
     //Update crowd info to server
     $scope.update = function(isValid) {
       if (isValid) {
-        var crowd = $scope.crowdDetail;
-
-        crowd.$update(function() {
-          alert("保存成功!");
-          $location.path('crowd/' + crowd.crowdName);
-        });
+        if($stateParams.crowdName) {
+          var crowd = $scope.crowdDetail;
+          crowd.$update(function () {
+            alert("保存成功!");
+            $location.path('crowd/main');
+          });
+        } else {
+          CrowdService.createCrowd($scope.crowdDetail, function(data) {
+            if(data.success) {
+              alert("创建成功!");
+              $location.path('/crowd/'+$scope.crowdDetail.crowdName+'/userlist');
+            } else {
+              alert("创建失败!");
+            }
+          });
+        }
       } else {
         alert("数据存在问题");
         $scope.submitted = true;
@@ -339,8 +421,94 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         alert("数据存在问题");
         $scope.submitted = true;
       }
-
     };
+
+    //Remove group from server
+    $scope.removeGroup = function(group) {
+      if (group) {
+        group.$remove(function(response) {
+          for (var i in $scope.grouplist) {
+            if ($scope.grouplist[i] === group) {
+              $scope.grouplist.splice(i, 1);
+            }
+          }
+        });
+      }
+    };
+
+    //Get group details from server
+    $scope.findGroup = function() {
+      if(!$stateParams.groupName) {
+        $scope.groupDetail = {};
+        $scope.groupDetail.selector = [];
+      } else {
+        Groupmanager.get({
+          crowdName: $stateParams.groupName
+        }, function(groupDetail) {
+          $scope.groupDetail = groupDetail;
+        });
+      }
+
+      Cipmanager.query({pageId:0,pageSz:$scope.page_size},function(crowds) {
+        $scope.crowds = crowds;
+      });
+
+      CrowdService.getCount(function(data) {
+        if (data.success) {
+          $scope.totalItems = data.length;
+        } else {
+          $scope.totalItems = 1;
+        }
+      });
+    };
+
+    //Update group info to server
+    $scope.updateGroup = function(isValid) {
+      if (isValid) {
+        var selectorlist = $scope.groupDetail.selector;
+        $scope.groupDetail.selector = [];
+        $scope.groupDetail.type = 'static';
+        for(var index in selectorlist){
+          $scope.groupDetail.selector.push(selectorlist[index].crowdName);
+          if(selectorlist[index].type == 'dynamic') {
+            $scope.groupDetail.type = 'dynamic';
+          }
+        }
+
+        if($stateParams.groupName) {
+          var group = $scope.groupDetail;
+          group.$update(function () {
+            alert("保存成功!");
+            $location.path('crowd/main');
+          });
+        } else {
+          CrowdService.createGroup($scope.groupDetail, function(data) {
+            if(data.success) {
+              alert("创建成功!");
+              $location.path('/group/crowd/'+$scope.groupDetail.crowdName+'/userlist');
+            } else {
+              alert("创建失败!");
+            }
+          });
+        }
+      } else {
+        alert("数据存在问题");
+        $scope.submitted = true;
+      }
+    };
+
+    $scope.getGroupUserCount = function(callback) {
+      var param = {};
+      param.selector = [];
+      for(var index in $scope.groupDetail.selector){
+        param.selector.push($scope.groupDetail.selector[index].selector);
+      }
+      CrowdService.getGroupUserCount(param, function(data) {
+        if (data.success) {
+          callback(data.length);
+        }
+      });
+    }
 
     //Query ontology
     $scope.initOntology = function() {

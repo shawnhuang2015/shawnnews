@@ -13,6 +13,7 @@
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
+#include "export_ontology_tree.hpp"
 
 using namespace gperun;
 
@@ -31,8 +32,15 @@ const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
 
 class UDFRunner : public ServiceImplBase {
+ private:
+  Json::Value semantic_schema;
+  std::map<std::string, uint32_t> vertex_type_map;
+  std::map<uint32_t, std::string> vertex_type_reverse_map;
+  std::map<std::string, uint32_t> edge_type_map;
+  std::map<uint32_t, std::string> edge_type_reverse_map;
+
  public:
-  UDFRunner() {
+  void Init(ServiceAPI& serviceapi) {
     // check and load semantic schema
     std::ifstream f(SEMANTIC_SCHEMA_PATH.c_str());
     if (f.good()) {
@@ -43,6 +51,25 @@ class UDFRunner : public ServiceImplBase {
         std::cout << "fail to parse semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
       }
       std::cout << "parsed semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+    }
+
+    // create a map: vertex/edge type name to id
+    topology4::TopologyMeta* topology = serviceapi.GetTopologyMeta();
+    uint32_t num_vertex_types = topology->vertextypemeta_.size();
+
+    for (uint32_t i = 0; i < num_vertex_types; ++i) {
+      std::string vertex_type_name = std::string(
+          topology->GetVertexType(i).typename_);
+      vertex_type_map[vertex_type_name] = i;
+      vertex_type_reverse_map[i] = vertex_type_name;
+    }
+
+    uint32_t num_edge_types = topology->edgetypemeta_.size();
+    for (uint32_t i = 0; i < num_edge_types; ++i) {
+      std::string edge_type_name =
+        std::string(topology->GetEdgeType(i).typename_);
+      edge_type_map[edge_type_name] = i;
+      edge_type_reverse_map[i] = edge_type_name;
     }
 
   }
@@ -70,9 +97,6 @@ class UDFRunner : public ServiceImplBase {
     
     return false;  /// not a valid request
   }
-
- private:
-  Json::Value semantic_schema;
 
  private:
   bool RunUDF_KNeighborSize(ServiceAPI& serviceapi,
@@ -260,6 +284,7 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    // TODO(@alan): replaced by GetOntologyVEType
     // get vtype/etype for ontology tree
     const Json::Value &onto = semantic_schema[ONTO];
     size = onto.size();
@@ -278,10 +303,26 @@ class UDFRunner : public ServiceImplBase {
         request.outputwriter_->WriteEndObject();
 
         request.outputwriter_->WriteEndObject();
+        break;
       }
     }
 
     return true;
+  }
+
+  int GetOntologyVEType(const std::string &name, std::map<std::string, std::string> &rez) {
+    // get vtype/etype for ontology tree
+    const Json::Value &onto = semantic_schema[ONTO];
+    int size = onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (onto[i]["name"].asString() == name) {
+        rez["vtype"] = onto[i]["vtype"].asString();
+        rez["up_etype"] = onto[i]["etype"]["up"].asString();
+        rez["down_etype"] = onto[i]["etype"]["down"].asString();
+        return 0;
+      }
+    }
+    return -1;
   }
 
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
@@ -292,10 +333,64 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    JSONWriter* writer_ = request.outputwriter_;
     int size = request.jsoptions_["name"].size();
+
+    writer_->WriteStartArray();
+    typedef std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > tree_t;
+    tree_t tree;
+
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
+      std::map<std::string, std::string> rez;
+      if (! GetOntologyVEType(name, rez)) {
+        request.error_ = true;
+        request.message_ += name + " not found in " + ONTO;
+        return false;
+      }
+
+      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
+          (vertex_type_map.find(rez["up_etype"]) == vertex_type_map.end()) ||
+          (vertex_type_map.find(rez["down_etype"]) == vertex_type_map.end())) {
+        request.error_ = true;
+        request.message_ += "vtype or etype not found in graph meta.";
+        return false;
+      }
+
+      uint32_t vtype_id = vertex_type_map[rez["vtype"]];
+      uint32_t down_etype_id = edge_type_map[rez["down_etype"]];
+
+      // run udf to get the tree
+      typedef ExportOntologyTree UDF_t;
+
+      tree.clear();
+      UDF_t udf(1, vtype_id, down_etype_id, tree);
+      serviceapi.RunUDF(&request, &udf);
+
+      if (tree.size() > 0) {
+        writer_->WriteStartObject();
+        writer_->WriteName("name");
+        writer_->WriteString(name);
+        writer_->WriteName("tree");
+        writer_->WriteStartArray();
+        for (tree_t::iterator it = tree.begin(); it != tree.end(); ++it) {
+          writer_->WriteStartObject();
+          writer_->WriteName("parent");
+          writer_->WriteMarkVId(it->first);
+          writer_->WriteName("children");
+          writer_->WriteStartArray();
+          for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
+               it1 != it->second.end(); ++it1) {
+            writer_->WriteMarkVId(*it1);
+          }
+          writer_->WriteEndArray();
+          writer_->WriteEndObject();
+        }
+        writer_->WriteEndArray();
+        writer_->WriteEndObject();
+      }
     }
+    writer_->WriteEndArray();
     return true;
   }
 

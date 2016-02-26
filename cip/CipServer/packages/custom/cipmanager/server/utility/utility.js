@@ -94,10 +94,9 @@ exports.post = function(endpoint, queryStr, data, cb) {
     req.end();
 }
 
-//validate whether the crowd conditions are correct or not
-exports.validateSelector = function(selector) {
-    var ontology = selector["selector"]["ontology"];
-    var behavior = selector["selector"]["behavior"];
+var validateCondition = function(selector) {
+    var ontology = selector["ontology"];
+    var behavior = selector["behavior"];
 
     if (!ontology || !behavior) {
         console.log("behavior & ontology");
@@ -123,6 +122,24 @@ exports.validateSelector = function(selector) {
     }
 
     return true;
+}
+
+//validate whether the crowd conditions are correct or not [Single]
+exports.validateSelector = function(selector) {
+    return validateCondition(selector);
+}
+
+//validate whether the crowd conditions are correct or not [Array]
+exports.validateSelectorArray = function(selector) {
+    if (selector instanceof Array) {
+        for (var i = 0; i < selector.length; ++i) {
+            if (!validateCondition(selector[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 exports.getErrorMessage = function(err) {

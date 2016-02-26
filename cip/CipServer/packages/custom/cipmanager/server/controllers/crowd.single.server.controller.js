@@ -5,13 +5,14 @@ var utility = require('../utility/utility');
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    Crowd = mongoose.model('Crowd'),
+    CrowdSingle = mongoose.model('CrowdSingle'),
+    CrowdGroup = mongoose.model('CrowdGroup'),
     config = require('meanio').loadConfig(),
     _ = require('lodash');
 
 //create
 exports.create = function(req, res) {
-    var crowd = new Crowd(req.body);
+    var crowd = new CrowdSingle(req.body);
     console.log("crowd = " + JSON.stringify(req.body));
 
     crowd.save(function(err) {
@@ -30,7 +31,7 @@ exports.create = function(req, res) {
 exports.list = function(req, res) {
     var pageId = Number(req.query["pageId"]);
     var pageSz = Number(req.query["pageSz"]);
-    Crowd.find().sort("-created").exec(function(err, crowds) {
+    CrowdSingle.find().sort("-created").exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -49,7 +50,7 @@ exports.list = function(req, res) {
 
 //count
 exports.count = function(req, res) {
-    Crowd.find().sort("-created").exec(function(err, crowds) {
+    CrowdSingle.find().sort("-created").exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -69,7 +70,7 @@ exports.count = function(req, res) {
 
 //read
 exports.crowdByName = function(req, res, next, name) {
-    Crowd.findOne({crowdName: name}, function(err, crowd) {
+    CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
         if (err) {
             req.error = utility.getErrorMessage(err);
         } else {
@@ -85,6 +86,13 @@ exports.read = function(req, res) {
 
 //update
 exports.update = function(req, res) {
+    if (req.error) {
+        console.log(req.error);
+        return res.send({
+            error: true,
+            message: req.error
+        });
+    }
     var crowd = req.crowd;
 
     for (var field in req.body) {
