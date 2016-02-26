@@ -124,5 +124,13 @@
       },
       "summary": "export the tree."
     }
+  },
+  "get_profile": {
+    "GET": {
+      "function": "get_profile",
+      "parameters": {
+      },
+      "summary": "export profile."
+    }
   }
 }
