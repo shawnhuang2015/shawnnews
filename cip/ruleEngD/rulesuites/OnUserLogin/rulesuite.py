@@ -21,6 +21,12 @@ from rulebase.RestBizObj import RestBizObj
 from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
+########   performance   #########################
+sys.path.append("../logging")
+from Decorators import Performance
+from monitor.Perf import Perf
+
+
 #########   customization biz objects ################
 from cust.bangcle.BangcleBizObj import BangcleAcctToBizObj 
 
@@ -47,3 +53,4 @@ def r8_frequent_login(context):
     # TODO: for demo only
     if len(bizEvents.bizEvtList) > 1:
         __W_RULE_RET(context, "ALERT:account %s login exceeds 10 in past 5 minutes with %s times login" % (bizEvt.account, len(bizEvents.bizEvtList)))
+        perf.post({"rule":"r8_frequent_login"}, 1.0)

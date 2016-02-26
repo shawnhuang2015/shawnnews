@@ -48,5 +48,5 @@ request_body_re=$(cat <<-EOF
 EOF
 )
 
-    curl -s -H 'Content-Type:application/json' -X POST "$url_re" -d "$request_body_re" | python -m json.tool | jq '.result.data.r8_frequent_login' 
+    curl -s -H 'Content-Type:application/json' -X POST "$url_re" -d "$request_body_re" | python -m json.tool | jq '.result.data.r1_same_imsi_finger' 
 done

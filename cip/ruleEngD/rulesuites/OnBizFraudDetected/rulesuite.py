@@ -21,8 +21,16 @@ from rulebase.RestBizObj import RestBizObj
 from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
+########   performance   #########################
+sys.path.append("../logging")
+from Decorators import Performance
+from monitor.Perf import Perf
+
 #########   customization biz objects ################
 from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj 
+
+#TODO: move global definition to Perf package itself
+perf = Perf("192.168.33.70","rule_result")
 
 def resolve_conflict(context):
     # RuleConfltSol.default_sol_conflict(context)
@@ -46,3 +54,5 @@ def r4_operation_without_fingerprint(context):
 
     if ret.udids == []:
         __W_RULE_RET(context , "ALERT: operation without fingureprint, bizEvtid:%s" % bizEvt.bizEvtId)
+        # TODO: make it as a rule action
+        perf.post({"rule":"r4_operation_without_fingerprint"}, 1.0)

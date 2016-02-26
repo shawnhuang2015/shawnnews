@@ -21,6 +21,11 @@ from rulebase.RestBizObj import RestBizObj
 from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
+########   performance   #########################
+sys.path.append("../logging")
+from Decorators import Performance
+from monitor.Perf import Perf
+
 #########   customization biz objects ################
 from cust.bangcle.BangcleBizObj import BangcleDevEvtToMacImeiObj
 
@@ -47,4 +52,5 @@ def r1_same_imsi_finger(context):
     # if len(result.imeiList) > 10 or  len(result.macList) > 10:
     # TODO: for demo purpose only
     if len(result.imeiList) > 2 or  len(result.macList) > 2:
-        __W_RULE_RET(context , "ALERT: imsi-%s has more than 10 different eithor imsi:%d or mac:%d in past one day" %(evt.imsi, len(imei),len(mac)))
+        __W_RULE_RET(context , "ALERT: imsi-%s has more than 10 different eithor imsi:%d or mac:%d in past one day" %(evt.imsi, len(result.imeiList),len(result.macList)))
+        perf.post({"rule":"r1_same_imsi_finger"}, 1.0)

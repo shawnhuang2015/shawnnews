@@ -14,12 +14,13 @@ class Perf(object):
         self.poster.write_points(json_body)
 
 if __name__ == "__main__":
-    perf = Perf("192.168.33.70", "sla")
+    perf = Perf("192.168.33.70", "rule_result")
     while True:
 #          perf.post({"checkpoint": "OnDeviceInit"}, random.random())
         #  perf.post({"checkpoint": "OnUserLogin"}, random.random())
         #  perf.post({"checkpoint": "OnBizFraudDetcted"}, random.random())
-        perf.post({}, random.random())
+        # perf.post({}, random.random())
+        perf.post({"rule":"r4_operation_without_fingerprint"}, 5.0)
         time.sleep(1)
 
 
