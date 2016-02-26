@@ -343,7 +343,7 @@ class UDFRunner : public ServiceImplBase {
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
       std::map<std::string, std::string> rez;
-      if (! GetOntologyVEType(name, rez)) {
+      if (GetOntologyVEType(name, rez) != 0) {
         request.error_ = true;
         request.message_ += name + " not found in " + ONTO;
         return false;
