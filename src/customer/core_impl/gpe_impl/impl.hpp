@@ -53,15 +53,22 @@ class UDFRunner : public ServiceImplBase {
       std::cout << "parsed semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
     }
 
+    // load graph meta
+    LoadGraphMeta(serviceapi);
+  }
+
+  void LoadGraphMeta(ServiceAPI &serviceapi) {
     // create a map: vertex/edge type name to id
     topology4::TopologyMeta* topology = serviceapi.GetTopologyMeta();
     uint32_t num_vertex_types = topology->vertextypemeta_.size();
 
+    std::cout << "loading graph meta:" << std::endl;
     for (uint32_t i = 0; i < num_vertex_types; ++i) {
       std::string vertex_type_name = std::string(
           topology->GetVertexType(i).typename_);
       vertex_type_map[vertex_type_name] = i;
       vertex_type_reverse_map[i] = vertex_type_name;
+      std::cout << vertex_type_name << " = " << i << std::endl;
     }
 
     uint32_t num_edge_types = topology->edgetypemeta_.size();
@@ -70,6 +77,7 @@ class UDFRunner : public ServiceImplBase {
         std::string(topology->GetEdgeType(i).typename_);
       edge_type_map[edge_type_name] = i;
       edge_type_reverse_map[i] = edge_type_name;
+      std::cout << edge_type_name << " = " << i << std::endl;
     }
 
   }
@@ -86,7 +94,7 @@ class UDFRunner : public ServiceImplBase {
         return false;
 #endif
     } else if (request.request_function_ == "semantic_def") {
-      return SemanticDef(request);
+      return SemanticDef(serviceapi, request);
     } else if (request.request_function_ == "ontology_import") {
       return OntologyImport(request);
     } else if (request.request_function_ == "user_search") {
@@ -143,7 +151,7 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool SemanticDef(EngineServiceRequest &request) {
+  bool SemanticDef(ServiceAPI &serviceapi, EngineServiceRequest &request) {
     const Json::Value &jsoptions = request.jsoptions_;
 
     if (! jsoptions.isMember("payload")) {
@@ -246,6 +254,10 @@ class UDFRunner : public ServiceImplBase {
     // TODO(@alan):
     // generate/run ddl job via an external script.
     system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str());
+
+    // once schema change, reload graph meta
+    LoadGraphMeta(serviceapi);
+
     return true;
   }
 
@@ -349,13 +361,25 @@ class UDFRunner : public ServiceImplBase {
         return false;
       }
 
-      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
-          (vertex_type_map.find(rez["up_etype"]) == vertex_type_map.end()) ||
-          (vertex_type_map.find(rez["down_etype"]) == vertex_type_map.end())) {
-        request.error_ = true;
-        request.message_ += "vtype or etype not found in graph meta.";
-        return false;
-      }
+//      std::cout << name << ", " << rez["vtype"] << ", " << rez["up_etype"] << ", " << rez["down_etype"] << std::endl;
+//      std::cout << "vertex_type_map" << std::endl;
+//      for (std::map<std::string, uint32_t>::iterator it = vertex_type_map.begin();
+//          it != vertex_type_map.end(); ++it) {
+//        std::cout << it->first << " = " << it->second << std::endl;
+//      }
+//      std::cout << "edge_type_map" << std::endl;
+//      for (std::map<std::string, uint32_t>::iterator it = edge_type_map.begin();
+//          it != edge_type_map.end(); ++it) {
+//        std::cout << it->first << " = " << it->second << std::endl;
+//      }
+//
+//      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
+//          (edge_type_map.find(rez["up_etype"]) == edge_type_map.end()) ||
+//          (edge_type_map.find(rez["down_etype"]) == edge_type_map.end())) {
+//        request.error_ = true;
+//        request.message_ += "vtype or etype not found in graph meta.";
+//        return false;
+//      }
 
       uint32_t vtype_id = vertex_type_map[rez["vtype"]];
       uint32_t down_etype_id = edge_type_map[rez["down_etype"]];
@@ -377,11 +401,14 @@ class UDFRunner : public ServiceImplBase {
           writer_->WriteStartObject();
           writer_->WriteName("parent");
           writer_->WriteMarkVId(it->first);
+          request.output_idservice_vids.push_back(it->first);
+
           writer_->WriteName("children");
           writer_->WriteStartArray();
           for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
                it1 != it->second.end(); ++it1) {
             writer_->WriteMarkVId(*it1);
+            request.output_idservice_vids.push_back(*it1);
           }
           writer_->WriteEndArray();
           writer_->WriteEndObject();
