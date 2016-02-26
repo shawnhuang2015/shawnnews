@@ -236,7 +236,7 @@ class UDFRunner : public ServiceImplBase {
     // let the external script do the diff and run schema change.
  
     // check for "profile", should be present
-    if (payload.isMember(PROF) && payload[PROF].isArray()) {
+    if (payload.isMember(PROF)) {
     } else {
       request.error_ = true;
       request.message_ += PROF + " missing or not array.";
