@@ -253,7 +253,11 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
     // generate/run ddl job via an external script.
-    system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str());
+    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str()) != 0) {
+      request.error_ = true;
+      request.message_ += "fail to do schema change.";
+      return false;
+    }
 
     // once schema change, reload graph meta
     LoadGraphMeta(serviceapi);

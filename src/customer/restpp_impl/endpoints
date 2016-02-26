@@ -113,7 +113,9 @@
       "function": "get_ontology",
       "parameters": {
         "name": {
-          "type": "STRING"
+          "type": "STRING",
+          "min_count": 0,
+          "max_count": 100
         }
       },
       "summary": "export the tree."
