@@ -101,6 +101,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_UserSearch(serviceapi, request);
     } else if (request.request_function_ == "get_ontology") {
       return RunUDF_GetOntology(serviceapi, request);
+    } else if (request.request_function_ == "get_profile") {
+      return RunUDF_GetProfile(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -351,6 +353,7 @@ class UDFRunner : public ServiceImplBase {
 
     JSONWriter* writer_ = request.outputwriter_;
     int size = request.jsoptions_["name"].size();
+    size_t threshold = request.jsoptions_["threshold"][0].asUInt64();
 
     writer_->WriteStartArray();
     typedef std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > tree_t;
@@ -358,32 +361,13 @@ class UDFRunner : public ServiceImplBase {
 
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
+
       std::map<std::string, std::string> rez;
       if (GetOntologyVEType(name, rez) != 0) {
         request.error_ = true;
         request.message_ += name + " not found in " + ONTO;
         return false;
       }
-
-//      std::cout << name << ", " << rez["vtype"] << ", " << rez["up_etype"] << ", " << rez["down_etype"] << std::endl;
-//      std::cout << "vertex_type_map" << std::endl;
-//      for (std::map<std::string, uint32_t>::iterator it = vertex_type_map.begin();
-//          it != vertex_type_map.end(); ++it) {
-//        std::cout << it->first << " = " << it->second << std::endl;
-//      }
-//      std::cout << "edge_type_map" << std::endl;
-//      for (std::map<std::string, uint32_t>::iterator it = edge_type_map.begin();
-//          it != edge_type_map.end(); ++it) {
-//        std::cout << it->first << " = " << it->second << std::endl;
-//      }
-//
-//      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
-//          (edge_type_map.find(rez["up_etype"]) == edge_type_map.end()) ||
-//          (edge_type_map.find(rez["down_etype"]) == edge_type_map.end())) {
-//        request.error_ = true;
-//        request.message_ += "vtype or etype not found in graph meta.";
-//        return false;
-//      }
 
       uint32_t vtype_id = vertex_type_map[rez["vtype"]];
       uint32_t down_etype_id = edge_type_map[rez["down_etype"]];
@@ -392,7 +376,7 @@ class UDFRunner : public ServiceImplBase {
       typedef ExportOntologyTree UDF_t;
 
       tree.clear();
-      UDF_t udf(1, vtype_id, down_etype_id, tree);
+      UDF_t udf(1, vtype_id, down_etype_id, threshold, tree);
       serviceapi.RunUDF(&request, &udf);
 
       if (tree.size() > 0) {
@@ -422,6 +406,11 @@ class UDFRunner : public ServiceImplBase {
       }
     }
     writer_->WriteEndArray();
+    return true;
+  }
+
+  bool RunUDF_GetProfile(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
     return true;
   }
 
