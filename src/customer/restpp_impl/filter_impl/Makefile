@@ -7,12 +7,13 @@ ifndef GSQL_PROJ_HOME:
 endif
 ifneq "$(wildcard $(GSQL_PROJ_HOME)/src/realtime/restpp)" ""
 	JSON_PATH = $(GSQL_PROJ_HOME)/src/third_party/jsoncpp
+	BOOST_PATH = $(GSQL_PROJ_HOME)/src/third_party/boost
 	RESTPP_PATH = $(GSQL_PROJ_HOME)/src/realtime
 else
 	JSON_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/third_party/jsoncpp
 	RESTPP_PATH = $(GSQL_PROJ_HOME)/gdk/gsdk/include/realtime
 endif
-INCLUDE=-I$(JSON_PATH)/include -I$(RESTPP_PATH)
+INCLUDE=-I$(JSON_PATH)/include -I$(RESTPP_PATH) -I$(BOOST_PATH)
 SYS_SRC=$(JSON_PATH)/json_reader.cpp $(JSON_PATH)/json_writer.cpp $(JSON_PATH)/json_value.cpp
 SOURCES=$(wildcard *.cpp)
 OBJECTS=$(SOURCES:.cpp=.o) $(SYS_SRC:.cpp=.o)
