@@ -343,6 +343,21 @@ class UDFRunner : public ServiceImplBase {
     return -1;
   }
 
+  int GetOntologyNameByObject(const std::string &obj, std::set<std::string> &rez) {
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        int size1 = obj_onto[i]["ontology"].size();
+        for (int j = 0; j < size1; ++j) {
+          rez.insert(obj_onto[i]["ontology"][j]["name"].asString());
+        }
+        return 0;
+      }
+    }
+    return -1;
+  }
+
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     if (! request.jsoptions_.isMember("name")) {
@@ -411,6 +426,32 @@ class UDFRunner : public ServiceImplBase {
 
   bool RunUDF_GetProfile(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
+    const Json::Value &prof = semantic_schema[PROF];
+    std::set<std::string> obj;
+
+    if (! prof.isMember("target")) {
+      request.error_ = true;
+      request.message_ += "target missing.";
+      return false;
+    }
+    obj.insert(prof["target"].asString());
+
+    if (prof.isMember("behaviour")) {
+      const Json::Value &beh = prof["behaviour"];
+      int size = beh.size();
+      for (int i = 0; i < size; ++i) {
+        if (beh[i].isMember("object")) {
+          obj.insert(beh[i]["object"]["name"].asString());
+        }
+      }
+    }
+
+    std::set<std::string> onto;
+    for (std::set<std::string>::iterator it = obj.begin();
+        it != obj.end(); ++it) {
+      GetOntologyNameByObject(*it, onto);
+    }
+
     return true;
   }
 
