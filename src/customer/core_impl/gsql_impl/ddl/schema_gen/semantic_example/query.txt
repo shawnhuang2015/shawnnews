@@ -10,3 +10,4 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
 }'
 
 curl -X POST 'http://localhost:9000/ontology_import?object=user&name=demo' --data-binary @demo.csv
+curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=type' --data-binary @type.csv
