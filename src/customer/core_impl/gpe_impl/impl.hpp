@@ -441,11 +441,15 @@ class UDFRunner : public ServiceImplBase {
       int size = beh.size();
       for (int i = 0; i < size; ++i) {
         if (beh[i].isMember("object")) {
-          obj.insert(beh[i]["object"]["name"].asString());
+          int size1 = beh[i]["object"].size();
+          for (int j = 0; j < size1; ++j) {
+            obj.insert(beh[i]["object"][j]["name"].asString());
+          }
         }
       }
     }
 
+    std::cout << "dbg 2" << std::endl;
     std::set<std::string> onto;
     for (std::set<std::string>::iterator it = obj.begin();
         it != obj.end(); ++it) {
