@@ -358,6 +358,18 @@ class UDFRunner : public ServiceImplBase {
     return -1;
   }
 
+  int GetOntologyNameByObject(const std::string &obj, Json::Value &rez) {
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        rez = obj_onto[i];
+        return 0;
+      }
+    }
+    return -1;
+  }
+
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     if (! request.jsoptions_.isMember("name")) {
@@ -424,11 +436,14 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
+  // find all entities in profile,
+  // return all ontologies of entities as well as behaviour def
   bool RunUDF_GetProfile(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     const Json::Value &prof = semantic_schema[PROF];
     std::set<std::string> obj;
 
+    // collect all entities in profile
     if (! prof.isMember("target")) {
       request.error_ = true;
       request.message_ += "target missing.";
@@ -449,13 +464,57 @@ class UDFRunner : public ServiceImplBase {
       }
     }
 
-    std::cout << "dbg 2" << std::endl;
+    // get ontologies of all entities
     std::set<std::string> onto;
     for (std::set<std::string>::iterator it = obj.begin();
         it != obj.end(); ++it) {
       GetOntologyNameByObject(*it, onto);
     }
 
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+
+    // get obj-ontology
+    writer->WriteName("object_ontology");
+    writer->WriteStartArray();
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    for (std::set<std::string>::iterator it = obj.begin();
+        it != obj.end(); ++it) {
+      Json::Value one;
+
+      // TODO(@alan): it's handy to do `writer->WriteJSONContent(one.toStyledString())`,
+      // but the results is not a valid json, since `,` missing (call WriteRaw(",")?), freak me out !!
+      if (GetOntologyNameByObject(*it, one) == 0) {
+        writer->WriteStartObject();
+        writer->WriteName("object");
+        writer->WriteString(*it);
+        writer->WriteName("ontology");
+        std::string s(one["ontology"].toStyledString());
+        writer->WriteJSONContent(s);
+        writer->WriteEndObject();
+      }
+    }
+    writer->WriteEndArray();
+
+    // get ontology trees
+    Json::Value jsoptions;
+    for (std::set<std::string>::iterator it = onto.begin();
+        it != onto.end(); ++it) {
+      jsoptions["name"].append(*it);
+    }
+    jsoptions["threshold"].append(100000);
+    request.jsoptions_ = jsoptions;
+
+    writer->WriteName("ontology");
+    RunUDF_GetOntology(serviceapi, request);
+
+    // get behaviour meta
+    writer->WriteName("behaviour");
+    const Json::Value &beh = semantic_schema["behaviour"];
+    std::string s(beh.toStyledString()); 
+    writer->WriteJSONContent(s);
+
+    writer->WriteEndObject();
     return true;
   }
 
