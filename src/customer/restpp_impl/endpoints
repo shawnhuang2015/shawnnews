@@ -166,10 +166,10 @@
         "ontology_vtype": {
           "type": "STRING"
         },
-        "ontology_up_vtype": {
+        "ontology_up_etype": {
           "type": "STRING"
         },
-        "ontology_down_vtype": {
+        "ontology_down_etype": {
           "type": "STRING"
         },
         "object_ontology_etype": {
