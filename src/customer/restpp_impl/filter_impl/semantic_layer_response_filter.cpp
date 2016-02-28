@@ -64,18 +64,16 @@ RequestObject* SetUserTag(FilterHelper *filter_helper,
   Json::Reader reader;
   Json::Value root;
 
-  std::cout << "SetUserTag" << std::endl;
-
   if (reader.parse(str, root) && (root["error"].asBool() == false)) {
     RequestObject* req = new RequestObject();
     req->method = "POST";
     req->url = "post_user_tag";
 
     UserRequest* user_request = gsql_response->GetUserRequest();
+    std::cout << user_request << std::endl;
 //    req->params = user_request->params;
+    std::cout << user_request->data << std::endl;
     req->data = user_request->data;
-
-    std::cout << "root: " << root << std::endl;
 
     req->params["ontology_vtype"] = std::vector<std::string>();
     req->params["ontology_vtype"].push_back(
