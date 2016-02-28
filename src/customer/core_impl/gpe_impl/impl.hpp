@@ -255,7 +255,8 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
     // generate/run ddl job via an external script.
-    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str()) != 0) {
+//    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str()) != 0) {
+    if (system("bash /tmp/sc.sh") != 0) {
       request.error_ = true;
       request.message_ += "fail to do schema change.";
       return false;
@@ -510,11 +511,13 @@ class UDFRunner : public ServiceImplBase {
 
     // get behaviour meta
     writer->WriteName("behaviour");
-    const Json::Value &beh = semantic_schema["behaviour"];
+    const Json::Value &beh = prof["behaviour"];
     std::string s(beh.toStyledString()); 
     writer->WriteJSONContent(s);
 
     writer->WriteEndObject();
+
+    std::cout << semantic_schema << std::endl;
     return true;
   }
 
