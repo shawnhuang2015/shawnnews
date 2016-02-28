@@ -103,6 +103,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
       return RunUDF_GetProfile(serviceapi, request);
+    } else if (request.request_function_ == "set_user_tag") {
+      return RunUDF_GetProfile(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -268,19 +270,7 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool OntologyImport(EngineServiceRequest& request) {
-    const Json::Value &jsoptions = request.jsoptions_;
-    // lookup `obj_onto' map to find (obj, onto) pair
-    // lookup 'onto' map to find vtype/etype for onto
-    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
-      request.error_ = true;
-      request.message_ += "object or name missing.";
-      return false;
-    }
-    const std::string obj(jsoptions["object"][0].asString());
-    const std::string name(jsoptions["name"][0].asString());
-
-    // validate (obj, name) pair
+  bool ValidateObjectOntology(const std::string &obj, const std::string &name) {
     bool valid = false;
     const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
     int size = obj_onto.size();
@@ -297,7 +287,23 @@ class UDFRunner : public ServiceImplBase {
         break;
       }
     }
-    if (! valid) {
+    return valid;
+  }
+
+  bool OntologyImport(EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    // lookup `obj_onto' map to find (obj, onto) pair
+    // lookup 'onto' map to find vtype/etype for onto
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
+      return false;
+    }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    // validate (obj, name) pair
+    if (! ValidateObjectOntology(obj, name)) {
       request.error_ = true;
       request.message_ += "(" + obj + ", " + name + ") not found in " + OBJ_ONTO;
       return false;
@@ -306,7 +312,7 @@ class UDFRunner : public ServiceImplBase {
     // TODO(@alan): replaced by GetOntologyVEType
     // get vtype/etype for ontology tree
     const Json::Value &onto = semantic_schema[ONTO];
-    size = onto.size();
+    int size = onto.size();
     for (int i = 0; i < size; ++i) {
       if (onto[i]["name"].asString() == name) {
         request.outputwriter_->WriteStartObject();
@@ -516,8 +522,6 @@ class UDFRunner : public ServiceImplBase {
     writer->WriteJSONContent(s);
 
     writer->WriteEndObject();
-
-    std::cout << semantic_schema << std::endl;
     return true;
   }
 

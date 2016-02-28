@@ -132,5 +132,24 @@
       },
       "summary": "export profile."
     }
+  },
+  "set_user_tag": {
+    "POST": {
+      "function": "set_user_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "summary": "set user -> tags."
+    }
   }
 }
