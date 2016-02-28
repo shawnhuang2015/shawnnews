@@ -352,11 +352,12 @@ class UDFRunner : public ServiceImplBase {
 
   int GetObjectOntologyEType(const std::string &obj, const std::string &name, std::string &etype) {
     // get etype of obj-ontology
+    std::cout << semantic_schema << std::endl;
     const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
     int size = obj_onto.size();
     for (int i = 0; i < size; ++i) {
       if (obj_onto[i]["object"].asString() == obj) {
-        const Json::Value &onto = obj_onto[i]["ontology"].size();
+        const Json::Value &onto = obj_onto[i]["ontology"];
         int size1 = onto.size();
         for (int j = 0; j < size1; ++j) {
           if (onto[j]["name"].asString() == name) {
