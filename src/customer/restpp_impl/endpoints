@@ -152,7 +152,39 @@
           "default": "\n"
         }
       },
+      "response_filter": "SetUserTag",
       "summary": "set user -> tags."
+    }
+  },
+  "post_user_tag": {
+    "POST": {
+      "function": "post_user_tag",
+      "parameters": {
+        "object_vtype": {
+          "type": "STRING"
+        },
+        "ontology_vtype": {
+          "type": "STRING"
+        },
+        "ontology_up_vtype": {
+          "type": "STRING"
+        },
+        "ontology_down_vtype": {
+          "type": "STRING"
+        },
+        "object_ontology_etype": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "summary": "do the real POST, set user -> tags."
     }
   }
 }

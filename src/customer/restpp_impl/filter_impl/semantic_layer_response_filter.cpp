@@ -50,17 +50,47 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
     req->params["down_etype"] = std::vector<std::string>();
     req->params["down_etype"].push_back(root["results"]["etype"]["down"].asString());
 
-//    std::cout << "params: " << std::endl;
-//    typedef std::map<std::string, std::vector<std::string> > map_t;
-//    for (map_t::iterator it = req->params.begin(); it != req->params.end(); ++it) {
-//      std::cout << it->first << ": ";
-//      int size = it->second.size();
-//      for (int i = 0; i < size; ++i) {
-//        std::cout << it->second[i] << ", ";
-//      }
-//      std::cout << std::endl;
-//    }
-//    std::cout << "data: " << req->data << std::endl;
+    return req;
+  } else {
+    user_response->content = str;
+    return NULL;
+  }
+}
+
+RequestObject* SetUserTag(FilterHelper *filter_helper,
+          GsqlResponse *gsql_response,
+          UserResponse *user_response){
+  std::string str(gsql_response->response);
+  Json::Reader reader;
+  Json::Value root;
+
+  if (reader.parse(str, root) && (root["error"].asBool() == false)) {
+    RequestObject* req = new RequestObject();
+    req->method = "POST";
+    req->url = "post_user_tag";
+
+    UserRequest* user_request = gsql_response->GetUserRequest();
+//    req->params = user_request->params;
+    req->data = user_request->data;
+
+    std::cout << "root: " << root << std::endl;
+
+    req->params["ontology_vtype"] = std::vector<std::string>();
+    req->params["ontology_vtype"].push_back(
+        root["results"]["ontology"]["vtype"].asString());
+    req->params["ontology_up_etype"] = std::vector<std::string>();
+    req->params["ontology_up_etype"].push_back(
+        root["results"]["ontology"]["etype"]["up"].asString());
+    req->params["ontology_down_etype"] = std::vector<std::string>();
+    req->params["ontology_down_etype"].push_back(
+        root["results"]["ontology"]["etype"]["down"].asString());
+
+    req->params["object_vtype"] = std::vector<std::string>();
+    req->params["object_vtype"].push_back(user_request->params["object"][0]);
+
+    req->params["object_ontology_etype"] = std::vector<std::string>();
+    req->params["object_ontology_etype"].push_back(
+        root["results"]["object_ontology"]["etype"].asString());
 
     return req;
   } else {
