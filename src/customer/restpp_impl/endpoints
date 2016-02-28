@@ -140,6 +140,9 @@
         "object": {
           "type": "STRING"
         },
+        "name": {
+          "type": "STRING"
+        },
         "sep": {
           "type": "STRING",
           "default": ","

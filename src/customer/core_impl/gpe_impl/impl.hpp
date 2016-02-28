@@ -104,7 +104,7 @@ class UDFRunner : public ServiceImplBase {
     } else if (request.request_function_ == "get_profile") {
       return RunUDF_GetProfile(serviceapi, request);
     } else if (request.request_function_ == "set_user_tag") {
-      return RunUDF_GetProfile(serviceapi, request);
+      return SetOntologyTag(request);
     }
     
     return false;  /// not a valid request
@@ -350,6 +350,25 @@ class UDFRunner : public ServiceImplBase {
     return -1;
   }
 
+  int GetObjectOntologyEType(const std::string &obj, const std::string &name, std::string &etype) {
+    // get etype of obj-ontology
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        const Json::Value &onto = obj_onto[i]["ontology"].size();
+        int size1 = onto.size();
+        for (int j = 0; j < size1; ++j) {
+          if (onto[j]["name"].asString() == name) {
+            etype = onto[j]["etype"].asString();
+            return 0;
+          }
+        }
+      }
+    }
+    return -1;
+  }
+
   int GetOntologyNameByObject(const std::string &obj, std::set<std::string> &rez) {
     const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
     int size = obj_onto.size();
@@ -522,6 +541,66 @@ class UDFRunner : public ServiceImplBase {
     writer->WriteJSONContent(s);
 
     writer->WriteEndObject();
+    return true;
+  }
+
+  bool SetOntologyTag(EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    // lookup `obj_onto' map to find (obj, onto) pair
+    // lookup 'onto' map to find vtype/etype for onto
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
+      return false;
+    }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    // validate (obj, name) pair
+    if (! ValidateObjectOntology(obj, name)) {
+      request.error_ = true;
+      request.message_ += "(" + obj + ", " + name + ") not found in " + OBJ_ONTO;
+      return false;
+    }
+
+    // obj-ontology etype
+    std::string etype;
+    if (GetObjectOntologyEType(obj, name, etype) != 0) {
+      request.error_ = true;
+      request.message_ += "fail to get object-ontology etype";
+      return false;
+    }
+
+    // ontolgy tag-tag etype/vtype
+    std::map<std::string, std::string> rez;
+    if (GetOntologyVEType(name, rez) != 0) {
+      request.error_ = true;
+      request.message_ += name + " not found in " + ONTO;
+      return false;
+    }
+
+    request.outputwriter_->WriteStartObject();
+
+    request.outputwriter_->WriteName("object_ontology");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("etype");
+    request.outputwriter_->WriteString(etype);
+    request.outputwriter_->WriteEndObject();
+
+    request.outputwriter_->WriteName("ontology");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("vtype");
+    request.outputwriter_->WriteString(rez["vtype"]);
+    request.outputwriter_->WriteName("etype");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("up");
+    request.outputwriter_->WriteString(rez["up_etype"]);
+    request.outputwriter_->WriteName("down");
+    request.outputwriter_->WriteString(rez["down_etype"]);
+    request.outputwriter_->WriteEndObject();
+
+    request.outputwriter_->WriteEndObject();
+
     return true;
   }
 
