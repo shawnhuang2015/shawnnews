@@ -599,6 +599,7 @@ class UDFRunner : public ServiceImplBase {
     request.outputwriter_->WriteName("down");
     request.outputwriter_->WriteString(rez["down_etype"]);
     request.outputwriter_->WriteEndObject();
+    request.outputwriter_->WriteEndObject();
 
     request.outputwriter_->WriteEndObject();
 

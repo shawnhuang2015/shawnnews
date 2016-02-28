@@ -64,6 +64,8 @@ RequestObject* SetUserTag(FilterHelper *filter_helper,
   Json::Reader reader;
   Json::Value root;
 
+  std::cout << "SetUserTag" << std::endl;
+
   if (reader.parse(str, root) && (root["error"].asBool() == false)) {
     RequestObject* req = new RequestObject();
     req->method = "POST";
