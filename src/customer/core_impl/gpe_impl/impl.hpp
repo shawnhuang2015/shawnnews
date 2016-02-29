@@ -103,8 +103,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
       return RunUDF_GetProfile(serviceapi, request);
-    } else if (request.request_function_ == "set_user_tag") {
-      return SetOntologyTag(request);
+    } else if (request.request_function_ == "get_object_ontology_vetype") {
+      return GetObjectOntologyVEType(request);
     }
     
     return false;  /// not a valid request
@@ -545,7 +545,7 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool SetOntologyTag(EngineServiceRequest& request) {
+  bool GetObjectOntologyVEType(EngineServiceRequest& request) {
     const Json::Value &jsoptions = request.jsoptions_;
     // lookup `obj_onto' map to find (obj, onto) pair
     // lookup 'onto' map to find vtype/etype for onto

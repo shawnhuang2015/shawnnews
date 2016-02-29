@@ -58,7 +58,7 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
   }
 }
 
-RequestObject* SetUserTag(FilterHelper *filter_helper,
+RequestObject* GetUserTagVEType(FilterHelper *filter_helper,
           GsqlResponse *gsql_response,
           UserResponse *user_response){
   std::string str(gsql_response->response);

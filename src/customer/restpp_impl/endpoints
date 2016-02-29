@@ -135,7 +135,7 @@
   },
   "set_user_tag": {
     "POST": {
-      "function": "set_user_tag",
+      "function": "get_object_ontology_vetype",
       "parameters": {
         "object": {
           "type": "STRING"
@@ -160,7 +160,7 @@
           "default": "\n"
         }
       },
-      "response_filter": "SetUserTag",
+      "response_filter": "GetUserTagVEType",
       "summary": "set user -> tags."
     }
   },
