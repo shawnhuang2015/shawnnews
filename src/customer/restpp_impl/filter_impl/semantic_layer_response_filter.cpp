@@ -40,8 +40,7 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
     UserRequest* user_request = gsql_response->GetUserRequest();
     req->params = user_request->params;
     req->data = user_request->data;
-
-    std::cout << "root: " << root << std::endl;
+    req->data_length = user_request->data_length;
 
     req->params["vtype"] = std::vector<std::string>();
     req->params["vtype"].push_back(root["results"]["vtype"].asString());
@@ -70,10 +69,9 @@ RequestObject* SetUserTag(FilterHelper *filter_helper,
     req->url = "post_user_tag";
 
     UserRequest* user_request = gsql_response->GetUserRequest();
-    std::cout << user_request << std::endl;
-//    req->params = user_request->params;
-    std::cout << user_request->data << std::endl;
+    req->params = user_request->params;
     req->data = user_request->data;
+    req->data_length = user_request->data_length;
 
     req->params["ontology_vtype"] = std::vector<std::string>();
     req->params["ontology_vtype"].push_back(
