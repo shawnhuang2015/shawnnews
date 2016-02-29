@@ -113,10 +113,118 @@
       "function": "get_ontology",
       "parameters": {
         "name": {
-          "type": "STRING"
+          "type": "STRING",
+          "min_count": 1,
+          "max_count": 100
+        },
+        "threshold": {
+          "type": "UINT64",
+          "default": "100000"
         }
       },
       "summary": "export the tree."
+    }
+  },
+  "get_profile": {
+    "GET": {
+      "function": "get_profile",
+      "parameters": {
+      },
+      "summary": "export profile."
+    }
+  },
+  "set_user_tag": {
+    "POST": {
+      "function": "get_object_ontology_vetype",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "response_filter": "GetUserTagVEType",
+      "summary": "set user -> tags."
+    }
+  },
+  "post_user_tag": {
+    "POST": {
+      "function": "post_user_tag",
+      "parameters": {
+        "name": {
+          "type": "STRING"
+        },
+        "object_vtype": {
+          "type": "STRING"
+        },
+        "ontology_vtype": {
+          "type": "STRING"
+        },
+        "ontology_up_etype": {
+          "type": "STRING"
+        },
+        "ontology_down_etype": {
+          "type": "STRING"
+        },
+        "object_ontology_etype": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "request_filter": "PostUserTag",
+      "summary": "do the real POST, set user -> tags."
+    }
+  },
+  "get_tag": {
+    "GET": {
+      "function": "get_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "id": {
+          "type": "STRING",
+          "is_id":true,
+          "id_type":"$type"
+        },
+        "name": {
+          "type": "STRING",
+          "max_count": 100000
+        }
+      },
+      "summary": "get object's tags."
     }
   }
 }

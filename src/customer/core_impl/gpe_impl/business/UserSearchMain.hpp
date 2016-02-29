@@ -178,7 +178,6 @@ namespace UDIMPL {
       typedef UserSearchUDF UDF_t;
 
       //search path: onto - user
-      std::string targetStr = jsoptions["target"].asString();
       std::vector<OntologyCond> ontoCondVec;
       for (uint32_t k = 0; k < condOnto.size(); ++k) {
         Json::Value& condOntoItem = condOnto[k];

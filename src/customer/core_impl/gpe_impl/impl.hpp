@@ -16,6 +16,7 @@
 #include "querydispatcher.hpp"
 #include "export_ontology_tree.hpp"
 #include "business/UserSearchMain.hpp"
+#include "get_tag.hpp"
 
 using namespace gperun;
 
@@ -103,6 +104,12 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_UserSearch(serviceapi, request);
     } else if (request.request_function_ == "get_ontology") {
       return RunUDF_GetOntology(serviceapi, request);
+    } else if (request.request_function_ == "get_profile") {
+      return RunUDF_GetProfile(serviceapi, request);
+    } else if (request.request_function_ == "get_object_ontology_vetype") {
+      return GetObjectOntologyVEType(request);
+    } else if (request.request_function_ == "get_tag") {
+      return RunUDF_GetTag(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -229,7 +236,7 @@ class UDFRunner : public ServiceImplBase {
     // let the external script do the diff and run schema change.
  
     // check for "profile", should be present
-    if (payload.isMember(PROF) && payload[PROF].isArray()) {
+    if (payload.isMember(PROF)) {
     } else {
       request.error_ = true;
       request.message_ += PROF + " missing or not array.";
@@ -248,7 +255,12 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // TODO(@alan):
     // generate/run ddl job via an external script.
-    system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str());
+//    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + path).c_str()) != 0) {
+    if (system("bash /tmp/sc.sh") != 0) {
+      request.error_ = true;
+      request.message_ += "fail to do schema change.";
+      return false;
+    }
 
     // once schema change, reload graph meta
     LoadGraphMeta(serviceapi);
@@ -256,19 +268,7 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool OntologyImport(EngineServiceRequest& request) {
-    const Json::Value &jsoptions = request.jsoptions_;
-    // lookup `obj_onto' map to find (obj, onto) pair
-    // lookup 'onto' map to find vtype/etype for onto
-    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
-      request.error_ = true;
-      request.message_ += "object or name missing.";
-      return false;
-    }
-    const std::string obj(jsoptions["object"][0].asString());
-    const std::string name(jsoptions["name"][0].asString());
-
-    // validate (obj, name) pair
+  bool ValidateObjectOntology(const std::string &obj, const std::string &name) {
     bool valid = false;
     const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
     int size = obj_onto.size();
@@ -285,7 +285,23 @@ class UDFRunner : public ServiceImplBase {
         break;
       }
     }
-    if (! valid) {
+    return valid;
+  }
+
+  bool OntologyImport(EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    // lookup `obj_onto' map to find (obj, onto) pair
+    // lookup 'onto' map to find vtype/etype for onto
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
+      return false;
+    }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    // validate (obj, name) pair
+    if (! ValidateObjectOntology(obj, name)) {
       request.error_ = true;
       request.message_ += "(" + obj + ", " + name + ") not found in " + OBJ_ONTO;
       return false;
@@ -294,7 +310,7 @@ class UDFRunner : public ServiceImplBase {
     // TODO(@alan): replaced by GetOntologyVEType
     // get vtype/etype for ontology tree
     const Json::Value &onto = semantic_schema[ONTO];
-    size = onto.size();
+    int size = onto.size();
     for (int i = 0; i < size; ++i) {
       if (onto[i]["name"].asString() == name) {
         request.outputwriter_->WriteStartObject();
@@ -332,6 +348,53 @@ class UDFRunner : public ServiceImplBase {
     return -1;
   }
 
+  int GetObjectOntologyEType(const std::string &obj, const std::string &name, std::string &etype) {
+    // get etype of obj-ontology
+    std::cout << semantic_schema << std::endl;
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        const Json::Value &onto = obj_onto[i]["ontology"];
+        int size1 = onto.size();
+        for (int j = 0; j < size1; ++j) {
+          if (onto[j]["name"].asString() == name) {
+            etype = onto[j]["etype"].asString();
+            return 0;
+          }
+        }
+      }
+    }
+    return -1;
+  }
+
+  int GetOntologyNameByObject(const std::string &obj, std::set<std::string> &rez) {
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        int size1 = obj_onto[i]["ontology"].size();
+        for (int j = 0; j < size1; ++j) {
+          rez.insert(obj_onto[i]["ontology"][j]["name"].asString());
+        }
+        return 0;
+      }
+    }
+    return -1;
+  }
+
+  int GetOntologyNameByObject(const std::string &obj, Json::Value &rez) {
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    int size = obj_onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (obj_onto[i]["object"].asString() == obj) {
+        rez = obj_onto[i];
+        return 0;
+      }
+    }
+    return -1;
+  }
+
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     if (! request.jsoptions_.isMember("name")) {
@@ -342,6 +405,7 @@ class UDFRunner : public ServiceImplBase {
 
     JSONWriter* writer_ = request.outputwriter_;
     int size = request.jsoptions_["name"].size();
+    size_t threshold = request.jsoptions_["threshold"][0].asUInt64();
 
     writer_->WriteStartArray();
     typedef std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > tree_t;
@@ -349,32 +413,13 @@ class UDFRunner : public ServiceImplBase {
 
     for (int i = 0; i < size; ++i) {
       std::string name = request.jsoptions_["name"][i].asString();
+
       std::map<std::string, std::string> rez;
       if (GetOntologyVEType(name, rez) != 0) {
         request.error_ = true;
         request.message_ += name + " not found in " + ONTO;
         return false;
       }
-
-//      std::cout << name << ", " << rez["vtype"] << ", " << rez["up_etype"] << ", " << rez["down_etype"] << std::endl;
-//      std::cout << "vertex_type_map" << std::endl;
-//      for (std::map<std::string, uint32_t>::iterator it = vertex_type_map.begin();
-//          it != vertex_type_map.end(); ++it) {
-//        std::cout << it->first << " = " << it->second << std::endl;
-//      }
-//      std::cout << "edge_type_map" << std::endl;
-//      for (std::map<std::string, uint32_t>::iterator it = edge_type_map.begin();
-//          it != edge_type_map.end(); ++it) {
-//        std::cout << it->first << " = " << it->second << std::endl;
-//      }
-//
-//      if ((vertex_type_map.find(rez["vtype"]) == vertex_type_map.end()) ||
-//          (edge_type_map.find(rez["up_etype"]) == edge_type_map.end()) ||
-//          (edge_type_map.find(rez["down_etype"]) == edge_type_map.end())) {
-//        request.error_ = true;
-//        request.message_ += "vtype or etype not found in graph meta.";
-//        return false;
-//      }
 
       uint32_t vtype_id = vertex_type_map[rez["vtype"]];
       uint32_t down_etype_id = edge_type_map[rez["down_etype"]];
@@ -383,7 +428,7 @@ class UDFRunner : public ServiceImplBase {
       typedef ExportOntologyTree UDF_t;
 
       tree.clear();
-      UDF_t udf(1, vtype_id, down_etype_id, tree);
+      UDF_t udf(1, vtype_id, down_etype_id, threshold, tree);
       serviceapi.RunUDF(&request, &udf);
 
       if (tree.size() > 0) {
@@ -415,6 +460,204 @@ class UDFRunner : public ServiceImplBase {
     writer_->WriteEndArray();
     return true;
   }
+
+  // find all entities in profile,
+  // return all ontologies of entities as well as behaviour def
+  bool RunUDF_GetProfile(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
+    const Json::Value &prof = semantic_schema[PROF];
+    std::set<std::string> obj;
+
+    // collect all entities in profile
+    if (! prof.isMember("target")) {
+      request.error_ = true;
+      request.message_ += "target missing.";
+      return false;
+    }
+    obj.insert(prof["target"].asString());
+
+    if (prof.isMember("behaviour")) {
+      const Json::Value &beh = prof["behaviour"];
+      int size = beh.size();
+      for (int i = 0; i < size; ++i) {
+        if (beh[i].isMember("object")) {
+          int size1 = beh[i]["object"].size();
+          for (int j = 0; j < size1; ++j) {
+            obj.insert(beh[i]["object"][j]["name"].asString());
+          }
+        }
+      }
+    }
+
+    // get ontologies of all entities
+    std::set<std::string> onto;
+    for (std::set<std::string>::iterator it = obj.begin();
+        it != obj.end(); ++it) {
+      GetOntologyNameByObject(*it, onto);
+    }
+
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+
+    // get obj-ontology
+    writer->WriteName("object_ontology");
+    writer->WriteStartArray();
+    const Json::Value &obj_onto = semantic_schema[OBJ_ONTO];
+    for (std::set<std::string>::iterator it = obj.begin();
+        it != obj.end(); ++it) {
+      Json::Value one;
+
+      // TODO(@alan): it's handy to do `writer->WriteJSONContent(one.toStyledString())`,
+      // but the results is not a valid json, since `,` missing (call WriteRaw(",")?), freak me out !!
+      if (GetOntologyNameByObject(*it, one) == 0) {
+        writer->WriteStartObject();
+        writer->WriteName("object");
+        writer->WriteString(*it);
+        writer->WriteName("ontology");
+        std::string s(one["ontology"].toStyledString());
+        writer->WriteJSONContent(s);
+        writer->WriteEndObject();
+      }
+    }
+    writer->WriteEndArray();
+
+    // get ontology trees
+    Json::Value jsoptions;
+    for (std::set<std::string>::iterator it = onto.begin();
+        it != onto.end(); ++it) {
+      jsoptions["name"].append(*it);
+    }
+    jsoptions["threshold"].append(100000);
+    request.jsoptions_ = jsoptions;
+
+    writer->WriteName("ontology");
+    RunUDF_GetOntology(serviceapi, request);
+
+    // get behaviour meta
+    writer->WriteName("behaviour");
+    const Json::Value &beh = prof["behaviour"];
+    std::string s(beh.toStyledString()); 
+    writer->WriteJSONContent(s);
+
+    writer->WriteEndObject();
+    return true;
+  }
+
+  bool GetObjectOntologyVEType(EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    // lookup `obj_onto' map to find (obj, onto) pair
+    // lookup 'onto' map to find vtype/etype for onto
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
+      return false;
+    }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    // validate (obj, name) pair
+    if (! ValidateObjectOntology(obj, name)) {
+      request.error_ = true;
+      request.message_ += "(" + obj + ", " + name + ") not found in " + OBJ_ONTO;
+      return false;
+    }
+
+    // obj-ontology etype
+    std::string etype;
+    if (GetObjectOntologyEType(obj, name, etype) != 0) {
+      request.error_ = true;
+      request.message_ += "fail to get object-ontology etype";
+      return false;
+    }
+
+    // ontolgy tag-tag etype/vtype
+    std::map<std::string, std::string> rez;
+    if (GetOntologyVEType(name, rez) != 0) {
+      request.error_ = true;
+      request.message_ += name + " not found in " + ONTO;
+      return false;
+    }
+
+    request.outputwriter_->WriteStartObject();
+
+    request.outputwriter_->WriteName("object_ontology");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("etype");
+    request.outputwriter_->WriteString(etype);
+    request.outputwriter_->WriteEndObject();
+
+    request.outputwriter_->WriteName("ontology");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("vtype");
+    request.outputwriter_->WriteString(rez["vtype"]);
+    request.outputwriter_->WriteName("etype");
+    request.outputwriter_->WriteStartObject();
+    request.outputwriter_->WriteName("up");
+    request.outputwriter_->WriteString(rez["up_etype"]);
+    request.outputwriter_->WriteName("down");
+    request.outputwriter_->WriteString(rez["down_etype"]);
+    request.outputwriter_->WriteEndObject();
+    request.outputwriter_->WriteEndObject();
+
+    request.outputwriter_->WriteEndObject();
+
+    return true;
+  }
+
+  bool RunUDF_GetTag(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    const std::string &obj = jsoptions["object"][0].asString();
+    if (vertex_type_map.find(obj) == vertex_type_map.end()) {
+      request.error_ = true;
+      request.message_ += obj + " not found in graph meta";
+      return false;
+    }
+    uint32_t vtype_id = vertex_type_map[obj];
+
+    const std::string &id = jsoptions["id"][0].asString();
+    VertexLocalId_t start;
+    if (! serviceapi.UIdtoVId(request, id, start)) {
+      request.error_ = true;
+      request.message_ += "fail to get vertex local id, " + id;
+      return false;
+    }
+
+    std::set<std::string> names;
+    int size = jsoptions["name"].size();
+    if (size == 0) {
+      GetOntologyNameByObject(obj, names);
+    } else {
+      for (int i = 0; i < size; ++i) {
+        names.insert(jsoptions["name"][i].asString());
+      }
+    }
+
+    std::set<uint32_t> etype_id;
+    for (std::set<std::string>::iterator it = names.begin();
+        it != names.end(); ++it) {
+      std::string etype;
+      if (GetObjectOntologyEType(obj, *it, etype) != 0) {
+        request.error_ = true;
+        request.message_ += "fail to get object-ontology etype";
+        return false;
+      }
+      if (edge_type_map.find(etype) == edge_type_map.end()) {
+        request.error_ = true;
+        request.message_ += etype + " not found in graph meta";
+        return false;
+      }
+      etype_id.insert(edge_type_map[etype]);
+    }
+
+    typedef GetTagUDF UDF_t;
+
+    UDF_t udf(1, vtype_id, etype_id, start);
+    serviceapi.RunUDF(&request, &udf);
+
+    return true;
+  }
+
 
 };
 }  // namespace UDIMPL

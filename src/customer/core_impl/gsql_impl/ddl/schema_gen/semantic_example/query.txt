@@ -1,7 +1,16 @@
 
 curl -X POST 'http://localhost:9000/semantic_def' -d '{
   "object": ["user", "pic"],
-  "profile": [],
+  "profile": {
+    "target": "user",
+    "behaviour": [
+      {
+        "name": "post",
+        "subject": [{"name": "user", "etype": "user_post"}],
+        "object": [{"name": "pic", "etype": "post_pic"}]
+      }
+    ]
+  },
   "ontology": ["interest", "demo", "type"],
   "object_ontology": [
     {"object": "user", "ontology": ["interest", "demo"]},
