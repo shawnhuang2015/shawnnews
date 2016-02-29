@@ -39,9 +39,10 @@ var CrowdSingleSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "=", "sub", "like", "dislike"],
+                    enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"],
                     required: true
                 },
+                is_sub: Boolean,
                 weight: {
                     type: Number,
                     required: true,
@@ -83,9 +84,10 @@ var CrowdSingleSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "=", "sub"],
+                    enum:['>=','<=', ">", "<", "<>", "="],
                     required: true
                 },
+                is_sub: Boolean,
                 value: {
                     type: Number,
                     required: true,
