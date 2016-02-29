@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
   /*
-   curl -X POST 'http://localhost:9000/user_search?limit=1000' -d '{"selector":[{"ontology":[{"type":"demographic","factor":"Agebetween10and20","operator":">=","weight":"0.5","sequence":1},{"type":"interest","factor":"shopping/shows","operator":">=","weight":"0.5","sequence":3}],"behavior":[{"action":"buy","itemType":"item","itemId":"12345","cateType":"cateType","cateId":"cateId","operator":">","value":18,"startTime":1,"endTime":3,"timeType":"absolute","sequence":5},{"action":"click","itemType":"category","itemId":"shoes","cateType":"cateType","cateId":"cateId","operator":"<","value":20,"startTime":123,"endTime":456,"timeType":"relative","sequence":6}]}]}'
+ curl -X POST 'http://localhost:9000/user_search' -d '{"selector":[{"ontology":[{"type":"demographic","factor":"Age10~20","operator":"=","weight":"1.0","sequence":1},{"type":"demographic","factor":"Male","operator":"=","weight":"1.0","sequence":2},{"type":"interest","factor":"shopping/shows","operator":">=","weight":"0.5","sequence":3},{"type":"interest","factor":"interest/TV","operator":"<","weight":"0.8","sequence":4}],"behavior":[{"action":"browse","objectCategory":"theme","objectType":"Item","ontologyType":"","objectId":"12345","operator":">","value":18,"startTime":1,"endTime":3,"timeType":"absolute","sequence":5},{"action":"browse","objectCategory":"theme","objectType":"Item","ontologyType":"","objectId":"54321","operator":">","value":18,"startTime":1,"endTime":3,"timeType":"absolute","sequence":5},{"action":"browse","objectCategory":"theme","objectType":"Category","ontologyType":"pic_tag","objectId":"shoes","operator":"<","value":20,"startTime":123,"endTime":456,"timeType":"relative","sequence":6}]}]}'
    */
   std::string errorMsg(std::string msg) {
     Json::Value root;
@@ -40,15 +40,17 @@ extern "C" {
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request) {
+    std::string target_str = "target";
     std::string selector_str = "selector";
     std::string ontology_str = "ontology";
     std::string behavior_str = "behavior";
     std::string type_str = "type";
     std::string factor_str = "factor";
-    std::string itemT_str = "itemType";
-    std::string itemId_str = "itemId";
-    std::string cateT_str = "cateType";
-    std::string cateId_str = "cateId";
+    std::string objectType_str = "objectType";
+    std::string objectCategory_str = "objectCategory";
+    std::string ontologyType_str = "ontologyType";
+    std::string objectId_str = "objectId";
+    std::string is_sub_str = "is_sub";
 
     try {
       if (user_request->data_length == 0) {
@@ -69,21 +71,29 @@ extern "C" {
             for (uint32_t k = 0; k < ontology.size(); ++k) {
               std::string type = ontology[k][type_str].asString();
               std::string fact = ontology[k][factor_str].asString();
+              bool is_sub = ontology[k][is_sub_str].asBool();
+              if (is_sub) continue;
               gsql_request->AddId(type, fact);
             }
             for (uint32_t k = 0; k < behavior.size(); ++k) {
-              std::string itemType = behavior[k][itemT_str].asString();
-              std::string itemId = behavior[k][itemId_str].asString();
-              if (itemId.length() > 0) {
-                gsql_request->AddId(itemType, itemId);
-              }
-              std::string cateType = behavior[k][cateT_str].asString();
-              std::string cateId = behavior[k][cateId_str].asString();
-              if (cateId.length() > 0) {
-                gsql_request->AddId(cateT_str, cateId_str);
+              std::string enumStr = behavior[k][objectType_str].asString();
+              bool is_sub = ontology[k][is_sub_str].asBool();
+              if (is_sub) continue;
+              if (enumStr == "Item") {
+                std::string itemT = behavior[k][objectCategory_str].asString();
+                std::string itemId = behavior[k][objectId_str].asString();
+                gsql_request->AddId(itemT, itemId);
+              } else if (enumStr == "Category") {
+                std::string ontoT = behavior[k][ontologyType_str].asString();
+                std::string ontoId = behavior[k][objectId_str].asString();
+                gsql_request->AddId(ontoT, ontoId);
+              } else {
+                gsql_request->Respond(errorMsg("payload invalid"));
+                return;
               }
             }
           }
+          jsoptions[target_str] = root[target_str];
           jsoptions[selector_str] = root[selector_str];
         } else {
           gsql_request->Respond(errorMsg("payload invalid"));

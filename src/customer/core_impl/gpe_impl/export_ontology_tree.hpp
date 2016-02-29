@@ -14,16 +14,6 @@ namespace UDIMPL {
     // global variable
     enum {GV_TREE};
 
-//    typedef std::pair<VertexLocalId_t, VertexLocalId_t> tag_pair_t;
-//
-//    std::istream& operator>>(std::istream& is, tag_pair_t& st) {
-//      return is;
-//    }
-//
-//    std::ostream& operator<<(std::ostream& os, const tag_pair_t& st) {
-//      return os;
-//    }
-
     struct tag_pair_t {
       VertexLocalId_t srcid;
       VertexLocalId_t tgtid;
@@ -47,9 +37,10 @@ namespace UDIMPL {
     };
 
     ExportOntologyTree(unsigned int limit, uint32_t vtype_id, 
-        uint32_t etype_id, std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree)
+        uint32_t etype_id, size_t threshold, 
+        std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree)
       : SingleActiveBaseUDF(limit), vtype_id_(vtype_id), 
-        etype_id_(etype_id), tree_(tree) {}
+        etype_id_(etype_id), threshold_(threshold), tree_(tree) {}
 
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
       context->SetActiveFlagByType(vtype_id_, true);
@@ -62,6 +53,13 @@ namespace UDIMPL {
     void StartRun(MasterContext* context) {
       context->GetTypeFilterController()->DisableAllEdgeTypes();
       context->GetTypeFilterController()->EnableEdgeType(etype_id_);
+    }
+
+    void BeforeIteration(MasterContext* context) {
+      size_t n_active = context->GetActiveVertexCount();
+      if (n_active > threshold_) {
+        context->Abort();
+      }
     }
 
     void EdgeMap( const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
@@ -88,6 +86,7 @@ namespace UDIMPL {
   private:
     uint32_t vtype_id_;
     uint32_t etype_id_;
+    size_t threshold_;
     std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree_;
   };
 }  // namepsace UDIMPL
