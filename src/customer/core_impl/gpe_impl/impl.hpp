@@ -14,6 +14,7 @@
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
 #include "export_ontology_tree.hpp"
+#include "get_tag.hpp"
 
 using namespace gperun;
 
@@ -105,6 +106,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_GetProfile(serviceapi, request);
     } else if (request.request_function_ == "get_object_ontology_vetype") {
       return GetObjectOntologyVEType(request);
+    } else if (request.request_function_ == "get_tag") {
+      return RunUDF_GetTag(serviceapi, request);
     }
     
     return false;  /// not a valid request
@@ -605,6 +608,61 @@ class UDFRunner : public ServiceImplBase {
 
     return true;
   }
+
+  bool RunUDF_GetTag(ServiceAPI& serviceapi,
+                            EngineServiceRequest& request) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    const std::string &obj = jsoptions["object"][0].asString();
+    if (vertex_type_map.find(obj) == vertex_type_map.end()) {
+      request.error_ = true;
+      request.message_ += obj + " not found in graph meta";
+      return false;
+    }
+    uint32_t vtype_id = vertex_type_map[obj];
+
+    const std::string &id = jsoptions["id"][0].asString();
+    VertexLocalId_t start;
+    if (! serviceapi.UIdtoVId(request, id, start)) {
+      request.error_ = true;
+      request.message_ += "fail to get vertex local id, " + id;
+      return false;
+    }
+
+    std::set<std::string> names;
+    int size = jsoptions["name"].size();
+    if (size == 0) {
+      GetOntologyNameByObject(obj, names);
+    } else {
+      for (int i = 0; i < size; ++i) {
+        names.insert(jsoptions["name"][i].asString());
+      }
+    }
+
+    std::set<uint32_t> etype_id;
+    for (std::set<std::string>::iterator it = names.begin();
+        it != names.end(); ++it) {
+      std::string etype;
+      if (GetObjectOntologyEType(obj, *it, etype) != 0) {
+        request.error_ = true;
+        request.message_ += "fail to get object-ontology etype";
+        return false;
+      }
+      if (edge_type_map.find(etype) == edge_type_map.end()) {
+        request.error_ = true;
+        request.message_ += etype + " not found in graph meta";
+        return false;
+      }
+      etype_id.insert(edge_type_map[etype]);
+    }
+
+    typedef GetTagUDF UDF_t;
+
+    UDF_t udf(1, vtype_id, etype_id, start);
+    serviceapi.RunUDF(&request, &udf);
+
+    return true;
+  }
+
 
 };
 }  // namespace UDIMPL

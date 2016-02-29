@@ -215,7 +215,9 @@
           "type": "STRING"
         },
         "id": {
-          "type": "STRING"
+          "type": "STRING",
+          "is_id":true,
+          "id_type":"$type"
         },
         "name": {
           "type": "STRING",
@@ -224,5 +226,5 @@
       },
       "summary": "get object's tags."
     }
-  },
+  }
 }
