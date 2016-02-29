@@ -205,6 +205,7 @@ extern "C" {
         }
       }
     }
+    gsql_request->Respond("done.");
   }
 
 #ifdef __cplusplus
