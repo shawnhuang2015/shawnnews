@@ -206,5 +206,23 @@
       "request_filter": "PostUserTag",
       "summary": "do the real POST, set user -> tags."
     }
-  }
+  },
+  "get_tag": {
+    "GET": {
+      "function": "get_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "id": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING",
+          "max_count": 100000
+        }
+      },
+      "summary": "get object's tags."
+    }
+  },
 }
