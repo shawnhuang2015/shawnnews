@@ -205,6 +205,12 @@ extern "C" {
         }
       }
     }
+    std::string msg;
+    if (! gsql_request->FlushDelta(msg)) {
+      gsql_request->Respond("fail to flush delta, " + msg);
+      return;
+    }
+
     gsql_request->Respond("done.");
   }
 
