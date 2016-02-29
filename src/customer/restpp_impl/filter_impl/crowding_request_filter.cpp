@@ -40,6 +40,7 @@ extern "C" {
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request) {
+    std::string target_str = "target";
     std::string selector_str = "selector";
     std::string ontology_str = "ontology";
     std::string behavior_str = "behavior";
@@ -49,6 +50,7 @@ extern "C" {
     std::string objectCategory_str = "objectCategory";
     std::string ontologyType_str = "ontologyType";
     std::string objectId_str = "objectId";
+    std::string is_sub_str = "is_sub";
 
     try {
       if (user_request->data_length == 0) {
@@ -69,10 +71,14 @@ extern "C" {
             for (uint32_t k = 0; k < ontology.size(); ++k) {
               std::string type = ontology[k][type_str].asString();
               std::string fact = ontology[k][factor_str].asString();
+              bool is_sub = ontology[k][is_sub_str].asBool();
+              if (is_sub) continue;
               gsql_request->AddId(type, fact);
             }
             for (uint32_t k = 0; k < behavior.size(); ++k) {
               std::string enumStr = behavior[k][objectType_str].asString();
+              bool is_sub = ontology[k][is_sub_str].asBool();
+              if (is_sub) continue;
               if (enumStr == "Item") {
                 std::string itemT = behavior[k][objectCategory_str].asString();
                 std::string itemId = behavior[k][objectId_str].asString();
@@ -87,6 +93,7 @@ extern "C" {
               }
             }
           }
+          jsoptions[target_str] = root[target_str];
           jsoptions[selector_str] = root[selector_str];
         } else {
           gsql_request->Respond(errorMsg("payload invalid"));

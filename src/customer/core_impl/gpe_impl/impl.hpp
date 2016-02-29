@@ -9,11 +9,13 @@
 #ifndef SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 #define SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 
+#include <gpe/gpath_base/graphtypeinfo.hpp>
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"
 #include "querydispatcher.hpp"
 #include "export_ontology_tree.hpp"
+#include "business/UserSearchMain.hpp"
 
 using namespace gperun;
 
@@ -140,15 +142,8 @@ class UDFRunner : public ServiceImplBase {
   }
 
   bool RunUDF_UserSearch(ServiceAPI& serviceapi, EngineServiceRequest& request) {
-    Json::Value& jsoptions = request.jsoptions_;
-    std::cout << jsoptions.toStyledString() << std::endl;
-    std::cout << request.request_data_ << std::endl;
-    uint32_t limit = std::numeric_limits<uint32_t>::max(); 
-    if (jsoptions.isMember("limit") && jsoptions["limit"].size() > 0) {
-        limit = jsoptions["limit"][0].asUInt();
-    }
-
-    return true;
+    UserSearchMain usm(serviceapi, request);
+    return usm.RunUDF_UserSearch();
   }
 
   bool SemanticDef(ServiceAPI &serviceapi, EngineServiceRequest &request) {
