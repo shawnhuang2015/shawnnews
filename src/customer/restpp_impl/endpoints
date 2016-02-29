@@ -145,7 +145,15 @@
         },
         "sep": {
           "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
           "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
         },
         "eol": {
           "type": "STRING",
@@ -160,6 +168,9 @@
     "POST": {
       "function": "post_user_tag",
       "parameters": {
+        "name": {
+          "type": "STRING"
+        },
         "object_vtype": {
           "type": "STRING"
         },
@@ -177,13 +188,22 @@
         },
         "sep": {
           "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
           "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
         },
         "eol": {
           "type": "STRING",
           "default": "\n"
         }
       },
+      "request_filter": "PostUserTag",
       "summary": "do the real POST, set user -> tags."
     }
   }
