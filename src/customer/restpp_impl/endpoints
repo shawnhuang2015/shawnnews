@@ -108,6 +108,28 @@
       "request_filter": "UserSearchFilter"
     }
   },
+  "create_crowd": {
+    "POST": {
+      "function": "user_search",
+      "parameters": {
+        "name": {
+          "type": "STRING",
+          "min_count": 1,
+          "max_count": 1
+        }
+      },
+      "request_filter": "CreateCrowdRequestFilter",
+      "response_filter": "CreateCrowdResponseFilter"
+    }
+  },
+  "create_crowd_update": {
+    "GET/POST":{
+        "action":"update",
+        "target":"GPE",
+        "request_filter":"CreateCrowdUpdateFilter",
+        "summary":""
+    }  
+  },
   "get_ontology": {
     "GET": {
       "function": "get_ontology",

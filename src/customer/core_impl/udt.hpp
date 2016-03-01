@@ -32,7 +32,8 @@ enum Operator {
    NE       = 4,
    EQ       = 5,
    LIKE     = 6, //not support yet
-   DIS_LIKE = 7  //not support yet
+   DIS_LIKE = 7,  //not support yet
+   UNKNOWN_OP
 };
 
 //search condition: ontology -> user 

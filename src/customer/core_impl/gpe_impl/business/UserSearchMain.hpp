@@ -94,6 +94,7 @@ namespace UDIMPL {
       if (op_str == "=") return EQ;
       if (op_str == "like") return LIKE;
       if (op_str == "dislike") return DIS_LIKE;
+      return UNKNOWN_OP;
     }
 
     //Convert the item-behavior-user condition to the struct that can be used in UDF
