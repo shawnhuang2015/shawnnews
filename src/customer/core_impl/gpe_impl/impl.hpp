@@ -653,7 +653,8 @@ class UDFRunner : public ServiceImplBase {
 
     typedef GetTagUDF UDF_t;
 
-    UDF_t udf(1, vtype_id, etype_id, start);
+    std::vector<UDF_t::tag_t> tags;
+    UDF_t udf(1, vtype_id, etype_id, start, tags);
     serviceapi.RunUDF(&request, &udf);
 
     return true;

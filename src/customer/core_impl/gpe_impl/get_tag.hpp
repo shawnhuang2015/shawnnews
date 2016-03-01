@@ -11,24 +11,51 @@ namespace UDIMPL {
     typedef uint8_t V_VALUE;
     typedef VertexLocalId_t MESSAGE;
 
+    struct tag_t {
+      VertexLocalId_t id;
+      std::string name;
+      uint32_t vtype_id;
+
+      tag_t() : id(0), name(), vtype_id(0) {}
+
+      tag_t(VertexLocalId_t id, std::string name, uint32_t tid)
+        : id(id), name(name), vtype_id(tid) {}
+
+      tag_t(const tag_t &other)
+        : id(other.id), name(other.name), vtype_id(other.vtype_id) {}
+
+      friend std::istream& operator>>(std::istream& is, tag_t& st) {
+        return is;
+      }
+
+      friend std::ostream& operator<<(std::ostream& os, const tag_t& st) {
+        return os;
+      }
+    };
+
     // global variable
-    enum {GV_TREE};
+    enum {GV_TAG};
 
     GetTagUDF(unsigned int limit, uint32_t vtype_id, 
-        std::set<uint32_t> etype_id, VertexLocalId_t start)
-      : SingleActiveBaseUDF(limit) {}
+        const std::set<uint32_t> &etype_id, VertexLocalId_t start,
+        std::vector<tag_t> &tags)
+      : SingleActiveBaseUDF(limit), vtype_id_(vtype_id),
+        etype_id_(etype_id), start_(start), tags_(tags) {}
 
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
-//      context->SetActiveFlagByType(vtype_id_, true);
+      context->SetActiveFlagByType(vtype_id_, true);
     }
 
     void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
-//      globalvariables->Register(GV_TREE, new VectorVariable<tag_pair_t>());
+      globalvariables->Register(GV_TAG, new VectorVariable<tag_t>());
     }
 
     void StartRun(MasterContext* context) {
-//      context->GetTypeFilterController()->DisableAllEdgeTypes();
-//      context->GetTypeFilterController()->EnableEdgeType(etype_id_);
+      context->GetTypeFilterController()->DisableAllEdgeTypes();
+      for (std::set<uint32_t>::iterator it = etype_id_.begin();
+          it != etype_id_.end(); ++it) {
+        context->GetTypeFilterController()->EnableEdgeType(*it);
+      }
     }
 
     void BeforeIteration(MasterContext* context) {
@@ -37,25 +64,30 @@ namespace UDIMPL {
     void EdgeMap( const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
                   const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr, const V_VALUE& targetvertexvalue,
                   E_ATTR* edgeattr, SingleValueMapContext<MESSAGE>* context) {
-//      context->GlobalVariable_Reduce<tag_pair_t>(GV_TREE, tag_pair_t(srcvid, targetvid));
     }
 
     void Reduce( const VertexLocalId_t& vid, V_ATTR* vertexattr, const V_VALUE& singlevalue,
                  const MESSAGE& accumulator, SingleValueContext<V_VALUE>* context) {
+      context->GlobalVariable_Reduce<tag_t>(GV_TAG, 
+          tag_t(vid, vertexattr->GetString("name"), vertexattr->type()));
     }
 
     void AfterIteration(MasterContext* context) {
     }
 
     void EndRun(BasicContext* context) {
- //     GVector<tag_pair_t>::T &rez = context->GlobalVariable_GetValue<GVector<tag_pair_t>::T>(GV_TREE);
- //     int size = rez.size();
- //     for (int i = 0; i < size; ++i) {
- //       tree_[rez[i].srcid].push_back(rez[i].tgtid);
- //     }
+      GVector<tag_t>::T &rez = context->GlobalVariable_GetValue<GVector<tag_t>::T>(GV_TAG);
+      int size = rez.size();
+      for (int i = 0; i < size; ++i) {
+        tags_.push_back(rez[i]);
+      }
     }
 
   private:
+    uint32_t vtype_id_;
+    const std::set<uint32_t> &etype_id_;
+    VertexLocalId_t start_;
+    std::vector<tag_t> &tags_;
   };
 }  // namepsace UDIMPL
 
