@@ -2,7 +2,6 @@
 import json, sys, os.path, subprocess
 
 GSQL_PATH = os.path.expanduser('~/graphsql/dev/gsql/gsql')
-
 BASIC_SCHEMA_PATH = '/tmp/basic.gsql'
 SEMANTIC_SCHEMA_PATH = '/tmp/semantic.json'
 SCHEMA_CHANGE_JOB_PATH = '/tmp/sc.gsql'
@@ -47,7 +46,7 @@ def add_edge(directed, etype, srcv, tgtv, eattr):
   return pat.format('directed' if directed else 'undirected',
       etype, srcv, tgtv, attrs)
 
-def create_schema_change(bs_path, ss_path, sc_path):
+def create_schema_change(ss_path, sc_path):
   with open(ss_path, 'r') as fp:
     js = json.load(fp)
     if not all((ONTO in js, OBJ_ONTO in js)):
@@ -115,5 +114,5 @@ def run_schema_change(sc_path):
 
 
 if __name__ == '__main__':
-  create_schema_change(BASIC_SCHEMA_PATH, SEMANTIC_SCHEMA_PATH, SCHEMA_CHANGE_JOB_PATH)
+  create_schema_change(SEMANTIC_SCHEMA_PATH, SCHEMA_CHANGE_JOB_PATH)
   run_schema_change(SCHEMA_CHANGE_JOB_PATH)
