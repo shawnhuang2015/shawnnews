@@ -19,6 +19,7 @@
 #include <sstream>
 #include <cstdio>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 #include <boost/tokenizer.hpp>
@@ -216,57 +217,57 @@ extern "C" {
     gsql_request->Respond("done.");
   }
 
-  void PreSetTagRequest(
-           FilterHelper *filter_helper,
-           UserRequest *user_request,
-           GsqlRequest *gsql_request) {
-    if (user_request->data_length == 0) {
-      std::string msg("Payload missing.");
-      gsql_request->Respond(msg);
-      return;
-    }
-    std::string payload(user_request->data, user_request->data_length);
+ // void PreSetTagRequest(
+ //          FilterHelper *filter_helper,
+ //          UserRequest *user_request,
+ //          GsqlRequest *gsql_request) {
+ //   if (user_request->data_length == 0) {
+ //     std::string msg("Payload missing.");
+ //     gsql_request->Respond(msg);
+ //     return;
+ //   }
+ //   std::string payload(user_request->data, user_request->data_length);
 
-    param_t &params = user_request->params;
-    const std::string &name = params["name"][0];
-    const char sep = params["sep"][0][0];
-    const char tag_sep = params["tag_sep"][0][0];
-    const char weight_sep = params["weight_sep"][0][0];
-    const char eol = params["eol"][0][0];
+ //   param_t &params = user_request->params;
+ //   const std::string &name = params["name"][0];
+ //   const char sep = params["sep"][0][0];
+ //   const char tag_sep = params["tag_sep"][0][0];
+ //   const char weight_sep = params["weight_sep"][0][0];
+ //   const char eol = params["eol"][0][0];
 
-    boost::tokenizer<boost::char_separator<char> > lines(
-        payload, boost::char_separator<char>(&eol));
-    std::set<std::string> tags;
-    Json::Value &jsoptions = gsql_request->jsoptions;
+ //   boost::tokenizer<boost::char_separator<char> > lines(
+ //       payload, boost::char_separator<char>(&eol));
+ //   std::set<std::string> tags;
+ //   Json::Value &jsoptions = gsql_request->jsoptions;
 
-    BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
-      boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
-      int size = fields.size();
-      if (size != 2) {
-        std::cout << "invalid data: " << l << std::endl;
-        continue;
-      }
+ //   BOOST_FOREACH (const std::string &l, lines) {
+ //     std::vector<std::string> fields;
+ //     boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
+ //     int size = fields.size();
+ //     if (size != 2) {
+ //       std::cout << "invalid data: " << l << std::endl;
+ //       continue;
+ //     }
 
-      // get all tags, pack them into a json array "tags"
-      boost::tokenizer<boost::char_separator<char> > tags(
-          fields[1], boost::char_separator<char>(&tag_sep));
+ //     // get all tags, pack them into a json array "tags"
+ //     boost::tokenizer<boost::char_separator<char> > tags(
+ //         fields[1], boost::char_separator<char>(&tag_sep));
 
-      std::vector<std::string> tw;
-      BOOST_FOREACH(const std::string &tag, tags) {
-        boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
-        int size = tw.size();
-        if (size == 0) {
-          std::cout << "skip empty tag" << std::endl;
-          continue;
-        }
-        if (tags.find(tw[0]) == tags.end()) {
-          jsoptions["tags"].append(tw[0]);
-          tags.insert(tw[0]);
-        }
-      }
-    }
-  }
+ //     std::vector<std::string> tw;
+ //     BOOST_FOREACH(const std::string &tag, tags) {
+ //       boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
+ //       int size = tw.size();
+ //       if (size == 0) {
+ //         std::cout << "skip empty tag" << std::endl;
+ //         continue;
+ //       }
+ //       if (tags.find(tw[0]) == tags.end()) {
+ //         jsoptions["tags"].append(tw[0]);
+ //         tags.insert(tw[0]);
+ //       }
+ //     }
+ //   }
+ // }
 
 #ifdef __cplusplus
 }
