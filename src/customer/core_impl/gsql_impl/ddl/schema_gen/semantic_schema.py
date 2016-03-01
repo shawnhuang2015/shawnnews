@@ -13,7 +13,7 @@ OBJ_ONTO = 'object_ontology'
 #   {"name": "attr1", "dtype": "float"}, 
 #   {"name": "attr2", "dtype": "string", "default": "abc"}
 # ]
-def add_vertex(vtype, vattr={'name': 'name', 'dtype': 'string'}):
+def add_vertex(vtype, vattr=[{'name': 'name', 'dtype': 'string'}]):
   pat = 'add vertex {} (primary_id id string not null {});'
   attrs = []
   for i in vattr:

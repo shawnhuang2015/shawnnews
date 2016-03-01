@@ -109,8 +109,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
       return RunUDF_GetProfile(serviceapi, request);
-    } else if (request.request_function_ == "get_object_ontology_vetype") {
-      return GetObjectOntologyVEType(request);
+    } else if (request.request_function_ == "pre_set_tag") {
+      return PreSetTag(serviceapi, request);
     } else if (request.request_function_ == "get_tag") {
       return RunUDF_GetTag(serviceapi, request);
     }
@@ -439,6 +439,18 @@ class UDFRunner : public ServiceImplBase {
     return -1;
   }
 
+  int GetOntologyNameByVType(const std::string &vtype, std::string &name) {
+    const Json::Value &onto = semantic_schema[ONTO];
+    int size = onto.size();
+    for (int i = 0; i < size; ++i) {
+      if (onto[i]["vtype"].asString() == vtype) {
+        name = onto[i]["name"].asString();
+        return 0;
+      }
+    }
+    return -1;
+  }
+
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     if (! request.jsoptions_.isMember("name")) {
@@ -648,6 +660,16 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
+  bool PreSetTag(ServiceAPI& serviceapi,
+                          EngineServiceRequest& request) {
+    // first get v/etype
+    if (! GetObjectOntologyVEType(request)) {
+      return false;
+    }
+    // then find tags' primary id if exist in graph
+    return true;
+  }
+
   bool RunUDF_GetTag(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     const Json::Value &jsoptions = request.jsoptions_;
@@ -698,7 +720,6 @@ class UDFRunner : public ServiceImplBase {
     typedef GetTagUDF UDF_t;
     typedef std::vector<UDF_t::tag_t> tag_vec_t;
 
-
     tag_vec_t tags;
     UDF_t udf(1, vtype_id, etype_id, start, tags);
     serviceapi.RunUDF(&request, &udf);
@@ -720,7 +741,8 @@ class UDFRunner : public ServiceImplBase {
         request.message_ += it->first + " not found in reverse vertex map of graph meta";
         return false;
       }
-      std::string name = vertex_type_reverse_map[it->first];
+      std::string name;
+      GetOntologyNameByVType(vertex_type_reverse_map[it->first], name);
       writer->WriteName(name.c_str());
       writer->WriteStartArray();
       for (tag_vec_t::iterator it1 = it->second.begin(); it1 != it->second.end(); ++it1) {
