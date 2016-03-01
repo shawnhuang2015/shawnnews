@@ -20,6 +20,7 @@
   Step 1:  Include your *.hpp.
 -----------------------------------------------------------------------------------------*/
 #include "builtin_filter_example.hpp"
+#include "crowding_filter.hpp"
 
 
 void RegisterBuiltinFilters(){
@@ -30,6 +31,7 @@ void RegisterBuiltinFilters(){
   ---------------------------------------------------------------------------------------*/
   RegisterBuiltinFilter("BuiltinRequestFilterExample", (RequestFilter)&BuiltinRequestFilterExample);
   RegisterBuiltinFilter("BuiltinResponseFilterExample", (RequestFilter)&BuiltinResponseFilterExample);
+  RegisterBuiltinFilter("CreateCrowdUpdateFilter", (RequestFilter)&CreateCrowdUpdateFilter);
 }
 
 

@@ -32,5 +32,4 @@ RequestObject* BuiltinResponseFilterExample(FilterHelper *filter_helper,
     return NULL;
 }
 
-
 #endif

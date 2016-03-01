@@ -69,7 +69,38 @@ RequestObject* PostOntologyTreeDeprecated(FilterHelper *filter_helper,
   }
 }
 
+RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
+          GsqlResponse *gsql_response,
+          UserResponse *user_response){
+  UserRequest* user_request = gsql_response->GetUserRequest();
+  std::string respStr = gsql_response->response;
+  std::string cname = user_request->params["name"][0];
+  std::string reqStr(user_request->data, user_request->data_length); 
 
+  Json::Reader reader;
+  Json::Value JsonNewReq;
+  Json::Value JsonOldResp;
+  Json::Value JsonOldReq;
+
+  JsonNewReq["name"] = cname;
+  if (reader.parse(reqStr, JsonOldReq)) {
+    JsonNewReq["vtype"] = JsonOldReq["crowdIndex"]["vtype"];
+    JsonNewReq["etype"] = JsonOldReq["crowdIndex"]["etype"];
+  }
+
+  if (reader.parse(respStr, JsonOldResp)) {
+    JsonNewReq["results"] = JsonOldResp["results"];
+  }
+
+
+  RequestObject* postReq = new RequestObject();
+  postReq->method = "POST";
+  postReq->url = "create_crowd_update";
+  postReq->data = JsonNewReq.toStyledString();
+  std::cout << "create_crowd_update:\n" << JsonNewReq.toStyledString() << std::endl;
+  return postReq;
+
+}
 #ifdef __cplusplus
 }
 #endif
