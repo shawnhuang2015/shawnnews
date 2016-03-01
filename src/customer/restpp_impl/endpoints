@@ -224,7 +224,7 @@
           "max_count": 100000
         },
         "verbose": {
-          "type": "bool",
+          "type": "BOOL",
           "default": "false"
         }
       },
