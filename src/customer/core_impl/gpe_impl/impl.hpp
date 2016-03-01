@@ -9,7 +9,8 @@
 #ifndef SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 #define SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
 
-#include <gpe/gpath_base/graphtypeinfo.hpp>
+//#include <gpe/gpath_base/graphtypeinfo.hpp>
+#include <base/graphtypeinfo.hpp>
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
 #include "kstepneighborhoodsubgraph.hpp"

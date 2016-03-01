@@ -4,6 +4,7 @@ Import('env')
 
 src_files = Split("""gperun.cpp
                      ../udt.cpp
+                     base/graphtypeinfo.cpp
                      """)
 
 gperun_server_build = env.Program(target='poc_gpe_server', 
