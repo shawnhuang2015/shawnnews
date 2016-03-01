@@ -135,7 +135,7 @@
   },
   "set_user_tag": {
     "POST": {
-      "function": "get_object_ontology_vetype",
+      "function": "pre_set_tag",
       "parameters": {
         "object": {
           "type": "STRING"
