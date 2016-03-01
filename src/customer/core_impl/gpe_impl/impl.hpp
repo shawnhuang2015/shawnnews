@@ -652,11 +652,46 @@ class UDFRunner : public ServiceImplBase {
     }
 
     typedef GetTagUDF UDF_t;
+    typedef std::vector<UDF_t::tag_t> tag_vec_t;
 
-    std::vector<UDF_t::tag_t> tags;
+
+    tag_vec_t tags;
     UDF_t udf(1, vtype_id, etype_id, start, tags);
     serviceapi.RunUDF(&request, &udf);
 
+    // ontology vtypeid -> tags
+    std::map<uint32_t, tag_vec_t> tags_by_onto;
+    for (tag_vec_t::iterator it = tags.begin(); it != tags.end(); ++it) {
+      tags_by_onto[it->vtype_id].push_back(*it);
+    }
+
+    bool verbose = jsoptions["verbose"][0].asBool();
+
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+    for (std::map<uint32_t, tag_vec_t>::iterator it = tags_by_onto.begin();
+        it != tags_by_onto.end(); ++it) {
+      if (vertex_type_reverse_map.find(it->first) == vertex_type_reverse_map.end()) {
+        request.error_ = true;
+        request.message_ += it->first + " not found in reverse vertex map of graph meta";
+        return false;
+      }
+      std::string name = vertex_type_reverse_map[it->first];
+      writer->WriteName(name.c_str());
+      writer->WriteStartArray();
+      for (tag_vec_t::iterator it1 = it->second.begin(); it1 != it->second.end(); ++it1) {
+        writer->WriteStartObject();
+        writer->WriteName("tag");
+        writer->WriteString(it1->name);
+        if (verbose) {
+          writer->WriteName("weight");
+          writer->WriteFloat(it1->weight);
+        }
+        writer->WriteEndObject();
+      }
+      writer->WriteEndArray();
+    }
+    writer->WriteEndObject();
     return true;
   }
 

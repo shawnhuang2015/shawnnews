@@ -222,6 +222,10 @@
         "name": {
           "type": "STRING",
           "max_count": 100000
+        },
+        "verbose": {
+          "type": "bool",
+          "default": "false"
         }
       },
       "summary": "get object's tags."
