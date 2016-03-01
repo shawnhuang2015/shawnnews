@@ -130,6 +130,23 @@
         "summary":""
     }  
   },
+  "get_crowd": {
+    "GET/POST": {
+      "function": "get_crowd_by_name",
+      "parameters": {
+        "name": {
+          "type": "STRING",
+          "min_count": 1,
+          "max_count": 1,
+          "is_id":true,
+          "id_type":"$type"
+        },
+        "type": {
+          "type": "TYPENAME"
+        }
+      }
+    }
+  },
   "get_ontology": {
     "GET": {
       "function": "get_ontology",

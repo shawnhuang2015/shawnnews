@@ -103,6 +103,8 @@ class UDFRunner : public ServiceImplBase {
       return OntologyImport(request);
     } else if (request.request_function_ == "user_search") {
       return RunUDF_UserSearch(serviceapi, request);
+    } else if (request.request_function_ == "get_crowd_by_name") {
+      return RunUDF_GetCrowdByName(serviceapi, request);
     } else if (request.request_function_ == "get_ontology") {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
@@ -152,6 +154,48 @@ class UDFRunner : public ServiceImplBase {
   bool RunUDF_UserSearch(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     UserSearchMain usm(serviceapi, request);
     return usm.RunUDF_UserSearch();
+  }
+
+  bool RunUDF_GetCrowdByName(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+    std::cout << "RunUDF_GetCrowdByName" << std::endl;
+    Json::Value& jsoptions = request.jsoptions_;
+    std::cout << jsoptions.toStyledString() << std::endl;
+
+    //parse the request parameters
+    std::string crowdName = jsoptions["name"][0].asString();
+    uint32_t typeId = jsoptions["type"]["typeid"].asUInt();
+    std::string typeStr = boost::lexical_cast<std::string>(typeId);
+    VertexLocalId_t local_start;
+    if (!serviceapi.UIdtoVId(request, typeStr + "_" + crowdName, local_start)) {
+      request.error_ = true;
+      request.message_ += std::string("valid id: ") + typeStr + "_" + crowdName ;
+      return true;
+    }
+
+    //get all userIds for this crowd
+    std::set<VertexLocalId_t> userIds;
+    boost::shared_ptr<gapi4::GraphAPI> graphapi = serviceapi.CreateGraphAPI(&request);
+    gapi4::EdgesCollection edges;
+    graphapi->GetOneVertexEdges(local_start, NULL, edges);
+    while (edges.NextEdge()) {
+      VertexLocalId_t vid = edges.GetCurrentToVId();
+      userIds.insert(vid);
+    }
+
+    //output the final resutls
+    JSONWriter* writer_ = request.outputwriter_;
+    writer_->WriteStartObject();
+    writer_->WriteName("count");
+    writer_->WriteUnsignedInt(userIds.size());
+    writer_->WriteName("userIds");
+    writer_->WriteStartArray();
+    for (std::set<VertexLocalId_t>::iterator it = userIds.begin(); it != userIds.end(); ++it) {
+      writer_->WriteMarkVId(*it);
+      request.output_idservice_vids.push_back(*it);
+    }
+    writer_->WriteEndArray();
+    writer_->WriteEndObject();
+    return true;
   }
 
   bool SemanticDef(ServiceAPI &serviceapi, EngineServiceRequest &request) {
