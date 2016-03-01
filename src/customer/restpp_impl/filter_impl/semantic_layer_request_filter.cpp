@@ -188,7 +188,7 @@ extern "C" {
           continue;
         }
         std::string t(tw[0]);
-        double w = 1.0;
+        float w = 1.0;
         if (size == 2) {
           w = ::atof(tw[1].c_str());
         }
@@ -197,7 +197,7 @@ extern "C" {
 
         // upsert edge
         attr.Clear();
-        attr.SetDouble("weight", w);
+        attr.SetFloat("weight", w);
         if (! gsql_request->UpsertEdge(attr, object_vtype, user_id, 
               object_ontology_etype, ontology_vtype, t, msg)) {
           gsql_request->Respond("fail to upsert edge, " + msg);
