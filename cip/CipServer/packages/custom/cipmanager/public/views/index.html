@@ -20,7 +20,6 @@
             <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
             <td>
                 <span>
-                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd.crowdName}}/edit">编辑</a>
                     <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd.crowdName}}/userlist">下载</a>
                     <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd);">删除</button>
                 </span>
@@ -55,7 +54,6 @@
             <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
             <td>
                 <span>
-                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/group/{{crowd.crowdName}}/edit">编辑</a>
                     <a class="btn btn-info btn-xs" data-ng-href="/crowd/group/{{crowd.crowdName}}/userlist">下载</a>
                     <button class="btn btn-danger btn-xs" data-ng-click="removeGroup(crowd);">删除</button>
                 </span>
