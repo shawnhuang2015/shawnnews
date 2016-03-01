@@ -599,7 +599,33 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-  bool GetObjectOntologyVEType(EngineServiceRequest& request) {
+//  bool GetObjectOntologyVEType(const std::string &obj, const std::string &name,
+//      std::map<std::string, std::string> rez) {
+//    // validate (obj, name) pair
+//    if (! ValidateObjectOntology(obj, name)) {
+//      std::cout << "(" + obj + ", " + name + ") not found in " + OBJ_ONTO << std::endl;
+//      return false;
+//    }
+//
+//    // obj-ontology etype
+//    std::string etype;
+//    if (GetObjectOntologyEType(obj, name, etype) != 0) {
+//      std::cout << "fail to get object-ontology etype" << std::endl;
+//      return false;
+//    }
+//    rez["object_ontology_etype"] = etype;
+//
+//    // ontolgy tag-tag etype/vtype
+//    if (GetOntologyVEType(name, rez) != 0) {
+//      std::cout << name + " not found in " + ONTO << std::endl;
+//      return false;
+//    }
+//
+//    return true;
+//  }
+
+  bool GetObjectOntologyVEType(EngineServiceRequest& request,
+      std::map<std::string, std::string> *out = NULL) {
     const Json::Value &jsoptions = request.jsoptions_;
     // lookup `obj_onto' map to find (obj, onto) pair
     // lookup 'onto' map to find vtype/etype for onto
@@ -610,7 +636,6 @@ class UDFRunner : public ServiceImplBase {
     }
     const std::string obj(jsoptions["object"][0].asString());
     const std::string name(jsoptions["name"][0].asString());
-
     // validate (obj, name) pair
     if (! ValidateObjectOntology(obj, name)) {
       request.error_ = true;
@@ -618,18 +643,17 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    std::map<std::string, std::string> rez;
     // obj-ontology etype
     std::string etype;
     if (GetObjectOntologyEType(obj, name, etype) != 0) {
-      request.error_ = true;
       request.message_ += "fail to get object-ontology etype";
       return false;
     }
+    rez["object_ontology_etype"] = etype;
 
     // ontolgy tag-tag etype/vtype
-    std::map<std::string, std::string> rez;
     if (GetOntologyVEType(name, rez) != 0) {
-      request.error_ = true;
       request.message_ += name + " not found in " + ONTO;
       return false;
     }
@@ -639,7 +663,7 @@ class UDFRunner : public ServiceImplBase {
     request.outputwriter_->WriteName("object_ontology");
     request.outputwriter_->WriteStartObject();
     request.outputwriter_->WriteName("etype");
-    request.outputwriter_->WriteString(etype);
+    request.outputwriter_->WriteString(rez["object_ontology_etype"]);
     request.outputwriter_->WriteEndObject();
 
     request.outputwriter_->WriteName("ontology");
@@ -657,16 +681,36 @@ class UDFRunner : public ServiceImplBase {
 
     request.outputwriter_->WriteEndObject();
 
+    if (out != NULL) {
+      *out = rez;
+    }
+
     return true;
   }
 
   bool PreSetTag(ServiceAPI& serviceapi,
                           EngineServiceRequest& request) {
     // first get v/etype
-    if (! GetObjectOntologyVEType(request)) {
+    std::map<std::string, std::string> vetype;
+    if (! GetObjectOntologyVEType(request, &vetype)) {
       return false;
     }
     // then find tags' primary id if exist in graph
+    const Json::Value &jsoptions = request.jsoptions_;
+    if (jsoptions.isMember("tags")) {
+      std::map<std::string, VertexLocalId_t> tags;
+      int size = jsoptions["tags"].size();
+      for (int i = 0; i < size; ++i) {
+        // init with an invalid vid here
+        tags[jsoptions["tags"][i].asString()] = -1;
+      }
+
+      // run udf to find out primary id (path) of each tag
+//      typedef LocateTagUDF UDF_t;
+//      uint32_t vtype_id = vertex_type_map[vetype["vtype"]];
+//      UDF_t udf(1, vtype_id, tags);
+//      serviceapi.RunUDF(&request, &udf);
+    }
     return true;
   }
 
