@@ -212,12 +212,12 @@
       "function": "get_tag",
       "parameters": {
         "object": {
-          "type": "STRING"
+          "type": "TYPENAME"
         },
         "id": {
           "type": "STRING",
           "is_id":true,
-          "id_type":"$type"
+          "id_type":"$object"
         },
         "name": {
           "type": "STRING",

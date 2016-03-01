@@ -608,7 +608,7 @@ class UDFRunner : public ServiceImplBase {
   bool RunUDF_GetTag(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
     const Json::Value &jsoptions = request.jsoptions_;
-    const std::string &obj = jsoptions["object"][0].asString();
+    const std::string &obj = jsoptions["object"]["typename"].asString();
     if (vertex_type_map.find(obj) == vertex_type_map.end()) {
       request.error_ = true;
       request.message_ += obj + " not found in graph meta";
@@ -616,7 +616,8 @@ class UDFRunner : public ServiceImplBase {
     }
     uint32_t vtype_id = vertex_type_map[obj];
 
-    const std::string &id = jsoptions["id"][0].asString();
+    const std::string &id = boost::lexical_cast<std::string>(vtype_id) +
+      "_" +jsoptions["id"][0].asString();
     VertexLocalId_t start;
     if (! serviceapi.UIdtoVId(request, id, start)) {
       request.error_ = true;
