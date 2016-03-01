@@ -1,8 +1,7 @@
 # parse semantic schema and do dynamic schema change
-import json, sys, os.path
+import json, sys, os.path, subprocess
 
-GSQL_PATH = '~/graphsql/dev/gsql/gsql'
-
+GSQL_PATH = os.path.expanduser('~/graphsql/dev/gsql/gsql')
 BASIC_SCHEMA_PATH = '/tmp/basic.gsql'
 SEMANTIC_SCHEMA_PATH = '/tmp/semantic.json'
 SCHEMA_CHANGE_JOB_PATH = '/tmp/sc.gsql'
@@ -47,7 +46,7 @@ def add_edge(directed, etype, srcv, tgtv, eattr):
   return pat.format('directed' if directed else 'undirected',
       etype, srcv, tgtv, attrs)
 
-def create_schema_change(bs_path, ss_path, sc_path):
+def create_schema_change(ss_path, sc_path):
   with open(ss_path, 'r') as fp:
     js = json.load(fp)
     if not all((ONTO in js, OBJ_ONTO in js)):
@@ -107,10 +106,13 @@ def create_schema_change(bs_path, ss_path, sc_path):
     fp.write('\n'.join(lines))
 
 def run_schema_change(sc_path):
-  os.system(GSQL_PATH + ' ' + sc_path + '.vertex')
-  os.system(GSQL_PATH + ' ' + sc_path + '.edge')
+  with open('/tmp/schema_change.log', 'w') as fp:
+    v_job = subprocess.Popen([GSQL_PATH, sc_path + '.vertex'], stdout=fp, stderr=fp)
+    v_job.communicate()
+    e_job = subprocess.Popen([GSQL_PATH, sc_path + '.edge'], stdout=fp, stderr=fp)
+    e_job.communicate()
 
 
 if __name__ == '__main__':
-  create_schema_change(BASIC_SCHEMA_PATH, SEMANTIC_SCHEMA_PATH, SCHEMA_CHANGE_JOB_PATH)
+  create_schema_change(SEMANTIC_SCHEMA_PATH, SCHEMA_CHANGE_JOB_PATH)
   run_schema_change(SCHEMA_CHANGE_JOB_PATH)
