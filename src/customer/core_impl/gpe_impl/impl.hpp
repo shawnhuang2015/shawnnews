@@ -108,7 +108,7 @@ class UDFRunner : public ServiceImplBase {
     } else if (request.request_function_ == "get_profile") {
       return RunUDF_GetProfile(serviceapi, request);
     } else if (request.request_function_ == "pre_set_tag") {
-      return GetObjectOntologyVEType(request);
+      return PreSetTag(serviceapi, request);
     } else if (request.request_function_ == "get_tag") {
       return RunUDF_GetTag(serviceapi, request);
     }
@@ -613,6 +613,16 @@ class UDFRunner : public ServiceImplBase {
 
     request.outputwriter_->WriteEndObject();
 
+    return true;
+  }
+
+  bool PreSetTag(ServiceAPI& serviceapi,
+                          EngineServiceRequest& request) {
+    // first get v/etype
+    if (! GetObjectOntologyVEType(request)) {
+      return false;
+    }
+    // then find tags' primary id if exist in graph
     return true;
   }
 
