@@ -1,32 +1,8 @@
-# IUM will geneate this config when onsite deployment
-
-# IUM will modify graph yaml file on site automatically for SegSizeInBits
-
-# To generate visiualization of the graph schema in pdf format, you need to install graphviz (http://www.graphviz.org/) 
-# on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
-# e.g. DotDir=/usr/bin/
-
-# gsql script will generate this config
-# ptest will generate the soft link ~/.ptest/bin_root
-CanonnicalLoader=~/.ptest/bin_root
-
-
-# gsql script will generate this config
-# ptest will generate the soft link ~/.ptest/config_root 
-GSELoaderConfig=~/.ptest/config_root/gse_loader/gse_loader1.conf
-
-# gsql generate this
-# This is tokenUDF string->string function's output buffer size
+CanonnicalLoader=/home/danhu/.ptest/bin_root/generic_batch_loader
+GSELoaderConfig=/home/danhu/.ptest/config_root/gse_loader/gse_loader1.conf
 OutputTokenBufferSize=50000
-
-# This is a flag to prevent persist to the disk
 DoNotPersistCatalog=true
-
-# TokenBank cpp file dir
 TokenBankSrc=./resources/common/TokenBank
 TokenLibSrc=./resources/common/TokenLib
 ReducerBankSrc=./resources/common/ReducerBank
 ReducerLibSrc=./resources/common/ReducerLib
-
-# Set Root Dir
-RootDir=./
