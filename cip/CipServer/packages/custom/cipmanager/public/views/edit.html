@@ -55,7 +55,7 @@
                     </ui-select>
                 </div>
                 <div class="col-md-2"  ng-if="factors.type != 'behavior' && factors.type && factors.operator != 'like' && factors.operator != 'dislike'">
-                    <input name="weight" type="number" min=0 max=1 class="form-control" ng-model="factors.weight" placeholder="权重(0-1范围之间)">
+                    <input name="weight" type="number" class="form-control" ng-model="factors.weight" placeholder="权重">
                 </div>
 
                 <!-- For behavior -->

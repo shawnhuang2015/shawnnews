@@ -46,8 +46,6 @@ var CrowdSingleSchema = new Schema({
                 weight: {
                     type: Number,
                     //required: true,
-                    min: 0,
-                    max: 1
                 },
                 type: {
                     type: String,
