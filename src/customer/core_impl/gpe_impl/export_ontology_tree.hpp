@@ -38,9 +38,11 @@ namespace UDIMPL {
 
     ExportOntologyTree(unsigned int limit, uint32_t vtype_id, 
         uint32_t etype_id, size_t threshold, 
-        std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree)
+        std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree,
+        bool &large)
       : SingleActiveBaseUDF(limit), vtype_id_(vtype_id), 
-        etype_id_(etype_id), threshold_(threshold), tree_(tree) {}
+        etype_id_(etype_id), threshold_(threshold), tree_(tree),
+        large_(large) {}
 
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
       context->SetActiveFlagByType(vtype_id_, true);
@@ -58,6 +60,7 @@ namespace UDIMPL {
     void BeforeIteration(MasterContext* context) {
       size_t n_active = context->GetActiveVertexCount();
       if (n_active > threshold_) {
+        large_ = true;
         context->Abort();
       }
     }
@@ -81,6 +84,7 @@ namespace UDIMPL {
       for (int i = 0; i < size; ++i) {
         tree_[rez[i].srcid].push_back(rez[i].tgtid);
       }
+      large_ = false;
     }
 
   private:
@@ -88,6 +92,7 @@ namespace UDIMPL {
     uint32_t etype_id_;
     size_t threshold_;
     std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > &tree_;
+    bool &large_;
   };
 }  // namepsace UDIMPL
 
