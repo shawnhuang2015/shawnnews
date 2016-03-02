@@ -537,6 +537,9 @@ class UDFRunner : public ServiceImplBase {
     const Json::Value &prof = semantic_schema[PROF];
     std::set<std::string> obj;
 
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+
     // collect all entities in profile
     if (! prof.isMember("target")) {
       request.error_ = true;
@@ -544,6 +547,19 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
     obj.insert(prof["target"].asString());
+
+    writer->WriteName("target");
+    writer->WriteString(prof["target"].asString());
+
+    if (! prof.isMember("crowdIndex")) {
+      writer->WriteName("crowdIndex");
+      writer->WriteStartObject();
+      writer->WriteName("vtype");
+      writer->WriteString(prof["crowdIndex"]["vtype"].asString());
+      writer->WriteName("etype");
+      writer->WriteString(prof["crowdIndex"]["etype"].asString());
+      writer->WriteEndObject();
+    }
 
     if (prof.isMember("behaviour")) {
       const Json::Value &beh = prof["behaviour"];
@@ -564,9 +580,6 @@ class UDFRunner : public ServiceImplBase {
         it != obj.end(); ++it) {
       GetOntologyNameByObject(*it, onto);
     }
-
-    JSONWriter *writer = request.outputwriter_;
-    writer->WriteStartObject();
 
     // get obj-ontology
     writer->WriteName("object_ontology");
