@@ -112,16 +112,26 @@ namespace UDIMPL {
       std::cout << std::endl;
     }
 
+    void mergeValue(uint64_t id, V_VALUE val, 
+            std::map<uint64_t, V_VALUE> &initVal) {
+      if (initVal.find(id) == initVal.end()) {
+        initVal[id] = val;
+      } else {
+        initVal[id] += val;
+      }
+    }
+
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
       std::cout << "UDF Initialize" << std::endl;
-      //For specified path, active the start nodes.
-      //It still can not handle the case - the same vertex
-      //appear several times with different filters
+      //initValue - The start nodes could be repeated. This is used
+      //to merge the value of the same node
+      std::map<uint64_t, V_VALUE> initValue; 
+
       if (sp_ == PathOntoUser) {
         for (size_t k = 0; k < onto_cond_.size(); ++k) {
           std::vector<uint64_t> startIds = onto_cond_[k].startId;
           for (size_t i = 0; i < startIds.size(); ++i) {
-            context->Write(startIds[i], V_VALUE(pow2(k), cond_size_));
+            mergeValue(startIds[i], V_VALUE(pow2(k), cond_size_), initValue);
           }
         }
       } else if (sp_ == PathItemUser) {
@@ -131,7 +141,7 @@ namespace UDIMPL {
           value.count[k] = 1;
           std::vector<uint64_t> startIds = item_bhr_cond_[k].startId;
           for (size_t i = 0; i < startIds.size(); ++i) {
-            context->Write(startIds[i], value);
+            mergeValue(startIds[i], value, initValue);
           }
         }
       } else if (sp_ == PathOntoItemUser) {
@@ -141,9 +151,15 @@ namespace UDIMPL {
           value.count[k] = 1;
           std::vector<uint64_t> startIds = onto_bhr_cond_[k].startId;
           for (size_t i = 0; i < startIds.size(); ++i) {
-            context->Write(startIds[i], value);
+            mergeValue(startIds[i], value, initValue);
           }
         }
+      }
+
+      //active the start nodes here
+      for (std::map<uint64_t, V_VALUE>::iterator it = initValue.begin();
+              it != initValue.end(); ++it) {
+        context->Write(it->first, it->second);
       }
     }
 
