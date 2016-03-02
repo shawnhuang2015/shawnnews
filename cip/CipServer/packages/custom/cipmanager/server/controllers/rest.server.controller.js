@@ -462,7 +462,11 @@ exports.readMetadata = function(req, res) {
                                 {"parent": "china", "children": ["cctv1", "cctv2"]},
                                 {"parent": "USA", "children": ["youtube"]}
                             ]
+                        },
+                        {"name": "lol",
+
                         }
+
                     ],
 
                     "object_ontology": [

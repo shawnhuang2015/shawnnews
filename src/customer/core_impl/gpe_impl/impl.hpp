@@ -698,11 +698,11 @@ class UDFRunner : public ServiceImplBase {
     // then find tags' primary id if exist in graph
     const Json::Value &jsoptions = request.jsoptions_;
     if (jsoptions.isMember("tags")) {
-      std::map<std::string, VertexLocalId_t> tags;
+      std::set<std::string> tags;
       int size = jsoptions["tags"].size();
       for (int i = 0; i < size; ++i) {
         // init with an invalid vid here
-        tags[jsoptions["tags"][i].asString()] = -1;
+        tags.insert(jsoptions["tags"][i].asString());
       }
 
       // run udf to find out primary id (path) of each tag

@@ -22,10 +22,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
     ];
 
     ////////////////////////For temp test///////////////////
-    $scope.condition_type = [
-      'ontology',
-      'behavior'
-    ];
 
     $scope.ontology_type = [];
 
@@ -42,8 +38,9 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
     $scope.action = [];
 
     $scope.object_type = [
-      'Category',
-      'Item'
+      {name:'在目录中',id:'Category'},
+      {name:'物品ID=',id:'Item'},
+      {name:'包含字段',id:'Contains'}
     ];
 
     $scope.object_category = [];
@@ -84,7 +81,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
 
 
     //////////////////////Local function///////////////////////
-    $scope.addFactor = function(condition_type) {
+    $scope.addFactor = function(factor_type) {
+      var condition_type = 'ontology';
+      if(factor_type == 'behavior') {
+        condition_type = 'behavior';
+      }
       if(!$scope.crowdDetail) {
         $scope.crowdDetail = {};
       }
@@ -233,6 +234,13 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           });
         }
       });
+    });
+
+    $scope.$watch('factors.objectType', function(nowSelected){
+      if(!nowSelected){
+        return;
+      }
+      $scope.factors.objectId = '';
     });
 
     $scope.$watch('factors.ontologyType', function(nowSelected){
@@ -521,6 +529,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           for(var index in data.content.ontology){
             $scope.ontology_type.push(data.content.ontology[index].name);
           }
+          $scope.ontology_type.push('behavior');
           for(var index in data.content.behaviour){
             $scope.action.push(data.content.behaviour[index].name);
           }
