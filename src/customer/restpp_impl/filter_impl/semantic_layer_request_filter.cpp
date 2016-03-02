@@ -159,7 +159,11 @@ extern "C" {
     const char tag_sep = params["tag_sep"][0][0];
     const char weight_sep = params["weight_sep"][0][0];
     const char eol = params["eol"][0][0];
-    const bool more = params["more"][0][0];
+    const bool more = (params["more"][0] == "1");
+
+    std::cout << "sep=" << sep << "@, tag_sep=" << tag_sep
+        << "@, weight_sep=" << weight_sep << "@, eol="
+        << eol << "@, more=" << more << std::endl;
 
     // parse inverted_tags
     Json::Value inverted_tags;
@@ -173,8 +177,10 @@ extern "C" {
 
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(&eol));
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
+      std:: cout << "line: " << l << std::endl;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -194,6 +200,7 @@ extern "C" {
         // get tag/weight
         // FIXME: assume each tag only has one attr, which is weight,
         // in the future, might be more attrs
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {
@@ -279,8 +286,9 @@ extern "C" {
     std::set<std::string> uniq_tags;
     Json::Value &jsoptions = gsql_request->jsoptions;
 
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -294,6 +302,7 @@ extern "C" {
 
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {

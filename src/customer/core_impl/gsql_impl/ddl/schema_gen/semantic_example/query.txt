@@ -24,3 +24,6 @@ curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=demo&sep=;' -d
 curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=demo&verbose=true'
 curl -X GET 'http://localhost:9000/get_profile'
 curl -X GET 'http://localhost:9000/get_ontology?name=demo'
+curl -X POST 'http://localhost:9000/set_item_tag?object=pic&name=type&sep=;' -d 'p1;apple'
+
+### as I found out, cannot put args like this `sep=;&more=true`, otherwise `sep` won't be `;`, why?
