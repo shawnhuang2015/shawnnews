@@ -176,6 +176,42 @@
       "summary": "export profile."
     }
   },
+  "set_item_tag": {
+    "POST": {
+      "function": "pre_set_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        },
+        "more": {
+          "type": "BOOL",
+          "default": "1"
+        }
+      },
+      "request_filter": "PreSetTagRequest",
+      "response_filter": "PreSetTagResponse",
+      "summary": "set item -> tags."
+    }
+  },
   "set_user_tag": {
     "POST": {
       "function": "pre_set_tag",
@@ -201,6 +237,10 @@
         "eol": {
           "type": "STRING",
           "default": "\n"
+        },
+        "more": {
+          "type": "BOOL",
+          "default": "1"
         }
       },
       "request_filter": "PreSetTagRequest",
@@ -249,9 +289,13 @@
         "inverted_tags": {
           "type": "STRING",
           "default": "{}"
+        },
+        "more": {
+          "type": "BOOL",
+          "default": "0"
         }
       },
-      "request_filter": "PostUserTag",
+      "request_filter": "PostTag",
       "summary": "do the real POST, set user -> tags."
     }
   },
