@@ -282,7 +282,7 @@
           "request_filter": "UserSearchFilter"
         }
       },
-      "create_crowd": {
+      "create": {
         "POST": {
           "function": "user_search",
           "parameters": {
@@ -304,7 +304,7 @@
             "summary":""
         }  
       },
-      "get_crowd": {
+      "get": {
         "GET/POST": {
           "function": "get_crowd_by_name",
           "parameters": {
