@@ -138,6 +138,7 @@ extern "C" {
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request) {
+    std::cout << "PostUserTag" << std::endl;
     if (user_request->data_length == 0) {
       std::string msg("Payload missing.");
       gsql_request->Respond(msg);
@@ -160,8 +161,15 @@ extern "C" {
     const char weight_sep = params["weight_sep"][0][0];
     const char eol = params["eol"][0][0];
 
-    // TODO(@alan): 2 flags for now, one for path-tag, the other for single tag
-    int flag = 1;
+    // parse inverted_tags
+    Json::Value inverted_tags;
+    Json::Reader reader;
+    if (! reader.parse(params["inverted_tags"][0], inverted_tags)) {
+      gsql_request->Respond("fail to parse inverted_tags.");
+      return;
+    }
+
+    std::cout << "parsed inverted_tags = " << inverted_tags << std::endl;
 
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(&eol));
@@ -196,7 +204,34 @@ extern "C" {
           w = ::atof(tw[1].c_str());
         }
 
-        // TODO(@alan): check if tag exist in the tree, otherwise upsert
+        // check if `t` exists in inverted_tags, then find it's primary id
+        if (inverted_tags.isMember(t)) {
+          if (inverted_tags[t].size() == 1) {
+            t = inverted_tags[t][0].asString();
+          } else {
+            // error, tag not unique
+            gsql_request->Respond("tag (" + t + ") is not unique.");
+            return;
+          }
+        } else {
+          // add this new tag into ontology tree, insert vertex/edge
+          attr.Clear();
+          attr.SetString("name", t);
+          // upsert vertex, new tags are level-1 tags, so primay id = name
+          if (! gsql_request->UpsertVertex(attr, ontology_vtype, t, msg)) {
+            gsql_request->Respond("fail to upsert vertex, " + msg);
+            return;
+          }
+          // upsert edge
+          attr.Clear();
+          if (! gsql_request->UpsertEdge(attr, ontology_vtype, name, 
+                ontology_down_etype, ontology_vtype, t, msg) ||
+              ! gsql_request->UpsertEdge(attr, ontology_vtype, t, 
+                ontology_up_etype, ontology_vtype, name, msg)) {
+            gsql_request->Respond("fail to upsert edge, " + msg);
+            return;
+          }
+        }
 
         // upsert edge
         attr.Clear();

@@ -190,6 +190,10 @@
         "eol": {
           "type": "STRING",
           "default": "\n"
+        },
+        "inverted_tags": {
+          "type": "STRING",
+          "default": "{}"
         }
       },
       "request_filter": "PostUserTag",
