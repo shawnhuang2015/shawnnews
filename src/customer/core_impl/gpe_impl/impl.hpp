@@ -35,6 +35,9 @@ const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
+const std::string CROWD_INDEX("crowdIndex");
+const std::string CROWD_INDEX_VTYPE = "__crowd_index";
+const std::string USER_CROWD_INDEX_ETYPE = "__user_to_crowd_index";
 
 class UDFRunner : public ServiceImplBase {
  private:
@@ -279,6 +282,10 @@ class UDFRunner : public ServiceImplBase {
           obj_onto.append(one);
         }
         payload[OBJ_ONTO] = obj_onto;
+
+        // create crowdIndex v/etype for crowding service
+        payload[CROWD_INDEX]["vtype"] = CROWD_INDEX_VTYPE;
+        payload[CROWD_INDEX]["etype"] = USER_CROWD_INDEX_ETYPE;
       }
     } else {
       request.error_ = true;
@@ -552,14 +559,17 @@ class UDFRunner : public ServiceImplBase {
     writer->WriteString(prof["target"].asString());
 
     if (! prof.isMember("crowdIndex")) {
-      writer->WriteName("crowdIndex");
-      writer->WriteStartObject();
-      writer->WriteName("vtype");
-      writer->WriteString(prof["crowdIndex"]["vtype"].asString());
-      writer->WriteName("etype");
-      writer->WriteString(prof["crowdIndex"]["etype"].asString());
-      writer->WriteEndObject();
+      request.error_ = true;
+      request.message_ += "crowdIndex missing.";
+      return false;
     }
+    writer->WriteName("crowdIndex");
+    writer->WriteStartObject();
+    writer->WriteName("vtype");
+    writer->WriteString(prof["crowdIndex"]["vtype"].asString());
+    writer->WriteName("etype");
+    writer->WriteString(prof["crowdIndex"]["etype"].asString());
+    writer->WriteEndObject();
 
     if (prof.isMember("behaviour")) {
       const Json::Value &beh = prof["behaviour"];
