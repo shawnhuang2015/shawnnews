@@ -1,0 +1,15 @@
+{
+  "type":"object",
+  "$schema": "http://json-schema.org/draft-04/schema",
+      "properties":{
+        "user_id":"190012345",
+        "user_id":{"type":"string"},
+        "name":{"type":"string"},
+        "gender":{"type":"string"},
+        "age":{"type":"number"},
+        "current_pos":{"type":"string"},
+        "logintime":{"type":"string"},
+        "isVIP":{"type":"string"} 
+      },
+     "required":["user_id","name","gender","logintime"]
+}

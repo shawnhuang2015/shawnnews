@@ -22,6 +22,8 @@ from Decorators import logTxn
 from Decorators import Performance 
 sys.path.append("..")
 from monitor.Perf import Perf
+from util.ErrHandler import buildAppResult 
+from validator.validator import appSchemaValidator 
 
 
 #TODO:config
@@ -33,42 +35,33 @@ rsm = RuleSuiteManager(ruleRoot, 10)
 perf = Perf("192.168.33.70","sla")
 
 
-def reloadRuleSuite():
-    print "reloading ..........."
-    global rsm
-    rsm = RuleSuiteManager(ruleRoot, 10) 
-    Timer(3600*12, reloadRuleSuite,()).start()
+#  def reloadRuleSuite():
+    #  print "reloading ..........."
+    #  global rsm
+    #  rsm = RuleSuiteManager(ruleRoot, 10) 
+    #  Timer(3600*12, reloadRuleSuite,()).start()
 
-reloadRuleSuite()
+#  reloadRuleSuite()
 
-def buildRestAck(code, summary = None, data = None):
-    pkg = {
-            "code":code,
-            "summary":summary,
-            "data":data
-            }
-    return jsonify({"result":pkg})
-    
-
-
-def validateRequest(req):
-    #TODO
-    return True
+def appRespond(result):
+    return jsonify({"result":result})
 
 @app.route('/cip/api/1.0/ruleng', methods = ['POST'])
 @logTxn("API_CALL RULE_EXECUTE")
 @Performance(perf,{"API_CALL":"RULE_EXECUTE"})
 def execute():
     global rsm
+    appSchemaValidator.validate(request.data)
+    if appSchemaValidator.errors != []:
+        return appRespond(buildAppResult(REST_BAD_REQ, "Invalid request " + "\n".join(appSchemaValidator.errors)))
+
     req = json.loads(request.data)
-    if not validateRequest(request):
-        return buildRestAck(REST_BAD_REQ, "Invalid request " + request.data)
     try:
         ret = rsm.runWithRequest(request = req)
-        return buildRestAck(REST_OK, data = ret)
+        return appRespond(buildAppResult(REST_OK, data = ret))
     except Exception as e:
         print e
-        return buildRestAck(REST_INTERNAL_ERROR, e.message, e)
+        return appRespond(buildAppResult(REST_INTERNAL_ERROR, e.message, e))
     finally:
         pass
 
