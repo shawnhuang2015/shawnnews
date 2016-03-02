@@ -211,15 +211,20 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         return;
       }
       $scope.factors.factor = '';
-      angular.forEach($scope.ontology_data.ontology, function(val){
-        if(val.name == nowSelected) {
-          $scope.traverseTree(val.tree, function(itemList) {
-            $scope.factor_tag = itemList;
-            $scope.factors.factor = itemList[0];
-            $scope.factors.operator = $scope.operator[0];
-          });
-        }
-      });
+      if($scope.factors.type != 'behavior') {
+        angular.forEach($scope.ontology_data.ontology, function (val) {
+          if (val.name == nowSelected) {
+            $scope.traverseTree(val.tree, function (itemList) {
+              $scope.factor_tag = itemList;
+              $scope.factors.factor = itemList[0];
+              $scope.factors.operator = $scope.operator[0];
+            });
+          }
+        });
+      } else {
+        $scope.factors.action = $scope.ontology_data.behaviour[0].name;
+        $scope.factors.operator = $scope.operator[0];
+      }
     });
 
     $scope.$watch('factors.action', function(nowSelected){
