@@ -18,6 +18,7 @@
 #include "export_ontology_tree.hpp"
 #include "business/UserSearchMain.hpp"
 #include "get_tag.hpp"
+#include "locate_tag.hpp"
 
 using namespace gperun;
 
@@ -42,6 +43,8 @@ class UDFRunner : public ServiceImplBase {
   std::map<uint32_t, std::string> vertex_type_reverse_map;
   std::map<std::string, uint32_t> edge_type_map;
   std::map<uint32_t, std::string> edge_type_reverse_map;
+  std::map<std::string, std::vector<VertexLocalId_t> > inverted_tag_cache;
+  bool refresh_inverted_tag_chache;
 
  public:
   void Init(ServiceAPI& serviceapi) {
@@ -59,6 +62,9 @@ class UDFRunner : public ServiceImplBase {
 
     // load graph meta
     LoadGraphMeta(serviceapi);
+
+    // init some data member
+    refresh_inverted_tag_chache = true;
   }
 
   void LoadGraphMeta(ServiceAPI &serviceapi) {
@@ -606,31 +612,32 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
-//  bool GetObjectOntologyVEType(const std::string &obj, const std::string &name,
-//      std::map<std::string, std::string> rez) {
-//    // validate (obj, name) pair
-//    if (! ValidateObjectOntology(obj, name)) {
-//      std::cout << "(" + obj + ", " + name + ") not found in " + OBJ_ONTO << std::endl;
-//      return false;
-//    }
-//
-//    // obj-ontology etype
-//    std::string etype;
-//    if (GetObjectOntologyEType(obj, name, etype) != 0) {
-//      std::cout << "fail to get object-ontology etype" << std::endl;
-//      return false;
-//    }
-//    rez["object_ontology_etype"] = etype;
-//
-//    // ontolgy tag-tag etype/vtype
-//    if (GetOntologyVEType(name, rez) != 0) {
-//      std::cout << name + " not found in " + ONTO << std::endl;
-//      return false;
-//    }
-//
-//    return true;
-//  }
+  bool GetObjectOntologyVEType(const std::string &obj, const std::string &name,
+      std::map<std::string, std::string> &rez) {
+    // validate (obj, name) pair
+    if (! ValidateObjectOntology(obj, name)) {
+      std::cout << "(" + obj + ", " + name + ") not found in " + OBJ_ONTO << std::endl;
+      return false;
+    }
 
+    // obj-ontology etype
+    std::string etype;
+    if (GetObjectOntologyEType(obj, name, etype) != 0) {
+      std::cout << "fail to get object-ontology etype" << std::endl;
+      return false;
+    }
+    rez["object_ontology_etype"] = etype;
+
+    // ontolgy tag-tag etype/vtype
+    if (GetOntologyVEType(name, rez) != 0) {
+      std::cout << name + " not found in " + ONTO << std::endl;
+      return false;
+    }
+
+    return true;
+  }
+
+  // TODO(@alan): obsolete
   bool GetObjectOntologyVEType(EngineServiceRequest& request,
       std::map<std::string, std::string> *out = NULL) {
     const Json::Value &jsoptions = request.jsoptions_;
@@ -697,27 +704,97 @@ class UDFRunner : public ServiceImplBase {
 
   bool PreSetTag(ServiceAPI& serviceapi,
                           EngineServiceRequest& request) {
-    // first get v/etype
-    std::map<std::string, std::string> vetype;
-    if (! GetObjectOntologyVEType(request, &vetype)) {
+    const Json::Value &jsoptions = request.jsoptions_;
+    if (! (jsoptions.isMember("object") && jsoptions.isMember("name"))) {
+      request.error_ = true;
+      request.message_ += "object or name missing.";
       return false;
     }
+    const std::string obj(jsoptions["object"][0].asString());
+    const std::string name(jsoptions["name"][0].asString());
+
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+
+    // first get v/etype
+    std::map<std::string, std::string> vetype;
+    if (! GetObjectOntologyVEType(obj, name, vetype)) {
+      request.error_ = true;
+      request.message_ += "fail to get vetype.";
+      return false;
+    }
+
+    writer->WriteName("object_ontology");
+    writer->WriteStartObject();
+    writer->WriteName("etype");
+    writer->WriteString(vetype["object_ontology_etype"]);
+    writer->WriteEndObject();
+
+    writer->WriteName("ontology");
+    writer->WriteStartObject();
+    writer->WriteName("vtype");
+    writer->WriteString(vetype["vtype"]);
+    writer->WriteName("etype");
+    writer->WriteStartObject();
+    writer->WriteName("up");
+    writer->WriteString(vetype["up_etype"]);
+    writer->WriteName("down");
+    writer->WriteString(vetype["down_etype"]);
+    writer->WriteEndObject();
+    writer->WriteEndObject();
+
     // then find tags' primary id if exist in graph
-    const Json::Value &jsoptions = request.jsoptions_;
     if (jsoptions.isMember("tags")) {
-      std::set<std::string> tags;
-      int size = jsoptions["tags"].size();
-      for (int i = 0; i < size; ++i) {
-        // init with an invalid vid here
-        tags.insert(jsoptions["tags"][i].asString());
+      if (refresh_inverted_tag_chache) {
+        // find out primary id (path) of each tag
+        typedef LocateTagUDF UDF_t;
+        std::vector<UDF_t::tag_t> tag_vec;
+        uint32_t vtype_id = vertex_type_map[vetype["vtype"]];
+        UDF_t udf(1, vtype_id, tag_vec);
+        serviceapi.RunUDF(&request, &udf);
+  
+        // cache the inverted tag->path
+        inverted_tag_cache.clear();
+        for (std::vector<UDF_t::tag_t>::iterator it = tag_vec.begin();
+            it != tag_vec.end(); ++it) {
+          inverted_tag_cache[it->name].push_back(it->id);
+        }
+        refresh_inverted_tag_chache = false;
       }
 
-      // run udf to find out primary id (path) of each tag
-//      typedef LocateTagUDF UDF_t;
-//      uint32_t vtype_id = vertex_type_map[vetype["vtype"]];
-//      UDF_t udf(1, vtype_id, tags);
-//      serviceapi.RunUDF(&request, &udf);
+      std::cout << "cache.size = " << inverted_tag_cache.size() << std::endl;
+      std::cout << jsoptions["tags"] << std::endl;
+
+      writer->WriteName("inverted_tags");
+      writer->WriteStartObject();
+      int size = jsoptions["tags"].size();
+      std::map<std::string, std::vector<VertexLocalId_t> >::iterator it;
+      std::set<std::string> uniq;
+      for (int i = 0; i < size; ++i) {
+        const std::string &t = jsoptions["tags"][i].asString();
+        if (uniq.find(t) != uniq.end()) {
+          continue;
+        }
+
+        it = inverted_tag_cache.find(t);
+        if (it != inverted_tag_cache.end()) {
+          writer->WriteName(t.c_str());
+          writer->WriteStartArray();
+          int size1 = it->second.size();
+          for (int j = 0; j < size1; ++j) {
+            writer->WriteMarkVId(it->second[j]);
+            request.output_idservice_vids.push_back(it->second[j]);
+          }
+          writer->WriteEndArray();
+          uniq.insert(t);
+        } else {
+          refresh_inverted_tag_chache = true;
+        }
+      }
+      writer->WriteEndObject();
+
     }
+    writer->WriteEndObject();
     return true;
   }
 

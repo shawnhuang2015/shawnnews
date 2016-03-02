@@ -204,7 +204,7 @@
         }
       },
       "request_filter": "PreSetTagRequest",
-      "response_filter": "GetUserTagVEType",
+      "response_filter": "PreSetTagResponse",
       "summary": "set user -> tags."
     }
   },
