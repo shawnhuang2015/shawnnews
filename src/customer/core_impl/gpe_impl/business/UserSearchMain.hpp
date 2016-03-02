@@ -235,6 +235,7 @@ namespace UDIMPL {
         if (doIt) {
           IntersectSet(userIds, tmpUserIds);
         } else {
+          doIt = true;
           userIds = tmpUserIds;
         }
       }
@@ -261,6 +262,7 @@ namespace UDIMPL {
         if (doIt) {
           IntersectSet(userIds, tmpUserIds);
         } else {
+          doIt = true;
           userIds = tmpUserIds;
         }
       }
