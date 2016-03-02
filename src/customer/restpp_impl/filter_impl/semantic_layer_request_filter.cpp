@@ -159,7 +159,7 @@ extern "C" {
     const char tag_sep = params["tag_sep"][0][0];
     const char weight_sep = params["weight_sep"][0][0];
     const char eol = params["eol"][0][0];
-    const bool more = params["more"][0][0];
+    const bool more = (params["more"][0] == "1");
 
     // parse inverted_tags
     Json::Value inverted_tags;
