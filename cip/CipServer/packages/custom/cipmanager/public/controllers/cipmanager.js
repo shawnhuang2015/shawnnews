@@ -215,6 +215,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         if(val.name == nowSelected) {
           $scope.traverseTree(val.tree, function(itemList) {
             $scope.factor_tag = itemList;
+            $scope.factors.factor = itemList[0];
+            $scope.factors.operator = $scope.operator[0];
           });
         }
       });
@@ -234,6 +236,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           angular.forEach(val.object, function(object) {
             $scope.object_category.push(object.vtype);
           });
+          $scope.factors.objectCategory = val.object[0].vtype;
+          $scope.factors.objectType = $scope.object_type[0].id;
         }
       });
     });
@@ -250,6 +254,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           angular.forEach(val.ontology, function(ontology) {
             $scope.behavior_ontology_type.push(ontology.name);
           });
+          $scope.factors.ontologyType = val.ontology[0].name;
         }
       });
     });
@@ -271,6 +276,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         if(val.name == nowSelected) {
           $scope.traverseTree(val.tree, function(itemList) {
             $scope.object_id = itemList;
+            $scope.factors.objectId = itemList[0];
           });
         }
       });
@@ -545,6 +551,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           $scope.ontology_data = data.content;
           $scope.ontology_type = [];
           $scope.action = [];
+
           for(var index in data.content.ontology){
             $scope.ontology_type.push(data.content.ontology[index].name);
           }
@@ -552,6 +559,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           for(var index in data.content.behaviour){
             $scope.action.push(data.content.behaviour[index].name);
           }
+
+          $scope.factors.type = data.content.ontology[0].name;
+          $scope.factors.action = data.content.behaviour[0].name;
+
         }
       });
     };
