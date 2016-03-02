@@ -5,6 +5,7 @@
         <legend>条件列表</legend>
 
         <table class="table table-hover">
+            <h5>标签筛选条件</h5>
             <thead>
             <tr>
                 <th>序号</th>
@@ -30,13 +31,13 @@
         </table>
 
         <table class="table table-hover">
+            <h5>行为筛选条件</h5>
             <thead>
             <tr>
                 <th>序号</th>
                 <th>动作</th>
-                <th>对象类别</th>
-                <th>对象类型</th>
                 <th>对象</th>
+                <th>对象所属类目/属性体系</th>
                 <th>发生次数</th>
                 <th>发生时间</th>
                 <th>覆盖人数</th>
@@ -47,13 +48,13 @@
                 <td>{{$index+1}}</td>
                 <td>{{condition.action}}</td>
                 <td>{{condition.objectCategory}}</td>
-                <td>{{condition.objectType}}</td>
-                <td>{{condition.ontologyType}}/{{condition.objectId}}</td>
+                <td ng-if="condition.objectType=='Category'">位于{{condition.ontologyType}}/{{condition.objectId}}目录下</td>
+                <td ng-if="condition.objectType=='Contains'">包含字段{{condition.ontologyType}}/{{condition.objectId}}</td>
+                <td ng-if="condition.objectType=='Item'">物品ID={{condition.objectId}}</td>
                 <td>{{condition.operator}} {{condition.value}}次</td>
                 <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
                 <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
                 <td>{{condition.count}}</td>
-
             </tr>
             </tbody>
         </table>

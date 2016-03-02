@@ -21,6 +21,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       'dynamic'
     ];
 
+    $scope.group_logic = [
+      'and',
+      'or'
+    ];
+
     ////////////////////////For temp test///////////////////
 
     $scope.ontology_type = [];
@@ -38,8 +43,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
     $scope.action = [];
 
     $scope.object_type = [
-      {name:'在目录中',id:'Category'},
-      {name:'物品ID=',id:'Item'},
+      {name:'在分类...中',id:'Category'},
+      {name:'Item ID=',id:'Item'},
       {name:'包含字段',id:'Contains'}
     ];
 
@@ -99,6 +104,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       param.selector[condition_type].push($scope.factors);
       CrowdService.getUserCountByFactor(param, function(data){
         $scope.factors.count = data.length;
+        if($scope.factors.objectType == 'Contains') {
+          $scope.factors.is_sub = true;
+        } else {
+          $scope.factors.is_sub = false;
+        }
         $scope.crowdDetail.selector[condition_type].push($scope.factors);
         $scope.factors = {};
       });
@@ -120,6 +130,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
 
     $scope.goToCreate = function () {
       $state.go('create crowd')
+    };
+
+    $scope.goToSaveCrowd = function () {
+      $state.go('save crowd',{crowdDetail: $scope.crowdDetail});
     };
 
     $scope.goToCreateGroup = function () {
@@ -149,6 +163,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       });
     };
 
+    $scope.initSaveCrowd = function() {
+      $scope.crowdDetail = $stateParams.crowdDetail;
+      $scope.crowdDetail.type = 'static';
+    };
     //////////////////////Local function///////////////////////
 
 
@@ -449,6 +467,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       if(!$stateParams.groupName) {
         $scope.groupDetail = {};
         $scope.groupDetail.selector = [];
+        $scope.groupDetail.logic = 'or';
       } else {
         Groupmanager.get({
           crowdName: $stateParams.groupName
@@ -493,7 +512,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           CrowdService.createGroup($scope.groupDetail, function(data) {
             if(data.success) {
               alert("创建成功!");
-              $location.path('/group/crowd/'+$scope.groupDetail.crowdName+'/userlist');
+              $location.path('/crowd/group/'+$scope.groupDetail.crowdName+'/userlist');
             } else {
               alert("创建失败!");
             }

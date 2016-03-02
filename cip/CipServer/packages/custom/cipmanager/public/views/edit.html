@@ -1,36 +1,4 @@
 <section data-ng-controller="CipmanagerController" data-ng-init="findOne()">
-    <form name="crowdForm" class="form-horizontal" role="form" data-ng-submit="update(crowdForm.$valid)" novalidate>
-        <fieldset>
-            <legend>基本信息</legend>
-            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.crowd_name.$invalid }">
-                <label mean-token="'create-crowd_name'" class="col-md-2 control-label">人群名称</label>
-                <div class="col-md-4">
-                    <input name="crowd_name" type="text" class="form-control" data-ng-model="crowdDetail.crowdName"
-                           id="crowd_name" placeholder="Crowd Name" required>
-                    <div ng-show="submitted && crowdForm.crowd_name.$invalid" class="help-block">
-                        <p ng-show="crowdForm.crowd_name.$error.required">Crowd name is required</p>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
-                <label mean-token="'create-description'" class="col-md-2 control-label">描述</label>
-                <div class="col-md-4">
-                    <input name="description" type="text" class="form-control" data-ng-model="crowdDetail.description"
-                           id="description" placeholder="Description" required>
-                    <div ng-show="submitted && crowdForm.description.$invalid" class="help-block">
-                        <p ng-show="crowdForm.description.$error.required">Description is required</p>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label mean-token="'create-type'" class="col-md-2 control-label">人群类型</label>
-                <div class="col-md-4">
-                    <select class="form-control" ng-model="crowdDetail.type"
-                            ng-options="x as x for x in crowd_type"></select>
-                </div>
-            </div>
-        </fieldset>
-
         <fieldset>
             <legend>圈人条件</legend>
             <!-- Edit -->
@@ -107,14 +75,14 @@
                 </div>
                 <div class="col-md-2" ng-if="factors.type == 'behavior' && object_category.length>0">
                     <ui-select ng-model="factors.objectType" append-to-body="'true'">
-                        <ui-select-match placeholder="对象类型">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-match placeholder="查询方法">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="x.id as x in object_type | filter:$select.search">{{x.name}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-if="factors.type == 'behavior' && factors.objectType == 'Category' && object_category.length>0">
+                <div class="col-md-2" ng-if="factors.type == 'behavior' && (factors.objectType == 'Category' || factors.objectType == 'Contains') && object_category.length>0">
                     <ui-select ng-model="factors.ontologyType" append-to-body="'true'">
-                        <ui-select-match placeholder="ontology类型">{{factors.ontologyType}}</ui-select-match>
+                        <ui-select-match placeholder="对象所属分类体系">{{factors.ontologyType}}</ui-select-match>
                         <ui-select-choices repeat=" x in behavior_ontology_type | filter:$select.search">{{x}}
                         </ui-select-choices>
                     </ui-select>
@@ -127,9 +95,9 @@
                     </ui-select>
                 </div>
                 <div class="col-md-2" ng-if="factors.type == 'behavior' && object_category.length>0 &&
-                    (factors.objectType != 'Category' ||(factors.objectType == 'Category') && object_id.length<=0)">
+                    (factors.objectType != 'Category' ||(factors.objectType == 'Category' && object_id.length<=0))">
                     <input name="item_id" type="text" class="form-control" ng-model="factors.objectId"
-                           placeholder="Item Id">
+                           placeholder="对象值">
                 </div>
             </div>
             <div class="form-group row">
@@ -200,10 +168,11 @@
             <legend>条件列表</legend>
 
             <table class="table table-hover">
+                <h5>标签筛选条件</h5>
                 <thead>
                 <tr>
                     <th>序号</th>
-                    <th>标签体系</th>
+                    <th>标签分类体系</th>
                     <th>标签</th>
                     <th>逻辑</th>
                     <th>覆盖人数</th>
@@ -232,13 +201,13 @@
             </table>
 
             <table class="table table-hover">
+                <h5>行为筛选条件</h5>
                 <thead>
                 <tr>
                     <th>序号</th>
                     <th>动作</th>
-                    <th>对象类别</th>
-                    <th>对象类型</th>
                     <th>对象</th>
+                    <th>对象所属类目/属性体系</th>
                     <th>发生次数</th>
                     <th>发生时间</th>
                     <th>覆盖人数</th>
@@ -250,10 +219,9 @@
                     <td>{{$index+1}}</td>
                     <td>{{condition.action}}</td>
                     <td>{{condition.objectCategory}}</td>
-                    <td>{{condition.objectType}}</td>
-                    <td ng-if="condition.objectType=='Category'">{{condition.ontologyType}}/{{condition.objectId}}</td>
-                    <td ng-if="condition.objectType=='Contains'">{{condition.objectId}}</td>
-                    <td ng-if="condition.objectType=='Item'">{{condition.objectId}}</td>
+                    <td ng-if="condition.objectType=='Category'">位于{{condition.ontologyType}}/{{condition.objectId}}目录下</td>
+                    <td ng-if="condition.objectType=='Contains'">包含字段{{condition.ontologyType}}/{{condition.objectId}}</td>
+                    <td ng-if="condition.objectType=='Item'">物品ID={{condition.objectId}}</td>
                     <td>{{condition.operator}} {{condition.value}}次</td>
                     <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
                     <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
@@ -273,15 +241,8 @@
         </fieldset>
 
         <div class="form-group">
-            <div class="col-md-offset-3 col-md-3">
-                <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block">保存人群</button>
-            </div>
-            <div class="col-md-3">
-                <a mean-token="'create-save'" type="button" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block" ng-href="/crowd/{{crowdDetail.crowdName}}/userlist">
-                    查看/下载UID集合
-                </a>
+            <div class="col-md-offset-4 col-md-3">
+                <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0" class="btn btn-success btn-block">保存人群</button>
             </div>
         </div>
-
-    </form>
 </section>
