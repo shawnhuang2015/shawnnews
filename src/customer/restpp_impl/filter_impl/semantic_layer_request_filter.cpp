@@ -134,11 +134,10 @@ extern "C" {
     gsql_request->Respond("done.");
   }
 
-  void PostUserTag(
+  void PostTag(
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request) {
-    std::cout << "PostUserTag" << std::endl;
     if (user_request->data_length == 0) {
       std::string msg("Payload missing.");
       gsql_request->Respond(msg);
@@ -160,6 +159,7 @@ extern "C" {
     const char tag_sep = params["tag_sep"][0][0];
     const char weight_sep = params["weight_sep"][0][0];
     const char eol = params["eol"][0][0];
+    const bool more = params["more"][0][0];
 
     // parse inverted_tags
     Json::Value inverted_tags;
@@ -182,8 +182,8 @@ extern "C" {
         continue;
       }
 
-      // get user id
-      const std::string &user_id = fields[0];
+      // get object id
+      const std::string &obj_id = fields[0];
       boost::tokenizer<boost::char_separator<char> > tags(
           fields[1], boost::char_separator<char>(&tag_sep));
 
@@ -192,6 +192,8 @@ extern "C" {
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
         // get tag/weight
+        // FIXME: assume each tag only has one attr, which is weight,
+        // in the future, might be more attrs
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {
@@ -213,7 +215,7 @@ extern "C" {
             gsql_request->Respond("tag (" + t + ") is not unique.");
             return;
           }
-        } else {
+        } else if (more) {
           // add this new tag into ontology tree, insert vertex/edge
           attr.Clear();
           attr.SetString("name", t);
@@ -236,7 +238,7 @@ extern "C" {
         // upsert edge
         attr.Clear();
         attr.SetFloat("weight", w);
-        if (! gsql_request->UpsertEdge(attr, object_vtype, user_id, 
+        if (! gsql_request->UpsertEdge(attr, object_vtype, obj_id, 
               object_ontology_etype, ontology_vtype, t, msg)) {
           gsql_request->Respond("fail to upsert edge, " + msg);
           return;
@@ -252,6 +254,8 @@ extern "C" {
     gsql_request->Respond("done.");
   }
 
+  // parse payload to get all tags
+  // set tags to gpe in order to find the primary ids
   void PreSetTagRequest(
            FilterHelper *filter_helper,
            UserRequest *user_request,

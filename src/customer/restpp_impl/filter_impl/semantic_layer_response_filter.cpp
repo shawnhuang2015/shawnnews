@@ -58,6 +58,9 @@ RequestObject* PostOntologyTree(FilterHelper *filter_helper,
   }
 }
 
+// receive v/etype of ontology and object, 
+// and the tag -> primary id mapping (inverted_tags)
+// fire a new request and pass the above info to it (to do the real POST)
 RequestObject* PreSetTagResponse(FilterHelper *filter_helper,
           GsqlResponse *gsql_response,
           UserResponse *user_response){

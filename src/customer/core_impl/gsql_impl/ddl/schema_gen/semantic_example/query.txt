@@ -22,3 +22,4 @@ curl -X POST 'http://localhost:9000/ontology_import?object=user&name=demo' --dat
 curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=type' --data-binary @type.csv
 curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=demo&sep=;' -d 'u1;gender.male|0.1'
 curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=demo&verbose=true'
+curl -X GET 'http://localhost:9000/get_profile'
