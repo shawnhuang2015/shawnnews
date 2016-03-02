@@ -161,6 +161,10 @@ extern "C" {
     const char eol = params["eol"][0][0];
     const bool more = (params["more"][0] == "1");
 
+    std::cout << "sep=" << sep << "@, tag_sep=" << tag_sep
+        << "@, weight_sep=" << weight_sep << "@, eol="
+        << eol << "@, more=" << more << std::endl;
+
     // parse inverted_tags
     Json::Value inverted_tags;
     Json::Reader reader;
@@ -174,6 +178,7 @@ extern "C" {
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(&eol));
     BOOST_FOREACH (const std::string &l, lines) {
+      std:: cout << "line: " << l << std::endl;
       std::vector<std::string> fields;
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
