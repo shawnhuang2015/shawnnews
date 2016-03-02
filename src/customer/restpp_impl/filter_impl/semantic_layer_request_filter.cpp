@@ -177,9 +177,10 @@ extern "C" {
 
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(&eol));
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
       std:: cout << "line: " << l << std::endl;
-      std::vector<std::string> fields;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -199,6 +200,7 @@ extern "C" {
         // get tag/weight
         // FIXME: assume each tag only has one attr, which is weight,
         // in the future, might be more attrs
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {
@@ -284,8 +286,9 @@ extern "C" {
     std::set<std::string> uniq_tags;
     Json::Value &jsoptions = gsql_request->jsoptions;
 
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -299,6 +302,7 @@ extern "C" {
 
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {
