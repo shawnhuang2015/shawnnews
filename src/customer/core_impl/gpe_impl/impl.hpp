@@ -284,8 +284,8 @@ class UDFRunner : public ServiceImplBase {
         payload[OBJ_ONTO] = obj_onto;
 
         // create crowdIndex v/etype for crowding service
-        payload[CROWD_INDEX]["vtype"] = CROWD_INDEX_VTYPE;
-        payload[CROWD_INDEX]["etype"] = USER_CROWD_INDEX_ETYPE;
+        payload[PROF][CROWD_INDEX]["vtype"] = CROWD_INDEX_VTYPE;
+        payload[PROF][CROWD_INDEX]["etype"] = USER_CROWD_INDEX_ETYPE;
       }
     } else {
       request.error_ = true;
