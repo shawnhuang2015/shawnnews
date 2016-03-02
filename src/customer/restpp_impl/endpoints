@@ -96,61 +96,6 @@
       "summary": "load the tree."
     }
   },
-  "user_search": {
-    "POST": {
-      "function": "user_search",
-      "parameters": {
-        "limit": {
-          "type": "UINT32",
-          "min_count": 0
-        }
-      },
-      "request_filter": "UserSearchFilter"
-    }
-  },
-  "create_crowd": {
-    "POST": {
-      "function": "user_search",
-      "parameters": {
-        "name": {
-          "type": "STRING",
-          "min_count": 1,
-          "max_count": 1
-        }
-      },
-      "request_filter": "CreateCrowdRequestFilter",
-      "response_filter": "CreateCrowdResponseFilter"
-    }
-  },
-  "create_crowd_update": {
-    "GET/POST":{
-        "action":"update",
-        "target":"GPE",
-        "request_filter":"CreateCrowdUpdateFilter",
-        "summary":""
-    }  
-  },
-  "get_crowd": {
-    "GET/POST": {
-      "function": "get_crowd_by_name",
-      "parameters": {
-        "name": {
-          "type": "STRING",
-          "min_count": 1,
-          "max_count": 1,
-          "is_id":true,
-          "id_type":"$type"
-        },
-        "type": {
-          "type": "TYPENAME"
-        },
-        "limit": {
-          "type": "UINT32",
-          "min_count": 0
-        }
-      }
-    }
-  },
   "get_ontology": {
     "GET": {
       "function": "get_ontology",
@@ -273,6 +218,65 @@
         }
       },
       "summary": "get object's tags."
+    }
+  },
+  "crowd": {
+    "v1": {
+      "user_search": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            }
+          },
+          "request_filter": "UserSearchFilter"
+        }
+      },
+      "create_crowd": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1
+            }
+          },
+          "request_filter": "CreateCrowdRequestFilter",
+          "response_filter": "CreateCrowdResponseFilter"
+        }
+      },
+      "create_crowd_update": {
+        "GET/POST":{
+            "action":"update",
+            "target":"GPE",
+            "request_filter":"CreateCrowdUpdateFilter",
+            "summary":""
+        }  
+      },
+      "get_crowd": {
+        "GET/POST": {
+          "function": "get_crowd_by_name",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1,
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type": "TYPENAME"
+            },
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            }
+          }
+        }
+      }
     }
   }
 }
