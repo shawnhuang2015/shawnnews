@@ -872,7 +872,7 @@ class UDFRunner : public ServiceImplBase {
     typedef std::vector<UDF_t::tag_t> tag_vec_t;
 
     tag_vec_t tags;
-    UDF_t udf(1, vtype_id, etype_id, start, tags);
+    UDF_t udf(1, etype_id, start, tags);
     serviceapi.RunUDF(&request, &udf);
 
     // ontology vtypeid -> tags
