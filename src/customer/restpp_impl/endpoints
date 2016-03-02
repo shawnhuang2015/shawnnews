@@ -143,6 +143,10 @@
         },
         "type": {
           "type": "TYPENAME"
+        },
+        "limit": {
+          "type": "UINT32",
+          "min_count": 0
         }
       }
     }

@@ -28,6 +28,12 @@ namespace UDIMPL {
       return objectType + "_" + action + "_" + objectCategory + "_" + ontologyType;
     }
 
+    //remove the duplicated elements
+    void unique(std::vector<uint64_t> &vec) {
+      std::sort(vec.begin(), vec.end());
+      vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+    }
+
     //use condition to generate search path
     std::vector<uint32_t> getPathKey(Json::Value &cond) {
       std::cout << "Func getPathKey" << std::endl;
@@ -70,6 +76,7 @@ namespace UDIMPL {
           res.push_back(vs.GetCurrentVId());
         }
       }
+      unique(res);
     }
 
     //Calc the intersection of two sets
@@ -304,13 +311,11 @@ namespace UDIMPL {
       writer_->WriteUnsignedInt(userIds.size());
       writer_->WriteName("userIds");
       writer_->WriteStartArray();
-      for (std::set<VertexLocalId_t>::iterator it = userIds.begin(); it != userIds.end(); ++it) {
+      for (std::set<VertexLocalId_t>::iterator it = userIds.begin(); 
+              limit > 0 && it != userIds.end(); ++it) {
         --limit;
         writer_->WriteMarkVId(*it);
         request.output_idservice_vids.push_back(*it);
-        if (limit == 0) {
-          break;
-        }
       }
       writer_->WriteEndArray();
       writer_->WriteEndObject();

@@ -164,6 +164,11 @@ class UDFRunner : public ServiceImplBase {
     //parse the request parameters
     std::string crowdName = jsoptions["name"][0].asString();
     uint32_t typeId = jsoptions["type"]["typeid"].asUInt();
+    uint32_t limit = std::numeric_limits<uint32_t>::max();  
+    if (jsoptions.isMember("limit") && jsoptions["limit"].size() > 0) {
+      limit = jsoptions["limit"][0].asUInt();
+    }
+
     std::string typeStr = boost::lexical_cast<std::string>(typeId);
     VertexLocalId_t local_start;
     if (!serviceapi.UIdtoVId(request, typeStr + "_" + crowdName, local_start)) {
@@ -189,7 +194,9 @@ class UDFRunner : public ServiceImplBase {
     writer_->WriteUnsignedInt(userIds.size());
     writer_->WriteName("userIds");
     writer_->WriteStartArray();
-    for (std::set<VertexLocalId_t>::iterator it = userIds.begin(); it != userIds.end(); ++it) {
+    for (std::set<VertexLocalId_t>::iterator it = userIds.begin(); 
+            limit > 0 && it != userIds.end(); ++it) {
+      --limit;
       writer_->WriteMarkVId(*it);
       request.output_idservice_vids.push_back(*it);
     }
