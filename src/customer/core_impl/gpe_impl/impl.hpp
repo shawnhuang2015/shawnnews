@@ -606,7 +606,7 @@ class UDFRunner : public ServiceImplBase {
   }
 
   bool GetObjectOntologyVEType(const std::string &obj, const std::string &name,
-      std::map<std::string, std::string> rez) {
+      std::map<std::string, std::string> &rez) {
     // validate (obj, name) pair
     if (! ValidateObjectOntology(obj, name)) {
       std::cout << "(" + obj + ", " + name + ") not found in " + OBJ_ONTO << std::endl;
@@ -755,6 +755,9 @@ class UDFRunner : public ServiceImplBase {
         refresh_inverted_tag_chache = false;
       }
 
+      std::cout << "cache.size = " << inverted_tag_cache.size() << std::endl;
+      std::cout << jsoptions["tags"] << std::endl;
+
       writer->WriteName("inverted_tags");
       writer->WriteStartObject();
       int size = jsoptions["tags"].size();
@@ -777,6 +780,8 @@ class UDFRunner : public ServiceImplBase {
           }
           writer->WriteEndArray();
           uniq.insert(t);
+        } else {
+          refresh_inverted_tag_chache = true;
         }
       }
       writer->WriteEndObject();

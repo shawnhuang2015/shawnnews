@@ -54,7 +54,6 @@ namespace UDIMPL {
 
     ALWAYS_INLINE void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr,const V_VALUE& vertexvalue,
                                gpelib4::SingleValueMapContext<MESSAGE> * context) {
-      std::string name = vertexattr->GetString("name");
       context->GlobalVariable_Reduce<tag_t>(GV_TAG, 
           tag_t(vid, vertexattr->GetString("name")));
     }
