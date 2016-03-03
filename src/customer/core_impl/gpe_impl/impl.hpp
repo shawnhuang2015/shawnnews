@@ -34,6 +34,7 @@ const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
 const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
+const std::string SCHEMA_DIFF_PATH = "/tmp/diff.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
 const std::string CROWD_INDEX("crowdIndex");
 const std::string CROWD_INDEX_VTYPE = "__crowd_index";
@@ -245,11 +246,17 @@ class UDFRunner : public ServiceImplBase {
         }
 
         // handle ONTOLOGY, assign vtype/etype names
+        std::set<std::string> uniq;
         Json::Value onto;
         int size = payload[ONTO].size();
         for (int i = 0; i < size; ++i) {
-          Json::Value one;
           std::string name(payload[ONTO][i].asString());
+          if (uniq.find(name) != uniq.end()) {
+            continue;
+          }
+          uniq.insert(name);
+
+          Json::Value one;
           one["name"] = name;
           one["vtype"] = ONTO_VTYPE_PREF + name;
 
@@ -274,6 +281,11 @@ class UDFRunner : public ServiceImplBase {
           int size1 = js["ontology"].size();
           for (int j = 0; j < size1; ++j) {
             std::string name(js["ontology"][j].asString());
+            if (uniq.find(name) == uniq.end()) {
+              request.error_ = true;
+              request.message_ += name + " not found in ontology.";
+              return false;
+            }
             Json::Value two;
             two["name"] = name;
             two["etype"] = OBJ_ONTO_ETYPE_PREF + obj + "_to_" + name;
@@ -293,13 +305,6 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
-    // TODO(@alan):
-    // diff old version "ontology" vs the above version to 
-    // figure out what ontology vertex/edge will be dropped and created
-    // or
-    // don't do diff here, just dump this new schema to a file
-    // let the external script do the diff and run schema change.
- 
     // check for "profile", should be present
     if (payload.isMember(PROF)) {
     } else {
@@ -308,19 +313,24 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    // diff old/new version of semantic def, generate dynamic schema change job
+    Json::Value delta;
+    DiffSemanticSchema(semantic_schema, payload, delta);
+    std::ofstream diff_fp(SCHEMA_DIFF_PATH.c_str());
+    diff_fp << delta;
+    diff_fp.close();
+
+    // update semantic schema
     semantic_schema = payload;
 
-    // TODO(@alan):
-    // persist "payload" as semantic schema to disk or redis
-    std::string path(SEMANTIC_SCHEMA_PATH.c_str());
-    std::ofstream fp(path.c_str());
-    fp << payload;
+    // persist semantic schema to disk or redis
+    std::ofstream fp(SEMANTIC_SCHEMA_PATH.c_str());
+    fp << semantic_schema;
     fp.close();
 
     // trigger dynamic schema change job (external script)
-    // TODO(@alan):
     // generate/run ddl job via an external script.
-    if (system("/tmp/sc.sh") != 0) {
+    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + SCHEMA_DIFF_PATH).c_str()) != 0) {
       request.error_ = true;
       request.message_ += "fail to do schema change.";
       return false;
@@ -329,6 +339,123 @@ class UDFRunner : public ServiceImplBase {
     // once schema change, reload graph meta
     LoadGraphMeta(serviceapi);
 
+    return true;
+  }
+
+  bool DiffSemanticSchema(const Json::Value &old_schema, 
+      const Json::Value &new_schema, 
+      Json::Value &delta) {
+    // diff ontology
+    typedef std::map<std::string, Json::Value> map_t;
+    map_t old_onto;
+    map_t new_onto;
+    const Json::Value &onto0 = old_schema[ONTO];
+    const Json::Value &onto1 = new_schema[ONTO];
+
+    int size0 = onto0.size();
+    for (int i = 0; i < size0; ++i) {
+      old_onto[onto0[i]["name"].asString()] = onto0[i];
+    }
+    int size1 = onto1.size();
+    for (int i = 0; i < size1; ++i) {
+      new_onto[onto1[i]["name"].asString()] = onto1[i];
+    }
+
+    for (map_t::iterator it = old_onto.begin(); it != old_onto.end(); ++it) {
+      if (new_onto.find(it->first) != new_onto.end()) {
+        continue;
+      }
+      Json::Value one, two;
+      one["vtype"] = it->second["vtype"].asString();
+      delta["drop"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["up"].asString();
+      delta["drop"]["edge"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["down"].asString();
+      delta["drop"]["edge"].append(one);
+    }
+
+    for (map_t::iterator it = new_onto.begin(); it != new_onto.end(); ++it) {
+      if (old_onto.find(it->first) != old_onto.end()) {
+        continue;
+      }
+      Json::Value one, two;
+      one["vtype"] = it->second["vtype"].asString();
+      two["name"] = "name";
+      two["dtype"] = "string";
+      one["attr"].append(two);
+      delta["add"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["up"].asString();
+      delta["add"]["edge"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["down"].asString();
+      delta["add"]["edge"].append(one);
+    }
+
+    std::cout << "done ontology diff\n";
+
+    // diff object-ontology
+    map_t old_obj_onto;
+    map_t new_obj_onto;
+    const Json::Value &obj_onto0 = old_schema[OBJ_ONTO];
+    const Json::Value &obj_onto1 = new_schema[OBJ_ONTO];
+
+    std::cout << obj_onto0;
+    std::cout << obj_onto1;
+
+    size0 = obj_onto0.size();
+    for (int i = 0; i < size0; ++i) {
+      old_obj_onto[obj_onto0[i]["object"].asString()] = obj_onto0[i]["ontology"];
+    }
+    size1 = obj_onto1.size();
+    for (int i = 0; i < size1; ++i) {
+      new_obj_onto[obj_onto1[i]["object"].asString()] = obj_onto1[i]["ontology"];
+    }
+
+    for (map_t::iterator it = old_obj_onto.begin(); it != old_obj_onto.end(); ++it) {
+      if (new_obj_onto.find(it->first) != new_obj_onto.end()) {
+        map_t onto0, onto1;
+        const Json::Value &js_onto0 = it->second;
+        const Json::Value &js_onto1 = new_obj_onto[it->first];
+        int size0 = js_onto0.size();
+        int size1 = js_onto1.size();
+        for (int i = 0; i < size0; ++i) {
+          onto0[js_onto0[i]["name"].asString()] = js_onto0[i];
+        }
+        for (int i = 0; i < size1; ++i) {
+          onto1[js_onto1[i]["name"].asString()] = js_onto1[i];
+        }
+
+        for (map_t::iterator it = onto0.begin(); it != onto0.end(); ++it) {
+          if (onto1.find(it->first) != onto1.end()) {
+            continue;
+          }
+          Json::Value one;
+          one["etype"] = it->second["etype"].asString();
+          delta["drop"]["edge"].append(one);
+        }
+        for (map_t::iterator it = onto1.begin(); it != onto1.end(); ++it) {
+          if (onto0.find(it->first) != onto0.end()) {
+            continue;
+          }
+          Json::Value one, two;
+          one["etype"] = it->second["etype"].asString();
+          two["name"] = "weight";
+          two["dtype"] = "float";
+          two["default"] = "1.0";
+          one["attr"].append(two);
+          delta["add"]["edge"].append(one);
+        }
+      }
+    }
+
+    std::cout << "Delta: " << delta;
     return true;
   }
 
