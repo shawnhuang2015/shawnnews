@@ -34,6 +34,7 @@ const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
 const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
+const std::string SCHEMA_DIFF_PATH = "/tmp/diff.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
 const std::string CROWD_INDEX("crowdIndex");
 const std::string CROWD_INDEX_VTYPE = "__crowd_index";
@@ -315,21 +316,21 @@ class UDFRunner : public ServiceImplBase {
     // diff old/new version of semantic def, generate dynamic schema change job
     Json::Value delta;
     DiffSemanticSchema(semantic_schema, payload, delta);
+    std::ofstream diff_fp(SCHEMA_DIFF_PATH.c_str());
+    diff_fp << delta;
+    diff_fp.close();
 
     // update semantic schema
     semantic_schema = payload;
 
-    // TODO(@alan):
     // persist semantic schema to disk or redis
-    std::string path(SEMANTIC_SCHEMA_PATH.c_str());
-    std::ofstream fp(path.c_str());
+    std::ofstream fp(SEMANTIC_SCHEMA_PATH.c_str());
     fp << semantic_schema;
     fp.close();
 
-    // TODO(@alan):
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
-    if (system("/tmp/sc.sh") != 0) {
+    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + SCHEMA_DIFF_PATH).c_str()) != 0) {
       request.error_ = true;
       request.message_ += "fail to do schema change.";
       return false;
@@ -360,24 +361,41 @@ class UDFRunner : public ServiceImplBase {
       new_onto[onto1[i]["name"].asString()] = onto1[i];
     }
 
-    std::cout << "done map\n";
-
     for (map_t::iterator it = old_onto.begin(); it != old_onto.end(); ++it) {
       if (new_onto.find(it->first) != new_onto.end()) {
         continue;
       }
-      delta["drop"]["vtype"].append(it->second["vtype"].asString());
-      delta["drop"]["etype"].append(it->second["etype"]["up"].asString());
-      delta["drop"]["etype"].append(it->second["etype"]["down"].asString());
+      Json::Value one, two;
+      one["vtype"] = it->second["vtype"].asString();
+      delta["drop"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["up"].asString();
+      delta["drop"]["edge"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["down"].asString();
+      delta["drop"]["edge"].append(one);
     }
 
     for (map_t::iterator it = new_onto.begin(); it != new_onto.end(); ++it) {
       if (old_onto.find(it->first) != old_onto.end()) {
         continue;
       }
-      delta["add"]["vtype"].append(it->second["vtype"].asString());
-      delta["add"]["etype"].append(it->second["etype"]["up"].asString());
-      delta["add"]["etype"].append(it->second["etype"]["down"].asString());
+      Json::Value one, two;
+      one["vtype"] = it->second["vtype"].asString();
+      two["name"] = "name";
+      two["dtype"] = "string";
+      one["attr"].append(two);
+      delta["add"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["up"].asString();
+      delta["add"]["edge"].append(one);
+
+      one.clear();
+      one["etype"] = it->second["etype"]["down"].asString();
+      delta["add"]["edge"].append(one);
     }
 
     std::cout << "done ontology diff\n";
@@ -418,19 +436,26 @@ class UDFRunner : public ServiceImplBase {
           if (onto1.find(it->first) != onto1.end()) {
             continue;
           }
-          delta["drop"]["etype"].append(it->second["etype"].asString());
+          Json::Value one;
+          one["etype"] = it->second["etype"].asString();
+          delta["drop"]["edge"].append(one);
         }
         for (map_t::iterator it = onto1.begin(); it != onto1.end(); ++it) {
           if (onto0.find(it->first) != onto0.end()) {
             continue;
           }
-          delta["add"]["etype"].append(it->second["etype"].asString());
+          Json::Value one, two;
+          one["etype"] = it->second["etype"].asString();
+          two["name"] = "weight";
+          two["dtype"] = "float";
+          two["default"] = "1.0";
+          one["attr"].append(two);
+          delta["add"]["edge"].append(one);
         }
       }
     }
 
     std::cout << "Delta: " << delta;
-
     return true;
   }
 
