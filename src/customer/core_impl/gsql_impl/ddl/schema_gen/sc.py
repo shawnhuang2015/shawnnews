@@ -101,6 +101,7 @@ if __name__ == '__main__':
   if len(vertices) > 0:
     with open(JOB_DIR + 'sc_vertex.gsql', 'w') as fp:
       lines = [
+          'drop job sc_vertex',
           'create schema_change job sc_vertex for graph {} {{'.format(GRAPH_NAME),
           '\n'.join(vertices),
           '}',
@@ -112,6 +113,7 @@ if __name__ == '__main__':
   if len(edges) > 0:
     with open(JOB_DIR + 'sc_edge.gsql', 'w') as fp:
       lines = [
+          'drop job sc_edge',
           'create schema_change job sc_edge for graph {} {{'.format(GRAPH_NAME),
           '\n'.join(edges),
           '}',
