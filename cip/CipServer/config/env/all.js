@@ -64,9 +64,10 @@ module.exports = {
   remoteServer: {
     ruleEngine: {
     },
-    platform: {
+    crowdServer: {
       host: '192.168.33.66',
       port: 9000
     }
-  }
+  },
+  semanticSyncTime: 3600
 };

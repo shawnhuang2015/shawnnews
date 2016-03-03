@@ -29,7 +29,35 @@ var CrowdSingleSchema = new Schema({
     count: {
         type: Number
     },
+    tagAdded: Boolean,
     selector: {
+        tag: [
+            {
+                factor: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                operator: {
+                    type: String,
+                    enum:["<>", "="],
+                    required: true
+                },
+                weight: {
+                    type: Number,
+                    required: true,
+                    default: 1.0,
+                    min: 0,
+                    max: 1
+                },
+                name: {
+                    type: String,
+                    required: true,
+                    trim: true
+                },
+                count: Number
+            }
+        ],
         ontology: [
             {
                 factor: {
@@ -42,18 +70,18 @@ var CrowdSingleSchema = new Schema({
                     enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"],
                     required: true
                 },
-                is_sub: Boolean,
                 weight: {
                     type: Number,
-                    //required: true,
+                    required: true,
+                    min: -50.0,
+                    max: 50.0
                 },
-                type: {
+                name: {
                     type: String,
                     required: true,
                     trim: true
                 },
-                count: Number,
-                sequence: Number
+                count: Number
             }
         ],
         behavior: [
@@ -66,26 +94,21 @@ var CrowdSingleSchema = new Schema({
                 objectType: {
                     type: String,
                     enum:['Category','Item','Contains'],
-                    //required: true
                 },
                 objectCategory: {
                     type: String,
-                    //required: true
                 },
                 ontologyType: {
                     type: String
-                    //required: true
                 },
                 objectId: {
-                    type: String,
-                    //required: true
+                    type: String
                 },
                 operator: {
                     type: String,
                     enum:['>=','<=', ">", "<", "<>", "="],
                     required: true
                 },
-                is_sub: Boolean,
                 value: {
                     type: Number,
                     required: true,
@@ -106,8 +129,7 @@ var CrowdSingleSchema = new Schema({
                     enum: ["absolute", "relative", "hour", "day", "week", "month", "year"],
                     required: true
                 },
-                count: Number,
-                sequence: Number
+                count: Number
             }
         ]
     }
@@ -133,6 +155,7 @@ var CrowdGroupSchema = new Schema({
     count: {
         type: Number
     },
+    tagAdded: Boolean,
     selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
 });
 
