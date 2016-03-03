@@ -245,11 +245,17 @@ class UDFRunner : public ServiceImplBase {
         }
 
         // handle ONTOLOGY, assign vtype/etype names
+        std::set<std::string> uniq;
         Json::Value onto;
         int size = payload[ONTO].size();
         for (int i = 0; i < size; ++i) {
-          Json::Value one;
           std::string name(payload[ONTO][i].asString());
+          if (uniq.find(name) != uniq.end()) {
+            continue;
+          }
+          uniq.insert(name);
+
+          Json::Value one;
           one["name"] = name;
           one["vtype"] = ONTO_VTYPE_PREF + name;
 
@@ -274,6 +280,11 @@ class UDFRunner : public ServiceImplBase {
           int size1 = js["ontology"].size();
           for (int j = 0; j < size1; ++j) {
             std::string name(js["ontology"][j].asString());
+            if (uniq.find(name) == uniq.end()) {
+              request.error_ = true;
+              request.message_ += name + " not found in ontology.";
+              return false;
+            }
             Json::Value two;
             two["name"] = name;
             two["etype"] = OBJ_ONTO_ETYPE_PREF + obj + "_to_" + name;
@@ -334,57 +345,89 @@ class UDFRunner : public ServiceImplBase {
       const Json::Value &new_schema, 
       Json::Value &delta) {
     // diff ontology
-    std::vector<std::string> old_onto;
-    std::vector<std::string> new_onto;
+    typedef std::map<std::string, Json::Value> map_t;
+    map_t old_onto;
+    map_t new_onto;
     const Json::Value &onto0 = old_schema[ONTO];
     const Json::Value &onto1 = new_schema[ONTO];
 
     int size0 = onto0.size();
     for (int i = 0; i < size0; ++i) {
-      old_onto.push_back(onto0[i]["name"].asString());
+      old_onto[onto0[i]["name"].asString()] = onto0[i];
     }
     int size1 = onto1.size();
     for (int i = 0; i < size1; ++i) {
-      new_onto.push_back(onto1[i]["name"].asString());
+      new_onto[onto1[i]["name"].asString()] = onto1[i];
     }
 
-    std::sort(old_onto.begin(), old_onto.end());
-    std::sort(new_onto.begin(), new_onto.end());
+    std::cout << "done map\n";
 
-    int i, j;
-    for (i = 0, j = 0; (i < size0) && (j < size1);) {
-      if (old_onto[i] == new_onto[j]) {
-        ++i;
-        ++j;
+    for (map_t::iterator it = old_onto.begin(); it != old_onto.end(); ++it) {
+      if (new_onto.find(it->first) != new_onto.end()) {
         continue;
-      } else if (old_onto[i] > new_onto[j]) {
-        std::cout << "drop\n";
-        // add new 
-        delta["add"]["vtype"].append(onto1[j]["vtype"].asString());
-        delta["add"]["etype"].append(onto1[j]["etype"]["up"].asString());
-        delta["add"]["etype"].append(onto1[j]["etype"]["down"].asString());
-        ++j;
-      } else {
-        std::cout << "add\n";
-        // drop old
-        delta["drop"]["vtype"].append(onto0[i]["vtype"].asString());
-        delta["drop"]["etype"].append(onto0[i]["etype"]["up"].asString());
-        delta["drop"]["etype"].append(onto0[i]["etype"]["down"].asString());
-        ++i;
       }
+      delta["drop"]["vtype"].append(it->second["vtype"].asString());
+      delta["drop"]["etype"].append(it->second["etype"]["up"].asString());
+      delta["drop"]["etype"].append(it->second["etype"]["down"].asString());
     }
-    for (; i < size0; ++i) {
-      delta["drop"]["vtype"].append(onto0[i]["vtype"].asString());
-      delta["drop"]["etype"].append(onto0[i]["etype"]["up"].asString());
-      delta["drop"]["etype"].append(onto0[i]["etype"]["down"].asString());
+
+    for (map_t::iterator it = new_onto.begin(); it != new_onto.end(); ++it) {
+      if (old_onto.find(it->first) != old_onto.end()) {
+        continue;
+      }
+      delta["add"]["vtype"].append(it->second["vtype"].asString());
+      delta["add"]["etype"].append(it->second["etype"]["up"].asString());
+      delta["add"]["etype"].append(it->second["etype"]["down"].asString());
     }
-    for (; j < size1; ++j) {
-      delta["add"]["vtype"].append(onto1[j]["vtype"].asString());
-      delta["add"]["etype"].append(onto1[j]["etype"]["up"].asString());
-      delta["add"]["etype"].append(onto1[j]["etype"]["down"].asString());
-    }
+
+    std::cout << "done ontology diff\n";
 
     // diff object-ontology
+    map_t old_obj_onto;
+    map_t new_obj_onto;
+    const Json::Value &obj_onto0 = old_schema[OBJ_ONTO];
+    const Json::Value &obj_onto1 = new_schema[OBJ_ONTO];
+
+    std::cout << obj_onto0;
+    std::cout << obj_onto1;
+
+    size0 = obj_onto0.size();
+    for (int i = 0; i < size0; ++i) {
+      old_obj_onto[obj_onto0[i]["object"].asString()] = obj_onto0[i]["ontology"];
+    }
+    size1 = obj_onto1.size();
+    for (int i = 0; i < size1; ++i) {
+      new_obj_onto[obj_onto1[i]["object"].asString()] = obj_onto1[i]["ontology"];
+    }
+
+    for (map_t::iterator it = old_obj_onto.begin(); it != old_obj_onto.end(); ++it) {
+      if (new_obj_onto.find(it->first) != new_obj_onto.end()) {
+        map_t onto0, onto1;
+        const Json::Value &js_onto0 = it->second;
+        const Json::Value &js_onto1 = new_obj_onto[it->first];
+        int size0 = js_onto0.size();
+        int size1 = js_onto1.size();
+        for (int i = 0; i < size0; ++i) {
+          onto0[js_onto0[i]["name"].asString()] = js_onto0[i];
+        }
+        for (int i = 0; i < size1; ++i) {
+          onto1[js_onto1[i]["name"].asString()] = js_onto1[i];
+        }
+
+        for (map_t::iterator it = onto0.begin(); it != onto0.end(); ++it) {
+          if (onto1.find(it->first) != onto1.end()) {
+            continue;
+          }
+          delta["drop"]["etype"].append(it->second["etype"].asString());
+        }
+        for (map_t::iterator it = onto1.begin(); it != onto1.end(); ++it) {
+          if (onto0.find(it->first) != onto0.end()) {
+            continue;
+          }
+          delta["add"]["etype"].append(it->second["etype"].asString());
+        }
+      }
+    }
 
     std::cout << "Delta: " << delta;
 
