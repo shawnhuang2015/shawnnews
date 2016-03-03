@@ -1,6 +1,7 @@
 'use strict';
 var util = require('util');
 var utility = require('../utility/utility');
+var rest = require('../controllers/rest.server.controller');
 /**
  * Module dependencies.
  */
@@ -22,6 +23,7 @@ exports.create = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
+            //rest.createCrowdRemote(crowd.crowdName, crowd.selector);
             return res.json(crowd);
         }
     });
@@ -114,6 +116,7 @@ exports.update = function(req, res) {
 
 //delete
 exports.delete = function(req, res) {
+    console.log("run delete");
     if (req.error) {
         console.log(req.error);
         return res.send({
@@ -131,6 +134,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
+            rest.deleteCrowdRemote(crowd.crowdName);
             return res.json(crowd);
         }
     });

@@ -4,6 +4,7 @@
 'use strict';
 var http = require('http');
 var qs = require('querystring');
+var config = require('meanio').loadConfig();
 
 //http GET restful API
 //Input: 1. endpoint
@@ -17,9 +18,10 @@ exports.get = function(endpoint, queryStr, cb) {
         path += '?' + queryStr;
     }
 
+    console.log("request path: " + path);
     var options = {
-        hostname: config.remoteServer.platform.host,
-        port: config.remoteServer.platform.port,
+        hostname: config.remoteServer.crowdServer.host,
+        port: config.remoteServer.crowdServer.port,
         path: path,
         method: 'GET'
     };
@@ -59,9 +61,11 @@ exports.post = function(endpoint, queryStr, data, cb) {
     if (queryStr != '') {
         path += '?' + queryStr;
     }
+
+    console.log("request path: " + path + "\nbody = " + data);
     var options = {
-        hostname: config.remoteServer.platform.host,
-        port: config.remoteServer.platform.port,
+        hostname: config.remoteServer.crowdServer.host,
+        port: config.remoteServer.crowdServer.port,
         path: path,
         method: 'POST',
         headers:{
@@ -113,7 +117,8 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
-        if (!item["action"] || !item["objectType"] || !item["objectId"]
+        if (!item["action"] || !item["objectCategory"] || !item["objectType"]
+            || !item["ontologyType"] || !item["objectId"]
             || !item["operator"] || !item["value"] || !item["startTime"]
             || !item["endTime"] || !item["timeType"]) {
             console.log("in behavior");
