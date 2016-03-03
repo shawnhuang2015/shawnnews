@@ -293,13 +293,6 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
-    // TODO(@alan):
-    // diff old version "ontology" vs the above version to 
-    // figure out what ontology vertex/edge will be dropped and created
-    // or
-    // don't do diff here, just dump this new schema to a file
-    // let the external script do the diff and run schema change.
- 
     // check for "profile", should be present
     if (payload.isMember(PROF)) {
     } else {
@@ -308,17 +301,22 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
 
+    // diff old/new version of semantic def, generate dynamic schema change job
+    Json::Value delta;
+    DiffSemanticSchema(semantic_schema, payload, delta);
+
+    // update semantic schema
     semantic_schema = payload;
 
     // TODO(@alan):
-    // persist "payload" as semantic schema to disk or redis
+    // persist semantic schema to disk or redis
     std::string path(SEMANTIC_SCHEMA_PATH.c_str());
     std::ofstream fp(path.c_str());
-    fp << payload;
+    fp << semantic_schema;
     fp.close();
 
-    // trigger dynamic schema change job (external script)
     // TODO(@alan):
+    // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     if (system("/tmp/sc.sh") != 0) {
       request.error_ = true;
@@ -328,6 +326,67 @@ class UDFRunner : public ServiceImplBase {
 
     // once schema change, reload graph meta
     LoadGraphMeta(serviceapi);
+
+    return true;
+  }
+
+  bool DiffSemanticSchema(const Json::Value &old_schema, 
+      const Json::Value &new_schema, 
+      Json::Value &delta) {
+    // diff ontology
+    std::vector<std::string> old_onto;
+    std::vector<std::string> new_onto;
+    const Json::Value &onto0 = old_schema[ONTO];
+    const Json::Value &onto1 = new_schema[ONTO];
+
+    int size0 = onto0.size();
+    for (int i = 0; i < size0; ++i) {
+      old_onto.push_back(onto0[i]["name"].asString());
+    }
+    int size1 = onto1.size();
+    for (int i = 0; i < size1; ++i) {
+      new_onto.push_back(onto1[i]["name"].asString());
+    }
+
+    std::sort(old_onto.begin(), old_onto.end());
+    std::sort(new_onto.begin(), new_onto.end());
+
+    int i, j;
+    for (i = 0, j = 0; (i < size0) && (j < size1);) {
+      if (old_onto[i] == new_onto[j]) {
+        ++i;
+        ++j;
+        continue;
+      } else if (old_onto[i] > new_onto[j]) {
+        std::cout << "drop\n";
+        // add new 
+        delta["add"]["vtype"].append(onto1[j]["vtype"].asString());
+        delta["add"]["etype"].append(onto1[j]["etype"]["up"].asString());
+        delta["add"]["etype"].append(onto1[j]["etype"]["down"].asString());
+        ++j;
+      } else {
+        std::cout << "add\n";
+        // drop old
+        delta["drop"]["vtype"].append(onto0[i]["vtype"].asString());
+        delta["drop"]["etype"].append(onto0[i]["etype"]["up"].asString());
+        delta["drop"]["etype"].append(onto0[i]["etype"]["down"].asString());
+        ++i;
+      }
+    }
+    for (; i < size0; ++i) {
+      delta["drop"]["vtype"].append(onto0[i]["vtype"].asString());
+      delta["drop"]["etype"].append(onto0[i]["etype"]["up"].asString());
+      delta["drop"]["etype"].append(onto0[i]["etype"]["down"].asString());
+    }
+    for (; j < size1; ++j) {
+      delta["add"]["vtype"].append(onto1[j]["vtype"].asString());
+      delta["add"]["etype"].append(onto1[j]["etype"]["up"].asString());
+      delta["add"]["etype"].append(onto1[j]["etype"]["down"].asString());
+    }
+
+    // diff object-ontology
+
+    std::cout << "Delta: " << delta;
 
     return true;
   }
