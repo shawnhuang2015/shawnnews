@@ -5,7 +5,7 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
     "target": "user",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
-      {"name": "age", "datatype": "itemset}
+      {"name": "age", "datatype": "itemset"}
     ],
     "interest_intent": [
       {"ontology": "interest"},
@@ -20,19 +20,19 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
       }
     ]
   },
-  "ontology": ["interest", "demo", "type"],
+  "ontology": ["interest", "tag", "type"],
   "object_ontology": [
-    {"object": "user", "ontology": ["interest", "demo"]},
+    {"object": "user", "ontology": ["interest", "tag"]},
     {"object": "pic", "ontology": ["type"]}
   ]
 }'
 
-curl -X POST 'http://localhost:9000/ontology_import?object=user&name=demo' --data-binary @demo.csv
+curl -X POST 'http://localhost:9000/ontology_import?object=user&name=tag' --data-binary @tag.csv
 curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=type' --data-binary @type.csv
-curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=demo&sep=;' -d 'u1;gender.male|0.1'
-curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=demo&verbose=1'
+curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=tag&sep=;' -d 'u1;gender.male|0.1'
+curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=tag&verbose=1'
 curl -X GET 'http://localhost:9000/get_profile'
-curl -X GET 'http://localhost:9000/get_ontology?name=demo'
+curl -X GET 'http://localhost:9000/get_ontology?name=tag'
 curl -X POST 'http://localhost:9000/set_item_tag?object=pic&name=type&sep=;' -d 'p1;apple'
 
 ### as I found out, cannot put args like this `sep=;&more=true`, otherwise `sep` won't be `;`, why?
