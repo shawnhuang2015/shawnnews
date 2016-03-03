@@ -109,7 +109,7 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < ontology.length; ++i) {
         var item = ontology[i];
-        if (!item["factor"] || !item["operator"] || !item["weight"] || !item["type"]) {
+        if (!item["factor"] || !item["operator"] || !item["weight"] || !item["name"]) {
             console.log("in ontology");
             return false;
         }
@@ -118,9 +118,9 @@ var validateCondition = function(selector) {
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
         if (!item["action"] || !item["objectCategory"] || !item["objectType"]
-            || !item["ontologyType"] || !item["objectId"]
+            || !item["objectId"]
             || !item["operator"] || !item["value"] || !item["startTime"]
-            || !item["endTime"] || !item["timeType"]) {
+            || !item["endTime"] || !item["timeType"]) { //!item["ontologyType"]
             console.log("in behavior");
             return false;
         }
