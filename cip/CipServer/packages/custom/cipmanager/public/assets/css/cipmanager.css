@@ -1,3 +1,9 @@
 .cipmanager-example h1 {
   background-color: purple
 }
+
+.center-vertical {
+  position:relative;
+  top:50%;
+  transform:translateY(-50%);
+}
