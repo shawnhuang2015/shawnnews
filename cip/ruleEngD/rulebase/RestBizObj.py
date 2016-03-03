@@ -1,11 +1,12 @@
 from BizObjBase import BizObjBase 
+from config.RuleEngConfig import ruleEngConfigure
 import requests
 
 class RestBizObj(BizObjBase):
     def __init__(self, restUri, payload = None):
         self.obj = None
         try:
-            response = requests.get(restUri,data = payload, timeout = 0.1)
+            response = requests.get(restUri,data = payload, timeout = float(ruleEngConfigure["rest"]["get_timeout"]))
             if response.status_code == 200:
                 super(RestBizObj,self).__init__ (response.json())
             else:
@@ -19,7 +20,7 @@ class RestPostBizObj(BizObjBase):
     def __init__(self, restUri, payload ):
         self.obj = None
         try:
-            response = requests.post(restUri,data = payload, timeout = 0.1)
+            response = requests.post(restUri,data = payload, timeout = float(ruleEngConfigure["rest"]["post_timeout"]))
             if response.status_code == 200:
                 super(RestPostBizObj,self).__init__ (response.json())
             else:
@@ -39,5 +40,4 @@ if __name__ == "__main__":
     print rest.isValid
     if rest.isValid:
         print rest.products
-
 

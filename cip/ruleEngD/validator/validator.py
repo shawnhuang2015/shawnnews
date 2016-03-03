@@ -1,5 +1,6 @@
 import json
 import jsonschema
+from config.RuleEngConfig import ruleEngConfigure
 
 class SchemaValidator(object):
     def __init__(self, schemafile):
@@ -15,7 +16,7 @@ class SchemaValidator(object):
             self.errors.append(e.message)
 
 
-appSchemaValidator = SchemaValidator("/home/feng.chen/gitrepo/product/cip/ruleEngD/config/request_schema.json")
+appSchemaValidator = SchemaValidator(ruleEngConfigure["API"]["req_schema"])
 
 if __name__ == "__main__":
     validator = SchemaValidator("request_schema.json")

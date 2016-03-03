@@ -5,9 +5,9 @@ initEnv()
 
 import yaml
 import importlib
+from config.RuleEngConfig import ruleEngConfigure
 from ruletask.Topology import Topology
 from werkzeug.contrib.cache import MemcachedCache
-from init.Const import SUITE_ROOT
 from init.Const import POSTFIX_META
 from init.Const import POSTFIX_TOPO 
 from init.Const import POSTFIX_PKG
@@ -28,17 +28,17 @@ class RulEngCache(object):
         self.initMeta(ckpoint)
 
     def initPkg(self,ckpoint):
-        data=open("%s/%s/%s.pyc" %(SUITE_ROOT, ckpoint, SUITE_NAME_DEF) ,'r').read()
+        data=open("%s/%s/%s.pyc" %(ruleEngConfigure["rule"]["root"], ckpoint, SUITE_NAME_DEF) ,'r').read()
         # self.cache.set(ckpoint+ POSTFIX_PKG, importlib.import_module(SUITE_NAME_DEF, package=ckpoint))
         self.cache.set(ckpoint+ POSTFIX_PKG, data)
 
     def initTopo(self,ckpoint):
         topology = Topology()
-        topology.init("%s/%s/topo.yaml" %(SUITE_ROOT, ckpoint))
+        topology.init("%s/%s/topo.yaml" %(ruleEngConfigure["rule"]["root"], ckpoint))
         self.cache.set(ckpoint+ POSTFIX_TOPO, topology)
 
     def initMeta(self,ckpoint):
-        ruleMeta = yaml.load(open("%s/%s/%s.meta" % (SUITE_ROOT, ckpoint, SUITE_NAME_DEF)).read())
+        ruleMeta = yaml.load(open("%s/%s/%s.meta" % (ruleEngConfigure["rule"]["root"], ckpoint, SUITE_NAME_DEF)).read())
         metaObj = BizObjBase(ruleMeta)
         self.cache.set(ckpoint+ POSTFIX_META, metaObj)
 

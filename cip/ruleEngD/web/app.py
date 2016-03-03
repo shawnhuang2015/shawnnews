@@ -1,38 +1,34 @@
 import sys
 sys.path.append("../")
-from init.Env import initEnv
-initEnv()
 
-from flask import Flask, jsonify,request
 import json
-sys.path.append("../ruletask")
-from RuleSuiteManager import RuleSuiteManager
-sys.path.append("../rulebase")
-sys.path.append("../monitor")
 import time
-from BizObjBase import BizObjBase
-from RestBizObj import RestBizObj
-from JsonBizObj import JsonBizObj
 from threading import Timer
+from flask import Flask, jsonify,request
+from ruletask.RuleSuiteManager import RuleSuiteManager
+from rulebase.BizObjBase import BizObjBase
+from rulebase.RestBizObj import RestBizObj
+from rulebase.JsonBizObj import JsonBizObj
 from init.Const import REST_OK
 from init.Const import REST_BAD_REQ
 from init.Const import REST_INTERNAL_ERROR
-sys.path.append("../logging")
-from Decorators import logTxn
-from Decorators import Performance 
-sys.path.append("..")
 from monitor.Perf import Perf
 from util.ErrHandler import buildAppResult 
 from validator.validator import appSchemaValidator 
+sys.path.append("../logging")
+from Decorators import logTxn
+from Decorators import Performance 
 
-
-#TODO:config
-ruleRoot="/home/feng.chen/gitrepo/product/cip/ruleEngD/rulesuites"
+try:
+    from config.RuleEngConfig import ruleEngConfigure
+except (ImportError, Exception) as e:
+    print "%s, exit." % e.message 
+    sys.exit (1)
 
 app = Flask(__name__)
 
-rsm = RuleSuiteManager(ruleRoot, 10) 
-perf = Perf("192.168.33.70","sla")
+rsm = RuleSuiteManager(ruleEngConfigure["rule"]["root"], ruleEngConfigure["rule"]["ck_capacity"]) 
+perf = Perf(ruleEngConfigure["influxdb"]["host"],ruleEngConfigure["performance"]["sla"])
 
 
 #  def reloadRuleSuite():
