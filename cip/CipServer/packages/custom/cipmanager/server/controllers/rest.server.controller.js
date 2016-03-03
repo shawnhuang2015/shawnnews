@@ -463,10 +463,10 @@ exports.readMetadata = function(req, res) {
                                 {"parent": "USA", "children": ["youtube"]}
                             ]
                         },
-                        {"name": "lol",
+                        {
+                            "name": "lol",
 
                         }
-
                     ],
 
                     "object_ontology": [

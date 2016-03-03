@@ -21,6 +21,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       'dynamic'
     ];
 
+    $scope.group_logic = [
+      'and',
+      'or'
+    ];
+
     ////////////////////////For temp test///////////////////
 
     $scope.ontology_type = [];
@@ -38,8 +43,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
     $scope.action = [];
 
     $scope.object_type = [
-      {name:'在目录中',id:'Category'},
-      {name:'物品ID=',id:'Item'},
+      {name:'在分类...中',id:'Category'},
+      {name:'Item ID=',id:'Item'},
       {name:'包含字段',id:'Contains'}
     ];
 
@@ -99,6 +104,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       param.selector[condition_type].push($scope.factors);
       CrowdService.getUserCountByFactor(param, function(data){
         $scope.factors.count = data.length;
+        if($scope.factors.objectType == 'Contains') {
+          $scope.factors.is_sub = true;
+        } else {
+          $scope.factors.is_sub = false;
+        }
         $scope.crowdDetail.selector[condition_type].push($scope.factors);
         $scope.factors = {};
       });
@@ -120,6 +130,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
 
     $scope.goToCreate = function () {
       $state.go('create crowd')
+    };
+
+    $scope.goToSaveCrowd = function () {
+      $state.go('save crowd',{crowdDetail: $scope.crowdDetail});
     };
 
     $scope.goToCreateGroup = function () {
@@ -149,6 +163,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       });
     };
 
+    $scope.initSaveCrowd = function() {
+      $scope.crowdDetail = $stateParams.crowdDetail;
+      $scope.crowdDetail.type = 'static';
+    };
     //////////////////////Local function///////////////////////
 
 
@@ -193,13 +211,20 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         return;
       }
       $scope.factors.factor = '';
-      angular.forEach($scope.ontology_data.ontology, function(val){
-        if(val.name == nowSelected) {
-          $scope.traverseTree(val.tree, function(itemList) {
-            $scope.factor_tag = itemList;
-          });
-        }
-      });
+      if($scope.factors.type != 'behavior') {
+        angular.forEach($scope.ontology_data.ontology, function (val) {
+          if (val.name == nowSelected) {
+            $scope.traverseTree(val.tree, function (itemList) {
+              $scope.factor_tag = itemList;
+              $scope.factors.factor = itemList[0];
+              $scope.factors.operator = $scope.operator[0];
+            });
+          }
+        });
+      } else {
+        $scope.factors.action = $scope.ontology_data.behaviour[0].name;
+        $scope.factors.operator = $scope.operator[0];
+      }
     });
 
     $scope.$watch('factors.action', function(nowSelected){
@@ -216,6 +241,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           angular.forEach(val.object, function(object) {
             $scope.object_category.push(object.vtype);
           });
+          $scope.factors.objectCategory = val.object[0].vtype;
+          $scope.factors.objectType = $scope.object_type[0].id;
         }
       });
     });
@@ -232,6 +259,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           angular.forEach(val.ontology, function(ontology) {
             $scope.behavior_ontology_type.push(ontology.name);
           });
+          $scope.factors.ontologyType = val.ontology[0].name;
         }
       });
     });
@@ -253,6 +281,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
         if(val.name == nowSelected) {
           $scope.traverseTree(val.tree, function(itemList) {
             $scope.object_id = itemList;
+            $scope.factors.objectId = itemList[0];
           });
         }
       });
@@ -449,6 +478,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
       if(!$stateParams.groupName) {
         $scope.groupDetail = {};
         $scope.groupDetail.selector = [];
+        $scope.groupDetail.logic = 'or';
       } else {
         Groupmanager.get({
           crowdName: $stateParams.groupName
@@ -493,7 +523,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           CrowdService.createGroup($scope.groupDetail, function(data) {
             if(data.success) {
               alert("创建成功!");
-              $location.path('/group/crowd/'+$scope.groupDetail.crowdName+'/userlist');
+              $location.path('/crowd/group/'+$scope.groupDetail.crowdName+'/userlist');
             } else {
               alert("创建失败!");
             }
@@ -526,6 +556,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           $scope.ontology_data = data.content;
           $scope.ontology_type = [];
           $scope.action = [];
+
           for(var index in data.content.ontology){
             $scope.ontology_type.push(data.content.ontology[index].name);
           }
@@ -533,6 +564,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope','
           for(var index in data.content.behaviour){
             $scope.action.push(data.content.behaviour[index].name);
           }
+
+          $scope.factors.type = data.content.ontology[0].name;
+          $scope.factors.action = data.content.behaviour[0].name;
+
         }
       });
     };

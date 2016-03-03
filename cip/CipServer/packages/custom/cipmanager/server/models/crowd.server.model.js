@@ -45,9 +45,7 @@ var CrowdSingleSchema = new Schema({
                 is_sub: Boolean,
                 weight: {
                     type: Number,
-                    required: true,
-                    min: 0,
-                    max: 1
+                    //required: true,
                 },
                 type: {
                     type: String,
@@ -68,11 +66,11 @@ var CrowdSingleSchema = new Schema({
                 objectType: {
                     type: String,
                     enum:['Category','Item','Contains'],
-                    required: true
+                    //required: true
                 },
                 objectCategory: {
                     type: String,
-                    required: true
+                    //required: true
                 },
                 ontologyType: {
                     type: String
@@ -80,7 +78,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 objectId: {
                     type: String,
-                    required: true
+                    //required: true
                 },
                 operator: {
                     type: String,
