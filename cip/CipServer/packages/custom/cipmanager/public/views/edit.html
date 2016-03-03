@@ -10,10 +10,10 @@
                     <h5>标签</h5>
                 </div>
                 <div class="col-md-2" ng-if="factors.type != 'behavior' && factors.type">
-                    <h5>逻辑</h5>
+                    <h5>运算逻辑</h5>
                 </div>
                 <div class="col-md-2" ng-if="factors.type != 'behavior' && factors.type">
-                    <h5>权重</h5>
+                    <h5>标签置信权重</h5>
                 </div>
 
                 <!-- Behavior-->
@@ -55,7 +55,7 @@
                     </ui-select>
                 </div>
                 <div class="col-md-2"  ng-if="factors.type != 'behavior' && factors.type && factors.operator != 'like' && factors.operator != 'dislike'">
-                    <input name="weight" type="number" class="form-control" ng-model="factors.weight" placeholder="权重">
+                    <input name="weight" type="number" class="form-control" ng-model="factors.weight" placeholder="标签置信权重">
                 </div>
 
                 <!-- For behavior -->
@@ -167,8 +167,8 @@
             <!-- Show -->
             <legend>条件列表</legend>
 
-            <table class="table table-hover">
-                <h5>标签筛选条件</h5>
+            <table class="table table-hover" ng-if="crowdDetail.selector.ontology.length>0">
+                <h5 ng-if="crowdDetail.selector.ontology.length>0">标签筛选条件</h5>
                 <thead>
                 <tr>
                     <th>序号</th>
@@ -200,8 +200,8 @@
                 </tbody>
             </table>
 
-            <table class="table table-hover">
-                <h5>行为筛选条件</h5>
+            <table class="table table-hover" ng-if="crowdDetail.selector.behavior.length>0">
+                <h5 ng-if="crowdDetail.selector.behavior.length>0">行为筛选条件</h5>
                 <thead>
                 <tr>
                     <th>序号</th>
@@ -237,7 +237,7 @@
                 </tbody>
             </table>
 
-            <div class="col-md-offset-8 col-md-3"><h4>满足上面所有条件 共覆盖{{crowdDetail.count}}人</h4></div>
+            <div class="col-md-offset-8 col-md-3" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0"><h4>满足上面所有条件 共覆盖{{crowdDetail.count}}人</h4></div>
         </fieldset>
 
         <div class="form-group">

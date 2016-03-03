@@ -1,7 +1,8 @@
 <section data-ng-controller="CipmanagerController" data-ng-init="init()">
+    <h4 class="text-center" ng-if="!crowds || crowds.length<=0">您还没有创建人群,现在开始创建一个人群吧!</h4>
+
     <table class="table table-hover" ng-if="crowds.length>0">
         <h4 ng-if="crowds.length>0">人群列表</h4>
-        <h5 ng-if="!crowds || crowds.length<=0">还没有人群列表,点击创建新的人群按钮创建</h5>
         <thead>
         <tr>
             <th>序号</th>
@@ -36,8 +37,6 @@
 
     <table class="table table-hover" ng-if="grouplist.length>0">
         <h4 ng-if="grouplist.length>0">人群组合列表</h4>
-        <h5 ng-if="crowds.length>0 && !grouplist || grouplist.length<=0">还没有人群列表,点击创建人群组合按钮创建</h5>
-
         <thead>
         <tr>
             <th>序号</th>
@@ -71,7 +70,7 @@
         </uib-pagination>
     </div>
 
-    <div class="col-md-offset-3 col-md-2">
+    <div class="col-md-offset-4 col-md-2">
         <button data-ng-click="goToCreate()" class="btn btn-info btn-block">创建新的人群</button>
     </div>
     <div class="col-md-2">
