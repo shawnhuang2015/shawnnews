@@ -134,7 +134,7 @@ extern "C" {
     gsql_request->Respond("done.");
   }
 
-  void PostUserTag(
+  void PostTag(
            FilterHelper *filter_helper,
            UserRequest *user_request,
            GsqlRequest *gsql_request) {
@@ -159,14 +159,28 @@ extern "C" {
     const char tag_sep = params["tag_sep"][0][0];
     const char weight_sep = params["weight_sep"][0][0];
     const char eol = params["eol"][0][0];
+    const bool more = (params["more"][0] == "1");
 
-    // TODO(@alan): 2 flags for now, one for path-tag, the other for single tag
-    int flag = 1;
+    std::cout << "sep=" << sep << "@, tag_sep=" << tag_sep
+        << "@, weight_sep=" << weight_sep << "@, eol="
+        << eol << "@, more=" << more << std::endl;
+
+    // parse inverted_tags
+    Json::Value inverted_tags;
+    Json::Reader reader;
+    if (! reader.parse(params["inverted_tags"][0], inverted_tags)) {
+      gsql_request->Respond("fail to parse inverted_tags.");
+      return;
+    }
+
+    std::cout << "parsed inverted_tags = " << inverted_tags << std::endl;
 
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(&eol));
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
+      std:: cout << "line: " << l << std::endl;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -174,8 +188,8 @@ extern "C" {
         continue;
       }
 
-      // get user id
-      const std::string &user_id = fields[0];
+      // get object id
+      const std::string &obj_id = fields[0];
       boost::tokenizer<boost::char_separator<char> > tags(
           fields[1], boost::char_separator<char>(&tag_sep));
 
@@ -184,6 +198,9 @@ extern "C" {
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
         // get tag/weight
+        // FIXME: assume each tag only has one attr, which is weight,
+        // in the future, might be more attrs
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {
@@ -196,15 +213,47 @@ extern "C" {
           w = ::atof(tw[1].c_str());
         }
 
-        // TODO(@alan): check if tag exist in the tree, otherwise upsert
+        // check if `t` exists in inverted_tags, then find it's primary id
+        bool flag = true;
+        if (inverted_tags.isMember(t)) {
+          if (inverted_tags[t].size() == 1) {
+            t = inverted_tags[t][0].asString();
+          } else {
+            // error, tag not unique
+            gsql_request->Respond("tag (" + t + ") is not unique.");
+            return;
+          }
+        } else if (more) {
+          // add this new tag into ontology tree, insert vertex/edge
+          attr.Clear();
+          attr.SetString("name", t);
+          // upsert vertex, new tags are level-1 tags, so primay id = name
+          if (! gsql_request->UpsertVertex(attr, ontology_vtype, t, msg)) {
+            gsql_request->Respond("fail to upsert vertex, " + msg);
+            return;
+          }
+          // upsert edge
+          attr.Clear();
+          if (! gsql_request->UpsertEdge(attr, ontology_vtype, name, 
+                ontology_down_etype, ontology_vtype, t, msg) ||
+              ! gsql_request->UpsertEdge(attr, ontology_vtype, t, 
+                ontology_up_etype, ontology_vtype, name, msg)) {
+            gsql_request->Respond("fail to upsert edge, " + msg);
+            return;
+          }
+        } else {
+          flag = false;
+        }
 
         // upsert edge
-        attr.Clear();
-        attr.SetFloat("weight", w);
-        if (! gsql_request->UpsertEdge(attr, object_vtype, user_id, 
-              object_ontology_etype, ontology_vtype, t, msg)) {
-          gsql_request->Respond("fail to upsert edge, " + msg);
-          return;
+        if (flag) {
+          attr.Clear();
+          attr.SetFloat("weight", w);
+          if (! gsql_request->UpsertEdge(attr, object_vtype, obj_id, 
+                object_ontology_etype, ontology_vtype, t, msg)) {
+            gsql_request->Respond("fail to upsert edge, " + msg);
+            return;
+          }
         }
       }
     }
@@ -217,6 +266,8 @@ extern "C" {
     gsql_request->Respond("done.");
   }
 
+  // parse payload to get all tags
+  // set tags to gpe in order to find the primary ids
   void PreSetTagRequest(
            FilterHelper *filter_helper,
            UserRequest *user_request,
@@ -240,8 +291,9 @@ extern "C" {
     std::set<std::string> uniq_tags;
     Json::Value &jsoptions = gsql_request->jsoptions;
 
+    std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
-      std::vector<std::string> fields;
+      fields.clear();
       boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
       int size = fields.size();
       if (size != 2) {
@@ -255,6 +307,7 @@ extern "C" {
 
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
+        tw.clear();
         boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
         int size = tw.size();
         if (size == 0) {

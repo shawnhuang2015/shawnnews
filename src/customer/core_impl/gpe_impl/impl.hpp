@@ -35,6 +35,9 @@ const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
+const std::string CROWD_INDEX("crowdIndex");
+const std::string CROWD_INDEX_VTYPE = "__crowd_index";
+const std::string USER_CROWD_INDEX_ETYPE = "__user_to_crowd_index";
 
 class UDFRunner : public ServiceImplBase {
  private:
@@ -44,7 +47,7 @@ class UDFRunner : public ServiceImplBase {
   std::map<std::string, uint32_t> edge_type_map;
   std::map<uint32_t, std::string> edge_type_reverse_map;
   std::map<std::string, std::vector<VertexLocalId_t> > inverted_tag_cache;
-  bool refresh_inverted_tag_chache;
+  bool refresh_inverted_tag_cache;
 
  public:
   void Init(ServiceAPI& serviceapi) {
@@ -64,7 +67,7 @@ class UDFRunner : public ServiceImplBase {
     LoadGraphMeta(serviceapi);
 
     // init some data member
-    refresh_inverted_tag_chache = true;
+    refresh_inverted_tag_cache = true;
   }
 
   void LoadGraphMeta(ServiceAPI &serviceapi) {
@@ -279,6 +282,10 @@ class UDFRunner : public ServiceImplBase {
           obj_onto.append(one);
         }
         payload[OBJ_ONTO] = obj_onto;
+
+        // create crowdIndex v/etype for crowding service
+        payload[PROF][CROWD_INDEX]["vtype"] = CROWD_INDEX_VTYPE;
+        payload[PROF][CROWD_INDEX]["etype"] = USER_CROWD_INDEX_ETYPE;
       }
     } else {
       request.error_ = true;
@@ -497,34 +504,35 @@ class UDFRunner : public ServiceImplBase {
       typedef ExportOntologyTree UDF_t;
 
       tree.clear();
-      UDF_t udf(1, vtype_id, down_etype_id, threshold, tree);
+      bool large = false;
+      UDF_t udf(1, vtype_id, down_etype_id, threshold, tree, large);
       serviceapi.RunUDF(&request, &udf);
 
-      if (tree.size() > 0) {
+      writer_->WriteStartObject();
+      writer_->WriteName("name");
+      writer_->WriteString(name);
+      writer_->WriteName("large");
+      writer_->WriteBool(large);
+      writer_->WriteName("tree");
+      writer_->WriteStartArray();
+      for (tree_t::iterator it = tree.begin(); it != tree.end(); ++it) {
         writer_->WriteStartObject();
-        writer_->WriteName("name");
-        writer_->WriteString(name);
-        writer_->WriteName("tree");
-        writer_->WriteStartArray();
-        for (tree_t::iterator it = tree.begin(); it != tree.end(); ++it) {
-          writer_->WriteStartObject();
-          writer_->WriteName("parent");
-          writer_->WriteMarkVId(it->first);
-          request.output_idservice_vids.push_back(it->first);
+        writer_->WriteName("parent");
+        writer_->WriteMarkVId(it->first);
+        request.output_idservice_vids.push_back(it->first);
 
-          writer_->WriteName("children");
-          writer_->WriteStartArray();
-          for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
-               it1 != it->second.end(); ++it1) {
-            writer_->WriteMarkVId(*it1);
-            request.output_idservice_vids.push_back(*it1);
-          }
-          writer_->WriteEndArray();
-          writer_->WriteEndObject();
+        writer_->WriteName("children");
+        writer_->WriteStartArray();
+        for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
+             it1 != it->second.end(); ++it1) {
+          writer_->WriteMarkVId(*it1);
+          request.output_idservice_vids.push_back(*it1);
         }
         writer_->WriteEndArray();
         writer_->WriteEndObject();
       }
+      writer_->WriteEndArray();
+      writer_->WriteEndObject();
     }
     writer_->WriteEndArray();
     return true;
@@ -537,6 +545,9 @@ class UDFRunner : public ServiceImplBase {
     const Json::Value &prof = semantic_schema[PROF];
     std::set<std::string> obj;
 
+    JSONWriter *writer = request.outputwriter_;
+    writer->WriteStartObject();
+
     // collect all entities in profile
     if (! prof.isMember("target")) {
       request.error_ = true;
@@ -544,6 +555,24 @@ class UDFRunner : public ServiceImplBase {
       return false;
     }
     obj.insert(prof["target"].asString());
+
+    // get target
+    writer->WriteName("target");
+    writer->WriteString(prof["target"].asString());
+
+    // get crowdIndex
+    if (! prof.isMember("crowdIndex")) {
+      request.error_ = true;
+      request.message_ += "crowdIndex missing.";
+      return false;
+    }
+    writer->WriteName("crowdIndex");
+    writer->WriteStartObject();
+    writer->WriteName("vtype");
+    writer->WriteString(prof["crowdIndex"]["vtype"].asString());
+    writer->WriteName("etype");
+    writer->WriteString(prof["crowdIndex"]["etype"].asString());
+    writer->WriteEndObject();
 
     if (prof.isMember("behaviour")) {
       const Json::Value &beh = prof["behaviour"];
@@ -564,9 +593,6 @@ class UDFRunner : public ServiceImplBase {
         it != obj.end(); ++it) {
       GetOntologyNameByObject(*it, onto);
     }
-
-    JSONWriter *writer = request.outputwriter_;
-    writer->WriteStartObject();
 
     // get obj-ontology
     writer->WriteName("object_ontology");
@@ -745,8 +771,8 @@ class UDFRunner : public ServiceImplBase {
 
     // then find tags' primary id if exist in graph
     if (jsoptions.isMember("tags")) {
-      if (refresh_inverted_tag_chache) {
-        // find out primary id (path) of each tag
+      // try to find each tag's primary id using name, i.e. tag == primary_id.name
+      if (refresh_inverted_tag_cache) {
         typedef LocateTagUDF UDF_t;
         std::vector<UDF_t::tag_t> tag_vec;
         uint32_t vtype_id = vertex_type_map[vetype["vtype"]];
@@ -759,7 +785,33 @@ class UDFRunner : public ServiceImplBase {
             it != tag_vec.end(); ++it) {
           inverted_tag_cache[it->name].push_back(it->id);
         }
-        refresh_inverted_tag_chache = false;
+        refresh_inverted_tag_cache = false;
+      }
+
+      // try to convert each tag to internal primary id, i.e. tag == primary_id
+      int size = jsoptions["tags"].size();
+      std::set<std::string> uniq;
+      std::vector<std::pair<std::string, std::string> > uids;
+      for (int i = 0; i < size; ++i) {
+        const std::string &t = jsoptions["tags"][i].asString();
+        if (uniq.find(t) != uniq.end()) {
+          continue;
+        }
+        uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], t));
+      }
+      std::vector<VertexLocalId_t> vids = serviceapi.UIdtoVId(uids);
+
+      // merge vid_found into inverted_tag_cache
+      size = uids.size();
+      std::cout << "merge\n";
+      for (int i = 0; i < size; ++i) {
+        if (vids[i] == (VertexLocalId_t)-1) {
+          std::cout << uids[i].second << " fail to convert\n";
+          continue;
+        }
+        inverted_tag_cache[uids[i].second].clear();
+        inverted_tag_cache[uids[i].second].push_back(vids[i]);
+        std::cout << uids[i].second << ", " << vids[i] << std::endl;
       }
 
       std::cout << "cache.size = " << inverted_tag_cache.size() << std::endl;
@@ -767,15 +819,15 @@ class UDFRunner : public ServiceImplBase {
 
       writer->WriteName("inverted_tags");
       writer->WriteStartObject();
-      int size = jsoptions["tags"].size();
+
+      uniq.clear();
+      size = jsoptions["tags"].size();
       std::map<std::string, std::vector<VertexLocalId_t> >::iterator it;
-      std::set<std::string> uniq;
       for (int i = 0; i < size; ++i) {
         const std::string &t = jsoptions["tags"][i].asString();
         if (uniq.find(t) != uniq.end()) {
           continue;
         }
-
         it = inverted_tag_cache.find(t);
         if (it != inverted_tag_cache.end()) {
           writer->WriteName(t.c_str());
@@ -788,7 +840,7 @@ class UDFRunner : public ServiceImplBase {
           writer->WriteEndArray();
           uniq.insert(t);
         } else {
-          refresh_inverted_tag_chache = true;
+          refresh_inverted_tag_cache = true;
         }
       }
       writer->WriteEndObject();
@@ -849,7 +901,7 @@ class UDFRunner : public ServiceImplBase {
     typedef std::vector<UDF_t::tag_t> tag_vec_t;
 
     tag_vec_t tags;
-    UDF_t udf(1, vtype_id, etype_id, start, tags);
+    UDF_t udf(1, etype_id, start, tags);
     serviceapi.RunUDF(&request, &udf);
 
     // ontology vtypeid -> tags

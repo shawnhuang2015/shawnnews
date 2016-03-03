@@ -37,14 +37,12 @@ namespace UDIMPL {
     // global variable
     enum {GV_TAG};
 
-    GetTagUDF(unsigned int limit, uint32_t vtype_id, 
-        const std::set<uint32_t> &etype_id, VertexLocalId_t start,
+    GetTagUDF(unsigned int limit, const std::set<uint32_t> &etype_id, VertexLocalId_t start,
         std::vector<tag_t> &tags)
-      : SingleActiveBaseUDF(limit), vtype_id_(vtype_id),
-        etype_id_(etype_id), start_(start), tags_(tags) {}
+      : SingleActiveBaseUDF(limit), etype_id_(etype_id), start_(start), tags_(tags) {}
 
     void Initialize(GlobalSingleValueContext<V_VALUE>* context) {
-      context->SetActiveFlagByType(vtype_id_, true);
+      context->SetActiveFlag(start_);
     }
 
     void Initialize_GlobalVariables(gpelib4::GlobalVariables* globalvariables) {
@@ -87,7 +85,6 @@ namespace UDIMPL {
     }
 
   private:
-    uint32_t vtype_id_;
     const std::set<uint32_t> &etype_id_;
     VertexLocalId_t start_;
     std::vector<tag_t> &tags_;

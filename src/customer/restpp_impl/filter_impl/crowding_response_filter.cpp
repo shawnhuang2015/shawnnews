@@ -95,7 +95,7 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
 
   RequestObject* postReq = new RequestObject();
   postReq->method = "POST";
-  postReq->url = "create_crowd_update";
+  postReq->url = "crowd/v1/create_crowd_update";
   postReq->data = JsonNewReq.toStyledString();
   std::cout << "create_crowd_update:\n" << JsonNewReq.toStyledString() << std::endl;
   return postReq;

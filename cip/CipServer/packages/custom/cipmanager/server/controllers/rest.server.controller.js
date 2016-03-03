@@ -4,6 +4,7 @@
 'use strict';
 var qs = require('querystring');
 var utility = require('../utility/utility');
+var util = require('util');
 /**
  * Module dependencies.
  */
@@ -31,18 +32,28 @@ exports.getCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('getCrowd', '', selector, function(err, result) {
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
+            return;
         }
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body["selector"], md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to get crowd: " + bodyStr);
+                return;
+            }
+            res.send(res);
+        });
+
     });
-    */
+
+    /*
     res.send({
         "results": {
             "count": 3,
@@ -50,7 +61,7 @@ exports.getCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -71,18 +82,28 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('getCrowd', '', selector, function(err, result) {
-     if (err) {
-     return res.send({
-     message: err.message
-     });
-     } else {
-     return res.send(result);
-     }
-     });
-     */
+
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        if (err) {
+            return;
+        }
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body["selector"], md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to get crowd: " + bodyStr);
+                return;
+            }
+            res.send(res);
+        });
+
+    });
+/*
     res.send({
         "results": {
             "count": 3,
@@ -90,7 +111,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -237,58 +258,92 @@ exports.getCrowdCountByGet = function(req, res) {
     });
 }
 
-/*
-create a crowd on crowding service
-Input: 1. selector conditions - which express the crowding condition that the client choose on UI
-       2. crowd name
- */
-exports.createCrowd = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelector(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
+
+var generateCond = function(input_cond, metadata) {
+    //map the vertex name to vertex type
+    var tagT = {};
+    for (var k = 0; k < metadata.tag.length; ++k) {
+        var name = metadata.tag[k].name;
+        var vtype = metadata.tag[k].vtype;
+        tagT[name] = vtype;
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('createCrowd', '', selector, function(err, result) {
-        if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
+    var ontoT = {};
+    for (var k = 0; k < metadata.ontology.length; ++k) {
+        var name = metadata.ontology[k].name;
+        var vtype = metadata.ontology[k].vtype;
+        ontoT[name] = vtype;
+    }
+
+    //use condition in db to generate condition sent to crowding service
+    if (!(input_cond instanceof Array)) {
+        input_cond = [input_cond];
+    }
+    //console.log("input_cond: " + input_cond);
+
+    var res = [];
+    for (var index = 0; index < input_cond.length; ++index) {
+        var cond = {
+            ontology: [],
+            behavior: []
+        };
+        var tag = input_cond[index].tag;
+        var onto = input_cond[index].ontology;
+        var behr = input_cond[index].behavior;
+        for (var k = 0; k < tag.length; ++k) {
+            var item = tag[k];
+            item.type = tagT[item.name];
+            console.log("ready to outpu itemType: " + item.type);
+            console.log("ready to outpu item: " + util.inspect(item, true));
+            cond.ontology.push(item);
         }
-    });*/
-    res.send({
-        "results": {
-            "count": 10
-        },
-        "error": false,
-        "message": ""
-    });
+        for (var k = 0; k < onto.length; ++k) {
+            var item = onto[k];
+            item.type = ontoT[item.name];
+            cond.ontology.push(item);
+        }
+        for (var k = 0; k < onto.length; ++k) {
+            var item = behr[k];
+            item.ontologyType = ontoT[item.ontologyType];
+            cond.behavior.push(item);
+        }
+        res.push(cond);
+    }
+
+    return res;
 }
 
-
+/*
+ create a crowd on crowding service
+ Input: 1. selector conditions - which express the crowding condition that the client choose on UI
+        2. crowd name
+ */
 exports.createCrowdRemote = function(name, condition) {
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        if (err) {
+            console.log("Error to create crowd: " + name);
+            return;
+        }
         var body = {
             crowdIndex: md.profile.crowdIndex,
             searchCond: {
                 target: md.profile.target,
-                selector: [condition]
+                selector: generateCond(condition, md.profile)
             }
         };
         var bodyStr = JSON.stringify(body);
-        utility.post("create_crowd", "name=" + name, bodyStr, function(err, res) {
+        utility.post("crowd/v1/create", "name=" + name, bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to create crowd: " + name);
+                return;
+            }
             CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
                 crowd.tagAdded = true;
-                crowd.save(function(err) {});
+                crowd.save(function(err) {
+                    if (err) {
+                        console.log("Error to create crowd: " + name);
+                        return;
+                    }
+                });
             });
         });
     });
@@ -387,26 +442,20 @@ It is used to delete the crowd on crowding service.
 Input: cname - crowd name
 Output: return the number of persons in the deleted crowd
  */
-exports.deleteCrowd = function(req, res) {
-    var crowdName = req.query["cname"];
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'cname'"
-        });
-    }
-    /*
-     utility.get('deleteCrowd', 'crowdName=' + crowdName, function(err, result) {
-        if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
-        }
-    });
-    */
-    res.send('{"results": {"count": 10}, "error": false, "message": ""}');
+exports.deleteCrowdRemote = function(name) {
+     utility.get('crowd/v1/delete', 'name=' + name, function(err, result) {
+         if (err) {
+             console.log("delete crowd error: " + err.message);
+             return;
+         }
+         var jsRes = JSON.parse(result);
+         if (jsRes.error) {
+             console.log("delete crowd " + name + " error: " + jsRes.message);
+             return;
+         } else {
+             console.log("delete crowd: " + name + ", count: " + jsRes.results.count);
+         }
+     });
 }
 
 

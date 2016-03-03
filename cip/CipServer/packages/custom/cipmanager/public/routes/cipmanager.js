@@ -24,6 +24,16 @@ angular.module('mean.cipmanager').config(['$stateProvider',
             circles: ['admin']
           }
         })
+        .state('save crowd', {
+            url: '/crowd/save',
+            templateUrl: '/cipmanager/views/saveCrowd.html',
+            params: {
+                crowdDetail: null // 这个地方就可以随便你用了. 因为这个参数没在state的url中体现出来
+            },
+            requiredCircles : {
+                circles: ['admin']
+            }
+        })
         .state('user list', {
             url: '/crowd/:crowdName/userlist',
             templateUrl: '/cipmanager/views/userlist.html',

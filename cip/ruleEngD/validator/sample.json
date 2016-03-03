@@ -1,0 +1,27 @@
+{
+    "actor":
+    {
+        "flow":"Lakala Risk Mangement",
+        "entry":"http://lakala.com",
+        "client_id":"001",
+        "ip":"123",
+        "session_id":"879SDFD89SE8"
+    },
+    "checkpoint":
+    {
+        "name":"myrulesuite",
+        "uri":"http://cip.graphsql.com/lakala/myrulesuite",
+        "conflict":"HPW",
+        "summary":"fraud check"
+    },
+    "event":
+    {
+        "user_id":"1223399",
+        "name":"Will Smith",
+        "gender":"Male",
+        "age":86,
+        "current_pos":"http://lakala/cart",
+        "logintime":"20160101",
+        "isVIP":"false"
+    }
+}

@@ -96,61 +96,6 @@
       "summary": "load the tree."
     }
   },
-  "user_search": {
-    "POST": {
-      "function": "user_search",
-      "parameters": {
-        "limit": {
-          "type": "UINT32",
-          "min_count": 0
-        }
-      },
-      "request_filter": "UserSearchFilter"
-    }
-  },
-  "create_crowd": {
-    "POST": {
-      "function": "user_search",
-      "parameters": {
-        "name": {
-          "type": "STRING",
-          "min_count": 1,
-          "max_count": 1
-        }
-      },
-      "request_filter": "CreateCrowdRequestFilter",
-      "response_filter": "CreateCrowdResponseFilter"
-    }
-  },
-  "create_crowd_update": {
-    "GET/POST":{
-        "action":"update",
-        "target":"GPE",
-        "request_filter":"CreateCrowdUpdateFilter",
-        "summary":""
-    }  
-  },
-  "get_crowd": {
-    "GET/POST": {
-      "function": "get_crowd_by_name",
-      "parameters": {
-        "name": {
-          "type": "STRING",
-          "min_count": 1,
-          "max_count": 1,
-          "is_id":true,
-          "id_type":"$type"
-        },
-        "type": {
-          "type": "TYPENAME"
-        },
-        "limit": {
-          "type": "UINT32",
-          "min_count": 0
-        }
-      }
-    }
-  },
   "get_ontology": {
     "GET": {
       "function": "get_ontology",
@@ -174,6 +119,42 @@
       "parameters": {
       },
       "summary": "export profile."
+    }
+  },
+  "set_item_tag": {
+    "POST": {
+      "function": "pre_set_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "1"
+        }
+      },
+      "request_filter": "PreSetTagRequest",
+      "response_filter": "PreSetTagResponse",
+      "summary": "set item -> tags."
     }
   },
   "set_user_tag": {
@@ -201,6 +182,10 @@
         "eol": {
           "type": "STRING",
           "default": "\n"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "1"
         }
       },
       "request_filter": "PreSetTagRequest",
@@ -245,9 +230,17 @@
         "eol": {
           "type": "STRING",
           "default": "\n"
+        },
+        "inverted_tags": {
+          "type": "STRING",
+          "default": "{}"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "0"
         }
       },
-      "request_filter": "PostUserTag",
+      "request_filter": "PostTag",
       "summary": "do the real POST, set user -> tags."
     }
   },
@@ -268,11 +261,70 @@
           "max_count": 100000
         },
         "verbose": {
-          "type": "BOOL",
-          "default": "false"
+          "type": "UINT32",
+          "default": "0"
         }
       },
       "summary": "get object's tags."
+    }
+  },
+  "crowd": {
+    "v1": {
+      "user_search": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            }
+          },
+          "request_filter": "UserSearchFilter"
+        }
+      },
+      "create": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1
+            }
+          },
+          "request_filter": "CreateCrowdRequestFilter",
+          "response_filter": "CreateCrowdResponseFilter"
+        }
+      },
+      "create_crowd_update": {
+        "GET/POST":{
+            "action":"update",
+            "target":"GPE",
+            "request_filter":"CreateCrowdUpdateFilter",
+            "summary":""
+        }  
+      },
+      "get": {
+        "GET/POST": {
+          "function": "get_crowd_by_name",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1,
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type": "TYPENAME"
+            },
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            }
+          }
+        }
+      }
     }
   }
 }

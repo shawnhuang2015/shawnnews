@@ -1,6 +1,7 @@
 <section data-ng-controller="CipmanagerController" data-ng-init="init()">
-    <table class="table table-hover">
-        <h4>人群列表</h4>
+    <table class="table table-hover" ng-if="crowds.length>0">
+        <h4 ng-if="crowds.length>0">人群列表</h4>
+        <h5 ng-if="!crowds || crowds.length<=0">还没有人群列表,点击创建新的人群按钮创建</h5>
         <thead>
         <tr>
             <th>序号</th>
@@ -27,14 +28,16 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4">
+    <div class="col-md-offset-4" ng-if="crowds.length>0">
         <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" ng-change="pageChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
         </uib-pagination>
     </div>
 
     <table class="table table-hover" ng-if="grouplist.length>0">
-        <h4>人群组合列表</h4>
+        <h4 ng-if="grouplist.length>0">人群组合列表</h4>
+        <h5 ng-if="crowds.length>0 && !grouplist || grouplist.length<=0">还没有人群列表,点击创建人群组合按钮创建</h5>
+
         <thead>
         <tr>
             <th>序号</th>
@@ -61,7 +64,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4">
+    <div class="col-md-offset-4" ng-if="grouplist.length>0">
         <uib-pagination boundary-links="true" total-items="totalGroupItems" ng-model="currentGroupPage" class="pagination-sm" ng-change="pageGroupChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
 
@@ -72,7 +75,7 @@
         <button data-ng-click="goToCreate()" class="btn btn-info btn-block">创建新的人群</button>
     </div>
     <div class="col-md-2">
-        <button data-ng-click="goToCreateGroup()" class="btn btn-info btn-block">创建人群组合</button>
+        <button data-ng-click="goToCreateGroup()" ng-if="crowds.length>0" class="btn btn-info btn-block">创建人群组合</button>
     </div>
 
 </section>

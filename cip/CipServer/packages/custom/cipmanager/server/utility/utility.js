@@ -117,7 +117,8 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
-        if (!item["action"] || !item["objectType"] || !item["objectId"]
+        if (!item["action"] || !item["objectCategory"] || !item["objectType"]
+            || !item["ontologyType"] || !item["objectId"]
             || !item["operator"] || !item["value"] || !item["startTime"]
             || !item["endTime"] || !item["timeType"]) {
             console.log("in behavior");

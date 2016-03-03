@@ -94,19 +94,15 @@ var CrowdSingleSchema = new Schema({
                 objectType: {
                     type: String,
                     enum:['Category','Item','Contains'],
-                    required: true
                 },
                 objectCategory: {
                     type: String,
-                    required: true
                 },
                 ontologyType: {
                     type: String
-                    //required: true
                 },
                 objectId: {
-                    type: String,
-                    required: true
+                    type: String
                 },
                 operator: {
                     type: String,
