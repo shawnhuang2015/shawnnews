@@ -93,7 +93,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 objectType: {
                     type: String,
-                    enum:['Category','Item','Contains'],
+                    enum:['Category','Item','Contains', 'Behavior'],
                 },
                 objectCategory: {
                     type: String,
