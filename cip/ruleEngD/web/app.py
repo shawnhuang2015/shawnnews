@@ -60,8 +60,7 @@ def execute():
         ret = rsm.runWithRequest(request = req)
         return appRespond(buildAppResult(REST_OK, data = ret))
     except Exception as e:
-        print e
-        return appRespond(buildAppResult(REST_INTERNAL_ERROR, e.message, e))
+        return appRespond(buildAppResult(REST_INTERNAL_ERROR, data = str(e)))
     finally:
         pass
 
