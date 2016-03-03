@@ -801,12 +801,15 @@ class UDFRunner : public ServiceImplBase {
 
       // merge vid_found into inverted_tag_cache
       size = uids.size();
+      std::cout << "merge\n";
       for (int i = 0; i < size; ++i) {
         if (vids[i] == (VertexLocalId_t)-1) {
+          std::cout << uids[i].second << " fail to convert\n";
           continue;
         }
         inverted_tag_cache[uids[i].second].clear();
         inverted_tag_cache[uids[i].second].push_back(vids[i]);
+        std::cout << uids[i].second << ", " << vids[i] << std::endl;
       }
 
       std::cout << "cache.size = " << inverted_tag_cache.size() << std::endl;
