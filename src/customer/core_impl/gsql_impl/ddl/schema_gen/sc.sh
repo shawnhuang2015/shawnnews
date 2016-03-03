@@ -14,3 +14,6 @@ if [[ $? -eq 0 ]]; then
   mv $old{,.$(date)}
   mv $new $old
 fi
+
+# restart gpe
+gsql_admin restart -y gpe
