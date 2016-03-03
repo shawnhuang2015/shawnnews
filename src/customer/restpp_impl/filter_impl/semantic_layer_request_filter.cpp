@@ -214,6 +214,7 @@ extern "C" {
         }
 
         // check if `t` exists in inverted_tags, then find it's primary id
+        bool flag = true;
         if (inverted_tags.isMember(t)) {
           if (inverted_tags[t].size() == 1) {
             t = inverted_tags[t][0].asString();
@@ -240,15 +241,19 @@ extern "C" {
             gsql_request->Respond("fail to upsert edge, " + msg);
             return;
           }
+        } else {
+          flag = false;
         }
 
         // upsert edge
-        attr.Clear();
-        attr.SetFloat("weight", w);
-        if (! gsql_request->UpsertEdge(attr, object_vtype, obj_id, 
-              object_ontology_etype, ontology_vtype, t, msg)) {
-          gsql_request->Respond("fail to upsert edge, " + msg);
-          return;
+        if (flag) {
+          attr.Clear();
+          attr.SetFloat("weight", w);
+          if (! gsql_request->UpsertEdge(attr, object_vtype, obj_id, 
+                object_ontology_etype, ontology_vtype, t, msg)) {
+            gsql_request->Respond("fail to upsert edge, " + msg);
+            return;
+          }
         }
       }
     }

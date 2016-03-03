@@ -9,6 +9,7 @@ var mongoose = require('mongoose'),
 /**
  * Campaign Schema
  */
+
 var CampaignSchema = new Schema({
     created: {
         type: Date,

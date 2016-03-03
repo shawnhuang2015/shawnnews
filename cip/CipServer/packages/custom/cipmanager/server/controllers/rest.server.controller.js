@@ -4,11 +4,13 @@
 'use strict';
 var qs = require('querystring');
 var utility = require('../utility/utility');
+var util = require('util');
 /**
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
     SemanticMetaData = mongoose.model('SemanticMetaData'),
+    CrowdSingle = mongoose.model('CrowdSingle'),
     config = require('meanio').loadConfig(),
     _ = require('lodash');
 
@@ -29,19 +31,29 @@ exports.getCrowdDetailByPost = function(req, res) {
             error: true,
             message: "wrong 'selector'"
         });
-    }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('getCrowd', '', selector, function(err, result) {
+    }/*
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
+            return;
         }
-    });
-    */
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body["selector"], md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to get crowd: " + bodyStr);
+                return;
+            }
+            res.send(res);
+        });
+
+    });*/
+
+
     res.send({
         "results": {
             "count": 3,
@@ -70,18 +82,28 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('getCrowd', '', selector, function(err, result) {
-     if (err) {
-     return res.send({
-     message: err.message
-     });
-     } else {
-     return res.send(result);
-     }
-     });
-     */
+/*
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        if (err) {
+            return;
+        }
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body["selector"], md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to get crowd: " + bodyStr);
+                return;
+            }
+            res.send(res);
+        });
+
+    });*/
+
     res.send({
         "results": {
             "count": 3,
@@ -236,40 +258,95 @@ exports.getCrowdCountByGet = function(req, res) {
     });
 }
 
-/*
-create a crowd on crowding service
-Input: 1. selector conditions - which express the crowding condition that the client choose on UI
-       2. crowd name
- */
-exports.createCrowd = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelector(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
+
+var generateCond = function(input_cond, metadata) {
+    //map the vertex name to vertex type
+    var tagT = {};
+    for (var k = 0; k < metadata.tag.length; ++k) {
+        var name = metadata.tag[k].name;
+        var vtype = metadata.tag[k].vtype;
+        tagT[name] = vtype;
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('createCrowd', '', selector, function(err, result) {
-        if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
+    var ontoT = {};
+    for (var k = 0; k < metadata.ontology.length; ++k) {
+        var name = metadata.ontology[k].name;
+        var vtype = metadata.ontology[k].vtype;
+        ontoT[name] = vtype;
+    }
+
+    //use condition in db to generate condition sent to crowding service
+    if (!(input_cond instanceof Array)) {
+        input_cond = [input_cond];
+    }
+    //console.log("input_cond: " + input_cond);
+    console.log("tagT: " + JSON.stringify(tagT));
+    console.log("ontoT: " + JSON.stringify(ontoT));
+
+    var res = [];
+    for (var index = 0; index < input_cond.length; ++index) {
+        var cond = {
+            ontology: [],
+            behavior: []
+        };
+        var tag = input_cond[index].tag;
+        var onto = input_cond[index].ontology;
+        var behr = input_cond[index].behavior;
+        for (var k = 0; k < tag.length; ++k) {
+            var item = tag[k];
+            item.type = tagT[item.name];
+            cond.ontology.push(item);
         }
-    });*/
-    res.send({
-        "results": {
-            "count": 10
-        },
-        "error": false,
-        "message": ""
+        for (var k = 0; k < onto.length; ++k) {
+            var item = onto[k];
+            item.type = ontoT[item.name];
+            cond.ontology.push(item);
+        }
+        for (var k = 0; k < onto.length; ++k) {
+            var item = behr[k];
+            item.ontologyType = ontoT[item.ontologyType];
+            cond.behavior.push(item);
+        }
+        res.push(cond);
+    }
+
+    return res;
+}
+
+/*
+ create a crowd on crowding service
+ Input: 1. selector conditions - which express the crowding condition that the client choose on UI
+        2. crowd name
+ */
+exports.createCrowdRemote = function(name, condition) {
+    condition = JSON.parse(condition);
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        if (err) {
+            console.log("Error to create crowd: " + name);
+            return;
+        }
+        var body = {
+            crowdIndex: md.profile.crowdIndex,
+            searchCond: {
+                target: md.profile.target,
+                selector: generateCond(condition, md.profile)
+            }
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/create", "name=" + name, bodyStr, function(err, res) {
+            if (err) {
+                console.log("Error to create crowd: " + name);
+                return;
+            }
+            CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
+                crowd.tagAdded = true;
+                crowd.save(function(err) {
+                    if (err) {
+                        console.log("Error to create crowd: " + name);
+                        return;
+                    }
+                });
+            });
+        });
     });
 }
 
@@ -366,26 +443,20 @@ It is used to delete the crowd on crowding service.
 Input: cname - crowd name
 Output: return the number of persons in the deleted crowd
  */
-exports.deleteCrowd = function(req, res) {
-    var crowdName = req.query["cname"];
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'cname'"
-        });
-    }
-    /*
-     utility.get('deleteCrowd', 'crowdName=' + crowdName, function(err, result) {
-        if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
-        }
-    });
-    */
-    res.send('{"results": {"count": 10}, "error": false, "message": ""}');
+exports.deleteCrowdRemote = function(name) {
+     utility.get('crowd/v1/delete', 'name=' + name, function(err, result) {
+         if (err) {
+             console.log("delete crowd error: " + err.message);
+             return;
+         }
+         var jsRes = JSON.parse(result);
+         if (jsRes.error) {
+             console.log("delete crowd " + name + " error: " + jsRes.message);
+             return;
+         } else {
+             console.log("delete crowd: " + name + ", count: " + jsRes.results.count);
+         }
+     });
 }
 
 
@@ -407,7 +478,7 @@ exports.readMetadata = function(req, res) {
                 error: true,
                 message: utility.getErrorMessage(err)
             });
-        } else if (md && (curTime - md["created"].getTime() < 10000)) {
+        } else if (md && (curTime - md["created"].getTime() < config.semanticSyncTime * 1000)) {
             console.log("time delta = " + (curTime - md["created"].getTime()));
             return res.send(md["profile"]);
         } else {
@@ -429,8 +500,12 @@ exports.readMetadata = function(req, res) {
                 "error": false,
                 "message": "",
                 "results": {
+                    "target": "user",
+                    "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
                     "ontology": [
-                        {"name": "demo",
+                        {"name": "tag",
+                            "vtype": "tag_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "demo", "children": ["gender", "age"]},
                                 {"parent": "gender", "children": ["male", "female"]},
@@ -438,6 +513,8 @@ exports.readMetadata = function(req, res) {
                             ]
                         },
                         {"name": "interest",
+                            "vtype": "interest_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "interest", "children": ["food", "book"]},
                                 {"parent": "food", "children": ["apple", "orange"]},
@@ -445,28 +522,38 @@ exports.readMetadata = function(req, res) {
                             ]
                         },
                         {"name": "pic_type",
+                            "vtype": "pic_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "pic_type", "children": ["flower", "food"]},
                                 {"parent": "food", "children": ["apple", "orange"]}
                             ]
                         },
                         {"name": "pic_tag",
+                            "vtype": "pic_tag_vtype",
+                            "large": false,
                             "tree": [
-                                {"parent": "pic_tag", "children": ["flower2", "food2"]},
-                                {"parent": "food", "children": ["apple2", "orange2"]}
+                                {"parent": "pic_tag", "children": ["flower", "food"]},
+                                {"parent": "food", "children": ["apple", "orange"]}
                             ]
                         },
                         {"name": "channel_tag",
+                            "vtype": "channel_tag_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "channel_tag", "children": ["china", "USA"]},
                                 {"parent": "china", "children": ["cctv1", "cctv2"]},
                                 {"parent": "USA", "children": ["youtube"]}
                             ]
-                        },
-                        {
-                            "name": "lol",
-
                         }
+                    ],
+                    "tag": [
+                        {"name": "gender", "vtype": "tag_vtype", "element": ["male", "female"], "datatype": "itemset"},
+                        {"name": "age", "vtype": "tag_vtype", "element": ["0~10","10~20"], "datatype": "number"}
+                    ],
+                    "interest_intent": [
+                        {"ontology": "interest"},
+                        {"ontology": "pic_type"}
                     ],
 
                     "object_ontology": [
@@ -476,13 +563,13 @@ exports.readMetadata = function(req, res) {
                         {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
                     ],
                     "behaviour": [
-                        {"name": "browse", "subject": [{"vtype": "user", "etype": "user_browse"}],
-                            "object": [{"vtype": "theme", "etype": "browse_theme"},{"vtype": "pic", "etype": "post_pic"}]},
-                        {"name": "post", "subject": [{"vtype": "user", "etype": "user_post"}],
-                            "object": [{"vtype": "pic", "etype": "post_pic"}]},
-                        {"name": "visit", "subject": [{"vtype": "user", "etype": "user_visit"}],
-                            "object": [{"vtype": "channel", "etype": "visit_channel"}]},
-                        {"name": "login", "subject": [{"vtype": "user", "etype": "user_login"}]}
+                        {"name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
+                            "object": [{"name": "theme", "etype": "browse_theme"}]},
+                        {"name": "post", "subject": [{"name": "user", "etype": "user_post"}],
+                            "object": [{"name": "pic", "etype": "post_pic"}]},
+                        {"name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
+                            "object": [{"name": "channel", "etype": "visit_channel"}]},
+                        {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                     ]
                 }
             };
