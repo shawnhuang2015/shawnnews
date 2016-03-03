@@ -31,7 +31,7 @@ exports.getCrowdDetailByPost = function(req, res) {
             error: true,
             message: "wrong 'selector'"
         });
-    }
+    }/*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             return;
@@ -51,9 +51,9 @@ exports.getCrowdDetailByPost = function(req, res) {
             res.send(res);
         });
 
-    });
+    });*/
 
-    /*
+
     res.send({
         "results": {
             "count": 3,
@@ -61,7 +61,7 @@ exports.getCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });*/
+    });
 }
 
 /*
@@ -82,7 +82,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-
+/*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             return;
@@ -102,8 +102,8 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             res.send(res);
         });
 
-    });
-/*
+    });*/
+
     res.send({
         "results": {
             "count": 3,
@@ -111,7 +111,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });*/
+    });
 }
 
 /*
@@ -279,6 +279,8 @@ var generateCond = function(input_cond, metadata) {
         input_cond = [input_cond];
     }
     //console.log("input_cond: " + input_cond);
+    console.log("tagT: " + JSON.stringify(tagT));
+    console.log("ontoT: " + JSON.stringify(ontoT));
 
     var res = [];
     for (var index = 0; index < input_cond.length; ++index) {
@@ -292,8 +294,6 @@ var generateCond = function(input_cond, metadata) {
         for (var k = 0; k < tag.length; ++k) {
             var item = tag[k];
             item.type = tagT[item.name];
-            console.log("ready to outpu itemType: " + item.type);
-            console.log("ready to outpu item: " + util.inspect(item, true));
             cond.ontology.push(item);
         }
         for (var k = 0; k < onto.length; ++k) {
@@ -318,6 +318,7 @@ var generateCond = function(input_cond, metadata) {
         2. crowd name
  */
 exports.createCrowdRemote = function(name, condition) {
+    condition = JSON.parse(condition);
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to create crowd: " + name);
