@@ -391,10 +391,16 @@ class UDFRunner : public ServiceImplBase {
 
       one.clear();
       one["etype"] = it->second["etype"]["up"].asString();
+      one["directed"] = true;
+      one["source_vtype"] = it->second["vtype"].asString();
+      one["target_vtype"] = it->second["vtype"].asString();
       delta["add"]["edge"].append(one);
 
       one.clear();
       one["etype"] = it->second["etype"]["down"].asString();
+      one["directed"] = true;
+      one["source_vtype"] = it->second["vtype"].asString();
+      one["target_vtype"] = it->second["vtype"].asString();
       delta["add"]["edge"].append(one);
     }
 
@@ -432,20 +438,23 @@ class UDFRunner : public ServiceImplBase {
           onto1[js_onto1[i]["name"].asString()] = js_onto1[i];
         }
 
-        for (map_t::iterator it = onto0.begin(); it != onto0.end(); ++it) {
-          if (onto1.find(it->first) != onto1.end()) {
+        for (map_t::iterator it1 = onto0.begin(); it1 != onto0.end(); ++it1) {
+          if (onto1.find(it1->first) != onto1.end()) {
             continue;
           }
           Json::Value one;
-          one["etype"] = it->second["etype"].asString();
+          one["etype"] = it1->second["etype"].asString();
           delta["drop"]["edge"].append(one);
         }
-        for (map_t::iterator it = onto1.begin(); it != onto1.end(); ++it) {
-          if (onto0.find(it->first) != onto0.end()) {
+        for (map_t::iterator it1 = onto1.begin(); it1 != onto1.end(); ++it1) {
+          if (onto0.find(it1->first) != onto0.end()) {
             continue;
           }
           Json::Value one, two;
-          one["etype"] = it->second["etype"].asString();
+          one["etype"] = it1->second["etype"].asString();
+          one["directed"] = false;
+          one["source_vtype"] = it->first;
+          one["target_vtype"] = new_onto[it1->first]["vtype"].asString();
           two["name"] = "weight";
           two["dtype"] = "float";
           two["default"] = "1.0";

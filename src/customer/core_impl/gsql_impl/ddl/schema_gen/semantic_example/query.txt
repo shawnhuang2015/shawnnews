@@ -20,9 +20,9 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
       }
     ]
   },
-  "ontology": ["interest", "tag", "type"],
+  "ontology": ["interest", "type"],
   "object_ontology": [
-    {"object": "user", "ontology": ["interest", "tag", "type"]},
+    {"object": "user", "ontology": ["interest"]},
     {"object": "pic", "ontology": ["type"]}
   ]
 }'
