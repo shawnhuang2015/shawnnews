@@ -320,22 +320,29 @@ class UDFRunner : public ServiceImplBase {
     diff_fp << delta;
     diff_fp.close();
 
-    // update semantic schema
-    semantic_schema = payload;
+    // persist the old semantic schema to disk
+    std::ofstream fp0(SEMANTIC_SCHEMA_PATH.c_str());
+    fp0 << semantic_schema;
+    fp0.close();
 
-    // persist semantic schema to disk or redis
-    std::ofstream fp(SEMANTIC_SCHEMA_PATH.c_str());
-    fp << semantic_schema;
-    fp.close();
+    // persist the new semantic schema to disk
+    std::ofstream fp1((SEMANTIC_SCHEMA_PATH + ".rc").c_str());
+    fp1 << payload;
+    fp1.close();
 
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
-    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " + SCHEMA_DIFF_PATH).c_str()) != 0) {
+    // if sc job is good, the script will replace old schema file with the new one
+    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " 
+        + SCHEMA_DIFF_PATH + " "
+        + SEMANTIC_SCHEMA_PATH + " "
+        + SEMANTIC_SCHEMA_PATH + ".rc").c_str()) != 0) {
       request.error_ = true;
       request.message_ += "fail to do schema change.";
       return false;
     }
 
+    // code below is useless
     // once schema change, reload graph meta
     LoadGraphMeta(serviceapi);
 
@@ -391,10 +398,16 @@ class UDFRunner : public ServiceImplBase {
 
       one.clear();
       one["etype"] = it->second["etype"]["up"].asString();
+      one["directed"] = true;
+      one["source_vtype"] = it->second["vtype"].asString();
+      one["target_vtype"] = it->second["vtype"].asString();
       delta["add"]["edge"].append(one);
 
       one.clear();
       one["etype"] = it->second["etype"]["down"].asString();
+      one["directed"] = true;
+      one["source_vtype"] = it->second["vtype"].asString();
+      one["target_vtype"] = it->second["vtype"].asString();
       delta["add"]["edge"].append(one);
     }
 
@@ -432,20 +445,23 @@ class UDFRunner : public ServiceImplBase {
           onto1[js_onto1[i]["name"].asString()] = js_onto1[i];
         }
 
-        for (map_t::iterator it = onto0.begin(); it != onto0.end(); ++it) {
-          if (onto1.find(it->first) != onto1.end()) {
+        for (map_t::iterator it1 = onto0.begin(); it1 != onto0.end(); ++it1) {
+          if (onto1.find(it1->first) != onto1.end()) {
             continue;
           }
           Json::Value one;
-          one["etype"] = it->second["etype"].asString();
+          one["etype"] = it1->second["etype"].asString();
           delta["drop"]["edge"].append(one);
         }
-        for (map_t::iterator it = onto1.begin(); it != onto1.end(); ++it) {
-          if (onto0.find(it->first) != onto0.end()) {
+        for (map_t::iterator it1 = onto1.begin(); it1 != onto1.end(); ++it1) {
+          if (onto0.find(it1->first) != onto0.end()) {
             continue;
           }
           Json::Value one, two;
-          one["etype"] = it->second["etype"].asString();
+          one["etype"] = it1->second["etype"].asString();
+          one["directed"] = false;
+          one["source_vtype"] = it->first;
+          one["target_vtype"] = new_onto[it1->first]["vtype"].asString();
           two["name"] = "weight";
           two["dtype"] = "float";
           two["default"] = "1.0";
