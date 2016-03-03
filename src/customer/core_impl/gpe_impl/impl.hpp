@@ -556,9 +556,11 @@ class UDFRunner : public ServiceImplBase {
     }
     obj.insert(prof["target"].asString());
 
+    // get target
     writer->WriteName("target");
     writer->WriteString(prof["target"].asString());
 
+    // get crowdIndex
     if (! prof.isMember("crowdIndex")) {
       request.error_ = true;
       request.message_ += "crowdIndex missing.";
