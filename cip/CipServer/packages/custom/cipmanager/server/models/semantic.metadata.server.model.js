@@ -23,15 +23,30 @@ var SemanticMetaDataSchema = new Schema({
         default: Date.now
     },
     profile: {
+        target: String,
+        crowdIndex: {vtype: String, etype: String},
         ontology: [
             {
                 name: String,
+                vtype: String,
+                large: Boolean,
                 tree: [
                     {
                         parent: String,
                         children: [String]
                     }
                 ]
+            }
+        ],
+        tag: [
+            {
+                name: String,
+                vtype: String,
+                element: [String],
+                datetype: {
+                    type: String,
+                    enum: ["itemset", "number"]
+                }
             }
         ],
         object_ontology: [

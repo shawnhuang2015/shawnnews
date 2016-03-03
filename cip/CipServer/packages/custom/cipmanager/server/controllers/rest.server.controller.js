@@ -9,6 +9,7 @@ var utility = require('../utility/utility');
  */
 var mongoose = require('mongoose'),
     SemanticMetaData = mongoose.model('SemanticMetaData'),
+    CrowdSingle = mongoose.model('CrowdSingle'),
     config = require('meanio').loadConfig(),
     _ = require('lodash');
 
@@ -273,6 +274,26 @@ exports.createCrowd = function(req, res) {
     });
 }
 
+
+exports.createCrowdRemote = function(name, condition) {
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        var body = {
+            crowdIndex: md.profile.crowdIndex,
+            searchCond: {
+                target: md.profile.target,
+                selector: [condition]
+            }
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post("create_crowd", "name=" + name, bodyStr, function(err, res) {
+            CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
+                crowd.tagAdded = true;
+                crowd.save(function(err) {});
+            });
+        });
+    });
+}
+
 /*
 Method: POST
 Input: 1. selector conditions - which express the crowding condition that the client choose on UI
@@ -407,7 +428,7 @@ exports.readMetadata = function(req, res) {
                 error: true,
                 message: utility.getErrorMessage(err)
             });
-        } else if (md && (curTime - md["created"].getTime() < 10000)) {
+        } else if (md && (curTime - md["created"].getTime() < config.semanticSyncTime * 1000)) {
             console.log("time delta = " + (curTime - md["created"].getTime()));
             return res.send(md["profile"]);
         } else {
@@ -429,8 +450,12 @@ exports.readMetadata = function(req, res) {
                 "error": false,
                 "message": "",
                 "results": {
+                    "target": "user",
+                    "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
                     "ontology": [
-                        {"name": "demo",
+                        {"name": "tag",
+                            "vtype": "tag_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "demo", "children": ["gender", "age"]},
                                 {"parent": "gender", "children": ["male", "female"]},
@@ -438,6 +463,8 @@ exports.readMetadata = function(req, res) {
                             ]
                         },
                         {"name": "interest",
+                            "vtype": "interest_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "interest", "children": ["food", "book"]},
                                 {"parent": "food", "children": ["apple", "orange"]},
@@ -445,28 +472,38 @@ exports.readMetadata = function(req, res) {
                             ]
                         },
                         {"name": "pic_type",
+                            "vtype": "pic_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "pic_type", "children": ["flower", "food"]},
                                 {"parent": "food", "children": ["apple", "orange"]}
                             ]
                         },
                         {"name": "pic_tag",
+                            "vtype": "pic_tag_vtype",
+                            "large": false,
                             "tree": [
-                                {"parent": "pic_tag", "children": ["flower2", "food2"]},
-                                {"parent": "food", "children": ["apple2", "orange2"]}
+                                {"parent": "pic_tag", "children": ["flower", "food"]},
+                                {"parent": "food", "children": ["apple", "orange"]}
                             ]
                         },
                         {"name": "channel_tag",
+                            "vtype": "channel_tag_vtype",
+                            "large": false,
                             "tree": [
                                 {"parent": "channel_tag", "children": ["china", "USA"]},
                                 {"parent": "china", "children": ["cctv1", "cctv2"]},
                                 {"parent": "USA", "children": ["youtube"]}
                             ]
-                        },
-                        {"name": "lol",
-
                         }
-
+                    ],
+                    "tag": [
+                        {"name": "gender", "vtype": "tag_vtype", "element": ["male", "female"], "datatype": "itemset"},
+                        {"name": "age", "vtype": "tag_vtype", "element": ["0~10","10~20"], "datatype": "number"}
+                    ],
+                    "interest_intent": [
+                        {"ontology": "interest"},
+                        {"ontology": "pic_type"}
                     ],
 
                     "object_ontology": [
@@ -476,13 +513,13 @@ exports.readMetadata = function(req, res) {
                         {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
                     ],
                     "behaviour": [
-                        {"name": "browse", "subject": [{"vtype": "user", "etype": "user_browse"}],
-                            "object": [{"vtype": "theme", "etype": "browse_theme"},{"vtype": "pic", "etype": "post_pic"}]},
-                        {"name": "post", "subject": [{"vtype": "user", "etype": "user_post"}],
-                            "object": [{"vtype": "pic", "etype": "post_pic"}]},
-                        {"name": "visit", "subject": [{"vtype": "user", "etype": "user_visit"}],
-                            "object": [{"vtype": "channel", "etype": "visit_channel"}]},
-                        {"name": "login", "subject": [{"vtype": "user", "etype": "user_login"}]}
+                        {"name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
+                            "object": [{"name": "theme", "etype": "browse_theme"}]},
+                        {"name": "post", "subject": [{"name": "user", "etype": "user_post"}],
+                            "object": [{"name": "pic", "etype": "post_pic"}]},
+                        {"name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
+                            "object": [{"name": "channel", "etype": "visit_channel"}]},
+                        {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                     ]
                 }
             };
