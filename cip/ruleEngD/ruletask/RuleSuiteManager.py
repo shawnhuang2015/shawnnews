@@ -24,7 +24,7 @@ class RuleSuiteManager(object):
             self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
 
     def validate(self, cp):
-        return os.path.isfile("%s/%s" %(self.ruleroot, cp))
+        return os.path.isdir("%s/%s" %(self.ruleroot, cp))
 
     def runWithRequest(self, request):
         # TODO: hard code
