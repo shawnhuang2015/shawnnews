@@ -123,6 +123,9 @@ class UDFRunner : public ServiceImplBase {
       return PreSetTag(serviceapi, request);
     } else if (request.request_function_ == "get_tag") {
       return RunUDF_GetTag(serviceapi, request);
+    } else if (request.request_function_ == "clear_semantic") {
+      semantic_schema = Json::Value();
+      return true;
     }
     
     return false;  /// not a valid request
@@ -431,7 +434,9 @@ class UDFRunner : public ServiceImplBase {
       new_obj_onto[obj_onto1[i]["object"].asString()] = obj_onto1[i]["ontology"];
     }
 
+    // scan old object-ontology
     for (map_t::iterator it = old_obj_onto.begin(); it != old_obj_onto.end(); ++it) {
+      // both of old & new contains such object, then diff object's ontology
       if (new_obj_onto.find(it->first) != new_obj_onto.end()) {
         map_t onto0, onto1;
         const Json::Value &js_onto0 = it->second;
@@ -462,6 +467,38 @@ class UDFRunner : public ServiceImplBase {
           one["directed"] = false;
           one["source_vtype"] = it->first;
           one["target_vtype"] = new_onto[it1->first]["vtype"].asString();
+          two["name"] = "weight";
+          two["dtype"] = "float";
+          two["default"] = "1.0";
+          one["attr"].append(two);
+          delta["add"]["edge"].append(one);
+        }
+      } else {
+        // otherwise, drop all edges in old
+        const Json::Value &js_onto0 = it->second;
+        int size0 = js_onto0.size();
+        for (int i = 0; i < size0; ++i) {
+          Json::Value one;
+          one["etype"] = js_onto0[i]["etype"].asString();
+          delta["drop"]["edge"].append(one);
+        }
+      }
+    }
+
+    // scan new object-ontology
+    for (map_t::iterator it = new_obj_onto.begin(); it != new_obj_onto.end(); ++it) {
+      if (old_obj_onto.find(it->first) != old_obj_onto.end()) {
+        // this object has already been handled in old object-ontology scan
+      } else {
+        // otherwise, add all edges in new
+        const Json::Value &js_onto1 = it->second;
+        int size1 = js_onto1.size();
+        for (int i = 0; i < size1; ++i) {
+          Json::Value one, two;
+          one["etype"] = js_onto1[i]["etype"].asString();
+          one["directed"] = false;
+          one["source_vtype"] = it->first;
+          one["target_vtype"] = new_onto[js_onto1[i]["name"].asString()]["vtype"].asString();
           two["name"] = "weight";
           two["dtype"] = "float";
           two["default"] = "1.0";

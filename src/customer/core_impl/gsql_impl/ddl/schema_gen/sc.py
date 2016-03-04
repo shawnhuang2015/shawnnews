@@ -5,7 +5,6 @@ GSQL_PATH = os.path.expanduser('~/graphsql/dev/gsql/gsql')
 BASIC_SCHEMA_PATH = '/tmp/basic.gsql'
 JOB_DIR = '/tmp/'
 GRAPH_NAME = 'cip'
-LOG_FILE = '/tmp/sc.log'
 
 # attrs = [
 #   {"name": "attr1", "dtype": "float"}, 
@@ -70,10 +69,8 @@ def drop_edge(edge):
   return pat.format(etype)
 
 def run_job(job_file):
-  with open(LOG_FILE, 'a') as fp:
-    job = subprocess.Popen([GSQL_PATH, job_file], stdout=fp, stderr=fp)
-    job.communicate()
-    print >> fp, 'done, ', time.ctime()
+  job = subprocess.Popen([GSQL_PATH, job_file], stdout=sys.stdout, stderr=sys.stderr)
+  job.communicate()
 
 
 if __name__ == '__main__':

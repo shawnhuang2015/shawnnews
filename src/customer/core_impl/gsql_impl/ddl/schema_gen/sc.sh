@@ -16,9 +16,9 @@ if [[ $? -eq 0 ]]; then
   echo "replace old with new schema"
   mv $old{,.$(date)}
   mv $new $old
+
+  # restart gpe
+  gsql_admin restart -y gpe
 fi
 
-# restart gpe
-gsql_admin restart -y gpe
-
-} > $LOG_FILE
+} &> $LOG_FILE
