@@ -33,7 +33,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4" ng-if="crowds.length>0">
+    <div class="text-center " ng-if="crowds.length>0">
         <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" ng-change="pageChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
         </uib-pagination>
@@ -71,7 +71,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4" ng-if="grouplist.length>0">
+    <div class="text-center" ng-if="grouplist.length>0">
         <uib-pagination boundary-links="true" total-items="totalGroupItems" ng-model="currentGroupPage" class="pagination-sm" ng-change="pageGroupChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
 

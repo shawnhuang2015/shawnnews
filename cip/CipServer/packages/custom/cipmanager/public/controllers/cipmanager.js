@@ -379,10 +379,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         $scope.init = function () {
             Cipmanager.query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
                 $scope.crowds = crowds;
-            });
-
-            Groupmanager.query({pageId: 0, pageSz: $scope.page_size}, function (groups) {
-                $scope.grouplist = groups;
+                Groupmanager.query({pageId: 0, pageSz: $scope.page_size}, function (groups) {
+                    $scope.grouplist = groups;
+                    //for	(var index = 0; index < groups.length; index++) {
+                    //    $scope.crowds.push(groups[index]);
+                    //}
+                });
             });
 
             CrowdService.getCount(function (data) {
@@ -404,7 +406,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initUserList = function () {
             $scope.findOne();
-            setTimeout(function(){
+            //setTimeout(function(){
                 CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
                     if (data.success) {
                         $scope.userList = data.userList;
@@ -412,15 +414,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                         $scope.userList = [];
                     }
                 });
-            }, 2000);
+            //}, 2000);
 
-            //CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
-            //    if (data.success) {
-            //        $scope.userList = data.userList;
-            //    } else {
-            //        $scope.userList = [];
-            //    }
-            //});
             CrowdService.getUserCount($stateParams.crowdName, function (data) {
                 if (data.success) {
                     $scope.userCount = data.length;
@@ -464,14 +459,16 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         //Remove crowd from server
         $scope.remove = function (crowd) {
-            if (crowd) {
-                crowd.$remove(function (response) {
-                    for (var i in $scope.crowds) {
-                        if ($scope.crowds[i] === crowd) {
-                            $scope.crowds.splice(i, 1);
+            if(confirm("确定要删除这个人群吗？")) {
+                if (crowd) {
+                    crowd.$remove(function (response) {
+                        for (var i in $scope.crowds) {
+                            if ($scope.crowds[i] === crowd) {
+                                $scope.crowds.splice(i, 1);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         };
 

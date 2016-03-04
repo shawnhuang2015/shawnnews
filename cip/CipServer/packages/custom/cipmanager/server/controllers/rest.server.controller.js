@@ -326,7 +326,7 @@ var generateCond = function(input_cond, metadata) {
             item.type = ontoT[item.name];
             cond.ontology.push(item);
         }
-        for (var k = 0; k < onto.length; ++k) {
+        for (var k = 0; k < behr.length; ++k) {
             var item = behr[k];
             item.ontologyType = ontoT[item.ontologyType];
             cond.behavior.push(item);
