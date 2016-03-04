@@ -126,9 +126,8 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
-        if (!item["objectType"] || !item["action"] || !item["operator"] || !item["value"] || !item["startTime"]
-            || !item["endTime"] || !item["timeType"]) {
-            console.log("Field absent in hehavior");
+        if (!item["objectType"] || !item["action"] || !item["operator"] || !item["value"]  || !item["timeType"]) {
+            console.log("Field absent in hehavior");//|| !item["startTime"] || !item["endTime"]
             return false;
         }
         if ((item["objectType"] == 'Category' || item["objectType"] == 'Contains')
