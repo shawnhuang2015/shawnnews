@@ -229,6 +229,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             if (nowSelected == 'tag') {
                 $scope.factors.name = $scope.ontology_data.tag[0].name;
                 $scope.factors.operator = $scope.tag_operator[0];
+                $scope.factors.weight = 1.0;
             } else if (nowSelected == 'ontology') {
                 $scope.factors.name = $scope.ontology_data.interest_intent[0].ontology;
                 $scope.factors.operator = $scope.operator[0];
@@ -284,8 +285,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                     angular.forEach(val.object, function (object) {
                         $scope.object_category.push(object.name);
                     });
-                    $scope.factors.objectCategory = val.object[0].name;
-                    $scope.factors.objectType = $scope.object_type[0].id;
+                    if(!$scope.object_category || $scope.object_category.length <= 0) {
+                        $scope.factors.objectType = "Behavior";
+                    } else {
+                        $scope.factors.objectCategory = val.object[0].name;
+                        $scope.factors.objectType = $scope.object_type[0].id;
+                    }
                 }
             });
         });
@@ -355,9 +360,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         //Init the crowds, query first page and total count
         $scope.init = function () {
             Cipmanager.query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
-                for (var index in crowds) {
-                    crowds[index].tagAdded = index % 3 - 1;
-                }
                 $scope.crowds = crowds;
             });
 
