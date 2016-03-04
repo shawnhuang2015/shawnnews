@@ -333,6 +333,7 @@ class UDFRunner : public ServiceImplBase {
     fp1 << payload;
     fp1.close();
 
+    std::cout << "before system call" << std::endl;
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
@@ -344,6 +345,7 @@ class UDFRunner : public ServiceImplBase {
       request.message_ += "fail to do schema change.";
       return false;
     }
+    std::cout << "done system call" << std::endl;
 
     // code below is useless
     // once schema change, reload graph meta
@@ -506,6 +508,23 @@ class UDFRunner : public ServiceImplBase {
           delta["add"]["edge"].append(one);
         }
       }
+    }
+
+    // diff profile[crowdIndex], this should be done just once
+    const Json::Value &prof0 = old_schema[PROF];
+    const Json::Value &prof1 = new_schema[PROF];
+
+    if ((! prof0.isMember("crowdIndex")) && prof1.isMember("crowdIndex")) {
+      Json::Value one;
+      one["vtype"] = prof1["crowdIndex"]["vtype"].asString();
+      delta["add"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = prof1["crowdIndex"]["etype"].asString();
+      one["directed"] = false;
+      one["source_vtype"] = prof1["target"].asString();
+      one["target_vtype"] = prof1["crowdIndex"]["vtype"].asString();
+      delta["add"]["edge"].append(one);
     }
 
     std::cout << "Delta: " << delta;
