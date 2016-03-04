@@ -1,5 +1,5 @@
-import ConfigParser
 import os
+import ConfigParser
 
 class RuleEngConfig(object):
     def __init__(self):

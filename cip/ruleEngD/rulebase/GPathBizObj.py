@@ -1,8 +1,7 @@
+import json
 import sys
 sys.path.append("../")
-import json
-sys.path.append("../logging")
-from Decorators import logTxn
+from logger.Decorators import logTxn
 ########  common biz objects #########################
 from rulebase.BizObjBase import BizObjBase
 from rulebase.JsonBizObj import JsonBizObj 

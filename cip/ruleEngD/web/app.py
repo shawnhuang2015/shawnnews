@@ -5,6 +5,7 @@ import json
 import time
 from threading import Timer
 from flask import Flask, jsonify,request
+
 from ruletask.RuleSuiteManager import RuleSuiteManager
 from rulebase.BizObjBase import BizObjBase
 from rulebase.RestBizObj import RestBizObj
@@ -15,9 +16,8 @@ from init.Const import REST_INTERNAL_ERROR
 from monitor.Perf import Perf
 from util.ErrHandler import buildAppResult 
 from validator.validator import appSchemaValidator 
-sys.path.append("../logging")
-from Decorators import logTxn
-from Decorators import Performance 
+from logger.Decorators import logTxn
+from logger.Decorators import Performance 
 
 try:
     from config.RuleEngConfig import ruleEngConfigure
