@@ -9,7 +9,7 @@ from rulebase.JsonBizObj import JsonBizObj
 from rulebase.RestBizObj import RestPostBizObj 
 ############ User defined bizObjects ############
 class GPathConfig(object):
-    def __init__(self, host = "localhost", port = 9000):
+    def __init__(self, host, port):
         self.host = host
         self.port = port
 
@@ -26,7 +26,7 @@ class GPathBizObj(object):
         return []
 
 if __name__ == '__main__':
-    config = GPathConfig("192.168.33.70") 
+    config = GPathConfig("192.168.33.70",9000) 
     # gpath = "imsi[\"8986002615149\"]-udid_imsi->deviceEvent-deviceEvent_mac->mac=>.project{mac._external_id}"
     gpath = "imsi[\"8986002615149\", \"89860040221405\"]=>.project{imsi._external_id}"
     gpathObj = GPathBizObj(config, gpath)

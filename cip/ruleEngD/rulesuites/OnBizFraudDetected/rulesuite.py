@@ -3,7 +3,7 @@ import time, sys
 sys.path.append("../")
 from algorithm import RuleConfltSol 
 ###### common functions applied to context ###########
-from Context import RuleContext
+from ruletask.Context import RuleContext
 from ruletask.Context import __REQ_ACTOR
 from ruletask.Context import __REQ_CP 
 from ruletask.Context import __REQ_EVT 

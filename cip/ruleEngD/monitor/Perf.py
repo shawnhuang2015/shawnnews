@@ -2,10 +2,11 @@ import datetime
 import random
 import time
 from influxdb import InfluxDBClient 
+from config.RuleEngConfig import ruleEngConfigure
 
 class Perf(object):
     def __init__(self, host, measurement):
-        self.poster = InfluxDBClient(host=host, database='ruleng')
+        self.poster = InfluxDBClient(host=host, database=ruleEngConfigure["influxdb"]["db"])
         self.measurement = measurement
 
     def post(self, tags, value):
@@ -22,6 +23,3 @@ if __name__ == "__main__":
         # perf.post({}, random.random())
         perf.post({"rule":"r4_operation_without_fingerprint"}, 5.0)
         time.sleep(1)
-
-
-

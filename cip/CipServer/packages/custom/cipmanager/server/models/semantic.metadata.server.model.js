@@ -49,6 +49,11 @@ var SemanticMetaDataSchema = new Schema({
                 }
             }
         ],
+        interest_intent: [
+            {
+                ontology: String,
+            }
+        ],
         object_ontology: [
             {
                 object: String,
