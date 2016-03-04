@@ -5,6 +5,7 @@
 var qs = require('querystring');
 var utility = require('../utility/utility');
 var util = require('util');
+var fs = require("fs");
 /**
  * Module dependencies.
  */
@@ -31,7 +32,8 @@ exports.getCrowdDetailByPost = function(req, res) {
             error: true,
             message: "wrong 'selector'"
         });
-    }/*
+    }
+    /*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             return;
@@ -43,17 +45,17 @@ exports.getCrowdDetailByPost = function(req, res) {
         };
 
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to get crowd: " + bodyStr);
                 return;
             }
-            res.send(res);
+            res.send(resp);
         });
 
-    });*/
+    });
 
-
+*/
     res.send({
         "results": {
             "count": 3,
@@ -85,6 +87,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
 /*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
+            console.log("Error to get crowd detail");
             return;
         }
 
@@ -94,16 +97,16 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         };
 
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, res) {
+        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to get crowd: " + bodyStr);
                 return;
             }
-            res.send(res);
+            res.send(resp);
         });
 
-    });*/
-
+    });
+*/
     res.send({
         "results": {
             "count": 3,
@@ -167,20 +170,31 @@ exports.getCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    var selector = JSON.stringify(req.body);
-    /*
-     utility.post('getCrowdCount', '', selector, fucntion(err, result){
+/*
+    //var selector = JSON.stringify(req.body);
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
+            console.log("Error to get crowd count");
+            return;
         }
-    }); */
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
+            if (err) {
+                console.log("Error to create crowd count");
+            } else {
+                res.send(resp);
+            }
+        });
+    });
+    */
     res.send({
         "results": {
-            "count": 3
+            "count": 3,
+            "userIds": []
         },
         "error": false,
         "message": ""
@@ -204,20 +218,31 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    var selector = JSON.stringify(req.body);
     /*
-     utility.post('getCrowdCount', '', selector, fucntion(err, result){
-     if (err) {
-     return res.send({
-     message: err.message
-     });
-     } else {
-     return res.send(result);
-     }
-     }); */
+    //var selector = JSON.stringify(req.body);
+    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+        if (err) {
+            console.log("Error to get crowd count");
+            return;
+        }
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
+            if (err) {
+                console.log("Error to create crowd count");
+            } else {
+                res.send(resp);
+            }
+        });
+    });*/
+
     res.send({
         "results": {
-            "count": 3
+            "count": 3,
+            "userIds": []
         },
         "error": false,
         "message": ""
@@ -318,9 +343,37 @@ var generateCond = function(input_cond, metadata) {
         2. crowd name
  */
 exports.createCrowdRemote = function(name, condition) {
+    function updateTag(name, value) {
+        CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
+            crowd.tagAdded = value;
+            crowd.file = name + '.user';
+            crowd.save(function(err) {
+                if (err) {
+                    console.log("Error to create crowd: " + name);
+                    return;
+                }
+            });
+        });
+    }
+
+    function writeUserToFile(res, path) {
+        var data = "UserCount: " + res.results.count + "\n";
+        for (var k = 0; k < res.results.userIds.length; ++k) {
+            data += res.results.userIds[k] + "\n";
+        }
+        fs.writeFile(path, data,  function(err) {
+            if (err) {
+                console.log("Error to wirte file: " + path);
+            } else {
+                console.log("Success to wirte file: " + path);
+            }
+        });
+    }
+
     condition = JSON.parse(condition);
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
+            updateTag(name, -1);
             console.log("Error to create crowd: " + name);
             return;
         }
@@ -334,18 +387,18 @@ exports.createCrowdRemote = function(name, condition) {
         var bodyStr = JSON.stringify(body);
         utility.post("crowd/v1/create", "name=" + name, bodyStr, function(err, res) {
             if (err) {
+                updateTag(name, -1);
                 console.log("Error to create crowd: " + name);
-                return;
+            } else {
+                var jsRes = JSON.parse(res);
+                if (jsRes.error == false) {
+                    writeUserToFile(jsRes, config.dataPath + name + '.user');
+                    updateTag(name, 1);
+                } else {
+                    updateTag(name, -1);
+                    console.log("Error to create crowd: " + name + ', error: ' + jsRes.message);
+                }
             }
-            CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
-                crowd.tagAdded = true;
-                crowd.save(function(err) {
-                    if (err) {
-                        console.log("Error to create crowd: " + name);
-                        return;
-                    }
-                });
-            });
         });
     });
 }
@@ -513,6 +566,83 @@ exports.readMetadata = function(req, res) {
                             ]
                         },
                         {"name": "interest",
+                            "vtype": "interest",
+                            "large": false,
+                            "tree": [
+                                {"parent": "interest", "children": ["food", "book"]},
+                                {"parent": "food", "children": ["apple", "orange"]},
+                                {"parent": "book", "children": ["c++", "web development"]}
+                            ]
+                        },
+                        {"name": "pic_type",
+                            "vtype": "pic_vtype",
+                            "large": false,
+                            "tree": [
+                                {"parent": "pic_type", "children": ["flower", "food"]},
+                                {"parent": "food", "children": ["apple", "orange"]}
+                            ]
+                        },
+                        {"name": "pic_tag",
+                            "vtype": "pic_tag",
+                            "large": false,
+                            "tree": [
+                                {"parent": "pic_tag", "children": ["flower", "food"]},
+                                {"parent": "food", "children": ["apple", "orange"]}
+                            ]
+                        },
+                        {"name": "channel_tag",
+                            "vtype": "channel_tag_vtype",
+                            "large": false,
+                            "tree": [
+                                {"parent": "channel_tag", "children": ["china", "USA"]},
+                                {"parent": "china", "children": ["cctv1", "cctv2"]},
+                                {"parent": "USA", "children": ["youtube"]}
+                            ]
+                        }
+                    ],
+                    "tag": [
+                        {"name": "gender", "vtype": "demo", "element": ["male", "female"], "datatype": "itemset"},
+                        {"name": "age", "vtype": "demo", "element": ["0~10","10~20"], "datatype": "number"}
+                    ],
+                    "interest_intent": [
+                        {"ontology": "interest"},
+                        {"ontology": "pic_tag"}
+                    ],
+
+                    "object_ontology": [
+                        {"object": "pic", "ontology": [{"name": "pic_type", "etype": "pic_to_pic_type"}, {"name":"pic_tag", "etype": "pic_tag_pic"}] },
+                        {"object": "user", "ontology": [{"name": "demo", "etype": "user_to_demo"}, {"name": "interest", "etype": "user_to_interest"}] },
+                        {"object": "theme", "ontology": [{"name": "pic_tag", "etype": "theme_to_pic_tag"}] },
+                        {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
+                    ],
+                    "behaviour": [
+                        {"name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
+                            "object": [{"name": "pic", "etype": "browse_pic"}]},
+                        {"name": "post", "subject": [{"name": "user", "etype": "user_post"}],
+                            "object": [{"name": "pic", "etype": "post_pic"}]},
+                        {"name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
+                            "object": [{"name": "channel", "etype": "visit_channel"}]},
+                        {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
+                    ]
+                }
+            };/*
+            var result = {
+                "error": false,
+                "message": "",
+                "results": {
+                    "target": "user",
+                    "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
+                    "ontology": [
+                        {"name": "tag",
+                            "vtype": "tag_vtype",
+                            "large": false,
+                            "tree": [
+                                {"parent": "demo", "children": ["gender", "age"]},
+                                {"parent": "gender", "children": ["male", "female"]},
+                                {"parent": "age", "children": ["0~10", "10~20"]}
+                            ]
+                        },
+                        {"name": "interest",
                             "vtype": "interest_vtype",
                             "large": false,
                             "tree": [
@@ -572,7 +702,7 @@ exports.readMetadata = function(req, res) {
                         {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                     ]
                 }
-            };
+            };*/
             SemanticMetaData.remove(function(err) {
                 if (err) {
                     return res.send({
@@ -596,3 +726,8 @@ exports.readMetadata = function(req, res) {
         }
     });
 }
+
+exports.download = function(req, res) {
+    var file = req.query["file"];
+    res.download(config.dataPath + file);
+};

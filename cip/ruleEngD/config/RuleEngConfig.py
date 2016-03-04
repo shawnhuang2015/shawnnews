@@ -1,19 +1,27 @@
 import ConfigParser
-confRoot='/home/feng.chen/gitrepo/product/cip/ruleEngD'
+import os
 
 class RuleEngConfig(object):
     def __init__(self):
         Config = ConfigParser.ConfigParser()
-        Config.read("%s/config/config.ini" % confRoot)
+        curDir = os.path.dirname(os.path.realpath(__file__)) 
+        confPath = "%s/config.ini" % curDir
+        if not os.path.isfile(confPath):
+            raise Exception ("Can't find %s" % confPath)
+        Config.read("%s/config.ini" % curDir)
         self.conf={}
         for sec in Config.sections():
             self.conf[sec] = {}
             for opt in Config.options(sec):
                 self.conf[sec][opt] = Config.get(sec, opt)
 
-    def getCfg(self):
-        return self.conf
+    def validate(self):
+        return True
+
+    def __getitem__(self, index):
+        return self.conf[index]
+
+ruleEngConfigure = RuleEngConfig()
 
 if __name__ == "__main__":
-    conf = RuleEngConfig()
-    print conf.getCfg()['kafka']['ip']
+    print ruleEngConfigure['kafka']['ip']

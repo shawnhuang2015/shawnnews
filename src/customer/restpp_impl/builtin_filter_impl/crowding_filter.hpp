@@ -70,7 +70,8 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
       Json::Value root;
       root["error"] = false;
       root["message"] = "";
-      root["results"]["count"] = userCount;
+      //root["results"]["count"] = userCount;
+      root["results"] = results;
 
       gsql_request->Respond(root.toStyledString());
     } else {

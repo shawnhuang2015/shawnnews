@@ -69,5 +69,6 @@ module.exports = {
       port: 9000
     }
   },
-  semanticSyncTime: 3600
+  semanticSyncTime: 3600,
+  dataPath: rootPath + "/data/"
 };

@@ -123,6 +123,9 @@ class UDFRunner : public ServiceImplBase {
       return PreSetTag(serviceapi, request);
     } else if (request.request_function_ == "get_tag") {
       return RunUDF_GetTag(serviceapi, request);
+    } else if (request.request_function_ == "clear_semantic") {
+      semantic_schema = Json::Value();
+      return true;
     }
     
     return false;  /// not a valid request
@@ -330,6 +333,7 @@ class UDFRunner : public ServiceImplBase {
     fp1 << payload;
     fp1.close();
 
+    std::cout << "before system call" << std::endl;
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
@@ -341,6 +345,7 @@ class UDFRunner : public ServiceImplBase {
       request.message_ += "fail to do schema change.";
       return false;
     }
+    std::cout << "done system call" << std::endl;
 
     // code below is useless
     // once schema change, reload graph meta
@@ -431,7 +436,9 @@ class UDFRunner : public ServiceImplBase {
       new_obj_onto[obj_onto1[i]["object"].asString()] = obj_onto1[i]["ontology"];
     }
 
+    // scan old object-ontology
     for (map_t::iterator it = old_obj_onto.begin(); it != old_obj_onto.end(); ++it) {
+      // both of old & new contains such object, then diff object's ontology
       if (new_obj_onto.find(it->first) != new_obj_onto.end()) {
         map_t onto0, onto1;
         const Json::Value &js_onto0 = it->second;
@@ -468,7 +475,56 @@ class UDFRunner : public ServiceImplBase {
           one["attr"].append(two);
           delta["add"]["edge"].append(one);
         }
+      } else {
+        // otherwise, drop all edges in old
+        const Json::Value &js_onto0 = it->second;
+        int size0 = js_onto0.size();
+        for (int i = 0; i < size0; ++i) {
+          Json::Value one;
+          one["etype"] = js_onto0[i]["etype"].asString();
+          delta["drop"]["edge"].append(one);
+        }
       }
+    }
+
+    // scan new object-ontology
+    for (map_t::iterator it = new_obj_onto.begin(); it != new_obj_onto.end(); ++it) {
+      if (old_obj_onto.find(it->first) != old_obj_onto.end()) {
+        // this object has already been handled in old object-ontology scan
+      } else {
+        // otherwise, add all edges in new
+        const Json::Value &js_onto1 = it->second;
+        int size1 = js_onto1.size();
+        for (int i = 0; i < size1; ++i) {
+          Json::Value one, two;
+          one["etype"] = js_onto1[i]["etype"].asString();
+          one["directed"] = false;
+          one["source_vtype"] = it->first;
+          one["target_vtype"] = new_onto[js_onto1[i]["name"].asString()]["vtype"].asString();
+          two["name"] = "weight";
+          two["dtype"] = "float";
+          two["default"] = "1.0";
+          one["attr"].append(two);
+          delta["add"]["edge"].append(one);
+        }
+      }
+    }
+
+    // diff profile[crowdIndex], this should be done just once
+    const Json::Value &prof0 = old_schema[PROF];
+    const Json::Value &prof1 = new_schema[PROF];
+
+    if ((! prof0.isMember("crowdIndex")) && prof1.isMember("crowdIndex")) {
+      Json::Value one;
+      one["vtype"] = prof1["crowdIndex"]["vtype"].asString();
+      delta["add"]["vertex"].append(one);
+
+      one.clear();
+      one["etype"] = prof1["crowdIndex"]["etype"].asString();
+      one["directed"] = false;
+      one["source_vtype"] = prof1["target"].asString();
+      one["target_vtype"] = prof1["crowdIndex"]["vtype"].asString();
+      delta["add"]["edge"].append(one);
     }
 
     std::cout << "Delta: " << delta;
@@ -615,7 +671,9 @@ class UDFRunner : public ServiceImplBase {
   }
 
   bool RunUDF_GetOntology(ServiceAPI& serviceapi,
-                            EngineServiceRequest& request) {
+                EngineServiceRequest& request,
+                const std::set<std::string> *save = NULL,
+                std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > *out = NULL) {
     if (! request.jsoptions_.isMember("name")) {
       request.error_ = true;
       request.message_ += "name missing.";
@@ -651,6 +709,11 @@ class UDFRunner : public ServiceImplBase {
       UDF_t udf(1, vtype_id, down_etype_id, threshold, tree, large);
       serviceapi.RunUDF(&request, &udf);
 
+      bool flag = false;
+      if ((save != NULL) && (save->find(name) != save->end())) {
+        flag = true;
+      }
+
       writer_->WriteStartObject();
       writer_->WriteName("name");
       writer_->WriteString(name);
@@ -670,6 +733,10 @@ class UDFRunner : public ServiceImplBase {
              it1 != it->second.end(); ++it1) {
           writer_->WriteMarkVId(*it1);
           request.output_idservice_vids.push_back(*it1);
+
+          if ((out != NULL) && flag) {
+            (*out)[it->first].push_back(*it1);
+          }
         }
         writer_->WriteEndArray();
         writer_->WriteEndObject();
@@ -745,8 +812,6 @@ class UDFRunner : public ServiceImplBase {
         it != obj.end(); ++it) {
       Json::Value one;
 
-      // TODO(@alan): it's handy to do `writer->WriteJSONContent(one.toStyledString())`,
-      // but the results is not a valid json, since `,` missing (call WriteRaw(",")?), freak me out !!
       if (GetOntologyNameByObject(*it, one) == 0) {
         writer->WriteStartObject();
         writer->WriteName("object");
@@ -768,8 +833,92 @@ class UDFRunner : public ServiceImplBase {
     jsoptions["threshold"].append(100000);
     request.jsoptions_ = jsoptions;
 
+    // since "tag" ontology needs more peculiar treatment, so save it
+    const std::string tag_onto_name("tag");
+    std::set<std::string> save;
+    save.insert(tag_onto_name);
+    std::map<VertexLocalId_t, std::vector<VertexLocalId_t> > tree;
+
     writer->WriteName("ontology");
-    RunUDF_GetOntology(serviceapi, request);
+    RunUDF_GetOntology(serviceapi, request, &save, &tree);
+    
+    // get tag
+    const Json::Value &tag_prof = prof["tag"];
+    writer->WriteName("tag");
+    writer->WriteStartArray();
+    std::cout << "before all\n";
+    if (tree.size() == 0) {
+      std::cout << "no tag ontology in schema." << std::endl;
+    } else {
+      std::map<std::string, std::string> vetype;
+      if (GetOntologyVEType(tag_onto_name, vetype) != 0) {
+        std::cout << "fail to get vetype for " + tag_onto_name << std::endl;
+      } else {
+        std::vector<std::pair<std::string, std::string> > uids;
+        uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], tag_onto_name));
+        int size = tag_prof.size();
+        // these are the level-1 tags in "tag" ontology tree, find their internal vid as well
+        for (int i = 0; i < size; ++i) {
+          uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], 
+                tag_prof[i]["name"].asString()));
+        }
+        std::cout << "before ids\n";
+        std::vector<VertexLocalId_t> vids = serviceapi.UIdtoVId(uids);
+
+        VertexLocalId_t tag_root = vids[0];
+
+        // level-1 tag vid -> position of level-1 tag definition in tag_prof
+        std::map<VertexLocalId_t, int> vid_to_idx;
+        size = vids.size();
+        for (int i = 1; i < size; ++i) {
+          if (vids[i] == (VertexLocalId_t)-1) {
+            continue;
+          }
+          vid_to_idx[vids[i]] = i - 1;
+          std::cout << vids[i] << ", " << i-1 << std::endl;
+        }
+
+        std::cout << "before tag_root\n";
+        if (tree.find(tag_root) != tree.end()) {
+          std::cout << "found tag_root\n";
+          const std::vector<VertexLocalId_t> &lv1 = tree[tag_root];
+          int size = lv1.size();
+          std::cout << "lv1 size = " << size << std::endl;
+          for (int i = 0; i < size; ++i) {
+            // find the children of level-1 tag
+            if (tree.find(lv1[i]) != tree.end()) {
+              const std::vector<VertexLocalId_t> &lv2 = tree[lv1[i]];
+              std::string dtype("itemset");
+              if (vid_to_idx.find(lv1[i]) != vid_to_idx.end()) {
+                dtype = tag_prof[vid_to_idx[lv1[i]]]["datatype"].asString();
+              }
+              std::cout << "dtype = " << dtype << std::endl;
+              writer->WriteStartObject();
+              writer->WriteName("name");
+              writer->WriteMarkVId(lv1[i]);
+              request.output_idservice_vids.push_back(lv1[i]);
+
+              writer->WriteName("vtype");
+              writer->WriteString(vetype["vtype"]);
+
+              writer->WriteName("datatype");
+              writer->WriteString(dtype);
+
+              writer->WriteName("element");
+              writer->WriteStartArray();
+              int size = lv2.size();
+              for (int j = 0; j < size; ++j) {
+                writer->WriteMarkVId(lv2[j]);
+              }
+              writer->WriteEndArray();
+
+              writer->WriteEndObject();
+            }
+          }
+        }
+      }
+    }
+    writer->WriteEndArray();
 
     // get behaviour meta
     writer->WriteName("behaviour");

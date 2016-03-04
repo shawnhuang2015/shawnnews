@@ -43,6 +43,8 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.param('crowdGroupName', crowdgroup.crowdByName);
 
+  //download
+  app.route("/api/download").get(rest.download);
 
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');

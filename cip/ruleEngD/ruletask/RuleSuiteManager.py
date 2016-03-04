@@ -23,6 +23,9 @@ class RuleSuiteManager(object):
 
             self.processors[checkpoint] = RuleSuiteProcessor("%s/%s" %(self.ruleroot, checkpoint),timeout=defaultTimeOut);
 
+    def validate(self, cp):
+        return os.path.isdir("%s/%s" %(self.ruleroot, cp))
+
     def runWithRequest(self, request):
         # TODO: hard code
         perf = Perf("192.168.33.70","sla")
@@ -30,6 +33,9 @@ class RuleSuiteManager(object):
         actor =  BizObjBase(request["actor"])
         cp = BizObjBase(request["checkpoint"])
         event  = BizObjBase(request["event"])
+
+        if self.validate(cp.name) == False:
+            raise Exception("Invalid check point %s" % cp.name)
 
         if not cp.name in self.processors.keys():
             if len(self.processors) == self.capacity:

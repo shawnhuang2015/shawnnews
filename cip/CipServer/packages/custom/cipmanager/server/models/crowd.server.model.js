@@ -29,7 +29,15 @@ var CrowdSingleSchema = new Schema({
     count: {
         type: Number
     },
-    tagAdded: Number,
+    tagAdded: {
+        type: Number,
+        required: true,
+        default: 1
+    }, //创建完成＝1 创建中＝0 创建失败＝－1
+    file: {
+        type: String,
+        default: "test.user"
+    },
     selector: {
         tag: [
             {
@@ -154,7 +162,8 @@ var CrowdGroupSchema = new Schema({
     count: {
         type: Number
     },
-    tagAdded: Boolean,
+    tagAdded: Number,
+    file: String,
     selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
 });
 

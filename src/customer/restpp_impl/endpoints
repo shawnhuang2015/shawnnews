@@ -326,5 +326,11 @@
         }
       }
     }
+  },
+  "clear_semantic": {
+    "POST": {
+      "function": "clear_semantic",
+      "summary": "clear semantic schema in GPE."
+    }
   }
 }
