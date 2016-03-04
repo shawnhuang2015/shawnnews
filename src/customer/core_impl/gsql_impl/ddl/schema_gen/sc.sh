@@ -26,7 +26,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "replace old with new schema"
-mv $old{,.$(date)}
+mv $old{,."$(date +%Y%m%d%H%M)"}
 mv $new $old
 
 # restart gpe
