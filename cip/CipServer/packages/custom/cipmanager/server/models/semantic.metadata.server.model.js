@@ -70,13 +70,13 @@ var SemanticMetaDataSchema = new Schema({
                 name: String,
                 subject: [
                     {
-                        vtype: String,
+                        name: String,
                         etype: String
                     }
                 ],
                 object: [
                     {
-                        vtype: String,
+                        name: String,
                         etype: String
                     }
                 ]

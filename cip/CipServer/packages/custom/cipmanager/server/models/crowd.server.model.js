@@ -29,7 +29,7 @@ var CrowdSingleSchema = new Schema({
     count: {
         type: Number
     },
-    tagAdded: Boolean,
+    tagAdded: Number,
     selector: {
         tag: [
             {
@@ -72,7 +72,6 @@ var CrowdSingleSchema = new Schema({
                 },
                 weight: {
                     type: Number,
-                    required: true,
                     min: -50.0,
                     max: 50.0
                 },

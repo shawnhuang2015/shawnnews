@@ -99,32 +99,32 @@ exports.post = function(endpoint, queryStr, data, cb) {
 }
 
 var validateCondition = function(selector) {
-    var ontology = selector["ontology"];
-    var behavior = selector["behavior"];
-
-    if (!ontology || !behavior) {
-        console.log("behavior & ontology");
-        return false;
-    }
-
-    for (var i = 0; i < ontology.length; ++i) {
-        var item = ontology[i];
-        if (!item["factor"] || !item["operator"] || !item["weight"] || !item["name"]) {
-            console.log("in ontology");
-            return false;
-        }
-    }
-
-    for (var i = 0; i < behavior.length; ++i) {
-        var item = behavior[i];
-        if (!item["action"] || !item["objectCategory"] || !item["objectType"]
-            || !item["objectId"]
-            || !item["operator"] || !item["value"] || !item["startTime"]
-            || !item["endTime"] || !item["timeType"]) { //!item["ontologyType"]
-            console.log("in behavior");
-            return false;
-        }
-    }
+    //var ontology = selector["ontology"];
+    //var behavior = selector["behavior"];
+    //
+    //if (!ontology || !behavior) {
+    //    console.log("behavior & ontology");
+    //    return false;
+    //}
+    //
+    //for (var i = 0; i < ontology.length; ++i) {
+    //    var item = ontology[i];
+    //    if (!item["factor"] || !item["operator"] || !item["weight"] || !item["name"]) {
+    //        console.log("in ontology");
+    //        return false;
+    //    }
+    //}
+    //
+    //for (var i = 0; i < behavior.length; ++i) {
+    //    var item = behavior[i];
+    //    if (!item["action"] || !item["objectCategory"] || !item["objectType"]
+    //        || !item["objectId"]
+    //        || !item["operator"] || !item["value"] || !item["startTime"]
+    //        || !item["endTime"] || !item["timeType"]) { //!item["ontologyType"]
+    //        console.log("in behavior");
+    //        return false;
+    //    }
+    //}
 
     return true;
 }

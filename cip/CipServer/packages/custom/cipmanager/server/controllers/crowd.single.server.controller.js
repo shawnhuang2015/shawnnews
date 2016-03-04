@@ -15,7 +15,6 @@ var mongoose = require('mongoose'),
 exports.create = function(req, res) {
     var crowd = new CrowdSingle(req.body);
     console.log("crowd = " + JSON.stringify(req.body));
-
     crowd.save(function(err) {
         if (err) {
             return res.send({

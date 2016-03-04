@@ -10,6 +10,7 @@
             <th>类型</th>
             <th>覆盖人数</th>
             <th>创建时间</th>
+            <th>状态</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -20,6 +21,9 @@
             <td>{{crowd.type}}</td>
             <td>{{crowd.count}}</td>
             <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd.tagAdded == 1" class="text-success">创建完成</td>
+            <td ng-if="crowd.tagAdded == 0" class="text-warning">创建中</td>
+            <td ng-if="crowd.tagAdded == -1" class="text-danger">创建失败</td>
             <td>
                 <span>
                     <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd.crowdName}}/userlist">下载</a>
