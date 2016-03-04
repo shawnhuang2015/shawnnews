@@ -1,5 +1,4 @@
-import os
-import time
+import os,time
 from multiprocessing import Process
 from RuleSuiteProcessor import RuleSuiteProcessor
 import sys

@@ -1,12 +1,9 @@
-import zipfile
-import yaml
-import os
-import threading
+import zipfile,yaml,os,threading
 from RuleTaskBuilder import RuleTaskBuilder
 from Context import RuleContext
 import sys
-sys.path.append("../rulebase")
-from BizObjBase import BizObjBase
+sys.path.append("..")
+from rulebase.BizObjBase import BizObjBase
 
 class RuleSuiteProcessor(object):
     # timeout should never be 0 

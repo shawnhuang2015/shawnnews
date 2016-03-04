@@ -1,6 +1,4 @@
-import datetime
-import random
-import time
+import datetime,random,time
 from influxdb import InfluxDBClient 
 from config.RuleEngConfig import ruleEngConfigure
 
