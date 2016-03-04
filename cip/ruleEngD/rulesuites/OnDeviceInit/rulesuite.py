@@ -22,8 +22,7 @@ from rulebase.util.func  import __R_SUM_DICT_ARRAY
 from rulebase.util.func  import __R_MERGE_DICT_ARRAY
 
 ########   performance   #########################
-sys.path.append("../logging")
-from Decorators import Performance
+from logger.Decorators import Performance
 from monitor.Perf import Perf
 
 #########   customization biz objects ################

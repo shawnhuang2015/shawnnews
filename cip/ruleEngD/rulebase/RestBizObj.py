@@ -1,6 +1,6 @@
+import requests
 from BizObjBase import BizObjBase 
 from config.RuleEngConfig import ruleEngConfigure
-import requests
 
 class RestBizObj(BizObjBase):
     def __init__(self, restUri, payload = None):
