@@ -76,6 +76,7 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
   std::string respStr = gsql_response->response;
   std::string cname = user_request->params["name"][0];
   std::string reqStr(user_request->data, user_request->data_length); 
+  std::cout << "restpStr: " << respStr << std::endl; 
 
   Json::Reader reader;
   Json::Value JsonNewReq;
@@ -89,6 +90,10 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
   }
 
   if (reader.parse(respStr, JsonOldResp)) {
+    if (JsonOldResp["error"].asBool()) {
+      user_response->content = respStr;
+      return NULL;
+    }
     JsonNewReq["results"] = JsonOldResp["results"];
   }
 

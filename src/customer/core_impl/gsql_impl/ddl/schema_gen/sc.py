@@ -71,12 +71,15 @@ def drop_edge(edge):
 def run_job(job_file):
   job = subprocess.Popen([GSQL_PATH, job_file], stdout=sys.stdout, stderr=sys.stderr)
   job.communicate()
+  return job.returncode == 0
 
 
 if __name__ == '__main__':
   diff_file = sys.argv[1]
   with open(diff_file, 'r') as fp:
     delta = json.load(fp)
+    if delta is None:
+      sys.exit(0)
 
   vertices = []
   edges = []
@@ -105,7 +108,8 @@ if __name__ == '__main__':
           'run job sc_vertex'
         ]
       fp.write('\n'.join(lines))
-    run_job(JOB_DIR + 'sc_vertex.gsql')
+    if not run_job(JOB_DIR + 'sc_vertex.gsql'):
+      sys.exit(1)
 
   if len(edges) > 0:
     with open(JOB_DIR + 'sc_edge.gsql', 'w') as fp:
@@ -117,4 +121,5 @@ if __name__ == '__main__':
           'run job sc_edge'
         ]
       fp.write('\n'.join(lines))
-    run_job(JOB_DIR + 'sc_edge.gsql')
+    if not run_job(JOB_DIR + 'sc_edge.gsql'):
+      sys.exit(1)

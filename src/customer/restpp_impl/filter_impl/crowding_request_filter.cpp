@@ -47,7 +47,6 @@ extern "C" {
     std::string objectCategory_str = "objectCategory";
     std::string ontologyType_str = "ontologyType";
     std::string objectId_str = "objectId";
-    std::string is_sub_str = "is_sub";
 
     std::cout << condRoot[selector_str].toStyledString() << std::endl;
     Json::Value& selector = condRoot[selector_str];
@@ -57,18 +56,10 @@ extern "C" {
       for (uint32_t k = 0; k < ontology.size(); ++k) {
         std::string type = ontology[k][type_str].asString();
         std::string fact = ontology[k][factor_str].asString();
-        if (ontology[k].isMember(is_sub_str)) {
-          bool is_sub = ontology[k][is_sub_str].asBool();
-          if (is_sub) continue;
-        }
         gsql_request->AddId(type, fact);
       }
       for (uint32_t k = 0; k < behavior.size(); ++k) {
         std::string enumStr = behavior[k][objectType_str].asString();
-        if (behavior[k].isMember(is_sub_str)) {
-          bool is_sub = behavior[k][is_sub_str].asBool();
-          if (is_sub) continue;
-        }
         if (enumStr == "Item") {
           std::string itemT = behavior[k][objectCategory_str].asString();
           std::string itemId = behavior[k][objectId_str].asString();
@@ -77,6 +68,8 @@ extern "C" {
           std::string ontoT = behavior[k][ontologyType_str].asString();
           std::string ontoId = behavior[k][objectId_str].asString();
           gsql_request->AddId(ontoT, ontoId);
+        } else if (enumStr == "Contains") {
+          //substring
         } else {
           gsql_request->Respond(errorMsg("payload invalid"));
           return;
