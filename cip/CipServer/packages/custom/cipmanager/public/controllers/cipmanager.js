@@ -119,7 +119,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             //        param.selector[condition_type][0].count = data.length;
             //        //$scope.factors.count = data.length;
             //    });
-            //}, 5000);
+            //}, 2000);
             CrowdService.getUserCountByFactor(param, function (param, data) {
                 param.selector[condition_type][0].count = data.length;
             });
@@ -145,6 +145,24 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         };
 
         $scope.goToSaveCrowd = function () {
+            for (var index in $scope.crowdDetail.selector.tag) {
+                if($scope.crowdDetail.selector.tag[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
+            for (index in $scope.crowdDetail.selector.behavior) {
+                if($scope.crowdDetail.selector.behavior[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
+            for (index in $scope.crowdDetail.selector.ontology) {
+                if($scope.crowdDetail.selector.ontology[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
             $state.go('save crowd', {crowdDetail: $scope.crowdDetail});
         };
 
@@ -386,13 +404,23 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initUserList = function () {
             $scope.findOne();
-            CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
-                if (data.success) {
-                    $scope.userList = data.userList;
-                } else {
-                    $scope.userList = [];
-                }
-            });
+            setTimeout(function(){
+                CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
+                    if (data.success) {
+                        $scope.userList = data.userList;
+                    } else {
+                        $scope.userList = [];
+                    }
+                });
+            }, 2000);
+
+            //CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
+            //    if (data.success) {
+            //        $scope.userList = data.userList;
+            //    } else {
+            //        $scope.userList = [];
+            //    }
+            //});
             CrowdService.getUserCount($stateParams.crowdName, function (data) {
                 if (data.success) {
                     $scope.userCount = data.length;

@@ -229,7 +229,8 @@
                     <td>{{$index+1}}</td>
                     <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}} {{condition.factor}}</b></td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
+                    </td>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
@@ -247,7 +248,7 @@
                         {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣为 <b>{{condition.operator}}</b>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
@@ -268,7 +269,7 @@
                         <nobr ng-if="condition.timeType=='relative'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
