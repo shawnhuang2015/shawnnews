@@ -12,6 +12,37 @@ namespace UDIMPL {
   //UserSearchMain is the main class to handle the user_search Endpoint
   class UserSearchMain {
   public:
+    #define D_Category_enum       "Category"
+    #define D_Item_enum           "Item"
+    #define D_Contains_enum       "Contains"
+    #define D_Behavior_enum       "Behavior"
+
+    #define D_relative_enum       "relative" 
+    #define D_absolute_enum       "absolute"
+
+    #define D_factor_key          "factor"
+    #define D_operator_key        "operator"
+    #define D_weight_key          "weight"
+    #define D_type_key            "type"
+    #define D_action_key          "action"
+    #define D_objectType_key      "objectType"
+    #define D_objectCategory_key  "objectCategory"
+    #define D_ontologyType_key    "ontologyType"
+    #define D_objectId_key        "objectId"
+    #define D_operator_key        "operator"
+    #define D_value_key           "value"
+    #define D_startTime_key       "startTime"
+    #define D_endTime_key         "endTime"
+    #define D_timeType_key        "timeType"
+
+    #define D_ontology_key        "ontology"
+    #define D_behavior_key        "behavior"
+    #define D_selector_key        "selector"
+    #define D_target_key          "target"
+
+    #define D_name_attr           "name"
+
+  public:
     UserSearchMain(ServiceAPI& serviceapi_, EngineServiceRequest& request_)
       :serviceapi(serviceapi_), request(request_) {
       graphapi = serviceapi.CreateGraphAPI(&request);
@@ -20,10 +51,10 @@ namespace UDIMPL {
 
     std::string getCondBehaviorKey(Json::Value &cond) {
       std::cout << "Func getCondBehaviorKey" << std::endl;
-      std::string action = cond["action"].asString();
-      std::string objectCategory = cond["objectCategory"].asString();
-      std::string objectType = cond["objectType"].asString();
-      std::string ontologyType = cond["ontologyType"].asString();
+      std::string action = cond[D_action_key].asString();
+      std::string objectCategory = cond[D_objectCategory_key].asString();
+      std::string objectType = cond[D_objectType_key].asString();
+      std::string ontologyType = cond[D_ontologyType_key].asString();
 
       return objectType + "_" + action + "_" + objectCategory + "_" + ontologyType;
     }
@@ -37,21 +68,21 @@ namespace UDIMPL {
     //use condition to generate search path
     std::vector<uint32_t> getPathKey(Json::Value &cond) {
       std::cout << "Func getPathKey" << std::endl;
-      std::string action = cond["action"].asString();
-      std::string objectCategory = cond["objectCategory"].asString();
-      std::string objectType = cond["objectType"].asString();
-      std::string ontologyType = cond["ontologyType"].asString();
+      std::string action = cond[D_action_key].asString();
+      std::string objectCategory = cond[D_objectCategory_key].asString();
+      std::string objectType = cond[D_objectType_key].asString();
+      std::string ontologyType = cond[D_ontologyType_key].asString();
 
       std::vector<uint32_t> res;
       uint32_t itemT;
       uint32_t behrT;
       graphInfo.getVertexTypeIndex(objectCategory, itemT);
       graphInfo.getVertexTypeIndex(action, behrT);
-      if (objectType == "Item") {
+      if (objectType == D_Item_enum) {
         res.push_back(itemT);
         res.push_back(behrT);
         res.push_back(targetId);
-      } else if (objectType == "Category") {
+      } else if (objectType == D_Category_enum || objectType == D_Contains_enum) {
         uint32_t ontoT;
         graphInfo.getVertexTypeIndex(ontologyType, ontoT);
         res.push_back(ontoT);
@@ -71,7 +102,7 @@ namespace UDIMPL {
       graphapi->GetAllVertices((gapi4::BaseVerticesFilter*)(&typefilter), vs);
       while (vs.NextVertex()) {
         topology4::VertexAttribute* attr = vs.GetCurrentVertexAttribute();
-        std::string name = attr->GetString("name"); 
+        std::string name = attr->GetString(D_name_attr); 
         if (name.find(sub) != std::string::npos) {
           res.push_back(vs.GetCurrentVId());
         }
@@ -108,17 +139,15 @@ namespace UDIMPL {
     bool generateItemBehaviorCond(Json::Value &jsCond, ItemBehaviorCond& cond) {
       std::cout << "Func generateItemBehaviorCond" << std::endl;
       cond.sp = PathItemUser;
-      cond.op = toOperator(jsCond["operator"].asString());
-      graphInfo.getVertexTypeIndex(jsCond["objectCategory"].asString(), cond.itemT);
-      graphInfo.getVertexTypeIndex(jsCond["ontologyType"].asString(), cond.ontoT);
-      cond.times = jsCond["value"].asUInt();
-      std::string objectId = jsCond["objectId"].asString();
+      cond.op = toOperator(jsCond[D_operator_key].asString());
+      graphInfo.getVertexTypeIndex(jsCond[D_objectCategory_key].asString(), cond.itemT);
+      graphInfo.getVertexTypeIndex(jsCond[D_ontologyType_key].asString(), cond.ontoT);
+      cond.times = jsCond[D_value_key].asUInt();
+      std::string objectId = jsCond[D_objectId_key].asString();
       std::string type = boost::lexical_cast<std::string>(cond.itemT);
       VertexLocalId_t localId;
       std::vector<uint64_t> startIds;
-      if (jsCond["is_sub"].asBool() == true) {
-        SubstrVertices(cond.itemT, objectId, startIds);
-      } else if (!serviceapi.UIdtoVId(request, type + "_" + objectId, localId)) {
+      if (!serviceapi.UIdtoVId(request, type + "_" + objectId, localId)) {
         request.error_ = true;
         request.message_ += std::string("valid id: ") + type + "_" + objectId;
         return false;
@@ -126,30 +155,30 @@ namespace UDIMPL {
         startIds.push_back(localId);
       }
       cond.startId = startIds;
-      if (jsCond["timeType"].asString() == "absolute") {
-        cond.timeStart = jsCond["startTime"].asUInt();
-        cond.timeEnd = jsCond["endTime"].asUInt();
-      } else if (jsCond["timeType"].asString() == "relative") {
+      if (jsCond[D_timeType_key].asString() == D_absolute_enum) {
+        cond.timeStart = jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = jsCond[D_endTime_key].asUInt();
+      } else if (jsCond[D_timeType_key].asString() == D_relative_enum) {
         time_t cur = time(NULL);
-        cond.timeStart = cur - jsCond["startTime"].asUInt();
-        cond.timeEnd = cur - jsCond["endTime"].asUInt();
+        cond.timeStart = cur - jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = cur - jsCond[D_endTime_key].asUInt();
       }
       return true;
     }
 
     //Convert the onto-item-behavior-user condition to the struct that can be used in UDF
-    bool generateOntoBehaviorCond(Json::Value &jsCond, OntoBehaviorCond& cond) {
+    bool generateOntoBehaviorCond(Json::Value &jsCond, OntoBehaviorCond& cond, bool isSub) {
       std::cout << "Func generateOntoBehaviorCond" << std::endl;
       cond.sp = PathOntoItemUser;
-      cond.op = toOperator(jsCond["operator"].asString());
-      graphInfo.getVertexTypeIndex(jsCond["objectCategory"].asString(), cond.itemT);
-      graphInfo.getVertexTypeIndex(jsCond["ontologyType"].asString(), cond.ontoT);
-      cond.times = jsCond["value"].asUInt();
-      std::string objectId = jsCond["objectId"].asString();
+      cond.op = toOperator(jsCond[D_operator_key].asString());
+      graphInfo.getVertexTypeIndex(jsCond[D_objectCategory_key].asString(), cond.itemT);
+      graphInfo.getVertexTypeIndex(jsCond[D_ontologyType_key].asString(), cond.ontoT);
+      cond.times = jsCond[D_value_key].asUInt();
+      std::string objectId = jsCond[D_objectId_key].asString();
       std::string type = boost::lexical_cast<std::string>(cond.ontoT);
       VertexLocalId_t localId;
       std::vector<uint64_t> startIds;
-      if (jsCond["is_sub"].asBool() == true) {
+      if (isSub) {
         SubstrVertices(cond.ontoT, objectId, startIds);
       } else if (!serviceapi.UIdtoVId(request, type + "_" + objectId, localId)) {
         request.error_ = true;
@@ -159,13 +188,13 @@ namespace UDIMPL {
         startIds.push_back(localId);
       }
       cond.startId = startIds;
-      if (jsCond["timeType"].asString() == "absolute") {
-        cond.timeStart = jsCond["startTime"].asUInt();
-        cond.timeEnd = jsCond["endTime"].asUInt();
-      } else if (jsCond["timeType"].asString() == "relative") {
+      if (jsCond[D_timeType_key].asString() == D_absolute_enum) {
+        cond.timeStart = jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = jsCond[D_endTime_key].asUInt();
+      } else if (jsCond[D_timeType_key].asString() == D_relative_enum) {
         time_t cur = time(NULL);
-        cond.timeStart = cur - jsCond["startTime"].asUInt();
-        cond.timeEnd = cur - jsCond["endTime"].asUInt();
+        cond.timeStart = cur - jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = cur - jsCond[D_endTime_key].asUInt();
       }
       return true;
     }
@@ -178,8 +207,8 @@ namespace UDIMPL {
       //doIt - whether we have run the UDF or not
       bool doIt = false; 
 
-      Json::Value& condOnto = cond["ontology"];
-      Json::Value& condBehr = cond["behavior"];
+      Json::Value& condOnto = cond[D_ontology_key];
+      Json::Value& condBehr = cond[D_behavior_key];
       std::cout << "condOnto " << condOnto.toStyledString() << std::endl;
       std::cout << "condBehr " << condBehr.toStyledString() << std::endl;
 
@@ -189,18 +218,16 @@ namespace UDIMPL {
       std::vector<OntologyCond> ontoCondVec;
       for (uint32_t k = 0; k < condOnto.size(); ++k) {
         Json::Value& condOntoItem = condOnto[k];
-        std::string type = condOntoItem["type"].asString();
-        std::string factor = condOntoItem["factor"].asString();
+        std::string type = condOntoItem[D_type_key].asString();
+        std::string factor = condOntoItem[D_factor_key].asString();
         uint32_t typeId;
         graphInfo.getVertexTypeIndex(type, typeId);
         OntologyCond cond;
-        cond.op = toOperator(condOntoItem["operator"].asString());
-        cond.weight = condOntoItem["weight"].asDouble();
+        cond.op = toOperator(condOntoItem[D_operator_key].asString());
+        cond.weight = condOntoItem[D_weight_key].asDouble();
         VertexLocalId_t localId;
         std::vector<uint64_t> startIds;
-        if (condOntoItem["is_sub"].asBool()) {
-          SubstrVertices(typeId, factor, startIds);
-        } else if (!serviceapi.UIdtoVId(request, boost::lexical_cast<std::string>(typeId) + "_" + factor, localId)) {
+        if (!serviceapi.UIdtoVId(request, boost::lexical_cast<std::string>(typeId) + "_" + factor, localId)) {
           request.error_ = true;
           request.message_ += std::string("valid id: ") + type + "_" + factor;
           return false;
@@ -224,8 +251,8 @@ namespace UDIMPL {
       std::map<std::vector<uint32_t>, std::vector<ItemBehaviorCond> > ItemBehrCond;
       for (uint32_t k = 0; k < condBehr.size(); ++k) {
         Json::Value& condItem = condBehr[k];
-        std::string objectType = condItem["objectType"].asString();
-        if (objectType == "Item") {
+        std::string objectType = condItem[D_objectType_key].asString();
+        if (objectType == D_Item_enum) {
           std::vector<uint32_t> key = getPathKey(condItem);
           ItemBehaviorCond itemCond;
           if (!generateItemBehaviorCond(condItem, itemCond)) return false;
@@ -251,11 +278,14 @@ namespace UDIMPL {
       std::map<std::vector<uint32_t>, std::vector<OntoBehaviorCond> > OntoBehrCond;
       for (uint32_t k = 0; k < condBehr.size(); ++k) {
         Json::Value& condItem = condBehr[k];
-        std::string objectType = condItem["objectType"].asString();
-        if (objectType == "Category") {
+        std::string objectType = condItem[D_objectType_key].asString();
+        if (objectType == D_Category_enum || objectType == D_Contains_enum) {
           std::vector<uint32_t> key = getPathKey(condItem);
           OntoBehaviorCond ontoCond;
-          if (!generateOntoBehaviorCond(condItem, ontoCond)) return false;
+          if (!generateOntoBehaviorCond(condItem, ontoCond, 
+                      (objectType == D_Contains_enum))) {
+            return false;
+          }
           OntoBehrCond[key].push_back(ontoCond);
           std::cout << "key = " << getCondBehaviorKey(condItem) << ", cond = " << ontoCond << std::endl;
         }
@@ -280,8 +310,8 @@ namespace UDIMPL {
     bool RunUDF_UserSearch() {
       std::cout << "Func RunUDF_UserSearch" << std::endl;
       Json::Value& jsoptions = request.jsoptions_;
-      Json::Value& selector = jsoptions["selector"];
-      std::string targetStr = jsoptions["target"].asString();
+      Json::Value& selector = jsoptions[D_selector_key];
+      std::string targetStr = jsoptions[D_target_key].asString();
 
       std::cout << jsoptions.toStyledString() << std::endl;
       std::cout << request.request_data_ << std::endl;
