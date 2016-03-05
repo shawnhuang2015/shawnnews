@@ -841,6 +841,16 @@ class UDFRunner : public ServiceImplBase {
 
     writer->WriteName("ontology");
     RunUDF_GetOntology(serviceapi, request, &save, &tree);
+
+    for (std::map<VertexLocalId_t, std::vector<VertexLocalId_t> >::iterator it = tree.begin();
+        it != tree.end(); ++it) {
+      std::cout << it->first << ":\n";
+      for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
+          it1 != it->second.end(); ++it1) {
+        std::cout << *it1 << ",";
+      }
+      std::cout << std::endl;
+    }
     
     // get tag
     const Json::Value &tag_prof = prof["tag"];
@@ -855,48 +865,34 @@ class UDFRunner : public ServiceImplBase {
         std::cout << "fail to get vetype for " + tag_onto_name << std::endl;
       } else {
         std::vector<std::pair<std::string, std::string> > uids;
-        uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], tag_onto_name));
         int size = tag_prof.size();
-        // these are the level-1 tags in "tag" ontology tree, find their internal vid as well
+        // find internal vid of each item in profile's "tag"
         for (int i = 0; i < size; ++i) {
           uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], 
                 tag_prof[i]["name"].asString()));
         }
-        std::cout << "before ids\n";
         std::vector<VertexLocalId_t> vids = serviceapi.UIdtoVId(uids);
-
-        VertexLocalId_t tag_root = vids[0];
-
-        // level-1 tag vid -> position of level-1 tag definition in tag_prof
-        std::map<VertexLocalId_t, int> vid_to_idx;
-        size = vids.size();
-        for (int i = 1; i < size; ++i) {
+        std::map<std::string, VertexLocalId_t> uid_to_vid;
+        for (int i = 0; i < size; ++i) {
           if (vids[i] == (VertexLocalId_t)-1) {
             continue;
           }
-          vid_to_idx[vids[i]] = i - 1;
-          std::cout << vids[i] << ", " << i-1 << std::endl;
+          uid_to_vid[uids[i].second] = vids[i];
         }
 
-        std::cout << "before tag_root\n";
-        if (tree.find(tag_root) != tree.end()) {
-          std::cout << "found tag_root\n";
-          const std::vector<VertexLocalId_t> &lv1 = tree[tag_root];
-          int size = lv1.size();
-          std::cout << "lv1 size = " << size << std::endl;
-          for (int i = 0; i < size; ++i) {
-            // find the children of level-1 tag
-            if (tree.find(lv1[i]) != tree.end()) {
-              const std::vector<VertexLocalId_t> &lv2 = tree[lv1[i]];
-              std::string dtype("itemset");
-              if (vid_to_idx.find(lv1[i]) != vid_to_idx.end()) {
-                dtype = tag_prof[vid_to_idx[lv1[i]]]["datatype"].asString();
-              }
-              std::cout << "dtype = " << dtype << std::endl;
+        for (int i = 0; i < size; ++i) {
+          // find the children of level-1 tag
+          std::string name(tag_prof[i]["name"].asString());
+          if (uid_to_vid.find(name) != uid_to_vid.end()) {
+            VertexLocalId_t vid = uid_to_vid[name];
+            if (tree.find(vid) != tree.end()) {
+              const std::vector<VertexLocalId_t> &children = tree[vid];
+              std::string dtype = tag_prof[i]["datatype"].asString();
+
               writer->WriteStartObject();
               writer->WriteName("name");
-              writer->WriteMarkVId(lv1[i]);
-              request.output_idservice_vids.push_back(lv1[i]);
+              writer->WriteMarkVId(vid);
+              request.output_idservice_vids.push_back(vid);
 
               writer->WriteName("vtype");
               writer->WriteString(vetype["vtype"]);
@@ -906,12 +902,11 @@ class UDFRunner : public ServiceImplBase {
 
               writer->WriteName("element");
               writer->WriteStartArray();
-              int size = lv2.size();
+              int size = children.size();
               for (int j = 0; j < size; ++j) {
-                writer->WriteMarkVId(lv2[j]);
+                writer->WriteMarkVId(children[j]);
               }
               writer->WriteEndArray();
-
               writer->WriteEndObject();
             }
           }
