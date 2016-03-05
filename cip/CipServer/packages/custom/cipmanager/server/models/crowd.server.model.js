@@ -32,7 +32,7 @@ var CrowdSingleSchema = new Schema({
     tagAdded: {
         type: Number,
         required: true,
-        default: 1
+        default: 0
     }, //创建完成＝1 创建中＝0 创建失败＝－1
     file: {
         type: String,
@@ -80,7 +80,6 @@ var CrowdSingleSchema = new Schema({
                 },
                 weight: {
                     type: Number,
-                    required: true,
                     min: -50.0,
                     max: 50.0
                 },
@@ -163,8 +162,15 @@ var CrowdGroupSchema = new Schema({
     count: {
         type: Number
     },
-    tagAdded: Number,
-    file: String,
+    tagAdded: {
+        type: Number,
+        required: true,
+        default: 1
+    }, //创建完成＝1 创建中＝0 创建失败＝－1
+    file: {
+        type: String,
+        default: "test.user"
+    },
     selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
 });
 

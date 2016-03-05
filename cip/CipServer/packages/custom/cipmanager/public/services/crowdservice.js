@@ -70,7 +70,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             // Temporary - probably it should to be resource based.
             $http.post('/api/rest/crowd/count',factor).
             success(function(data, status, headers, config) {
-                callback({
+                callback(factor, {
                     success: true,
                     length: data.results.count
                 });

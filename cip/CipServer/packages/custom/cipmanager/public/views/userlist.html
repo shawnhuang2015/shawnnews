@@ -3,57 +3,50 @@
     <fieldset>
         <!-- Show -->
         <legend>条件列表</legend>
-
-        <table class="table table-hover">
-            <h5>标签筛选条件</h5>
+        <table class="table table-hover"
+               ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
             <thead>
             <tr>
                 <th>序号</th>
-                <th>标签体系</th>
-                <th>标签</th>
-                <th>逻辑</th>
+                <th>圈人条件</th>
                 <th>覆盖人数</th>
             </tr>
             </thead>
             <tbody>
-            <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
+            <tr data-ng-repeat="condition in crowdDetail.selector.tag">
                 <td>{{$index+1}}</td>
-                <td>{{condition.type}}</td>
-                <td>{{condition.factor}}</td>
-                <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
-                    权重{{condition.operator}}{{condition.weight}}
-                </td>
-                <td ng-if="condition.operator=='dislike' || condition.operator=='like'">{{condition.operator}}</td>
+                <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}}
+                    {{condition.factor}}</b></td>
                 <td>{{condition.count}}</td>
-
             </tr>
-            </tbody>
-        </table>
-
-        <table class="table table-hover">
-            <h5>行为筛选条件</h5>
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>动作</th>
-                <th>对象</th>
-                <th>对象所属类目/属性体系</th>
-                <th>发生次数</th>
-                <th>发生时间</th>
-                <th>覆盖人数</th>
+            <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
+                <td>{{$index+1+crowdDetail.selector.tag.length}}</td>
+                <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
+                    {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣的权重
+                    <b>{{condition.operator}} {{condition.weight}}</b>
+                </td>
+                <td ng-if="condition.operator=='dislike' || condition.operator=='like'">
+                    {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣为
+                    <b>{{condition.operator}}</b>
+                </td>
+                <td>{{condition.count}}</td>
             </tr>
-            </thead>
-            <tbody>
             <tr data-ng-repeat="condition in crowdDetail.selector.behavior">
-                <td>{{$index+1}}</td>
-                <td>{{condition.action}}</td>
-                <td>{{condition.objectCategory}}</td>
-                <td ng-if="condition.objectType=='Category'">位于{{condition.ontologyType}}/{{condition.objectId}}目录下</td>
-                <td ng-if="condition.objectType=='Contains'">包含字段{{condition.ontologyType}}/{{condition.objectId}}</td>
-                <td ng-if="condition.objectType=='Item'">物品ID={{condition.objectId}}</td>
-                <td>{{condition.operator}} {{condition.value}}次</td>
-                <td ng-if="condition.timeType=='absolute'">{{condition.startTime | date:'shortDate'}}--{{condition.endTime | date:'shortDate'}}</td>
-                <td ng-if="condition.timeType=='relative'">过去{{condition.startTime}}天内</td>
+                <td>{{$index+1+crowdDetail.selector.tag.length+crowdDetail.selector.ontology.length}}</td>
+                <td>
+                    {{condition_type[2].name}}:&nbsp;&nbsp;<b>{{condition.action}}</b>&nbsp;<b>{{condition.objectCategory}}</b>
+                    <nobr ng-if="condition.objectType=='Category'">&nbsp;&nbsp;位于<b>{{condition.ontologyType}}/{{condition.objectId}}</b>目录下
+                    </nobr>
+                    <nobr ng-if="condition.objectType=='Contains'">&nbsp;&nbsp;包含字段<b>{{condition.ontologyType}}/{{condition.objectId}}</b>
+                    </nobr>
+                    <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;物品ID=<b>{{condition.objectId}}</b></nobr>
+                    &nbsp;&nbsp;发生次数 <b>{{condition.operator}} {{condition.value}}</b>次
+                    <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;在日期<b>{{condition.startTime |
+                        date:'shortDate'}}</b>到<b>{{condition.endTime | date:'shortDate'}}</b>内
+                    </nobr>
+                    <nobr ng-if="condition.timeType=='relative'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内
+                    </nobr>
+                </td>
                 <td>{{condition.count}}</td>
             </tr>
             </tbody>
@@ -64,39 +57,45 @@
 
     <fieldset>
         <legend>用户列表明细</legend>
-        <div class="col-md-6">
-        <table class="table table-hover table-bordered">
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>UID</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr data-ng-repeat="user in userList">
-                <td>{{$index+1}}</td>
-                <td>{{user}}</td>
-                <td>
-                        <span>
-                          <button class="btn btn-info btn-xs">探索此用户
-                          </button>
-                        </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="text-center row" ng-if="!userList.length || userList.length<=0">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>数据正在获取中...
+        </div>
+        <div class="col-md-offset-3 col-md-6">
+            <table class="table table-hover table-bordered" ng-if="userList.length>0">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>UID</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="user in userList">
+                    <td>{{$index+1}}</td>
+                    <td>{{user}}</td>
+                    <td>
+                    <span>
+                        <button class="btn btn-info btn-xs">探索此用户
+                        </button>
+                    </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </fieldset>
 
-    <div class="col-md-offset-2 row">
-        <uib-pagination boundary-links="true" total-items="userCount" ng-model="currentUserListPage" class="pagination-sm" ng-change="pageUserListChanged()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+    <div class="text-center row" ng-if="userList.length>0">
+        <uib-pagination boundary-links="true" total-items="userCount" ng-model="currentUserListPage"
+                        class="pagination-sm" ng-change="pageUserListChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                        items-per-page="page_size">
 
         </uib-pagination>
     </div>
-    <div class="col-md-2">
-        <a mean-token="'create-c-crowd'" target="_blank" href="/api/download/uid.csv" class="btn btn-info btn-block">下载UID集合
-        </a>
+    <div class="col-md-offset-5 col-md-2">
+        <a target="_self" id="downloadUserlist" href="/api/download?file={{crowdDetail.file}}" download="userlist.xml"
+           class="btn btn-info btn-block" ng-if="userList.length>0">下载UID集合</a>
+
     </div>
 </section>

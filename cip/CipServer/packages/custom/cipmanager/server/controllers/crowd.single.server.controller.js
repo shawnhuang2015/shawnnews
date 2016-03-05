@@ -15,7 +15,6 @@ var mongoose = require('mongoose'),
 exports.create = function(req, res) {
     var crowd = new CrowdSingle(req.body);
     console.log("crowd = " + JSON.stringify(req.body));
-
     crowd.save(function(err) {
         if (err) {
             return res.send({
@@ -23,7 +22,7 @@ exports.create = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            //rest.createCrowdRemote(crowd.crowdName, JSON.stringify(crowd.selector));
+            rest.createCrowdRemote(crowd.crowdName, JSON.stringify(crowd.selector));
             return res.json(crowd);
         }
     });
