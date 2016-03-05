@@ -5,7 +5,8 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
     "target": "user",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
-      {"name": "age", "datatype": "itemset"}
+      {"name": "age", "datatype": "itemset"},
+      {"name": "0", "datatype": "number"}
     ],
     "interest_intent": [
       {"ontology": "interest"},

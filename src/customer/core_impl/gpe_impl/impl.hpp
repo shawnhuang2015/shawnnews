@@ -323,6 +323,10 @@ class UDFRunner : public ServiceImplBase {
     diff_fp << delta;
     diff_fp.close();
 
+    if (delta.isNull()) {
+      semantic_schema = payload;
+    }
+
     // persist the old semantic schema to disk
     std::ofstream fp0(SEMANTIC_SCHEMA_PATH.c_str());
     fp0 << semantic_schema;
@@ -337,10 +341,11 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
-    if (system((SCHEMA_CHANGE_SCRIPT_PATH + " " 
-        + SCHEMA_DIFF_PATH + " "
-        + SEMANTIC_SCHEMA_PATH + " "
-        + SEMANTIC_SCHEMA_PATH + ".rc").c_str()) != 0) {
+    if ((! delta.isNull()) && 
+        (system((SCHEMA_CHANGE_SCRIPT_PATH + " " 
+          + SCHEMA_DIFF_PATH + " "
+          + SEMANTIC_SCHEMA_PATH + " "
+          + SEMANTIC_SCHEMA_PATH + ".rc").c_str()) != 0)) {
       request.error_ = true;
       request.message_ += "fail to do schema change.";
       return false;
