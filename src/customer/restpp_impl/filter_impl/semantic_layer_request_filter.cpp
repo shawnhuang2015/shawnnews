@@ -76,7 +76,7 @@ extern "C" {
     char sep = params["sep"][0][0];
     char eol = params["eol"][0][0];
 
-    std::cout << "eol = " << eol << "@" << std::endl;
+    std::cout << "sep = " << sep << "@, eol = " << eol << "@" << std::endl;
 
     boost::char_separator<char> line_sep(&eol);
     boost::tokenizer<boost::char_separator<char> > lines(payload, line_sep);

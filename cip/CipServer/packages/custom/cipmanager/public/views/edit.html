@@ -171,14 +171,13 @@
                 </div>
                 <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
                     <ui-select ng-model="factors.timeType" append-to-body="'true'">
-                        <ui-select-match placeholder="日期类型">{{factors.timeType}}</ui-select-match>
-                        <ui-select-choices repeat=" x in date_type | filter:$select.search">{{x}}
+                        <ui-select-match placeholder="日期类型">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat=" x.id as x in date_type | filter:$select.search">{{x.name}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-md-2" ng-show="factors.condition == 'behavior' && factors.timeType == 'relative'">
-                    <input name="time_start" type="number" class="form-control" ng-model="st"
-                           placeholder="过去N天">
+                <div class="col-md-2" ng-show="factors.condition == 'behavior' && (factors.timeType == 'day' || factors.timeType == 'hour')">
+                    <input name="time_start" type="number" class="form-control" ng-model="st">
                 </div>
                 <div class="col-md-2" ng-show="factors.condition == 'behavior' && factors.timeType == 'absolute'">
                     <p class="input-group">
@@ -229,7 +228,8 @@
                     <td>{{$index+1}}</td>
                     <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}} {{condition.factor}}</b></td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
+                    </td>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
@@ -247,7 +247,7 @@
                         {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣为 <b>{{condition.operator}}</b>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
@@ -265,10 +265,11 @@
                         <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;物品ID=<b>{{condition.objectId}}</b></nobr>
                         &nbsp;&nbsp;发生次数 <b>{{condition.operator}} {{condition.value}}</b>次
                         <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;在日期<b>{{condition.startTime | date:'shortDate'}}</b>到<b>{{condition.endTime | date:'shortDate'}}</b>内</nobr>
-                        <nobr ng-if="condition.timeType=='relative'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
+                        <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
+                        <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;在过去<b>{{condition.startTime/3600000}}</b>小时内</nobr>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        {{condition.count}}</td>
+                        <span ng-if="condition.count != -1">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"

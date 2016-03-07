@@ -33,7 +33,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4" ng-if="crowds.length>0">
+    <div class="text-center " ng-if="crowds.length>0">
         <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" ng-change="pageChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
         </uib-pagination>
@@ -48,6 +48,7 @@
             <th>类型</th>
             <th>覆盖人数</th>
             <th>创建时间</th>
+            <th>状态</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -58,6 +59,9 @@
             <td>{{crowd.type}}</td>
             <td>{{crowd.count}}</td>
             <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd.tagAdded == 1" class="text-success">创建完成</td>
+            <td ng-if="crowd.tagAdded == 0" class="text-warning">创建中</td>
+            <td ng-if="crowd.tagAdded == -1" class="text-danger">创建失败</td>
             <td>
                 <span>
                     <a class="btn btn-info btn-xs" data-ng-href="/crowd/group/{{crowd.crowdName}}/userlist">下载</a>
@@ -67,7 +71,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-offset-4" ng-if="grouplist.length>0">
+    <div class="text-center" ng-if="grouplist.length>0">
         <uib-pagination boundary-links="true" total-items="totalGroupItems" ng-model="currentGroupPage" class="pagination-sm" ng-change="pageGroupChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
 

@@ -65,8 +65,9 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         $scope.object_id = [];
 
         $scope.date_type = [
-            'absolute',
-            'relative'
+            {name:'在日期N-M之间',id:'absolute'},
+            {name:'过去N天',id:'day'},
+            {name:'过去N小时',id:'hour'},
         ];
 
         //////////////////////Widget///////////////////////////////
@@ -119,7 +120,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             //        param.selector[condition_type][0].count = data.length;
             //        //$scope.factors.count = data.length;
             //    });
-            //}, 5000);
+            //}, 2000);
             CrowdService.getUserCountByFactor(param, function (param, data) {
                 param.selector[condition_type][0].count = data.length;
             });
@@ -145,6 +146,24 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         };
 
         $scope.goToSaveCrowd = function () {
+            for (var index in $scope.crowdDetail.selector.tag) {
+                if($scope.crowdDetail.selector.tag[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
+            for (index in $scope.crowdDetail.selector.behavior) {
+                if($scope.crowdDetail.selector.behavior[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
+            for (index in $scope.crowdDetail.selector.ontology) {
+                if($scope.crowdDetail.selector.ontology[index].count == -1) {
+                    alert("人群数量还未获取完成,请完成后再保存");
+                    return;
+                }
+            }
             $state.go('save crowd', {crowdDetail: $scope.crowdDetail});
         };
 
@@ -229,6 +248,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             if (nowSelected == 'tag') {
                 $scope.factors.name = $scope.ontology_data.tag[0].name;
                 $scope.factors.operator = $scope.tag_operator[0];
+                $scope.factors.weight = 1.0;
             } else if (nowSelected == 'ontology') {
                 $scope.factors.name = $scope.ontology_data.interest_intent[0].ontology;
                 $scope.factors.operator = $scope.operator[0];
@@ -284,8 +304,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                     angular.forEach(val.object, function (object) {
                         $scope.object_category.push(object.name);
                     });
-                    $scope.factors.objectCategory = val.object[0].name;
-                    $scope.factors.objectType = $scope.object_type[0].id;
+                    if(!$scope.object_category || $scope.object_category.length <= 0) {
+                        $scope.factors.objectType = "Behavior";
+                    } else {
+                        $scope.factors.objectCategory = val.object[0].name;
+                        $scope.factors.objectType = $scope.object_type[0].id;
+                    }
                 }
             });
         });
@@ -333,8 +357,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             if (!time) {
                 return;
             }
-            if ($scope.factors.timeType == 'relative') {
+            if ($scope.factors.timeType == 'day') {
                 $scope.factors.startTime = time * 86400000;
+                $scope.factors.endTime = 0;
+            } else if($scope.factors.timeType == 'hour') {
+                $scope.factors.startTime = time * 3600000;
                 $scope.factors.endTime = 0;
             } else {
                 $scope.factors.startTime = time.valueOf();
@@ -355,14 +382,13 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         //Init the crowds, query first page and total count
         $scope.init = function () {
             Cipmanager.query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
-                for (var index in crowds) {
-                    crowds[index].tagAdded = index % 3 - 1;
-                }
                 $scope.crowds = crowds;
-            });
-
-            Groupmanager.query({pageId: 0, pageSz: $scope.page_size}, function (groups) {
-                $scope.grouplist = groups;
+                Groupmanager.query({pageId: 0, pageSz: $scope.page_size}, function (groups) {
+                    $scope.grouplist = groups;
+                    //for	(var index = 0; index < groups.length; index++) {
+                    //    $scope.crowds.push(groups[index]);
+                    //}
+                });
             });
 
             CrowdService.getCount(function (data) {
@@ -384,13 +410,16 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initUserList = function () {
             $scope.findOne();
-            CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
-                if (data.success) {
-                    $scope.userList = data.userList;
-                } else {
-                    $scope.userList = [];
-                }
-            });
+            //setTimeout(function(){
+                CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
+                    if (data.success) {
+                        $scope.userList = data.userList;
+                    } else {
+                        $scope.userList = [];
+                    }
+                });
+            //}, 2000);
+
             CrowdService.getUserCount($stateParams.crowdName, function (data) {
                 if (data.success) {
                     $scope.userCount = data.length;
@@ -434,14 +463,16 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         //Remove crowd from server
         $scope.remove = function (crowd) {
-            if (crowd) {
-                crowd.$remove(function (response) {
-                    for (var i in $scope.crowds) {
-                        if ($scope.crowds[i] === crowd) {
-                            $scope.crowds.splice(i, 1);
+            if(confirm("确定要删除这个人群吗？")) {
+                if (crowd) {
+                    crowd.$remove(function (response) {
+                        for (var i in $scope.crowds) {
+                            if ($scope.crowds[i] === crowd) {
+                                $scope.crowds.splice(i, 1);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         };
 
