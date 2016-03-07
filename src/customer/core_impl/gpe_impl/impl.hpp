@@ -861,7 +861,7 @@ class UDFRunner : public ServiceImplBase {
 
     // get interest_indent
     const Json::Value &interest_prof = prof["interest_intent"];
-    writer->WriteName("interest_indent");
+    writer->WriteName("interest_intent");
     writer->WriteStartArray();
     int interest_size = interest_prof.size();
     for (int i = 0; i < interest_size; ++i) {
