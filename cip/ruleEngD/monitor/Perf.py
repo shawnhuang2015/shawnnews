@@ -1,6 +1,14 @@
 import datetime,random,time
-from influxdb import InfluxDBClient 
+#from influxdb import InfluxDBClient 
 from config.RuleEngConfig import ruleEngConfigure
+
+#TODO: fake InfluxDBClient
+class InfluxDBClient(object):
+    def __init__(self, host, database):
+        pass
+
+    def write_points(self, msg):
+        pass
 
 class Perf(object):
     def __init__(self, host, measurement):
