@@ -33,7 +33,7 @@ exports.getCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-
+/*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             return res.send({
@@ -59,7 +59,7 @@ exports.getCrowdDetailByPost = function(req, res) {
             res.send(resp);
         });
 
-    });
+    });*/
 
 
     res.send({
@@ -91,6 +91,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         });
     }
 
+    /*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd detail");
@@ -117,7 +118,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             res.send(resp);
         });
 
-    });
+    });*/
 
     res.send({
         "results": {
@@ -182,7 +183,7 @@ exports.getCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-
+/*
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd count");
@@ -207,7 +208,7 @@ exports.getCrowdCountByPost = function(req, res) {
                 res.send(resp);
             }
         });
-    });
+    });*/
 
     res.send({
         "results": {
@@ -236,7 +237,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-
+/*
     //var selector = JSON.stringify(req.body);
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
@@ -262,7 +263,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
                 res.send(resp);
             }
         });
-    });
+    });*/
 
     res.send({
         "results": {
