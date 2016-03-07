@@ -33,10 +33,13 @@ exports.getCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    /*
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
-            return;
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
         }
 
         var body = {
@@ -48,14 +51,17 @@ exports.getCrowdDetailByPost = function(req, res) {
         utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to get crowd: " + bodyStr);
-                return;
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
             }
             res.send(resp);
         });
 
     });
 
-*/
+
     res.send({
         "results": {
             "count": 3,
@@ -84,11 +90,14 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-/*
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd detail");
-            return;
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
         }
 
         var body = {
@@ -100,13 +109,16 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to get crowd: " + bodyStr);
-                return;
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
             }
             res.send(resp);
         });
 
     });
-*/
+
     res.send({
         "results": {
             "count": 3,
@@ -170,12 +182,14 @@ exports.getCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-/*
-    //var selector = JSON.stringify(req.body);
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd count");
-            return;
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
         }
         var body = {
             target: md.profile.target,
@@ -185,12 +199,16 @@ exports.getCrowdCountByPost = function(req, res) {
         utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to create crowd count");
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
             } else {
                 res.send(resp);
             }
         });
     });
-    */
+
     res.send({
         "results": {
             "count": 3,
@@ -218,12 +236,15 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-    /*
+
     //var selector = JSON.stringify(req.body);
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd count");
-            return;
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
         }
         var body = {
             target: md.profile.target,
@@ -233,11 +254,15 @@ exports.getGroupCrowdCountByPost = function(req, res) {
         utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
             if (err) {
                 console.log("Error to create crowd count");
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
             } else {
                 res.send(resp);
             }
         });
-    });*/
+    });
 
     res.send({
         "results": {
@@ -328,7 +353,7 @@ var generateCond = function(input_cond, metadata) {
         }
         for (var k = 0; k < behr.length; ++k) {
             var item = behr[k];
-            item.ontologyType = ontoT[item.ontologyType];
+            item.ontologyType = behr[item.ontologyType];
             cond.behavior.push(item);
         }
         res.push(cond);
