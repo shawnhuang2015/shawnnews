@@ -1,12 +1,12 @@
 
 curl -X POST 'http://localhost:9000/semantic_def' -d '{
-  "object": ["user", "pic"],
+  "object": ["inuser", "picture"],
   "profile": {
-    "target": "user",
+    "target": "inuser",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
       {"name": "age", "datatype": "itemset"},
-      {"name": "0", "datatype": "number"}
+      {"name": "quality", "datatype": "itemset"}
     ],
     "interest_intent": [
       {"ontology": "interest"},
@@ -15,16 +15,16 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
 
     "behaviour": [
       {
-        "name": "post",
-        "subject": [{"name": "user", "etype": "user_post"}],
-        "object": [{"name": "pic", "etype": "post_pic"}]
+        "name": "postPicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_postPicture"}],
+        "object": [{"name": "picture", "etype": "postPicture_with_picture"}]
       }
     ]
   },
   "ontology": ["interest", "type", "tag"],
   "object_ontology": [
-    {"object": "user", "ontology": ["interest", "tag"]},
-    {"object": "pic", "ontology": ["type"]}
+    {"object": "inuser", "ontology": ["tag"]},
+    {"object": "picture", "ontology": ["type"]}
   ]
 }'
 
@@ -35,6 +35,7 @@ curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=tag&verbose=1'
 curl -X GET 'http://localhost:9000/get_profile'
 curl -X GET 'http://localhost:9000/get_ontology?name=tag'
 curl -X POST 'http://localhost:9000/set_item_tag?object=pic&name=type&sep=;' -d 'p1;apple'
+curl -X POST 'http://localhost:9000/clear_semantic'
 
 ### as I found out, cannot put args like this `sep=;&more=true`, otherwise `sep` won't be `;`, why?
 ### change more from BOOL to UINT32
