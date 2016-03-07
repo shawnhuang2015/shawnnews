@@ -856,7 +856,13 @@ class UDFRunner : public ServiceImplBase {
       }
       std::cout << std::endl;
     }
-    
+
+    // get interest_indent
+    const Json::Value &interest_prof = prof["interest_intent"];
+    writer->WriteName("interest_indent");
+    std::string interest_s(interest_prof.toStyledString()); 
+    writer->WriteJSONContent(interest_s);
+
     // get tag
     const Json::Value &tag_prof = prof["tag"];
     writer->WriteName("tag");
