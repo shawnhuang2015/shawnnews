@@ -722,6 +722,8 @@ class UDFRunner : public ServiceImplBase {
       writer_->WriteStartObject();
       writer_->WriteName("name");
       writer_->WriteString(name);
+      writer_->WriteName("vtype");
+      writer_->WriteString(rez["vtype"]);
       writer_->WriteName("large");
       writer_->WriteBool(large);
       writer_->WriteName("tree");
@@ -856,7 +858,20 @@ class UDFRunner : public ServiceImplBase {
       }
       std::cout << std::endl;
     }
-    
+
+    // get interest_indent
+    const Json::Value &interest_prof = prof["interest_intent"];
+    writer->WriteName("interest_intent");
+    writer->WriteStartArray();
+    int interest_size = interest_prof.size();
+    for (int i = 0; i < interest_size; ++i) {
+      writer->WriteStartObject();
+      writer->WriteName("ontology");
+      writer->WriteString(interest_prof[i]["ontology"].asString());
+      writer->WriteEndObject();
+    }
+    writer->WriteEndArray();
+
     // get tag
     const Json::Value &tag_prof = prof["tag"];
     writer->WriteName("tag");

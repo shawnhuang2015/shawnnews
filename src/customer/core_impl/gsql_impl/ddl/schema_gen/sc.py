@@ -11,7 +11,7 @@ GRAPH_NAME = 'cip'
 #   {"name": "attr2", "dtype": "string", "default": "abc"}
 # ]
 def add_vertex(vert):
-  pat = 'add vertex {} (primary_id id string not null {});'
+  pat = 'add vertex {0} (primary_id id string not null {1});'
   assert vert.has_key('vtype')
   vtype = vert['vtype']
   attr = [] if not vert.has_key('attr') else vert['attr']
@@ -31,13 +31,13 @@ def add_vertex(vert):
   return pat.format(vtype, attrs)
 
 def drop_vertex(vert):
-  pat = 'drop vertex {};'
+  pat = 'drop vertex {0};'
   assert vert.has_key('vtype')
   vtype = vert['vtype']
   return pat.format(vtype)
 
 def add_edge(edge):
-  pat = 'add {} edge {} (from {}, to {} {});'
+  pat = 'add {0} edge {1} (from {2}, to {3} {4});'
   direct = 'undirected' if (not edge.has_key('directed')) or \
           edge['directed'] == False else 'directed'
   assert edge.has_key('etype')
@@ -63,7 +63,7 @@ def add_edge(edge):
   return pat.format(direct, etype, srcv, tgtv, attrs)
 
 def drop_edge(edge):
-  pat = 'drop edge {};'
+  pat = 'drop edge {0};'
   assert edge.has_key('etype')
   etype = edge['etype']
   return pat.format(etype)
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     with open(JOB_DIR + 'sc_vertex.gsql', 'w') as fp:
       lines = [
           'drop job sc_vertex',
-          'create schema_change job sc_vertex for graph {} {{'.format(GRAPH_NAME),
+          'create schema_change job sc_vertex for graph {0} {{'.format(GRAPH_NAME),
           '\n'.join(vertices),
           '}',
           'run job sc_vertex'
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     with open(JOB_DIR + 'sc_edge.gsql', 'w') as fp:
       lines = [
           'drop job sc_edge',
-          'create schema_change job sc_edge for graph {} {{'.format(GRAPH_NAME),
+          'create schema_change job sc_edge for graph {0} {{'.format(GRAPH_NAME),
           '\n'.join(edges),
           '}',
           'run job sc_edge'
