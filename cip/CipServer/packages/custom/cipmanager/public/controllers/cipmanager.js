@@ -65,8 +65,9 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         $scope.object_id = [];
 
         $scope.date_type = [
-            'absolute',
-            'relative'
+            {name:'在日期N-M之间',id:'absolute'},
+            {name:'过去N天',id:'day'},
+            {name:'过去N小时',id:'hour'},
         ];
 
         //////////////////////Widget///////////////////////////////
@@ -356,8 +357,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             if (!time) {
                 return;
             }
-            if ($scope.factors.timeType == 'relative') {
+            if ($scope.factors.timeType == 'day') {
                 $scope.factors.startTime = time * 86400000;
+                $scope.factors.endTime = 0;
+            } else if($scope.factors.timeType == 'hour') {
+                $scope.factors.startTime = time * 3600000;
                 $scope.factors.endTime = 0;
             } else {
                 $scope.factors.startTime = time.valueOf();
