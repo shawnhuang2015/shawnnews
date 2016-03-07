@@ -560,194 +560,177 @@ exports.readMetadata = function(req, res) {
             console.log("time delta = " + (curTime - md["created"].getTime()));
             return res.send(md["profile"]);
         } else {
-            /*
-            utility.get('get_profile',
-                '',
-                function(err, result) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: err.message
-                        });
-                    } else {
-                        return res.json(result);
-                    }
-                }
-            );
-            */
-            var result = {
-                "error": false,
-                "message": "",
-                "results": {
-                    "target": "user",
-                    "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
-                    "ontology": [
-                        {"name": "tag",
-                            "vtype": "tag_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "demo", "children": ["gender", "age"]},
-                                {"parent": "gender", "children": ["male", "female"]},
-                                {"parent": "age", "children": ["0~10", "10~20"]}
-                            ]
-                        },
-                        {"name": "interest",
-                            "vtype": "interest",
-                            "large": false,
-                            "tree": [
-                                {"parent": "interest", "children": ["food", "book"]},
-                                {"parent": "food", "children": ["apple", "orange"]},
-                                {"parent": "book", "children": ["c++", "web development"]}
-                            ]
-                        },
-                        {"name": "pic_type",
-                            "vtype": "pic_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "pic_type", "children": ["flower", "food"]},
-                                {"parent": "food", "children": ["apple", "orange"]}
-                            ]
-                        },
-                        {"name": "pic_tag",
-                            "vtype": "pic_tag",
-                            "large": false,
-                            "tree": [
-                                {"parent": "pic_tag", "children": ["flower", "food"]},
-                                {"parent": "food", "children": ["apple", "orange"]}
-                            ]
-                        },
-                        {"name": "channel_tag",
-                            "vtype": "channel_tag_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "channel_tag", "children": ["china", "USA"]},
-                                {"parent": "china", "children": ["cctv1", "cctv2"]},
-                                {"parent": "USA", "children": ["youtube"]}
-                            ]
-                        }
-                    ],
-                    "tag": [
-                        {"name": "gender", "vtype": "demo", "element": ["male", "female"], "datatype": "itemset"},
-                        {"name": "age", "vtype": "demo", "element": ["0~10","10~20"], "datatype": "number"}
-                    ],
-                    "interest_intent": [
-                        {"ontology": "interest"},
-                        {"ontology": "pic_tag"}
-                    ],
+            var TestFlag = true;
 
-                    "object_ontology": [
-                        {"object": "pic", "ontology": [{"name": "pic_type", "etype": "pic_to_pic_type"}, {"name":"pic_tag", "etype": "pic_tag_pic"}] },
-                        {"object": "user", "ontology": [{"name": "demo", "etype": "user_to_demo"}, {"name": "interest", "etype": "user_to_interest"}] },
-                        {"object": "theme", "ontology": [{"name": "pic_tag", "etype": "theme_to_pic_tag"}] },
-                        {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
-                    ],
-                    "behaviour": [
-                        {"name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
-                            "object": [{"name": "pic", "etype": "browse_pic"}]},
-                        {"name": "post", "subject": [{"name": "user", "etype": "user_post"}],
-                            "object": [{"name": "pic", "etype": "post_pic"}]},
-                        {"name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
-                            "object": [{"name": "channel", "etype": "visit_channel"}]},
-                        {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
-                    ]
-                }
-            };/*
-            var result = {
-                "error": false,
-                "message": "",
-                "results": {
-                    "target": "user",
-                    "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
-                    "ontology": [
-                        {"name": "tag",
-                            "vtype": "tag_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "demo", "children": ["gender", "age"]},
-                                {"parent": "gender", "children": ["male", "female"]},
-                                {"parent": "age", "children": ["0~10", "10~20"]}
-                            ]
-                        },
-                        {"name": "interest",
-                            "vtype": "interest_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "interest", "children": ["food", "book"]},
-                                {"parent": "food", "children": ["apple", "orange"]},
-                                {"parent": "book", "children": ["c++", "web development"]}
-                            ]
-                        },
-                        {"name": "pic_type",
-                            "vtype": "pic_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "pic_type", "children": ["flower", "food"]},
-                                {"parent": "food", "children": ["apple", "orange"]}
-                            ]
-                        },
-                        {"name": "pic_tag",
-                            "vtype": "pic_tag_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "pic_tag", "children": ["flower", "food"]},
-                                {"parent": "food", "children": ["apple", "orange"]}
-                            ]
-                        },
-                        {"name": "channel_tag",
-                            "vtype": "channel_tag_vtype",
-                            "large": false,
-                            "tree": [
-                                {"parent": "channel_tag", "children": ["china", "USA"]},
-                                {"parent": "china", "children": ["cctv1", "cctv2"]},
-                                {"parent": "USA", "children": ["youtube"]}
-                            ]
-                        }
-                    ],
-                    "tag": [
-                        {"name": "gender", "vtype": "tag_vtype", "element": ["male", "female"], "datatype": "itemset"},
-                        {"name": "age", "vtype": "tag_vtype", "element": ["0~10","10~20"], "datatype": "number"}
-                    ],
-                    "interest_intent": [
-                        {"ontology": "interest"},
-                        {"ontology": "pic_type"}
-                    ],
-
-                    "object_ontology": [
-                        {"object": "pic", "ontology": [{"name": "pic_type", "etype": "pic_to_pic_type"}, {"name":"pic_tag", "etype": "pic_to_pic_tag"}] },
-                        {"object": "user", "ontology": [{"name": "demo", "etype": "user_to_demo"}, {"name": "interest", "etype": "user_to_interest"}] },
-                        {"object": "theme", "ontology": [{"name": "pic_tag", "etype": "theme_to_pic_tag"}] },
-                        {"object": "channel", "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}] }
-                    ],
-                    "behaviour": [
-                        {"name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
-                            "object": [{"name": "theme", "etype": "browse_theme"}]},
-                        {"name": "post", "subject": [{"name": "user", "etype": "user_post"}],
-                            "object": [{"name": "pic", "etype": "post_pic"}]},
-                        {"name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
-                            "object": [{"name": "channel", "etype": "visit_channel"}]},
-                        {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
-                    ]
-                }
-            };*/
-            SemanticMetaData.remove(function(err) {
-                if (err) {
-                    return res.send({
-                        error: true,
-                        message: utility.getErrorMessage(err)
-                    });
-                } else {
-                    var metadata = new SemanticMetaData({name: "SemanticMetaData", profile: result["results"]});
-                    metadata.save(function(err) {
+            if (!TestFlag) {
+                utility.get('get_profile',
+                    '',
+                    function (err, resp) {
                         if (err) {
                             return res.send({
                                 error: true,
-                                message: utility.getErrorMessage(err)
+                                message: err.message
                             });
                         } else {
-                            return res.json(metadata["profile"]);
+                            //return res.json(resp);
+                            var result = JSON.parse(resp);
+                            if (result.error == true) {
+                                return res.send({
+                                    error: true,
+                                    message: result.message
+                                });
+                            }
+                            SemanticMetaData.remove(function (err) {
+                                if (err) {
+                                    return res.send({
+                                        error: true,
+                                        message: utility.getErrorMessage(err)
+                                    });
+                                } else {
+                                    var metadata = new SemanticMetaData({
+                                        name: "SemanticMetaData",
+                                        profile: result["results"]
+                                    });
+                                    metadata.save(function (err) {
+                                        if (err) {
+                                            return res.send({
+                                                error: true,
+                                                message: utility.getErrorMessage(err)
+                                            });
+                                        } else {
+                                            return res.json(metadata["profile"]);
+                                        }
+                                    });
+                                }
+                            });
                         }
-                    });
-                }
-            });
+                    }
+                );
+            } else {
+                var result = {
+                    "error": false,
+                    "message": "",
+                    "results": {
+                        "target": "user",
+                        "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
+                        "ontology": [
+                            {
+                                "name": "tag",
+                                "vtype": "tag_vtype",
+                                "large": false,
+                                "tree": [
+                                    {"parent": "demo", "children": ["gender", "age"]},
+                                    {"parent": "gender", "children": ["male", "female"]},
+                                    {"parent": "age", "children": ["0~10", "10~20"]}
+                                ]
+                            },
+                            {
+                                "name": "interest",
+                                "vtype": "interest",
+                                "large": false,
+                                "tree": [
+                                    {"parent": "interest", "children": ["food", "book"]},
+                                    {"parent": "food", "children": ["apple", "orange"]},
+                                    {"parent": "book", "children": ["c++", "web development"]}
+                                ]
+                            },
+                            {
+                                "name": "pic_type",
+                                "vtype": "pic_vtype",
+                                "large": false,
+                                "tree": [
+                                    {"parent": "pic_type", "children": ["flower", "food"]},
+                                    {"parent": "food", "children": ["apple", "orange"]}
+                                ]
+                            },
+                            {
+                                "name": "pic_tag",
+                                "vtype": "pic_tag",
+                                "large": false,
+                                "tree": [
+                                    {"parent": "pic_tag", "children": ["flower", "food"]},
+                                    {"parent": "food", "children": ["apple", "orange"]}
+                                ]
+                            },
+                            {
+                                "name": "channel_tag",
+                                "vtype": "channel_tag_vtype",
+                                "large": false,
+                                "tree": [
+                                    {"parent": "channel_tag", "children": ["china", "USA"]},
+                                    {"parent": "china", "children": ["cctv1", "cctv2"]},
+                                    {"parent": "USA", "children": ["youtube"]}
+                                ]
+                            }
+                        ],
+                        "tag": [
+                            {"name": "gender", "vtype": "demo", "element": ["male", "female"], "datatype": "itemset"},
+                            {"name": "age", "vtype": "demo", "element": ["0~10", "10~20"], "datatype": "number"}
+                        ],
+                        "interest_intent": [
+                            {"ontology": "interest"},
+                            {"ontology": "pic_tag"}
+                        ],
+
+                        "object_ontology": [
+                            {
+                                "object": "pic",
+                                "ontology": [{"name": "pic_type", "etype": "pic_to_pic_type"}, {
+                                    "name": "pic_tag",
+                                    "etype": "pic_tag_pic"
+                                }]
+                            },
+                            {
+                                "object": "user",
+                                "ontology": [{"name": "demo", "etype": "user_to_demo"}, {
+                                    "name": "interest",
+                                    "etype": "user_to_interest"
+                                }]
+                            },
+                            {"object": "theme", "ontology": [{"name": "pic_tag", "etype": "theme_to_pic_tag"}]},
+                            {
+                                "object": "channel",
+                                "ontology": [{"name": "channel_tag", "etype": "channel_to_channel_tag"}]
+                            }
+                        ],
+                        "behaviour": [
+                            {
+                                "name": "browse", "subject": [{"name": "user", "etype": "user_browse"}],
+                                "object": [{"name": "pic", "etype": "browse_pic"}]
+                            },
+                            {
+                                "name": "post", "subject": [{"name": "user", "etype": "user_post"}],
+                                "object": [{"name": "pic", "etype": "post_pic"}]
+                            },
+                            {
+                                "name": "visit", "subject": [{"name": "user", "etype": "user_visit"}],
+                                "object": [{"name": "channel", "etype": "visit_channel"}]
+                            },
+                            {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
+                        ]
+                    }
+                };
+                SemanticMetaData.remove(function (err) {
+                    if (err) {
+                        return res.send({
+                            error: true,
+                            message: utility.getErrorMessage(err)
+                        });
+                    } else {
+                        var metadata = new SemanticMetaData({name: "SemanticMetaData", profile: result["results"]});
+                        metadata.save(function (err) {
+                            if (err) {
+                                return res.send({
+                                    error: true,
+                                    message: utility.getErrorMessage(err)
+                                });
+                            } else {
+                                return res.json(metadata["profile"]);
+                            }
+                        });
+                    }
+                });
+            }
         }
     });
 }
