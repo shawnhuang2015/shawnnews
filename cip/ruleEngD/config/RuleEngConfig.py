@@ -4,7 +4,8 @@ import ConfigParser
 class RuleEngConfig(object):
     def __init__(self):
         Config = ConfigParser.ConfigParser()
-        curDir = os.path.dirname(os.path.realpath(__file__)) 
+        # curDir = os.path.dirname(os.path.realpath(__file__)) 
+        curDir = "."
         confPath = "%s/config.ini" % curDir
         if not os.path.isfile(confPath):
             raise Exception ("Can't find %s" % confPath)

@@ -67,7 +67,8 @@
                         <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;物品ID=<b>{{condition.objectId}}</b></nobr>
                         &nbsp;&nbsp;发生次数 <b>{{condition.operator}} {{condition.value}}</b>次
                         <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;在日期<b>{{condition.startTime | date:'shortDate'}}</b>到<b>{{condition.endTime | date:'shortDate'}}</b>内</nobr>
-                        <nobr ng-if="condition.timeType=='relative'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
+                        <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
+                        <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;在过去<b>{{condition.startTime/3600000}}</b>小时内</nobr>
                     </td>
                     <td>{{condition.count}}</td>
                 </tr>

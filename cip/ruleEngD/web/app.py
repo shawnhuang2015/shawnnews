@@ -1,5 +1,9 @@
 import sys
 sys.path.append("../")
+sys.path.append("/home/feng.chen/gitrepo/product/cip/ruleEngD/web/dist")
+
+from rulebase.util import *
+from algorithm import RuleConfltSol
 
 import json
 import time
@@ -7,6 +11,7 @@ from threading import Timer
 from flask import Flask, jsonify,request
 
 from ruletask.RuleSuiteManager import RuleSuiteManager
+from rulebase.GPathBizObj import GPathBizObj
 from rulebase.BizObjBase import BizObjBase
 from rulebase.RestBizObj import RestBizObj
 from rulebase.JsonBizObj import JsonBizObj
