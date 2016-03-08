@@ -33,7 +33,7 @@ exports.getCrowdDetailByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-/*
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             return res.send({
@@ -56,12 +56,12 @@ exports.getCrowdDetailByPost = function(req, res) {
                     message: err.message
                 });
             }
-            res.send(resp);
+            return res.send(resp);
         });
 
-    });*/
+    });
 
-
+/*
     res.send({
         "results": {
             "count": 3,
@@ -69,7 +69,7 @@ exports.getCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -91,7 +91,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         });
     }
 
-    /*
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd detail");
@@ -115,11 +115,11 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
                     message: err.message
                 });
             }
-            res.send(resp);
+            return res.send(resp);
         });
 
-    });*/
-
+    });
+/*
     res.send({
         "results": {
             "count": 3,
@@ -127,7 +127,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -172,6 +172,7 @@ Method: POST
 Input: selector conditions - which express the crowding condition that the client choose on UI
 */
 exports.getCrowdCountByPost = function(req, res) {
+    console.log("Get Count: " + JSON.stringify(req.body));
     if (!req.body["selector"]) {
         return res.send({
             error: true,
@@ -183,7 +184,7 @@ exports.getCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-/*
+
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
             console.log("Error to get crowd count");
@@ -205,11 +206,11 @@ exports.getCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                res.send(resp);
+                return res.send(resp);
             }
         });
-    });*/
-
+    });
+/*
     res.send({
         "results": {
             "count": 3,
@@ -217,7 +218,7 @@ exports.getCrowdCountByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -237,7 +238,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             message: "wrong 'selector'"
         });
     }
-/*
+
     //var selector = JSON.stringify(req.body);
     SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
         if (err) {
@@ -260,11 +261,11 @@ exports.getGroupCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                res.send(resp);
+                return res.send(resp);
             }
         });
-    });*/
-
+    });
+/*
     res.send({
         "results": {
             "count": 3,
@@ -272,7 +273,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
         },
         "error": false,
         "message": ""
-    });
+    });*/
 }
 
 /*
@@ -354,7 +355,9 @@ var generateCond = function(input_cond, metadata) {
         }
         for (var k = 0; k < behr.length; ++k) {
             var item = behr[k];
-            item.ontologyType = behr[item.ontologyType];
+            item.ontologyType = ontoT[item.ontologyType];
+            item.startTime /= 1000; //need remove
+            item.endTime /= 1000;   //need remove
             cond.behavior.push(item);
         }
         res.push(cond);
@@ -368,17 +371,21 @@ var generateCond = function(input_cond, metadata) {
  Input: 1. selector conditions - which express the crowding condition that the client choose on UI
         2. crowd name
  */
-exports.createCrowdRemote = function(name, condition) {
+exports.createCrowdRemote = function(name, crowdtype,  condition) {
     function updateTag(name, value) {
         CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
-            crowd.tagAdded = value;
-            crowd.file = name + '.user';
-            crowd.save(function(err) {
-                if (err) {
-                    console.log("Error to create crowd: " + name);
-                    return;
-                }
-            });
+            if (err) {
+                console.log("Error to read crowd: " + name);
+            } else {
+                crowd.tagAdded = value;
+                crowd.file = name + '.user';
+                crowd.save(function(err) {
+                    if (err) {
+                        console.log("Error to create crowd: " + name);
+                        return;
+                    }
+                });
+            }
         });
     }
 
@@ -397,36 +404,43 @@ exports.createCrowdRemote = function(name, condition) {
     }
 
     condition = JSON.parse(condition);
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            updateTag(name, -1);
-            console.log("Error to create crowd: " + name);
-            return;
-        }
-        var body = {
-            crowdIndex: md.profile.crowdIndex,
-            searchCond: {
-                target: md.profile.target,
-                selector: generateCond(condition, md.profile)
-            }
-        };
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/create", "name=" + name, bodyStr, function(err, res) {
+    if (crowdtype == 'static') {
+        SemanticMetaData.findOne({name: "SemanticMetaData"}, function (err, md) {
             if (err) {
                 updateTag(name, -1);
                 console.log("Error to create crowd: " + name);
-            } else {
-                var jsRes = JSON.parse(res);
-                if (jsRes.error == false) {
-                    writeUserToFile(jsRes, config.dataPath + name + '.user');
-                    updateTag(name, 1);
-                } else {
-                    updateTag(name, -1);
-                    console.log("Error to create crowd: " + name + ', error: ' + jsRes.message);
-                }
+                return;
             }
+            var body = {
+                crowdIndex: md.profile.crowdIndex,
+                searchCond: {
+                    target: md.profile.target,
+                    selector: generateCond(condition, md.profile)
+                }
+            };
+            var bodyStr = JSON.stringify(body);
+            utility.post("crowd/v1/create", "name=" + name, bodyStr, function (err, res) {
+                if (err) {
+                    updateTag(name, -1);
+                    console.log("Error to create crowd: " + name);
+                } else {
+                    var jsRes = JSON.parse(res);
+                    if (jsRes.error == false) {
+                        writeUserToFile(jsRes, config.dataPath + name + '.user');
+                        updateTag(name, 1);
+                    } else {
+                        updateTag(name, -1);
+                        console.log("Error to create crowd: " + name + ', error: ' + jsRes.message);
+                    }
+                }
+            });
         });
-    });
+    } else if (crowdtype == 'dynamic') {
+        updateTag(name, 1);
+        return;
+    } else {
+        console.log("wrong crowd type: " + crowdtype);
+    }
 }
 
 /*
@@ -561,7 +575,7 @@ exports.readMetadata = function(req, res) {
             console.log("time delta = " + (curTime - md["created"].getTime()));
             return res.send(md["profile"]);
         } else {
-            var TestFlag = true;
+            var TestFlag = false;
 
             if (!TestFlag) {
                 utility.get('get_profile',
