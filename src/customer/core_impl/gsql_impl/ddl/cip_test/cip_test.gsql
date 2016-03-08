@@ -1,0 +1,23 @@
+drop all
+ 
+create vertex user (primary_id user_id string not null) with stats="outdegree_by_edgetype"
+ 
+create vertex interest (primary_id interest_id string not null, name string) with stats="outdegree_by_edgetype"
+ 
+create vertex browse (primary_id browse_id string not null, date_time uint) with stats="outdegree_by_edgetype"
+ 
+create vertex pic (primary_id pic_id string not null ) with stats="outdegree_by_edgetype"
+ 
+create undirected edge user_interest (from user, to interest , weight real)
+     
+create undirected edge user_browse (from user, to browse)
+     
+create undirected edge browse_pic (from browse, to pic)
+     
+create graph cip (user, interest, browse, pic, user_interest, user_browse, browse_pic)
+ 
+export schema cip
+ 
+clear graph store -HARD
+ 
+init graph store for graph cip
