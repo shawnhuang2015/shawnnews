@@ -1,14 +1,9 @@
 'use strict';
-var util = require('util');
 var utility = require('../utility/utility');
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose'),
-    CrowdSingle = mongoose.model('CrowdSingle'),
-    CrowdGroup = mongoose.model('CrowdGroup'),
-    config = require('meanio').loadConfig(),
-    _ = require('lodash');
+var rest = require('../controllers/rest.server.controller');
+var mongoose = require('mongoose');
+var CrowdSingle = mongoose.model('CrowdSingle');
+var CrowdGroup = mongoose.model('CrowdGroup');
 
 //create
 exports.create = function(req, res) {
@@ -23,9 +18,9 @@ exports.create = function(req, res) {
         } else {
             body.selector = crowds;
             var crowdGroup = new CrowdGroup(req.body);
-            console.log("selector = " + JSON.stringify(selector));
-            console.log("crowds = " + JSON.stringify(crowds));
-            console.log("crowdGroup = " + JSON.stringify(body));
+            console.log('selector = ' + JSON.stringify(selector));
+            console.log('crowds = ' + JSON.stringify(crowds));
+            console.log('crowdGroup = ' + JSON.stringify(body));
 
             crowdGroup.save(function(err)    {
                 if (err) {
@@ -34,6 +29,7 @@ exports.create = function(req, res) {
                         message: utility.getErrorMessage(err)
                     });
                 } else {
+                    //rest.createCombinedCrowdRemote(crowdGroup.crowdName, crowdGroup.type, JSON.stringify(crowdGroup.selector));
                     return res.json(crowdGroup);
                 }
             });
@@ -44,9 +40,9 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
-    var pageId = Number(req.query["pageId"]);
-    var pageSz = Number(req.query["pageSz"]);
-    CrowdGroup.find().sort("-created").populate('selector').exec(function(err, crowds) {
+    var pageId = Number(req.query.pageId);
+    var pageSz = Number(req.query.pageSz);
+    CrowdGroup.find().sort('-created').populate('selector').exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -55,7 +51,7 @@ exports.list = function(req, res) {
         } else if (crowds.length <= pageId * pageSz) {
             return res.send({
                 error: true,
-                message: "Out of Bound"
+                message: 'Out of Bound'
             });
         } else {
             return res.json(crowds.slice(pageId * pageSz, (pageId + 1) * pageSz));
@@ -65,7 +61,7 @@ exports.list = function(req, res) {
 
 //count
 exports.count = function(req, res) {
-    CrowdGroup.find().sort("-created").exec(function(err, crowds) {
+    CrowdGroup.find().sort('-created').exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -74,7 +70,7 @@ exports.count = function(req, res) {
         } else {
             return res.send({
                 error: false,
-                message: "",
+                message: '',
                 results: {
                     count: crowds.length
                 }
@@ -112,7 +108,7 @@ exports.update = function(req, res) {
     //console.log("crowdGroup:  " + JSON.stringify(crowdGroup));
 
     for (var field in req.body) {
-        console.log("field: " + field);
+        console.log('field: ' + field);
         //console.log("body value: " + req.body[field]);
         //console.log("crowdGroup value: " + crowdGroup[field]);
         crowdGroup[field] = req.body[field]
@@ -128,9 +124,9 @@ exports.update = function(req, res) {
             });
         } else {
             crowdGroup.selector = crowds;
-            console.log("selector = " + JSON.stringify(selector));
-            console.log("crowds = " + JSON.stringify(crowds));
-            console.log("crowdGroup = " + JSON.stringify(crowdGroup));
+            console.log('selector = ' + JSON.stringify(selector));
+            console.log('crowds = ' + JSON.stringify(crowds));
+            console.log('crowdGroup = ' + JSON.stringify(crowdGroup));
 
             crowdGroup.save(function(err) {
                 if (err) {
@@ -165,6 +161,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
+            rest.deleteCrowdRemote(crowd.crowdName);
             return res.json(crowd);
         }
     });

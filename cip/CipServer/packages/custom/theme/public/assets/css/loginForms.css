@@ -55,9 +55,9 @@ body.login, body.register,  body.forgot-password {
 }
 
 .main-form {
-    width: 748px;
+    width: 600px;
     height: 435px;
-    margin-left: -374px;
+    margin-left: -300px;
 }
 
 .main-form.register-form {
@@ -65,10 +65,10 @@ body.login, body.register,  body.forgot-password {
 }
 
 .login-form__left {
-    width: 440px;
+    width: 100%;
     height: 100%;
     float: left;
-    padding: 34px 0 0 27px;
+    padding: 50px 50px 0 60px;
 }
 
 .login-form__left h2, .forgot_password_form h2 {

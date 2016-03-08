@@ -876,7 +876,6 @@ class UDFRunner : public ServiceImplBase {
     const Json::Value &tag_prof = prof["tag"];
     writer->WriteName("tag");
     writer->WriteStartArray();
-    std::cout << "before all\n";
     if (tree.size() == 0) {
       std::cout << "no tag ontology in schema." << std::endl;
     } else {
@@ -903,33 +902,34 @@ class UDFRunner : public ServiceImplBase {
         for (int i = 0; i < size; ++i) {
           // find the children of level-1 tag
           std::string name(tag_prof[i]["name"].asString());
+
+          writer->WriteStartObject();
+          writer->WriteName("name");
+          writer->WriteString(name);
+
+          std::string dtype = tag_prof[i]["datatype"].asString();
+          writer->WriteName("datatype");
+          writer->WriteString(dtype);
+
+          writer->WriteName("vtype");
+          writer->WriteString(vetype["vtype"]);
+
+          writer->WriteName("element");
+          writer->WriteStartArray();
+
           if (uid_to_vid.find(name) != uid_to_vid.end()) {
             VertexLocalId_t vid = uid_to_vid[name];
             if (tree.find(vid) != tree.end()) {
               const std::vector<VertexLocalId_t> &children = tree[vid];
-              std::string dtype = tag_prof[i]["datatype"].asString();
 
-              writer->WriteStartObject();
-              writer->WriteName("name");
-              writer->WriteMarkVId(vid);
-              request.output_idservice_vids.push_back(vid);
-
-              writer->WriteName("vtype");
-              writer->WriteString(vetype["vtype"]);
-
-              writer->WriteName("datatype");
-              writer->WriteString(dtype);
-
-              writer->WriteName("element");
-              writer->WriteStartArray();
               int size = children.size();
               for (int j = 0; j < size; ++j) {
                 writer->WriteMarkVId(children[j]);
               }
-              writer->WriteEndArray();
-              writer->WriteEndObject();
             }
           }
+          writer->WriteEndArray();
+          writer->WriteEndObject();
         }
       }
     }
