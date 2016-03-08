@@ -85,17 +85,8 @@
         </div>
     </fieldset>
 
-    <div class="text-center row" ng-if="userList.length>0">
-        <uib-pagination boundary-links="true" total-items="userCount" ng-model="currentUserListPage"
-                        class="pagination-sm" ng-change="pageUserListChanged()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
-                        items-per-page="page_size">
-
-        </uib-pagination>
-    </div>
     <div class="col-md-offset-5 col-md-2">
         <a target="_self" id="downloadUserlist" href="/api/download?file={{crowdDetail.file}}" download="userlist.xml"
-           class="btn btn-info btn-block" ng-if="userList.length>0">下载UID集合</a>
-
+           class="btn btn-info btn-block" ng-if="userList.length>0 && crowdDetail.type == 'static'">下载UID集合</a>
     </div>
 </section>

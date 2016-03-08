@@ -9,7 +9,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.post('/api/db/crowd',crowd).
             success(function(data, status, headers, config) {
                 callback({
-                    success: true
+                    success: !data.error
                 });
             }).
             error(function(data, status, headers, config) {
@@ -24,7 +24,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.get('/api/db/crowdcount').
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     length: data.results.count
                 });
             }).
@@ -35,11 +35,11 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         };
 
-        var getUserList = function(crowdName, pageId, pageSize, callback) {
-            $http.get('/api/rest/crowd/detail',{params:{cname:crowdName, pageId:pageId, pageSz:pageSize}}).
+        var getUserList = function(crowdName, callback) {
+            $http.get('/api/rest/crowd/detail',{params:{cname:crowdName}}).
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     userList: data.results.userIds
                 });
             }).
@@ -55,7 +55,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.get('/api/rest/crowd/count',{params:{cname:crowdName}}).
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     length: data.results.count
                 });
             }).
@@ -71,7 +71,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.post('/api/rest/crowd/count',factor).
             success(function(data, status, headers, config) {
                 callback(factor, {
-                    success: true,
+                    success: !data.error,
                     length: data.results.count
                 });
             }).
@@ -86,7 +86,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.get('/api/ontology').
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     content: data
                 });
             }).
@@ -101,7 +101,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.get('/api/db/group/crowdcount').
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     length: data.results.count
                 });
             }).
@@ -116,7 +116,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.post('/api/db/group/crowd',group).
             success(function(data, status, headers, config) {
                 callback({
-                    success: true
+                    success: !data.error
                 });
             }).
             error(function(data, status, headers, config) {
@@ -130,7 +130,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             $http.post('/api/rest/group/crowd/count',factor).
             success(function(data, status, headers, config) {
                 callback({
-                    success: true,
+                    success: !data.error,
                     length: data.results.count
                 });
             }).

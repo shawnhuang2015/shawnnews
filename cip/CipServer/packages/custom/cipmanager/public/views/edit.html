@@ -269,7 +269,8 @@
                         <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;在过去<b>{{condition.startTime/3600000}}</b>小时内</nobr>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        <span ng-if="condition.count != -1">{{condition.count}}</span>
+                        <span ng-if="condition.count == -2">条件搜索失败,请重试</span>
+                        <span ng-if="condition.count >= 0">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"

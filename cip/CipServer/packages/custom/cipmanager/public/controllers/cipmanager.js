@@ -122,18 +122,30 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             //    });
             //}, 2000);
             CrowdService.getUserCountByFactor(param, function (param, data) {
-                param.selector[condition_type][0].count = data.length;
+                if(data.success) {
+                    param.selector[condition_type][0].count = data.length;
+                } else {
+                    param.selector[condition_type][0].count = -2;
+                }
             });
 
             CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
-                $scope.crowdDetail.count = data.length;
+                if(data.success) {
+                    $scope.crowdDetail.count = data.length;
+                } else {
+                    $scope.crowdDetail.count = -2;
+                }
             });
         };
 
         $scope.deleteFactor = function (factor, index) {
             factor.splice(index, 1);
             CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
-                $scope.crowdDetail.count = data.length;
+                if(data.success) {
+                    $scope.crowdDetail.count = data.length;
+                } else {
+                    $scope.crowdDetail.count = -2;
+                }
             });
         };
 
@@ -210,9 +222,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             $scope.getGroupsByPageId($scope.currentGroupPage - 1);
         };
 
-        $scope.pageUserListChanged = function () {
-            $scope.getUserlistByPageId($scope.currentUserListPage - 1);
-        };
 
 
         //Ontology related
@@ -385,9 +394,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                 $scope.crowds = crowds;
                 Groupmanager.query({pageId: 0, pageSz: $scope.page_size}, function (groups) {
                     $scope.grouplist = groups;
-                    //for	(var index = 0; index < groups.length; index++) {
-                    //    $scope.crowds.push(groups[index]);
-                    //}
                 });
             });
 
@@ -410,15 +416,13 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initUserList = function () {
             $scope.findOne();
-            //setTimeout(function(){
-                CrowdService.getUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
-                    if (data.success) {
-                        $scope.userList = data.userList;
-                    } else {
-                        $scope.userList = [];
-                    }
-                });
-            //}, 2000);
+            CrowdService.getUserList($stateParams.crowdName, function (data) {
+                if (data.success) {
+                    $scope.userList = data.userList;
+                } else {
+                    $scope.userList = [];
+                }
+            });
 
             CrowdService.getUserCount($stateParams.crowdName, function (data) {
                 if (data.success) {
@@ -431,7 +435,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initGroupUserList = function () {
             $scope.findGroup();
-            CrowdService.getGroupUserList($stateParams.crowdName, 0, $scope.page_size, function (data) {
+            CrowdService.getUserList($stateParams.crowdName, function (data) {
                 if (data.success) {
                     $scope.userList = data.userList;
                 } else {
@@ -455,8 +459,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         };
 
         //Get userlist by page id
-        $scope.getUserlistByPageId = function (pageId) {
-            CrowdService.getUserList($stateParams.crowdName, pageId, $scope.page_size, function (crowds) {
+        $scope.getUserlistByPageId = function () {
+            CrowdService.getUserList($stateParams.crowdName, function (crowds) {
                 $scope.crowds = crowds;
             });
         };
@@ -621,6 +625,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             CrowdService.getGroupUserCount(param, function (data) {
                 if (data.success) {
                     callback(data.length);
+                } else {
+                    callback(-2);
                 }
             });
         };

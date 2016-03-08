@@ -5,10 +5,11 @@
             <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.crowd_name.$invalid }">
                 <label mean-token="'create-crowd_name'" class="col-md-2 control-label">人群名称</label>
                 <div class="col-md-4">
-                    <input name="crowd_name" type="text" class="form-control" data-ng-model="crowdDetail.crowdName"
-                           id="crowd_name" placeholder="Crowd Name" required>
-                    <div ng-show="submitted && crowdForm.crowd_name.$invalid" class="help-block">
-                        <p ng-show="crowdForm.crowd_name.$error.required">Crowd name is required</p>
+                    <input name="crowd_name" type="text" class="form-control" ng-model="crowdDetail.crowdName"
+                           id="crowd_name" placeholder="Crowd Name" ng-pattern="/^\w+$/" required>
+                    <div ng-show="crowdForm.crowd_name.$invalid" class="help-block">
+                        <p ng-show="crowdForm.crowd_name.$error.required" class="text-danger">人群名字不能为空</p>
+                        <p ng-show="!crowdForm.crowd_name.$error.required" class="text-danger">人群名称只能包含英文,数字,或下划线</p>
                     </div>
                 </div>
             </div>
@@ -17,8 +18,8 @@
                 <div class="col-md-4">
                     <input name="description" type="text" class="form-control" data-ng-model="crowdDetail.description"
                            id="description" placeholder="Description" required>
-                    <div ng-show="submitted && crowdForm.description.$invalid" class="help-block">
-                        <p ng-show="crowdForm.description.$error.required">Description is required</p>
+                    <div ng-show="crowdForm.description.$invalid" class="help-block">
+                        <p ng-show="crowdForm.description.$error.required" class="text-danger">描述不能为空</p>
                     </div>
                 </div>
             </div>
