@@ -171,6 +171,10 @@ var CrowdGroupSchema = new Schema({
         type: String,
         default: 'test.user'
     },
+    logic: {
+        type: String,
+        enum: ['or', 'and']
+    },
     selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
 });
 

@@ -15,7 +15,7 @@ exports.create = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            rest.createCrowdRemote(crowd.crowdName, crowd.type, JSON.stringify(crowd.selector));
+            rest.createSingleCrowdRemote(crowd.crowdName, crowd.type, JSON.stringify(crowd.selector));
             return res.json(crowd);
         }
     });

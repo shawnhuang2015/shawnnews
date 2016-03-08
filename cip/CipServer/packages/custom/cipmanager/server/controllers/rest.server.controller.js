@@ -4,6 +4,7 @@ var fs = require('fs');
 var mongoose = require('mongoose');
 var SemanticMetaData = mongoose.model('SemanticMetaData');
 var CrowdSingle = mongoose.model('CrowdSingle');
+var CrowdGroup = mongoose.model('CrowdGroup');
 var config = require('meanio').loadConfig();
 
 var generateCond = function(input_cond, metadata) {
@@ -357,19 +358,28 @@ exports.getCrowdCountByGet = function(req, res) {
     });
 }
 
-/*
- create a crowd on crowding service
- Input: 1. selector conditions - which express the crowding condition that the client choose on UI
-        2. crowd name
- */
-exports.createCrowdRemote = function(name, crowdtype,  condition) {
+function writeUserToFile(res, path) {
+    var data = 'UserCount: ' + res.results.count + "\n";
+    for (var k = 0; k < res.results.userIds.length; ++k) {
+        data += res.results.userIds[k] + '\n';
+    }
+    fs.writeFile(path, data,  function(err) {
+        if (err) {
+            console.log('Error to wirte file: ' + path);
+        } else {
+            console.log('Success to wirte file: ' + path);
+        }
+    });
+}
+
+exports.createCombinedCrowdRemote = function(name, crowdtype, condition) {
     function updateTag(name, value) {
-        CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
+        CrowdGroup.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
                 console.log('Error to read crowd: ' + name);
             } else {
                 crowd.tagAdded = value;
-                crowd.file = name + '.user';
+                crowd.file = name + '.user' + '.comb';
                 crowd.save(function(err) {
                     if (err) {
                         console.log('Error to create crowd: ' + name);
@@ -380,16 +390,70 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
         });
     }
 
-    function writeUserToFile(res, path) {
-        var data = 'UserCount: ' + res.results.count + "\n";
-        for (var k = 0; k < res.results.userIds.length; ++k) {
-            data += res.results.userIds[k] + '\n';
+    if (crowdtype === 'static') {
+        var selector = [];
+        condition = JSON.parse(condition);
+        for (var index = 0; index < condition.length; ++index) {
+            selector.push(condition[index].selector);
         }
-        fs.writeFile(path, data,  function(err) {
+
+        SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
             if (err) {
-                console.log('Error to wirte file: ' + path);
+                updateTag(name, -1);
+                console.log('Error to create crowd: ' + name);
+                return;
+            }
+            var body = {
+                crowdIndex: md.profile.crowdIndex,
+                searchCond: {
+                    target: md.profile.target,
+                    selector: generateCond(selector, md.profile)
+                }
+            };
+            var bodyStr = JSON.stringify(body);
+            utility.post('crowd/v1/create', 'name=' + name, bodyStr, function (err, res) {
+                if (err) {
+                    updateTag(name, -1);
+                    console.log('Error to create crowd: ' + name);
+                } else {
+                    var jsRes = JSON.parse(res);
+                    if (jsRes.error === false) {
+                        writeUserToFile(jsRes, config.dataPath + name + '.user');
+                        updateTag(name, 1);
+                    } else {
+                        updateTag(name, -1);
+                        console.log('Error to create crowd: ' + name + ', error: ' + jsRes.message);
+                    }
+                }
+            });
+        });
+    } else if (crowdtype == 'dynamic') {
+        updateTag(name, 1);
+        return;
+    } else {
+        console.log('wrong crowd type: ' + crowdtype);
+    }
+
+}
+/*
+ create a crowd on crowding service
+ Input: 1. selector conditions - which express the crowding condition that the client choose on UI
+        2. crowd name
+ */
+exports.createSingleCrowdRemote = function(name, crowdtype,  condition) {
+    function updateTag(name, value) {
+        CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
+            if (err) {
+                console.log('Error to read crowd: ' + name);
             } else {
-                console.log('Success to wirte file: ' + path);
+                crowd.tagAdded = value;
+                crowd.file = name + '.user' + '.single';
+                crowd.save(function(err) {
+                    if (err) {
+                        console.log('Error to create crowd: ' + name);
+                        return;
+                    }
+                });
             }
         });
     }

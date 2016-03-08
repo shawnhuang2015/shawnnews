@@ -1,5 +1,6 @@
 'use strict';
 var utility = require('../utility/utility');
+var rest = require('../controllers/rest.server.controller');
 var mongoose = require('mongoose');
 var CrowdSingle = mongoose.model('CrowdSingle');
 var CrowdGroup = mongoose.model('CrowdGroup');
@@ -28,6 +29,7 @@ exports.create = function(req, res) {
                         message: utility.getErrorMessage(err)
                     });
                 } else {
+                    //rest.createCombinedCrowdRemote(crowdGroup.crowdName, crowdGroup.type, JSON.stringify(crowdGroup.selector));
                     return res.json(crowdGroup);
                 }
             });
@@ -159,6 +161,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
+            rest.deleteCrowdRemote(crowd.crowdName);
             return res.json(crowd);
         }
     });
