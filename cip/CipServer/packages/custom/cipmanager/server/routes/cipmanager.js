@@ -9,42 +9,42 @@ var rest = require('../controllers/rest.server.controller');
 module.exports = function(Cipmanager, app, auth, database) {
 
   //call remote
-  app.route("/api/ontology").get(rest.readMetadata);
+  app.route('/api/ontology').get(rest.readMetadata);
 
-  app.route("/api/rest/crowd/detail").get(rest.getCrowdDetailByGet).post(rest.getCrowdDetailByPost);
+  app.route('/api/rest/crowd/detail').get(rest.getCrowdDetailByGet).post(rest.getCrowdDetailByPost);
 
-  app.route("/api/rest/crowd/count").get(rest.getCrowdCountByGet).post(rest.getCrowdCountByPost);
+  app.route('/api/rest/crowd/count').get(rest.getCrowdCountByGet).post(rest.getCrowdCountByPost);
 
-  app.route("/api/rest/group/crowd/detail").get(rest.getCrowdDetailByGet).post(rest.getGroupCrowdDetailByPost);
+  app.route('/api/rest/group/crowd/detail').get(rest.getCrowdDetailByGet).post(rest.getGroupCrowdDetailByPost);
 
-  app.route("/api/rest/group/crowd/count").get(rest.getCrowdCountByGet).post(rest.getGroupCrowdCountByPost);
+  app.route('/api/rest/group/crowd/count').get(rest.getCrowdCountByGet).post(rest.getGroupCrowdCountByPost);
 
   //app.route("/api/rest/crowd/delete").get(rest.deleteCrowdRemote);
 
   //app.route("/api/rest/crowd/create").post(rest.createCrowdRemote);
 
-  app.route("/api/rest/crowd/sample").get(rest.crowdSampleByGet).post(rest.crowdSampleByPost);
+  app.route('/api/rest/crowd/sample').get(rest.crowdSampleByGet).post(rest.crowdSampleByPost);
 
   //db single crowd
-  app.route("/api/db/crowd").get(crowdsingle.list).post(crowdsingle.create);
+  app.route('/api/db/crowd').get(crowdsingle.list).post(crowdsingle.create);
 
-  app.route("/api/db/crowdcount").get(crowdsingle.count);
+  app.route('/api/db/crowdcount').get(crowdsingle.count);
 
-  app.route("/api/db/crowd/:crowdName").get(crowdsingle.read).put(crowdsingle.update).delete(crowdsingle.delete);
+  app.route('/api/db/crowd/:crowdName').get(crowdsingle.read).put(crowdsingle.update).delete(crowdsingle.delete);
 
   app.param('crowdName', crowdsingle.crowdByName);
 
   //db crowd group
-  app.route("/api/db/group/crowd").get(crowdgroup.list).post(crowdgroup.create);
+  app.route('/api/db/group/crowd').get(crowdgroup.list).post(crowdgroup.create);
 
-  app.route("/api/db/group/crowdcount").get(crowdgroup.count);
+  app.route('/api/db/group/crowdcount').get(crowdgroup.count);
 
-  app.route("/api/db/group/crowd/:crowdGroupName").get(crowdgroup.read).put(crowdgroup.update).delete(crowdgroup.delete);
+  app.route('/api/db/group/crowd/:crowdGroupName').get(crowdgroup.read).put(crowdgroup.update).delete(crowdgroup.delete);
 
   app.param('crowdGroupName', crowdgroup.crowdByName);
 
   //download
-  app.route("/api/download").get(rest.download);
+  app.route('/api/download').get(rest.download);
 
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');

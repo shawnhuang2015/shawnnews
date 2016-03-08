@@ -1,314 +1,10 @@
-/**
- * Created on 2/2/16.
- */
 'use strict';
-var qs = require('querystring');
 var utility = require('../utility/utility');
-var util = require('util');
-var fs = require("fs");
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose'),
-    SemanticMetaData = mongoose.model('SemanticMetaData'),
-    CrowdSingle = mongoose.model('CrowdSingle'),
-    config = require('meanio').loadConfig(),
-    _ = require('lodash');
-
-/*
- Get the user id list which belong to the crowd.
- Method: POST
- Input: selector conditions - which express the crowding condition that the client choose on UI
- Output: 1. user id list 2. user count
- */
-exports.getCrowdDetailByPost = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelector(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
-    }
-/*
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            return res.send({
-                error: true,
-                message: utility.getErrorMessage(err)
-            });
-        }
-
-        var body = {
-            target: md.profile.target,
-            selector: generateCond(req.body["selector"], md.profile)
-        };
-
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
-            if (err) {
-                console.log("Error to get crowd: " + bodyStr);
-                return res.send({
-                    error: true,
-                    message: err.message
-                });
-            }
-            res.send(resp);
-        });
-
-    });*/
-
-
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
-/*
- Get the user id list which belong to the multi-crowd.
- Method: POST
- Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
- Output: 1. user id list 2. user count
- */
-exports.getGroupCrowdDetailByPost = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelectorArray(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
-    }
-
-    /*
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            console.log("Error to get crowd detail");
-            return res.send({
-                error: true,
-                message: utility.getErrorMessage(err)
-            });
-        }
-
-        var body = {
-            target: md.profile.target,
-            selector: generateCond(req.body["selector"], md.profile)
-        };
-
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
-            if (err) {
-                console.log("Error to get crowd: " + bodyStr);
-                return res.send({
-                    error: true,
-                    message: err.message
-                });
-            }
-            res.send(resp);
-        });
-
-    });*/
-
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
-/*
-Get the user id list which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
-Output: 1. user id list 2. user count
- */
-exports.getCrowdDetailByGet = function(req, res) {
-    var crowdName = req.query["cname"];
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'cname'"
-        });
-    }
-    /*
-     utility.get('getCrowd', 'crowdName=' + crowdName, function(err, result) {
-         if (err) {
-             return res.send({
-             message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-     */
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
-/*
-Get the number of users which belong to the crowd.
-Method: POST
-Input: selector conditions - which express the crowding condition that the client choose on UI
-*/
-exports.getCrowdCountByPost = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelector(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
-    }
-/*
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            console.log("Error to get crowd count");
-            return res.send({
-                error: true,
-                message: utility.getErrorMessage(err)
-            });
-        }
-        var body = {
-            target: md.profile.target,
-            selector: generateCond(req.body.selector, md.profile)
-        };
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
-            if (err) {
-                console.log("Error to create crowd count");
-                return res.send({
-                    error: true,
-                    message: err.message
-                });
-            } else {
-                res.send(resp);
-            }
-        });
-    });*/
-
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": []
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
-/*
- Get the number of users which belong to the multi-crowd.
- Method: POST
- Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
- */
-exports.getGroupCrowdCountByPost = function(req, res) {
-    if (!req.body["selector"]) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector'"
-        });
-    } else if (!utility.validateSelectorArray(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
-    }
-/*
-    //var selector = JSON.stringify(req.body);
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            console.log("Error to get crowd count");
-            return res.send({
-                error: true,
-                message: utility.getErrorMessage(err)
-            });
-        }
-        var body = {
-            target: md.profile.target,
-            selector: generateCond(req.body.selector, md.profile)
-        };
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
-            if (err) {
-                console.log("Error to create crowd count");
-                return res.send({
-                    error: true,
-                    message: err.message
-                });
-            } else {
-                res.send(resp);
-            }
-        });
-    });*/
-
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": []
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
-/*
-Get the number of users which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
- */
-exports.getCrowdCountByGet = function(req, res) {
-    var crowdName = req.query["cname"];
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'cname'"
-        });
-    }
-    /*
-     utility.get('getCrowdCount', 'crowdName=' + crowdName, fucntion(err, result) {
-         if (err) {
-             return res.send({
-                message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-    */
-    res.send({
-        "results": {
-            "count": 3
-        },
-        "error": false,
-        "message": ""
-    });
-}
-
+var fs = require('fs');
+var mongoose = require('mongoose');
+var SemanticMetaData = mongoose.model('SemanticMetaData');
+var CrowdSingle = mongoose.model('CrowdSingle');
+var config = require('meanio').loadConfig();
 
 var generateCond = function(input_cond, metadata) {
     //map the vertex name to vertex type
@@ -354,7 +50,9 @@ var generateCond = function(input_cond, metadata) {
         }
         for (var k = 0; k < behr.length; ++k) {
             var item = behr[k];
-            item.ontologyType = behr[item.ontologyType];
+            item.ontologyType = ontoT[item.ontologyType];
+            item.startTime /= 1000; //need remove
+            item.endTime /= 1000;   //need remove
             cond.behavior.push(item);
         }
         res.push(cond);
@@ -363,70 +61,377 @@ var generateCond = function(input_cond, metadata) {
     return res;
 }
 
+
+/*
+ Get the user id list which belong to the crowd.
+ Method: POST
+ Input: selector conditions - which express the crowding condition that the client choose on UI
+ Output: 1. user id list 2. user count
+ */
+exports.getCrowdDetailByPost = function(req, res) {
+    if (!req.body.selector) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelector(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
+        if (err) {
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
+        }
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post('crowd/v1/user_search', '', bodyStr, function(err, resp) {
+            if (err) {
+                console.log('Error to get crowd: ' + bodyStr);
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
+            }
+            return res.send(resp);
+        });
+
+    });
+
+/*
+    res.send({
+        "results": {
+            "count": 3,
+            "userIds": ["user_1", "user_2", "user_3"]
+        },
+        "error": false,
+        "message": ""
+    });*/
+}
+
+/*
+ Get the user id list which belong to the multi-crowd.
+ Method: POST
+ Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
+ Output: 1. user id list 2. user count
+ */
+exports.getGroupCrowdDetailByPost = function(req, res) {
+    if (!req.body.selector) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelectorArray(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+
+
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
+        if (err) {
+            console.log('Error to get crowd detail');
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
+        }
+
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+
+        var bodyStr = JSON.stringify(body);
+        utility.post('crowd/v1/user_search', '', bodyStr, function(err, resp) {
+            if (err) {
+                console.log('Error to get crowd: ' + bodyStr);
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
+            }
+            return res.send(resp);
+        });
+
+    });
+/*
+    res.send({
+        "results": {
+            "count": 3,
+            "userIds": ["user_1", "user_2", "user_3"]
+        },
+        "error": false,
+        "message": ""
+    });*/
+}
+
+/*
+Get the user id list which belong to the crowd.
+It can be called just when the crowd has been create on crowding service.
+Method: GET
+Input: cname - crowd name
+Output: 1. user id list 2. user count
+ */
+exports.getCrowdDetailByGet = function(req, res) {
+    var crowdName = req.query.cname;
+    if (!crowdName) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'cname'"
+        });
+    }
+    /*
+     utility.get('getCrowd', 'crowdName=' + crowdName, function(err, result) {
+         if (err) {
+             return res.send({
+             message: err.message
+             });
+         } else {
+             return res.send(result);
+         }
+     });
+     */
+    res.send({
+        results: {
+            count: 3,
+            userIds: ['user_1', 'user_2', 'user_3']
+        },
+        error: false,
+        message: ''
+    });
+}
+
+/*
+Get the number of users which belong to the crowd.
+Method: POST
+Input: selector conditions - which express the crowding condition that the client choose on UI
+*/
+exports.getCrowdCountByPost = function(req, res) {
+    console.log('Get Count: ' + JSON.stringify(req.body));
+    if (!req.body.selector) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelector(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
+        if (err) {
+            console.log('Error to get crowd count');
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
+        }
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+            if (err) {
+                console.log('Error to create crowd count');
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
+            } else {
+                return res.send(resp);
+            }
+        });
+    });
+/*
+    res.send({
+        "results": {
+            "count": 3,
+            "userIds": []
+        },
+        "error": false,
+        "message": ""
+    });*/
+}
+
+/*
+ Get the number of users which belong to the multi-crowd.
+ Method: POST
+ Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
+ */
+exports.getGroupCrowdCountByPost = function(req, res) {
+    if (!req.body.selector) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'selector'"
+        });
+    } else if (!utility.validateSelectorArray(req.body.selector)) {
+        return res.send({
+            error: true,
+            message: "wrong 'selector'"
+        });
+    }
+
+    //var selector = JSON.stringify(req.body);
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
+        if (err) {
+            console.log('Error to get crowd count');
+            return res.send({
+                error: true,
+                message: utility.getErrorMessage(err)
+            });
+        }
+        var body = {
+            target: md.profile.target,
+            selector: generateCond(req.body.selector, md.profile)
+        };
+        var bodyStr = JSON.stringify(body);
+        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+            if (err) {
+                console.log('Error to create crowd count');
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
+            } else {
+                return res.send(resp);
+            }
+        });
+    });
+/*
+    res.send({
+        "results": {
+            "count": 3,
+            "userIds": []
+        },
+        "error": false,
+        "message": ""
+    });*/
+}
+
+/*
+Get the number of users which belong to the crowd.
+It can be called just when the crowd has been create on crowding service.
+Method: GET
+Input: cname - crowd name
+ */
+exports.getCrowdCountByGet = function(req, res) {
+    var crowdName = req.query.cname;
+    if (!crowdName) {
+        return res.send({
+            error: true,
+            message: "Need Parameters 'cname'"
+        });
+    }
+    /*
+     utility.get('getCrowdCount', 'crowdName=' + crowdName, fucntion(err, result) {
+         if (err) {
+             return res.send({
+                message: err.message
+             });
+         } else {
+             return res.send(result);
+         }
+     });
+    */
+    res.send({
+        results: {
+            count: 3
+        },
+        error: false,
+        message: ''
+    });
+}
+
 /*
  create a crowd on crowding service
  Input: 1. selector conditions - which express the crowding condition that the client choose on UI
         2. crowd name
  */
-exports.createCrowdRemote = function(name, condition) {
+exports.createCrowdRemote = function(name, crowdtype,  condition) {
     function updateTag(name, value) {
         CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
-            crowd.tagAdded = value;
-            crowd.file = name + '.user';
-            crowd.save(function(err) {
-                if (err) {
-                    console.log("Error to create crowd: " + name);
-                    return;
-                }
-            });
+            if (err) {
+                console.log('Error to read crowd: ' + name);
+            } else {
+                crowd.tagAdded = value;
+                crowd.file = name + '.user';
+                crowd.save(function(err) {
+                    if (err) {
+                        console.log('Error to create crowd: ' + name);
+                        return;
+                    }
+                });
+            }
         });
     }
 
     function writeUserToFile(res, path) {
-        var data = "UserCount: " + res.results.count + "\n";
+        var data = 'UserCount: ' + res.results.count + "\n";
         for (var k = 0; k < res.results.userIds.length; ++k) {
-            data += res.results.userIds[k] + "\n";
+            data += res.results.userIds[k] + '\n';
         }
         fs.writeFile(path, data,  function(err) {
             if (err) {
-                console.log("Error to wirte file: " + path);
+                console.log('Error to wirte file: ' + path);
             } else {
-                console.log("Success to wirte file: " + path);
+                console.log('Success to wirte file: ' + path);
             }
         });
     }
 
     condition = JSON.parse(condition);
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
-        if (err) {
-            updateTag(name, -1);
-            console.log("Error to create crowd: " + name);
-            return;
-        }
-        var body = {
-            crowdIndex: md.profile.crowdIndex,
-            searchCond: {
-                target: md.profile.target,
-                selector: generateCond(condition, md.profile)
-            }
-        };
-        var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/create", "name=" + name, bodyStr, function(err, res) {
+    if (crowdtype === 'static') {
+        SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
             if (err) {
                 updateTag(name, -1);
-                console.log("Error to create crowd: " + name);
-            } else {
-                var jsRes = JSON.parse(res);
-                if (jsRes.error == false) {
-                    writeUserToFile(jsRes, config.dataPath + name + '.user');
-                    updateTag(name, 1);
-                } else {
-                    updateTag(name, -1);
-                    console.log("Error to create crowd: " + name + ', error: ' + jsRes.message);
-                }
+                console.log('Error to create crowd: ' + name);
+                return;
             }
+            var body = {
+                crowdIndex: md.profile.crowdIndex,
+                searchCond: {
+                    target: md.profile.target,
+                    selector: generateCond(condition, md.profile)
+                }
+            };
+            var bodyStr = JSON.stringify(body);
+            utility.post('crowd/v1/create', 'name=' + name, bodyStr, function (err, res) {
+                if (err) {
+                    updateTag(name, -1);
+                    console.log('Error to create crowd: ' + name);
+                } else {
+                    var jsRes = JSON.parse(res);
+                    if (jsRes.error === false) {
+                        writeUserToFile(jsRes, config.dataPath + name + '.user');
+                        updateTag(name, 1);
+                    } else {
+                        updateTag(name, -1);
+                        console.log('Error to create crowd: ' + name + ', error: ' + jsRes.message);
+                    }
+                }
+            });
         });
-    });
+    } else if (crowdtype === 'dynamic') {
+        updateTag(name, 1);
+        return;
+    } else {
+        console.log('wrong crowd type: ' + crowdtype);
+    }
 }
 
 /*
@@ -437,9 +442,9 @@ Output: Sample users in the crowd, the number of returned users' size equals to 
  */
 exports.crowdSampleByPost = function(req, res) {
     var selector = JSON.stringify(req.body);
-    var count = req.query["count"];
+    var count = req.query.count;
 
-    if (!req.body["selector"] || !count) {
+    if (!req.body.selector || !count) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector', 'count'"
@@ -464,11 +469,11 @@ exports.crowdSampleByPost = function(req, res) {
     */
 
     res.send({
-        "results": {
-            "count": 10
+        results: {
+            count: 10
         },
-        "error": false,
-        "message": ""
+        error: false,
+        message: ''
     });
 
 }
@@ -481,8 +486,8 @@ Input: 1. cname - crowd name
 Output: Sample users in the crowd, the number of returned users' size equals to 'count'
  */
 exports.crowdSampleByGet = function(req, res) {
-    var crowdName = req.query["cname"];
-    var count = req.query["count"];
+    var crowdName = req.query.cname;
+    var count = req.query.count;
     if (!crowdName || !count) {
         return res.send({
             error: true,
@@ -503,11 +508,11 @@ exports.crowdSampleByGet = function(req, res) {
      */
 
     res.send({
-        "results": {
-            "count": 10
+        results: {
+            count: 10
         },
-        "error": false,
-        "message": ""
+        error: false,
+        message: ''
     });
 
 }
@@ -525,15 +530,15 @@ Output: return the number of persons in the deleted crowd
 exports.deleteCrowdRemote = function(name) {
      utility.get('crowd/v1/delete', 'name=' + name, function(err, result) {
          if (err) {
-             console.log("delete crowd error: " + err.message);
+             console.log('delete crowd error: ' + err.message);
              return;
          }
          var jsRes = JSON.parse(result);
          if (jsRes.error) {
-             console.log("delete crowd " + name + " error: " + jsRes.message);
+             console.log('delete crowd ' + name + ', error: ' + jsRes.message);
              return;
          } else {
-             console.log("delete crowd: " + name + ", count: " + jsRes.results.count);
+             console.log('delete crowd: ' + name + ', count: ' + jsRes.results.count);
          }
      });
 }
@@ -551,17 +556,17 @@ we will update the data if it exceed the expiration time.
 */
 exports.readMetadata = function(req, res) {
     var curTime = new Date().getTime();
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
             });
-        } else if (md && (curTime - md["created"].getTime() < config.semanticSyncTime * 1000)) {
-            console.log("time delta = " + (curTime - md["created"].getTime()));
-            return res.send(md["profile"]);
+        } else if (md && (curTime - md.created.getTime() < config.semanticSyncTime * 1000)) {
+            console.log('time delta = ' + (curTime - md.created.getTime()));
+            return res.send(md.profile);
         } else {
-            var TestFlag = true;
+            var TestFlag = false;
 
             if (!TestFlag) {
                 utility.get('get_profile',
@@ -575,7 +580,7 @@ exports.readMetadata = function(req, res) {
                         } else {
                             //return res.json(resp);
                             var result = JSON.parse(resp);
-                            if (result.error == true) {
+                            if (result.error === true) {
                                 return res.send({
                                     error: true,
                                     message: result.message
@@ -589,8 +594,8 @@ exports.readMetadata = function(req, res) {
                                     });
                                 } else {
                                     var metadata = new SemanticMetaData({
-                                        name: "SemanticMetaData",
-                                        profile: result["results"]
+                                        name: 'SemanticMetaData',
+                                        profile: result.results
                                     });
                                     metadata.save(function (err) {
                                         if (err) {
@@ -599,7 +604,7 @@ exports.readMetadata = function(req, res) {
                                                 message: utility.getErrorMessage(err)
                                             });
                                         } else {
-                                            return res.json(metadata["profile"]);
+                                            return res.json(metadata.profile);
                                         }
                                     });
                                 }
@@ -608,9 +613,9 @@ exports.readMetadata = function(req, res) {
                     }
                 );
             } else {
-                var result = {
+                var result = { /*
                     "error": false,
-                    "message": "",
+                    "message": '',
                     "results": {
                         "target": "user",
                         "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
@@ -709,7 +714,7 @@ exports.readMetadata = function(req, res) {
                             },
                             {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                         ]
-                    }
+                    }*/
                 };
                 SemanticMetaData.remove(function (err) {
                     if (err) {
@@ -718,7 +723,7 @@ exports.readMetadata = function(req, res) {
                             message: utility.getErrorMessage(err)
                         });
                     } else {
-                        var metadata = new SemanticMetaData({name: "SemanticMetaData", profile: result["results"]});
+                        var metadata = new SemanticMetaData({name: 'SemanticMetaData', profile: result.results});
                         metadata.save(function (err) {
                             if (err) {
                                 return res.send({
@@ -726,7 +731,7 @@ exports.readMetadata = function(req, res) {
                                     message: utility.getErrorMessage(err)
                                 });
                             } else {
-                                return res.json(metadata["profile"]);
+                                return res.json(metadata.profile);
                             }
                         });
                     }
@@ -737,6 +742,6 @@ exports.readMetadata = function(req, res) {
 }
 
 exports.download = function(req, res) {
-    var file = req.query["file"];
+    var file = req.query.file;
     res.download(config.dataPath + file);
 };

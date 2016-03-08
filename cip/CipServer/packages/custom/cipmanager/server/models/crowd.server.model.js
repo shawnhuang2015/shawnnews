@@ -36,7 +36,7 @@ var CrowdSingleSchema = new Schema({
     }, //创建完成＝1 创建中＝0 创建失败＝－1
     file: {
         type: String,
-        default: "test.user"
+        default: 'test.user'
     },
     selector: {
         tag: [
@@ -48,7 +48,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:["<>", "="],
+                    enum:['<>', '='],
                     required: true
                 },
                 weight: {
@@ -75,7 +75,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "=", "like", "dislike"],
+                    enum:['>=','<=', '>', '<', '<>', '=', 'like', 'dislike'],
                     required: true
                 },
                 weight: {
@@ -113,7 +113,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 operator: {
                     type: String,
-                    enum:['>=','<=', ">", "<", "<>", "="],
+                    enum:['>=','<=', '>', '<', '<>', '='],
                     required: true
                 },
                 value: {
@@ -133,7 +133,7 @@ var CrowdSingleSchema = new Schema({
                 },
                 timeType: {
                     type: String,
-                    enum: ["absolute", "relative", "hour", "day", "week", "month", "year"],
+                    enum: ['absolute', 'relative', 'hour', 'day', 'week', 'month', 'year'],
                     required: true
                 },
                 count: Number
@@ -169,7 +169,7 @@ var CrowdGroupSchema = new Schema({
     }, //创建完成＝1 创建中＝0 创建失败＝－1
     file: {
         type: String,
-        default: "test.user"
+        default: 'test.user'
     },
     selector: [{type: Schema.Types.ObjectId, ref: 'CrowdSingle'}]
 });
