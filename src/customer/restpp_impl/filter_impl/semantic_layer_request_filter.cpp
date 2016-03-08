@@ -69,23 +69,23 @@ extern "C" {
     std::string payload(user_request->data, user_request->data_length);
 
     param_t &params = user_request->params;
-    std::string name = params["name"][0];
-    std::string vtype = params["vtype"][0];
-    std::string up_etype = params["up_etype"][0];
-    std::string down_etype = params["down_etype"][0];
-    char sep = params["sep"][0][0];
-    char eol = params["eol"][0][0];
+    const std::string name = params["name"][0];
+    const std::string vtype = params["vtype"][0];
+    const std::string up_etype = params["up_etype"][0];
+    const std::string down_etype = params["down_etype"][0];
+    const std::string sep = std::string(1, params["sep"][0][0]);
+    const std::string eol = std::string(1, params["eol"][0][0]);
 
     std::cout << "sep = " << sep << "@, eol = " << eol << "@" << std::endl;
 
-    boost::char_separator<char> line_sep(&eol);
+    boost::char_separator<char> line_sep(eol.c_str());
     boost::tokenizer<boost::char_separator<char> > lines(payload, line_sep);
     BOOST_FOREACH (const std::string &l, lines) {
       std::cout << l << std::endl;
       std::cout << name << std::endl;
       std::cout << vtype << std::endl;
 
-      boost::char_separator<char> field_sep(&sep);
+      boost::char_separator<char> field_sep(sep.c_str());
       boost::tokenizer<boost::char_separator<char> > fields(l, field_sep);
       AttributesDelta attr;
       std::string msg;
@@ -155,10 +155,10 @@ extern "C" {
     const std::string &ontology_up_etype = params["ontology_up_etype"][0];
     const std::string &ontology_down_etype = params["ontology_down_etype"][0];
     const std::string &object_ontology_etype = params["object_ontology_etype"][0];
-    const char sep = params["sep"][0][0];
-    const char tag_sep = params["tag_sep"][0][0];
-    const char weight_sep = params["weight_sep"][0][0];
-    const char eol = params["eol"][0][0];
+    const std::string sep = std::string(1, params["sep"][0][0]);
+    const std::string tag_sep = std::string(1, params["tag_sep"][0][0]);
+    const std::string weight_sep = std::string(1, params["weight_sep"][0][0]);
+    const std::string eol = std::string(1, params["eol"][0][0]);
     const bool more = (params["more"][0] == "1");
 
     std::cout << "sep=" << sep << "@, tag_sep=" << tag_sep
@@ -176,12 +176,12 @@ extern "C" {
     std::cout << "parsed inverted_tags = " << inverted_tags << std::endl;
 
     boost::tokenizer<boost::char_separator<char> > lines(
-        payload, boost::char_separator<char>(&eol));
+        payload, boost::char_separator<char>(eol.c_str()));
     std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
       std:: cout << "line: " << l << std::endl;
       fields.clear();
-      boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
+      boost::split(fields, l, boost::is_any_of(sep));
       int size = fields.size();
       if (size != 2) {
         std::cout << "invalid data: " << l << std::endl;
@@ -191,7 +191,7 @@ extern "C" {
       // get object id
       const std::string &obj_id = fields[0];
       boost::tokenizer<boost::char_separator<char> > tags(
-          fields[1], boost::char_separator<char>(&tag_sep));
+          fields[1], boost::char_separator<char>(tag_sep.c_str()));
 
       AttributesDelta attr;
       std::string msg;
@@ -201,7 +201,7 @@ extern "C" {
         // FIXME: assume each tag only has one attr, which is weight,
         // in the future, might be more attrs
         tw.clear();
-        boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
+        boost::split(tw, tag, boost::is_any_of(weight_sep));
         int size = tw.size();
         if (size == 0) {
           std::cout << "skip empty tag" << std::endl;
@@ -281,20 +281,20 @@ extern "C" {
 
     param_t &params = user_request->params;
     const std::string &name = params["name"][0];
-    const char sep = params["sep"][0][0];
-    const char tag_sep = params["tag_sep"][0][0];
-    const char weight_sep = params["weight_sep"][0][0];
-    const char eol = params["eol"][0][0];
+    const std::string sep = std::string(1, params["sep"][0][0]);
+    const std::string tag_sep = std::string(1, params["tag_sep"][0][0]);
+    const std::string weight_sep = std::string(1, params["weight_sep"][0][0]);
+    const std::string eol = std::string(1, params["eol"][0][0]);
 
     boost::tokenizer<boost::char_separator<char> > lines(
-        payload, boost::char_separator<char>(&eol));
+        payload, boost::char_separator<char>(eol.c_str()));
     std::set<std::string> uniq_tags;
     Json::Value &jsoptions = gsql_request->jsoptions;
 
     std::vector<std::string> fields;
     BOOST_FOREACH (const std::string &l, lines) {
       fields.clear();
-      boost::split(fields, l, boost::is_any_of(std::string(1, sep)));
+      boost::split(fields, l, boost::is_any_of(sep));
       int size = fields.size();
       if (size != 2) {
         std::cout << "invalid data: " << l << std::endl;
@@ -303,12 +303,12 @@ extern "C" {
 
       // get all tags, pack them into a json array "tags"
       boost::tokenizer<boost::char_separator<char> > tags(
-          fields[1], boost::char_separator<char>(&tag_sep));
+          fields[1], boost::char_separator<char>(tag_sep.c_str()));
 
       std::vector<std::string> tw;
       BOOST_FOREACH(const std::string &tag, tags) {
         tw.clear();
-        boost::split(tw, tag, boost::is_any_of(std::string(1, weight_sep)));
+        boost::split(tw, tag, boost::is_any_of(weight_sep));
         int size = tw.size();
         if (size == 0) {
           std::cout << "skip empty tag" << std::endl;
