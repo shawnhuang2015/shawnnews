@@ -914,20 +914,21 @@ class UDFRunner : public ServiceImplBase {
           writer->WriteName("vtype");
           writer->WriteString(vetype["vtype"]);
 
+          writer->WriteName("element");
+          writer->WriteStartArray();
+
           if (uid_to_vid.find(name) != uid_to_vid.end()) {
             VertexLocalId_t vid = uid_to_vid[name];
             if (tree.find(vid) != tree.end()) {
               const std::vector<VertexLocalId_t> &children = tree[vid];
 
-              writer->WriteName("element");
-              writer->WriteStartArray();
               int size = children.size();
               for (int j = 0; j < size; ++j) {
                 writer->WriteMarkVId(children[j]);
               }
-              writer->WriteEndArray();
             }
           }
+          writer->WriteEndArray();
           writer->WriteEndObject();
         }
       }
