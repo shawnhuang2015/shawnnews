@@ -1,5 +1,5 @@
 rm -rf build/ dist/
-pyinstaller --hidden-import=logstash_formatter --hidden-import=dateutil.tz.tz  --path=.. --path=/usr/lib/python2.7/site-packages --onefile app.py
+pyinstaller --hidden-import=logstash_formatter --hidden-import=dateutil.tz --path=.. --path=/usr/lib/python2.7/site-packages --onefile app.py
 #pyinstaller --path=..  app2.spec
 src_base='/home/feng.chen/gitrepo/product/cip/ruleEngD'
 dest="dist"
