@@ -93,7 +93,15 @@
             </tr>
             </tbody>
         </table>
-        <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{groupDetail.count}}人</h5></div>
+        <div class="col-md-offset-8 col-md-3">
+            <h5 ng-if="groupDetail.count >= -1">满足上面所有条件的人数为
+                <span ng-if="groupDetail.count >= 0">{{groupDetail.count}}</span>
+                <span ng-if="groupDetail.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                人</h5>
+            <h5 ng-if="groupDetail.count == -2">
+                全部人数获取失败,请重试条件
+            </h5>
+        </div>
     </div>
 
     <div class="form-group">

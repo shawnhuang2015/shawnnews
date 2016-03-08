@@ -114,8 +114,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                 alert("值不能为空");
                 return;
             }
-            if(condition_type == 'behavior' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
+            if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
                 alert("时间不能为空");
+                return;
+            }
+            if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && ($scope.factors.startTime > $scope.factors.endTime)) {
+                alert("开始时间不能大于结束时间");
                 return;
             }
 
@@ -146,7 +150,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                     param.selector[condition_type][0].count = -2;
                 }
             });
-
+            $scope.crowdDetail.count = -1;
             CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
                 if(data.success) {
                     $scope.crowdDetail.count = data.length;
@@ -158,6 +162,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.deleteFactor = function (factor, index) {
             factor.splice(index, 1);
+            $scope.crowdDetail.count = -1;
             CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
                 if(data.success) {
                     $scope.crowdDetail.count = data.length;
@@ -211,17 +216,13 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                     return;
                 }
             }
-            $scope.getGroupUserCount(function (length) {
-                $scope.groupDetail.count = length;
-                $scope.groupDetail.selector.push(crowd)
-            });
+            $scope.groupDetail.selector.push(crowd)
+            $scope.getGroupUserCount();
         };
 
         $scope.removeFromList = function (index) {
-            $scope.getGroupUserCount(function (length) {
-                $scope.groupDetail.count = length;
-                $scope.groupDetail.selector.splice(index, 1);
-            });
+            $scope.groupDetail.selector.splice(index, 1);
+            $scope.getGroupUserCount();
         };
 
         $scope.initSaveCrowd = function () {
@@ -561,14 +562,16 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         //Remove group from server
         $scope.removeGroup = function (group) {
-            if (group) {
-                group.$remove(function (response) {
-                    for (var i in $scope.grouplist) {
-                        if ($scope.grouplist[i] === group) {
-                            $scope.grouplist.splice(i, 1);
+            if(confirm("确定要删除这个人群组合吗？")) {
+                if (group) {
+                    group.$remove(function (response) {
+                        for (var i in $scope.grouplist) {
+                            if ($scope.grouplist[i] === group) {
+                                $scope.grouplist.splice(i, 1);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         };
 
@@ -634,17 +637,18 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             }
         };
 
-        $scope.getGroupUserCount = function (callback) {
+        $scope.getGroupUserCount = function () {
             var param = {};
             param.selector = [];
             for (var index in $scope.groupDetail.selector) {
                 param.selector.push($scope.groupDetail.selector[index].selector);
             }
+            $scope.groupDetail.count = -1;
             CrowdService.getGroupUserCount(param, function (data) {
                 if (data.success) {
-                    callback(data.length);
+                    $scope.groupDetail.count = data.length;
                 } else {
-                    callback(-2);
+                    $scope.groupDetail.count = -2;
                 }
             });
         };

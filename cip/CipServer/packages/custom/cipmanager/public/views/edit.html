@@ -282,7 +282,15 @@
                 </tbody>
             </table>
 
-            <div class="col-md-offset-8 col-md-3" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0"><h4>满足上面所有条件 共覆盖{{crowdDetail.count}}人</h4></div>
+            <div class="col-md-offset-8 col-md-3" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
+                <h5 ng-if="crowdDetail.count >= -1">满足上面所有条件的人数为
+                    <span ng-if="crowdDetail.count >= 0">{{crowdDetail.count}}</span>
+                    <span ng-if="crowdDetail.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                    人</h5>
+                <h5 ng-if="crowdDetail.count == -2">
+                    全部人数获取失败,请重试条件
+                </h5>
+            </div>
         </fieldset>
 
         <div class="form-group">
