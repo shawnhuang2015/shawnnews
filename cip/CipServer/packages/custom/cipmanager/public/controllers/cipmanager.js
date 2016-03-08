@@ -97,6 +97,29 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         //////////////////////Local function///////////////////////
         $scope.addFactor = function (condition_type) {
+            //Check valid
+            if(condition_type == 'behavior' && (!$scope.factors.objectId || $scope.factors.objectId == '')) {
+                alert("对象值不能为空");
+                return;
+            }
+            if(condition_type == 'ontology' && (!$scope.factors.factor || $scope.factors.factor == '')) {
+                alert("权重不能为空");
+                return;
+            }
+            if(condition_type == 'ontology' && !$scope.factors.weight) {
+                alert("权重不能为空");
+                return;
+            }
+            if(condition_type == 'behavior' && !$scope.factors.value) {
+                alert("值不能为空");
+                return;
+            }
+            if(condition_type == 'behavior' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
+                alert("时间不能为空");
+                return;
+            }
+
+            //Start add
             if (!$scope.crowdDetail) {
                 $scope.crowdDetail = {};
             }
@@ -115,12 +138,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
             $scope.factors = {};
             $scope.st = '';
             $scope.et = '';
-            //setTimeout(function(){
-            //    CrowdService.getUserCountByFactor(param, function (param, data) {
-            //        param.selector[condition_type][0].count = data.length;
-            //        //$scope.factors.count = data.length;
-            //    });
-            //}, 2000);
+
             CrowdService.getUserCountByFactor(param, function (param, data) {
                 if(data.success) {
                     param.selector[condition_type][0].count = data.length;
