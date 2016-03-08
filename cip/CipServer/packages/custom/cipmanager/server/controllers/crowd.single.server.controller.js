@@ -23,8 +23,8 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
-    var pageId = Number(req.query['pageId']);
-    var pageSz = Number(req.query['pageSz']);
+    var pageId = Number(req.query.pageId);
+    var pageSz = Number(req.query.pageSz);
     CrowdSingle.find().sort('-created').exec(function(err, crowds) {
         if (err) {
             return res.send({

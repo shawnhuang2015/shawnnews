@@ -38,9 +38,9 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
-    var pageId = Number(req.query['pageId']);
-    var pageSz = Number(req.query['pageSz']);
-    CrowdGroup.find().sort("-created").populate('selector').exec(function(err, crowds) {
+    var pageId = Number(req.query.pageId);
+    var pageSz = Number(req.query.pageSz);
+    CrowdGroup.find().sort('-created').populate('selector').exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -68,7 +68,7 @@ exports.count = function(req, res) {
         } else {
             return res.send({
                 error: false,
-                message: "",
+                message: '',
                 results: {
                     count: crowds.length
                 }
