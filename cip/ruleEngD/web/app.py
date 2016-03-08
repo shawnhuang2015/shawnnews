@@ -1,6 +1,5 @@
 import sys
 sys.path.append("../")
-sys.path.append("/home/feng.chen/gitrepo/product/cip/ruleEngD/web/dist")
 
 from rulebase.util import *
 from algorithm import RuleConfltSol

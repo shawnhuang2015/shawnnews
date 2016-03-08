@@ -161,7 +161,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            rest.deleteCrowdRemote(crowd.crowdName);
+            //rest.deleteCrowdRemote(crowd.crowdName);
             return res.json(crowd);
         }
     });
