@@ -54,6 +54,9 @@ var generateCond = function(input_cond, metadata) {
             item.ontologyType = ontoT[item.ontologyType];
             item.startTime /= 1000; //need remove
             item.endTime /= 1000;   //need remove
+            if (item.timeType == 'day' || item.timeType == 'hour') {
+                item.timeType = 'relative';
+            }
             cond.behavior.push(item);
         }
         res.push(cond);
