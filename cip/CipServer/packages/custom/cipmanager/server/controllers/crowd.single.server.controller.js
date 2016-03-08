@@ -1,20 +1,13 @@
 'use strict';
-var util = require('util');
 var utility = require('../utility/utility');
 var rest = require('../controllers/rest.server.controller');
-/**
- * Module dependencies.
- */
-var mongoose = require('mongoose'),
-    CrowdSingle = mongoose.model('CrowdSingle'),
-    CrowdGroup = mongoose.model('CrowdGroup'),
-    config = require('meanio').loadConfig(),
-    _ = require('lodash');
+var mongoose = require('mongoose');
+var CrowdSingle = mongoose.model('CrowdSingle');
 
 //create
 exports.create = function(req, res) {
     var crowd = new CrowdSingle(req.body);
-    console.log("crowd = " + JSON.stringify(req.body));
+    console.log('crowd = ' + JSON.stringify(req.body));
     crowd.save(function(err) {
         if (err) {
             return res.send({
@@ -30,9 +23,9 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
-    var pageId = Number(req.query["pageId"]);
-    var pageSz = Number(req.query["pageSz"]);
-    CrowdSingle.find().sort("-created").exec(function(err, crowds) {
+    var pageId = Number(req.query['pageId']);
+    var pageSz = Number(req.query['pageSz']);
+    CrowdSingle.find().sort('-created').exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -41,7 +34,7 @@ exports.list = function(req, res) {
         } else if (crowds.length <= pageId * pageSz) {
             return res.send({
                 error: true,
-                message: "Out of Bound"
+                message: 'Out of Bound'
             });
         } else {
             return res.json(crowds.slice(pageId * pageSz, (pageId + 1) * pageSz));
@@ -51,7 +44,7 @@ exports.list = function(req, res) {
 
 //count
 exports.count = function(req, res) {
-    CrowdSingle.find().sort("-created").exec(function(err, crowds) {
+    CrowdSingle.find().sort('-created').exec(function(err, crowds) {
         if (err) {
             return res.send({
                 error: true,
@@ -60,7 +53,7 @@ exports.count = function(req, res) {
         } else {
             return res.send({
                 error: false,
-                message: "",
+                message: '',
                 results: {
                     count: crowds.length
                 }
@@ -97,7 +90,7 @@ exports.update = function(req, res) {
     var crowd = req.crowd;
 
     for (var field in req.body) {
-        console.log("field: " + field);
+        console.log('field: ' + field);
         crowd[field] = req.body[field]
     }
 
@@ -115,7 +108,7 @@ exports.update = function(req, res) {
 
 //delete
 exports.delete = function(req, res) {
-    console.log("run delete");
+    console.log('run delete');
     if (req.error) {
         console.log(req.error);
         return res.send({

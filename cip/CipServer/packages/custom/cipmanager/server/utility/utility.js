@@ -1,9 +1,5 @@
-/**
- * Created by xunyang on 2/22/16.
- */
 'use strict';
 var http = require('http');
-var qs = require('querystring');
 var config = require('meanio').loadConfig();
 
 //http GET restful API
@@ -18,7 +14,7 @@ exports.get = function(endpoint, queryStr, cb) {
         path += '?' + queryStr;
     }
 
-    console.log("request path: " + path);
+    console.log('request path: ' + path);
     var options = {
         hostname: config.remoteServer.crowdServer.host,
         port: config.remoteServer.crowdServer.port,
@@ -62,7 +58,7 @@ exports.post = function(endpoint, queryStr, data, cb) {
         path += '?' + queryStr;
     }
 
-    console.log("request path: " + path + "\nbody = " + data);
+    console.log('request path: ' + path + '\nbody = ' + data);
     var options = {
         hostname: config.remoteServer.crowdServer.host,
         port: config.remoteServer.crowdServer.port,
@@ -99,41 +95,41 @@ exports.post = function(endpoint, queryStr, data, cb) {
 }
 
 var validateCondition = function(selector) {
-    var tag = selector["tag"];
-    var ontology = selector["ontology"];
-    var behavior = selector["behavior"];
+    var tag = selector['tag'];
+    var ontology = selector['ontology'];
+    var behavior = selector['behavior'];
 
     if (!tag || !ontology || !behavior) {
-        console.log("Func validateCondition, absent tag, ontology or behavior");
+        console.log('Func validateCondition, absent tag, ontology or behavior');
         return false;
     }
 
     for (var i = 0; i < tag.length; ++i) {
         var item = tag[i];
-        if (!item["factor"] || !item["operator"] || !item["weight"] || !item["name"]) {
-            console.log("Field absent in tag");
+        if (!item['factor'] || !item['operator'] || !item['weight'] || !item['name']) {
+            console.log('Field absent in tag');
             return false;
         }
     }
 
     for (var i = 0; i < ontology.length; ++i) {
         var item = ontology[i];
-        if (!item["factor"] || !item["operator"] || !item["weight"] || !item["name"]) {
-            console.log("Field absent in ontology");
+        if (!item['factor'] || !item['operator'] || !item['weight'] || !item['name']) {
+            console.log('Field absent in ontology');
             return false;
         }
     }
 
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
-        if (!item["objectType"] || !item["action"] || !item["operator"] || !item["value"]  || !item["timeType"]) {
-            console.log("Field absent in hehavior");//|| !item["startTime"] || !item["endTime"]
+        if (!item['objectType'] || !item['action'] || !item['operator'] || !item['value']  || !item['timeType']) {
+            console.log('Field absent in hehavior');//|| !item["startTime"] || !item["endTime"]
             return false;
         }
-        if ((item["objectType"] == 'Category' || item["objectType"] == 'Contains')
-            && (!item["ontologyType"] || !item["objectId"])
-            || item["objectType"] == 'Item' && !item["objectId"])  {
-            console.log("Field absent in hehavior");
+        if ((item['objectType'] == 'Category' || item['objectType'] == 'Contains')
+            && (!item['ontologyType'] || !item['objectId'])
+            || item['objectType'] == 'Item' && !item['objectId'])  {
+            console.log('Field absent in hehavior');
             return false;
         }
     }
@@ -165,6 +161,6 @@ exports.getErrorMessage = function(err) {
             if (err.errors[errName].message) return err.errors[errName].message;
         }
     } else {
-        return "Unknown server error";
+        return 'Unknown server error';
     }
 };

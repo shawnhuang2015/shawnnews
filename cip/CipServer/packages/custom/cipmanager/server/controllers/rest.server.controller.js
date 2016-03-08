@@ -5,7 +5,7 @@
 var qs = require('querystring');
 var utility = require('../utility/utility');
 var util = require('util');
-var fs = require("fs");
+var fs = require('fs');
 /**
  * Module dependencies.
  */
@@ -22,7 +22,7 @@ var mongoose = require('mongoose'),
  Output: 1. user id list 2. user count
  */
 exports.getCrowdDetailByPost = function(req, res) {
-    if (!req.body["selector"]) {
+    if (!req.body['selector']) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector'"
@@ -34,7 +34,7 @@ exports.getCrowdDetailByPost = function(req, res) {
         });
     }
 
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
             return res.send({
                 error: true,
@@ -44,13 +44,13 @@ exports.getCrowdDetailByPost = function(req, res) {
 
         var body = {
             target: md.profile.target,
-            selector: generateCond(req.body["selector"], md.profile)
+            selector: generateCond(req.body['selector'], md.profile)
         };
 
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', '', bodyStr, function(err, resp) {
             if (err) {
-                console.log("Error to get crowd: " + bodyStr);
+                console.log('Error to get crowd: ' + bodyStr);
                 return res.send({
                     error: true,
                     message: err.message
@@ -79,7 +79,7 @@ exports.getCrowdDetailByPost = function(req, res) {
  Output: 1. user id list 2. user count
  */
 exports.getGroupCrowdDetailByPost = function(req, res) {
-    if (!req.body["selector"]) {
+    if (!req.body['selector']) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector'"
@@ -92,9 +92,9 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
     }
 
 
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
-            console.log("Error to get crowd detail");
+            console.log('Error to get crowd detail');
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -107,9 +107,9 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         };
 
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", '', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', '', bodyStr, function(err, resp) {
             if (err) {
-                console.log("Error to get crowd: " + bodyStr);
+                console.log('Error to get crowd: ' + bodyStr);
                 return res.send({
                     error: true,
                     message: err.message
@@ -138,7 +138,7 @@ Input: cname - crowd name
 Output: 1. user id list 2. user count
  */
 exports.getCrowdDetailByGet = function(req, res) {
-    var crowdName = req.query["cname"];
+    var crowdName = req.query['cname'];
     if (!crowdName) {
         return res.send({
             error: true,
@@ -159,7 +159,7 @@ exports.getCrowdDetailByGet = function(req, res) {
     res.send({
         "results": {
             "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
+            "userIds": ['user_1', 'user_2', 'user_3']
         },
         "error": false,
         "message": ""
@@ -172,8 +172,8 @@ Method: POST
 Input: selector conditions - which express the crowding condition that the client choose on UI
 */
 exports.getCrowdCountByPost = function(req, res) {
-    console.log("Get Count: " + JSON.stringify(req.body));
-    if (!req.body["selector"]) {
+    console.log('Get Count: ' + JSON.stringify(req.body));
+    if (!req.body['selector']) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector'"
@@ -185,9 +185,9 @@ exports.getCrowdCountByPost = function(req, res) {
         });
     }
 
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
-            console.log("Error to get crowd count");
+            console.log('Error to get crowd count');
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -198,9 +198,9 @@ exports.getCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
             if (err) {
-                console.log("Error to create crowd count");
+                console.log('Error to create crowd count');
                 return res.send({
                     error: true,
                     message: err.message
@@ -227,7 +227,7 @@ exports.getCrowdCountByPost = function(req, res) {
  Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
  */
 exports.getGroupCrowdCountByPost = function(req, res) {
-    if (!req.body["selector"]) {
+    if (!req.body['selector']) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector'"
@@ -240,9 +240,9 @@ exports.getGroupCrowdCountByPost = function(req, res) {
     }
 
     //var selector = JSON.stringify(req.body);
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
-            console.log("Error to get crowd count");
+            console.log('Error to get crowd count');
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -253,9 +253,9 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post("crowd/v1/user_search", 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
             if (err) {
-                console.log("Error to create crowd count");
+                console.log('Error to create crowd count');
                 return res.send({
                     error: true,
                     message: err.message
@@ -283,7 +283,7 @@ Method: GET
 Input: cname - crowd name
  */
 exports.getCrowdCountByGet = function(req, res) {
-    var crowdName = req.query["cname"];
+    var crowdName = req.query['cname'];
     if (!crowdName) {
         return res.send({
             error: true,
@@ -375,13 +375,13 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
     function updateTag(name, value) {
         CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
-                console.log("Error to read crowd: " + name);
+                console.log('Error to read crowd: ' + name);
             } else {
                 crowd.tagAdded = value;
                 crowd.file = name + '.user';
                 crowd.save(function(err) {
                     if (err) {
-                        console.log("Error to create crowd: " + name);
+                        console.log('Error to create crowd: ' + name);
                         return;
                     }
                 });
@@ -390,25 +390,25 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
     }
 
     function writeUserToFile(res, path) {
-        var data = "UserCount: " + res.results.count + "\n";
+        var data = 'UserCount: ' + res.results.count + "\n";
         for (var k = 0; k < res.results.userIds.length; ++k) {
             data += res.results.userIds[k] + "\n";
         }
         fs.writeFile(path, data,  function(err) {
             if (err) {
-                console.log("Error to wirte file: " + path);
+                console.log('Error to wirte file: ' + path);
             } else {
-                console.log("Success to wirte file: " + path);
+                console.log('Success to wirte file: ' + path);
             }
         });
     }
 
     condition = JSON.parse(condition);
     if (crowdtype == 'static') {
-        SemanticMetaData.findOne({name: "SemanticMetaData"}, function (err, md) {
+        SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
             if (err) {
                 updateTag(name, -1);
-                console.log("Error to create crowd: " + name);
+                console.log('Error to create crowd: ' + name);
                 return;
             }
             var body = {
@@ -419,10 +419,10 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post("crowd/v1/create", "name=" + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + name, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
-                    console.log("Error to create crowd: " + name);
+                    console.log('Error to create crowd: ' + name);
                 } else {
                     var jsRes = JSON.parse(res);
                     if (jsRes.error == false) {
@@ -430,7 +430,7 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
                         updateTag(name, 1);
                     } else {
                         updateTag(name, -1);
-                        console.log("Error to create crowd: " + name + ', error: ' + jsRes.message);
+                        console.log('Error to create crowd: ' + name + ', error: ' + jsRes.message);
                     }
                 }
             });
@@ -439,7 +439,7 @@ exports.createCrowdRemote = function(name, crowdtype,  condition) {
         updateTag(name, 1);
         return;
     } else {
-        console.log("wrong crowd type: " + crowdtype);
+        console.log('wrong crowd type: ' + crowdtype);
     }
 }
 
@@ -451,9 +451,9 @@ Output: Sample users in the crowd, the number of returned users' size equals to 
  */
 exports.crowdSampleByPost = function(req, res) {
     var selector = JSON.stringify(req.body);
-    var count = req.query["count"];
+    var count = req.query['count'];
 
-    if (!req.body["selector"] || !count) {
+    if (!req.body['selector'] || !count) {
         return res.send({
             error: true,
             message: "Need Parameters 'selector', 'count'"
@@ -495,8 +495,8 @@ Input: 1. cname - crowd name
 Output: Sample users in the crowd, the number of returned users' size equals to 'count'
  */
 exports.crowdSampleByGet = function(req, res) {
-    var crowdName = req.query["cname"];
-    var count = req.query["count"];
+    var crowdName = req.query['cname'];
+    var count = req.query['count'];
     if (!crowdName || !count) {
         return res.send({
             error: true,
@@ -521,7 +521,7 @@ exports.crowdSampleByGet = function(req, res) {
             "count": 10
         },
         "error": false,
-        "message": ""
+        "message": ''
     });
 
 }
@@ -539,15 +539,15 @@ Output: return the number of persons in the deleted crowd
 exports.deleteCrowdRemote = function(name) {
      utility.get('crowd/v1/delete', 'name=' + name, function(err, result) {
          if (err) {
-             console.log("delete crowd error: " + err.message);
+             console.log('delete crowd error: ' + err.message);
              return;
          }
          var jsRes = JSON.parse(result);
          if (jsRes.error) {
-             console.log("delete crowd " + name + " error: " + jsRes.message);
+             console.log('delete crowd ' + name + ', error: ' + jsRes.message);
              return;
          } else {
-             console.log("delete crowd: " + name + ", count: " + jsRes.results.count);
+             console.log('delete crowd: ' + name + ', count: ' + jsRes.results.count);
          }
      });
 }
@@ -565,15 +565,15 @@ we will update the data if it exceed the expiration time.
 */
 exports.readMetadata = function(req, res) {
     var curTime = new Date().getTime();
-    SemanticMetaData.findOne({name: "SemanticMetaData"}, function(err, md) {
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
             });
-        } else if (md && (curTime - md["created"].getTime() < config.semanticSyncTime * 1000)) {
-            console.log("time delta = " + (curTime - md["created"].getTime()));
-            return res.send(md["profile"]);
+        } else if (md && (curTime - md['created'].getTime() < config.semanticSyncTime * 1000)) {
+            console.log('time delta = ' + (curTime - md['created'].getTime()));
+            return res.send(md['profile']);
         } else {
             var TestFlag = false;
 
@@ -603,8 +603,8 @@ exports.readMetadata = function(req, res) {
                                     });
                                 } else {
                                     var metadata = new SemanticMetaData({
-                                        name: "SemanticMetaData",
-                                        profile: result["results"]
+                                        name: 'SemanticMetaData',
+                                        profile: result['results']
                                     });
                                     metadata.save(function (err) {
                                         if (err) {
@@ -613,7 +613,7 @@ exports.readMetadata = function(req, res) {
                                                 message: utility.getErrorMessage(err)
                                             });
                                         } else {
-                                            return res.json(metadata["profile"]);
+                                            return res.json(metadata['profile']);
                                         }
                                     });
                                 }
@@ -624,7 +624,7 @@ exports.readMetadata = function(req, res) {
             } else {
                 var result = {
                     "error": false,
-                    "message": "",
+                    "message": '',
                     "results": {
                         "target": "user",
                         "crowdIndex": {"vtype": "__crowd_index", "etype": "__user_to_crowd_index"},
@@ -732,7 +732,7 @@ exports.readMetadata = function(req, res) {
                             message: utility.getErrorMessage(err)
                         });
                     } else {
-                        var metadata = new SemanticMetaData({name: "SemanticMetaData", profile: result["results"]});
+                        var metadata = new SemanticMetaData({name: 'SemanticMetaData', profile: result['results']});
                         metadata.save(function (err) {
                             if (err) {
                                 return res.send({
@@ -740,7 +740,7 @@ exports.readMetadata = function(req, res) {
                                     message: utility.getErrorMessage(err)
                                 });
                             } else {
-                                return res.json(metadata["profile"]);
+                                return res.json(metadata['profile']);
                             }
                         });
                     }
@@ -751,6 +751,6 @@ exports.readMetadata = function(req, res) {
 }
 
 exports.download = function(req, res) {
-    var file = req.query["file"];
+    var file = req.query['file'];
     res.download(config.dataPath + file);
 };

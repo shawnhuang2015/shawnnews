@@ -45,7 +45,7 @@ var SemanticMetaDataSchema = new Schema({
                 element: [String],
                 datetype: {
                     type: String,
-                    enum: ["itemset", "number"]
+                    enum: ['itemset', 'number']
                 }
             }
         ],
