@@ -570,7 +570,7 @@ exports.readMetadata = function(req, res) {
             console.log('time delta = ' + (curTime - md.created.getTime()));
             return res.send(md.profile);
         } else {
-            var TestFlag = false;
+            var TestFlag = true;
 
             if (!TestFlag) {
                 utility.get('get_profile',
