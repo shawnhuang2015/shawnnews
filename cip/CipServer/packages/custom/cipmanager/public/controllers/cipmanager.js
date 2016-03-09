@@ -110,10 +110,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                 alert("权重不能为空");
                 return;
             }
-            if(condition_type == 'behavior') {
-                alert("值不能为空");
-                return;
-            }
             if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
                 alert("时间不能为空");
                 return;
