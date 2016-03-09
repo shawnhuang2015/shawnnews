@@ -12,14 +12,7 @@ angular.module('mean.cipmanager').config(['$stateProvider',
         })
         .state('create crowd', {
           url: '/crowd/create',
-          templateUrl: '/cipmanager/views/edit.html',
-          requiredCircles : {
-            circles: ['admin']
-          }
-        })
-        .state('edit crowd', {
-          url: '/crowd/:crowdName/edit',
-          templateUrl: '/cipmanager/views/edit.html',
+          templateUrl: '/cipmanager/views/createCrowd.html',
           requiredCircles : {
             circles: ['admin']
           }
@@ -28,7 +21,7 @@ angular.module('mean.cipmanager').config(['$stateProvider',
             url: '/crowd/save',
             templateUrl: '/cipmanager/views/saveCrowd.html',
             params: {
-                crowdDetail: null // 这个地方就可以随便你用了. 因为这个参数没在state的url中体现出来
+                crowdDetail: null
             },
             requiredCircles : {
                 circles: ['admin']
@@ -43,13 +36,6 @@ angular.module('mean.cipmanager').config(['$stateProvider',
         })
         .state('create group', {
             url: '/crowd/group/',
-            templateUrl: '/cipmanager/views/createGroup.html',
-            requiredCircles : {
-                circles: ['admin']
-            }
-        })
-        .state('edit group', {
-            url: '/crowd/group/:groupName/edit',
             templateUrl: '/cipmanager/views/createGroup.html',
             requiredCircles : {
                 circles: ['admin']
