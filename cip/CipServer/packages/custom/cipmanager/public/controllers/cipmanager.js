@@ -45,7 +45,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         $scope.ontology_factor = [];
 
         $scope.operator = [
-            '>=', '<=', ">", "<", "<>", "=", "like", "dislike"
+            '>=', '<=', ">", "<", "<>", "="//, "like", "dislike"
         ];
 
         $scope.behavior_operator = [
@@ -110,7 +110,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                 alert("权重不能为空");
                 return;
             }
-            if(condition_type == 'behavior' && !$scope.factors.value) {
+            if(condition_type == 'behavior') {
                 alert("值不能为空");
                 return;
             }
