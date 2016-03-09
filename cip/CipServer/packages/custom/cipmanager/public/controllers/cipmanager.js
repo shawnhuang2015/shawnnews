@@ -103,11 +103,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
                 return;
             }
             if(condition_type == 'ontology' && (!$scope.factors.factor || $scope.factors.factor == '')) {
-                alert("权重不能为空");
-                return;
-            }
-            if(condition_type == 'ontology' && !$scope.factors.weight) {
-                alert("权重不能为空");
+                alert("标签不能为空");
                 return;
             }
             if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {

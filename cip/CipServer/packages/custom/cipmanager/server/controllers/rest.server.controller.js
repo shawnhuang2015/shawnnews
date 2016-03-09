@@ -633,7 +633,7 @@ exports.readMetadata = function(req, res) {
             console.log('time delta = ' + (curTime - md.created.getTime()));
             return res.send(md.profile);
         } else {
-            var TestFlag = false;
+            var TestFlag = true;
 
             if (!TestFlag) {
                 utility.get('get_profile',
@@ -680,7 +680,7 @@ exports.readMetadata = function(req, res) {
                     }
                 );
             } else {
-                var result = { /*
+                var result = {
                     "error": false,
                     "message": '',
                     "results": {
@@ -781,7 +781,7 @@ exports.readMetadata = function(req, res) {
                             },
                             {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                         ]
-                    }*/
+                    }
                 };
                 SemanticMetaData.remove(function (err) {
                     if (err) {

@@ -25,7 +25,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
-                    length: data.results.count
+                    length: data.error ? 0 : data.results.count
                 });
             }).
             error(function(data, status, headers, config) {
@@ -40,7 +40,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
-                    userList: data.results.userIds
+                    userList: data.error ? [] : data.results.userIds
                 });
             }).
             error(function(data, status, headers, config) {
@@ -56,7 +56,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
-                    length: data.results.count
+                    length: data.error ? 0 : data.results.count
                 });
             }).
             error(function(data, status, headers, config) {
@@ -72,7 +72,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback(factor, {
                     success: !data.error,
-                    length: data.results.count
+                    length: data.error ? 0 : data.results.count
                 });
             }).
             error(function(data, status, headers, config) {
@@ -102,7 +102,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
-                    length: data.results.count
+                    length: data.error ? 0 : data.results.count
                 });
             }).
             error(function(data, status, headers, config) {
@@ -131,7 +131,7 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
-                    length: data.results.count
+                    length: data.error ? 0 : data.results.count
                 });
             }).
             error(function(data, status, headers, config) {
