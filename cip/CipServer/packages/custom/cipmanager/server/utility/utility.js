@@ -3,6 +3,10 @@ var http = require('http');
 var qs = require('qs');
 var config = require('meanio').loadConfig();
 
+function getBytes(string) {
+    return Buffer.byteLength(string, 'utf8');
+}
+
 //http GET restful API
 //Input: 1. endpoint
 //       2. queryStr - the part after '?' in the url
@@ -67,8 +71,8 @@ exports.post = function(endpoint, queryStr, data, cb) {
         path: path,
         method: 'POST',
         headers:{
-            'Content-Type': 'application/json'//,
-           // 'Content-Length': data.length
+            'Content-Type': 'application/json',
+            'Content-Length': getBytes(data)
         }
     };
 
