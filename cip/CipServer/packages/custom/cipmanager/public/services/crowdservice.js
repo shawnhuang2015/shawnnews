@@ -35,8 +35,8 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         };
 
-        var getUserList = function(crowdName, callback) {
-            $http.get('/api/rest/crowd/detail',{params:{cname:crowdName}}).
+        var getUserList = function(crowdName, type, callback) {
+            $http.get('/api/rest/crowd/sample',{params:{cname:crowdName,count:10,type:type}}).
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,

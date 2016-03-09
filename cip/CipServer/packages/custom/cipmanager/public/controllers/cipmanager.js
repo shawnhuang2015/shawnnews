@@ -427,7 +427,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initUserList = function () {
             $scope.findOne();
-            CrowdService.getUserList($stateParams.crowdName, function (data) {
+            CrowdService.getUserList($stateParams.crowdName, 'single', function (data) {
                 if (data.success) {
                     $scope.userList = data.userList;
                 } else {
@@ -446,7 +446,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
 
         $scope.initGroupUserList = function () {
             $scope.findGroup();
-            CrowdService.getUserList($stateParams.crowdName, function (data) {
+            CrowdService.getUserList($stateParams.groupName, 'multi', function (data) {
                 if (data.success) {
                     $scope.userList = data.userList;
                 } else {
@@ -466,13 +466,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController', ['$scope', 
         $scope.getGroupsByPageId = function (pageId) {
             Groupmanager.query({pageId: pageId, pageSz: $scope.page_size}, function (grouplist) {
                 $scope.grouplist = grouplist;
-            });
-        };
-
-        //Get userlist by page id
-        $scope.getUserlistByPageId = function () {
-            CrowdService.getUserList($stateParams.crowdName, function (crowds) {
-                $scope.crowds = crowds;
             });
         };
 
