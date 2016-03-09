@@ -421,7 +421,7 @@ exports.createCombinedCrowdRemote = function(name, crowdtype, condition) {
                 } else {
                     var jsRes = JSON.parse(res);
                     if (jsRes.error === false) {
-                        writeUserToFile(jsRes, config.dataPath + name + '.user');
+                        writeUserToFile(jsRes, config.dataPath + name + '.user' + '.comb');
                         updateTag(name, 1);
                     } else {
                         updateTag(name, -1);
@@ -484,7 +484,7 @@ exports.createSingleCrowdRemote = function(name, crowdtype,  condition) {
                 } else {
                     var jsRes = JSON.parse(res);
                     if (jsRes.error === false) {
-                        writeUserToFile(jsRes, config.dataPath + name + '.user');
+                        writeUserToFile(jsRes, config.dataPath + name + '.user' + '.single');
                         updateTag(name, 1);
                     } else {
                         updateTag(name, -1);
@@ -633,7 +633,7 @@ exports.readMetadata = function(req, res) {
             console.log('time delta = ' + (curTime - md.created.getTime()));
             return res.send(md.profile);
         } else {
-            var TestFlag = true;
+            var TestFlag = false;
 
             if (!TestFlag) {
                 utility.get('get_profile',
