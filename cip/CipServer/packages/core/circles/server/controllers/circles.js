@@ -194,23 +194,3 @@ function validateCircles(name, circles, callback) {
         });
     });
 }
-
-/*
-
-,
-        userRoles: function(req, res, next) {
-
-
-            var roles = req.user && req.user.roles ? req.user.roles : ['anonymous'];
-
-            var myRoles = {};
-
-            roles.forEach(function(role) {
-                if (req.circles[role]) {
-                    myRoles[role] = req.circes[role];
-                }
-            });
-
-            return myRoles;
-        }
-*/
