@@ -1,5 +1,6 @@
 'use strict';
 var http = require('http');
+var qs = require('qs');
 var config = require('meanio').loadConfig();
 
 //http GET restful API
@@ -7,7 +8,8 @@ var config = require('meanio').loadConfig();
 //       2. queryStr - the part after '?' in the url
 //       3. callback function - the format looks like callback(error, result)
 exports.get = function(endpoint, queryStr, cb) {
-    //var content = qs.stringify(queryStr);
+    var content = qs.stringify(queryStr);
+    //console.log('content: ' + content);
     var result = '';
     var path = '/' + endpoint;
     if (queryStr !== '') {

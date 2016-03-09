@@ -4,6 +4,7 @@ var rest = require('../controllers/rest.server.controller');
 var mongoose = require('mongoose');
 var CrowdSingle = mongoose.model('CrowdSingle');
 var CrowdGroup = mongoose.model('CrowdGroup');
+var config = require('meanio').loadConfig();
 
 //create
 exports.create = function(req, res) {
@@ -29,7 +30,8 @@ exports.create = function(req, res) {
                         message: utility.getErrorMessage(err)
                     });
                 } else {
-                    rest.createCombinedCrowdRemote(crowdGroup.crowdName, crowdGroup.type, JSON.stringify(crowdGroup.selector));
+                    rest.createCombinedCrowdRemote(config.CrowdPrefix.multi, crowdGroup.crowdName,
+                        crowdGroup.type, JSON.stringify(crowdGroup.selector));
                     return res.json(crowdGroup);
                 }
             });
@@ -105,12 +107,9 @@ exports.update = function(req, res) {
         });
     }
     var crowdGroup = req.crowd;
-    //console.log("crowdGroup:  " + JSON.stringify(crowdGroup));
 
     for (var field in req.body) {
         console.log('field: ' + field);
-        //console.log("body value: " + req.body[field]);
-        //console.log("crowdGroup value: " + crowdGroup[field]);
         crowdGroup[field] = req.body[field]
     }
 
@@ -161,7 +160,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            //rest.deleteCrowdRemote(crowd.crowdName);
+            rest.deleteCrowdRemote(config.CrowdPrefix.multi + crowd.crowdName, crowd.type);
             return res.json(crowd);
         }
     });

@@ -3,6 +3,7 @@ var utility = require('../utility/utility');
 var rest = require('../controllers/rest.server.controller');
 var mongoose = require('mongoose');
 var CrowdSingle = mongoose.model('CrowdSingle');
+var config = require('meanio').loadConfig();
 
 //create
 exports.create = function(req, res) {
@@ -15,7 +16,8 @@ exports.create = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            rest.createSingleCrowdRemote(crowd.crowdName, crowd.type, JSON.stringify(crowd.selector));
+            rest.createSingleCrowdRemote(config.CrowdPrefix.single, crowd.crowdName,
+                crowd.type, JSON.stringify(crowd.selector));
             return res.json(crowd);
         }
     });
@@ -126,7 +128,7 @@ exports.delete = function(req, res) {
                 message: utility.getErrorMessage(err)
             });
         } else {
-            //rest.deleteCrowdRemote(crowd.crowdName);
+            rest.deleteCrowdRemote(config.CrowdPrefix.single + crowd.crowdName, crowd.type);
             return res.json(crowd);
         }
     });

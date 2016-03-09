@@ -19,11 +19,7 @@ module.exports = function(Cipmanager, app, auth, database) {
 
   app.route('/api/rest/group/crowd/count').get(rest.getCrowdCountByGet).post(rest.getGroupCrowdCountByPost);
 
-  //app.route("/api/rest/crowd/delete").get(rest.deleteCrowdRemote);
-
-  //app.route("/api/rest/crowd/create").post(rest.createCrowdRemote);
-
-  app.route('/api/rest/crowd/sample').get(rest.crowdSampleByGet).post(rest.crowdSampleByPost);
+  app.route('/api/rest/crowd/sample').get(rest.crowdSampleByGet);
 
   //db single crowd
   app.route('/api/db/crowd').get(crowdsingle.list).post(crowdsingle.create);
@@ -46,6 +42,7 @@ module.exports = function(Cipmanager, app, auth, database) {
   //download
   app.route('/api/download').get(rest.download);
 
+  /*
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');
   });
@@ -66,4 +63,5 @@ module.exports = function(Cipmanager, app, auth, database) {
       res.send(html);
     });
   });
+  */
 };

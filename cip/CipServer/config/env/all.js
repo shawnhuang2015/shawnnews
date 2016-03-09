@@ -70,5 +70,13 @@ module.exports = {
     }
   },
   semanticSyncTime: 3600,
-  dataPath: rootPath + "/data/"
+  dataPath: rootPath + "/data/",
+  CrowdPrefix: {
+    single: "single_",
+    multi: "multi_"
+  },
+  CrowdFileSuffix: {
+    single: ".user.single",
+    multi: '.user.multi'
+  }
 };

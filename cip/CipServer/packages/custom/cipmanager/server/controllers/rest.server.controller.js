@@ -111,16 +111,6 @@ exports.getCrowdDetailByPost = function(req, res) {
         });
 
     });
-
-/*
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
-        },
-        "error": false,
-        "message": ""
-    });*/
 }
 
 /*
@@ -170,15 +160,6 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
         });
 
     });
-/*
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": ["user_1", "user_2", "user_3"]
-        },
-        "error": false,
-        "message": ""
-    });*/
 }
 
 /*
@@ -261,15 +242,6 @@ exports.getCrowdCountByPost = function(req, res) {
             }
         });
     });
-/*
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": []
-        },
-        "error": false,
-        "message": ""
-    });*/
 }
 
 /*
@@ -290,7 +262,6 @@ exports.getGroupCrowdCountByPost = function(req, res) {
         });
     }
 
-    //var selector = JSON.stringify(req.body);
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
             console.log('Error to get crowd count');
@@ -316,15 +287,6 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             }
         });
     });
-/*
-    res.send({
-        "results": {
-            "count": 3,
-            "userIds": []
-        },
-        "error": false,
-        "message": ""
-    });*/
 }
 
 /*
@@ -375,14 +337,14 @@ function writeUserToFile(res, path) {
     });
 }
 
-exports.createCombinedCrowdRemote = function(name, crowdtype, condition) {
+exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition) {
     function updateTag(name, value) {
         CrowdGroup.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
                 console.log('Error to read crowd: ' + name);
             } else {
                 crowd.tagAdded = value;
-                crowd.file = name + '.user' + '.comb';
+                crowd.file = name + config.CrowdFileSuffix.multi;
                 crowd.save(function(err) {
                     if (err) {
                         console.log('Error to create crowd: ' + name);
@@ -414,14 +376,14 @@ exports.createCombinedCrowdRemote = function(name, crowdtype, condition) {
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);
                 } else {
                     var jsRes = JSON.parse(res);
                     if (jsRes.error === false) {
-                        writeUserToFile(jsRes, config.dataPath + name + '.user' + '.comb');
+                        writeUserToFile(jsRes, config.dataPath + name + config.CrowdFileSuffix.multi);
                         updateTag(name, 1);
                     } else {
                         updateTag(name, -1);
@@ -443,14 +405,15 @@ exports.createCombinedCrowdRemote = function(name, crowdtype, condition) {
  Input: 1. selector conditions - which express the crowding condition that the client choose on UI
         2. crowd name
  */
-exports.createSingleCrowdRemote = function(name, crowdtype,  condition) {
+exports.createSingleCrowdRemote = function(prefix, name, crowdtype,  condition) {
     function updateTag(name, value) {
         CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
                 console.log('Error to read crowd: ' + name);
             } else {
+                console.log("Crowd: " + crowd);
                 crowd.tagAdded = value;
-                crowd.file = name + '.user' + '.single';
+                crowd.file = name + config.CrowdFileSuffix.single;
                 crowd.save(function(err) {
                     if (err) {
                         console.log('Error to create crowd: ' + name);
@@ -477,14 +440,14 @@ exports.createSingleCrowdRemote = function(name, crowdtype,  condition) {
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);
                 } else {
                     var jsRes = JSON.parse(res);
                     if (jsRes.error === false) {
-                        writeUserToFile(jsRes, config.dataPath + name + '.user' + '.single');
+                        writeUserToFile(jsRes, config.dataPath + name + config.CrowdFileSuffix.single);
                         updateTag(name, 1);
                     } else {
                         updateTag(name, -1);
@@ -502,50 +465,6 @@ exports.createSingleCrowdRemote = function(name, crowdtype,  condition) {
 }
 
 /*
-Method: POST
-Input: 1. selector conditions - which express the crowding condition that the client choose on UI
-       2. count - the number of persons that the client want to seee
-Output: Sample users in the crowd, the number of returned users' size equals to 'count'
- */
-exports.crowdSampleByPost = function(req, res) {
-    var selector = JSON.stringify(req.body);
-    var count = req.query.count;
-
-    if (!req.body.selector || !count) {
-        return res.send({
-            error: true,
-            message: "Need Parameters 'selector', 'count'"
-        });
-    } else if (!utility.validateSelector(req.body.selector)) {
-        return res.send({
-            error: true,
-            message: "wrong 'selector'"
-        });
-    }
-
-    /*
-     utility.post('crowdSample', 'count=' + count, cond, function(err, result) {
-        if (err) {
-            return res.send({
-                message: err.message
-            });
-        } else {
-            return res.send(result);
-        }
-    });
-    */
-
-    res.send({
-        results: {
-            count: 10
-        },
-        error: false,
-        message: ''
-    });
-
-}
-
-/*
 The API can be invoked just when the crowd has been created on crowding service
 Method: GET
 Input: 1. cname - crowd name
@@ -555,33 +474,42 @@ Output: Sample users in the crowd, the number of returned users' size equals to 
 exports.crowdSampleByGet = function(req, res) {
     var crowdName = req.query.cname;
     var count = req.query.count;
-    if (!crowdName || !count) {
+    var type = req.query.type; //single or multi
+    if (crowdName === undefined || count === undefined || type == undefined) {
         return res.send({
             error: true,
-            message: "Need Parameters 'cname', 'count'"
+            message: "Need Parameters 'cname', 'count', 'type'"
         });
     }
 
-    /*
-     utility.get('crowdSample', 'crowdName=' + crowdName + '&count=' + count, function(err, result) {
-         if (err) {
-             return res.send({
-                message: err.message
-             });
-         } else {
-            return res.send(result);
-         }
-     });
-     */
+    if (type !== 'single' && type != 'multi') {
+        return res.send({
+            error: true,
+            message: 'parameter type should be single/multi'
+        });
+    } else if (type == 'single') {
+        crowdName = config.CrowdPrefix.single + crowdName;
+    } else if (type == 'multi') {
+        crowdName = config.CrowdPrefix.multi + crowdName;
+    }
 
-    res.send({
-        results: {
-            count: 10
-        },
-        error: false,
-        message: ''
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
+        if (err) {
+            console.log('Error to sample crowd: ' + crowdName);
+            return;
+        }
+        var vtype = md.profile.crowdIndex.vtype;
+        utility.get('crowd/v1/get', 'name=' + crowdName + '&type=' + vtype + '&limit=' + count, function(err, resp) {
+            if (err) {
+                return res.send({
+                    error: true,
+                    message: err.message
+                });
+            } else {
+                return res.send(resp);
+            }
+        });
     });
-
 }
 
 exports.readCrowd = function(crowdName) {
@@ -594,20 +522,29 @@ It is used to delete the crowd on crowding service.
 Input: cname - crowd name
 Output: return the number of persons in the deleted crowd
  */
-exports.deleteCrowdRemote = function(name) {
-     utility.get('crowd/v1/delete', 'name=' + name, function(err, result) {
-         if (err) {
-             console.log('delete crowd error: ' + err.message);
-             return;
-         }
-         var jsRes = JSON.parse(result);
-         if (jsRes.error) {
-             console.log('delete crowd ' + name + ', error: ' + jsRes.message);
-             return;
-         } else {
-             console.log('delete crowd: ' + name + ', count: ' + jsRes.results.count);
-         }
-     });
+exports.deleteCrowdRemote = function(name, type) {
+    if (type == 'dynamic') {
+        return;
+    }
+    SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
+        if (err) {
+            console.log('Error to delete crowd: ' + name);
+            return;
+        }
+        var vtype = md.profile.crowdIndex.vtype;
+        utility.get('crowd/v1/delete', 'name=' + name + '&type=' + vtype, function (err, resp) {
+            if (err) {
+                console.log('Error to delete crowd: ' + name);
+            } else {
+                var jsRes = JSON.parse(resp);
+                if (jsRes.error === true) {
+                    console.log('Error to delete crowd: ' + name + ', mesg = ' + jsRes.message);
+                } else {
+                    console.log('delete crowd: ' + name);
+                }
+            }
+        });
+    });
 }
 
 
