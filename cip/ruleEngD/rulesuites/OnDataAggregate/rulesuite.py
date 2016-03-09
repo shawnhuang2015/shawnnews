@@ -54,11 +54,13 @@ def r4_operation_without_fingerprint(context):
         __W_RULE_RET(context , "ALERT: operation without fingureprint, bizEvtid:%s" % bizEvt.bizEvtId)
         # TODO: make it as a rule action
         perf.post({"rule":"r4_operation_without_fingerprint"}, 1.0)
-def r14_ip_query_frequency(context):
+def r21_short_signup(context):
     pass
-def r18_imei_login_frequency(context):
+def r24_jifeng_tuiguang_short(context):
     pass
-def r19_diff_device_login(context):
+def r25_same_c_netsegment_succid(context):
     pass
-def r20_gps_query_frequency(context):
+def r26_same_gps_region_succid(context):
+    pass
+def r27_same_c_netsegment_user_activate(context):
     pass

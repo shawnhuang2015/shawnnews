@@ -1,4 +1,17 @@
 r4_operation_without_fingerprint:
 -   start
+r14_ip_query_frequency:
+-   start
+r18_imei_login_frequency:
+-   start
+r19_diff_device_login: 
+-   start
+r20_gps_query_frequency:
+-   start
+
 end:
 -   r4_operation_without_fingerprint
+-   r14_ip_query_frequency
+-   r18_imei_login_frequency
+-   r19_diff_device_login
+-   r20_gps_query_frequency
