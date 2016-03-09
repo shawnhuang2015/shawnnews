@@ -99,7 +99,7 @@ var validateCondition = function(selector) {
     var ontology = selector.ontology;
     var behavior = selector.behavior;
 
-    if (!tag || !ontology || !behavior) {
+    if (tag === undefined || ontology === undefined || behavior === undefined) {
         console.log('Func validateCondition, absent tag, ontology or behavior');
         return false;
     }

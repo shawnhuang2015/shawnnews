@@ -29,7 +29,7 @@ exports.create = function(req, res) {
                         message: utility.getErrorMessage(err)
                     });
                 } else {
-                    //rest.createCombinedCrowdRemote(crowdGroup.crowdName, crowdGroup.type, JSON.stringify(crowdGroup.selector));
+                    rest.createCombinedCrowdRemote(crowdGroup.crowdName, crowdGroup.type, JSON.stringify(crowdGroup.selector));
                     return res.json(crowdGroup);
                 }
             });
