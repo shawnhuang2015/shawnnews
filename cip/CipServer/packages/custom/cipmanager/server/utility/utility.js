@@ -132,8 +132,10 @@ var validateCondition = function(selector) {
             item.action === undefined ||
             item.operator === undefined ||
             item.value === undefined  ||
-            item.timeType === undefined) {
-            console.log('Field absent in hehavior');//|| !item["startTime"] || !item["endTime"]
+            item.timeType === undefined ||
+            item.startTime === undefined ||
+            item.endTime === undefined) {
+            console.log('Field absent in hehavior');
             return false;
         }
         if ((item.objectType === 'Category' ||
