@@ -65,8 +65,8 @@ exports.post = function(endpoint, queryStr, data, cb) {
         path: path,
         method: 'POST',
         headers:{
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
+            'Content-Type': 'application/json'//,
+           // 'Content-Length': data.length
         }
     };
 
@@ -106,7 +106,10 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < tag.length; ++i) {
         var item = tag[i];
-        if (!item.factor || !item.operator || !item.weight || !item.name) {
+        if (item.factor === undefined ||
+            item.operator === undefined ||
+            item.weight === undefined ||
+            item.name === undefined) {
             console.log('Field absent in tag');
             return false;
         }
@@ -114,7 +117,10 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < ontology.length; ++i) {
         var item = ontology[i];
-        if (!item.factor || !item.operator || !item.weight || !item.name) {
+        if (item.factor === undefined ||
+            item.operator === undefined ||
+            item.weight === undefined ||
+            item.name === undefined) {
             console.log('Field absent in ontology');
             return false;
         }
@@ -122,11 +128,18 @@ var validateCondition = function(selector) {
 
     for (var i = 0; i < behavior.length; ++i) {
         var item = behavior[i];
-        if (!item.objectType || !item.action || !item.operator || !item.value  || !item.timeType) {
+        if (item.objectType === undefined ||
+            item.action === undefined ||
+            item.operator === undefined ||
+            item.value === undefined  ||
+            item.timeType === undefined) {
             console.log('Field absent in hehavior');//|| !item["startTime"] || !item["endTime"]
             return false;
         }
-        if ((item.objectType === 'Category' || item.objectType === 'Contains') && (!item.ontologyType || !item.objectId)  || item.objectType === 'Item' && !item.objectId)  {
+        if ((item.objectType === 'Category' ||
+            item.objectType === 'Contains') && (item.ontologyType === undefined ||
+            item.objectId === undefined)  ||
+            item.objectType === 'Item' && item.objectId === undefined)  {
             console.log('Field absent in hehavior');
             return false;
         }
