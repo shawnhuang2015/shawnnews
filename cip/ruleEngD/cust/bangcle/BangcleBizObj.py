@@ -55,3 +55,10 @@ class BangcleAcct_BizEvt_Udid_Obj(object):
         gpath = "account[\"%s\"]-bizEvent_account->bizEvent{bizEvent.action_type = '%s'}-bizEvent_udid->udid=>.project{bizEvent._external_id}" % (account, biz_op_type)
         gpathObj = GPathBizObj(config, gpath)
         self.udidList = gpathObj.getList()
+
+class BangcleCNetSegment_BizEvt_Obj(object):
+    def __init__(self, cnetsegment, biz_op_type, ts_start, ts_end):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "c_netsegment[\"%s\"]-c_netsegment_ip->ip-bizEvent_ip->bizEvent{bizEvent.action_type = '%s'}-bizEvent_udid->udid=>.project{bizEvent._external_id}" % (cnetsegment, biz_op_type)
+        gpathObj = GPathBizObj(config, gpath)
+        self.bizEvtList = gpathObj.getList()
