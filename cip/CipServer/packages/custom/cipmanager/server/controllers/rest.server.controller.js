@@ -86,7 +86,7 @@ exports.getCrowdDetailByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -134,7 +134,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
 
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd detail');
             return res.send({
                 error: true,
@@ -218,7 +218,7 @@ exports.getCrowdCountByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd count');
             return res.send({
                 error: true,
@@ -263,7 +263,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd count');
             return res.send({
                 error: true,
@@ -570,7 +570,7 @@ exports.readMetadata = function(req, res) {
             console.log('time delta = ' + (curTime - md.created.getTime()));
             return res.send(md.profile);
         } else {
-            var TestFlag = true;
+            var TestFlag = false;
 
             if (!TestFlag) {
                 utility.get('get_profile',

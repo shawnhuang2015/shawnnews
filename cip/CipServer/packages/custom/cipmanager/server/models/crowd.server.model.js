@@ -165,7 +165,7 @@ var CrowdGroupSchema = new Schema({
     tagAdded: {
         type: Number,
         required: true,
-        default: 1
+        default: 0
     }, //创建完成＝1 创建中＝0 创建失败＝－1
     file: {
         type: String,
