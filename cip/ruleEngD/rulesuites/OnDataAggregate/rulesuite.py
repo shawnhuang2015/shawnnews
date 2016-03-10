@@ -28,6 +28,10 @@ from monitor.Perf import Perf
 from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj 
 from cust.bangcle.BangcleBizObj import BangcleCNetSegment_BizEvt_Obj 
 
+# TODO: Below two move to util
+import datetime
+import time
+
 #TODO: move global definition to Perf package itself
 perf = Perf("192.168.33.70","rule_result")
 
@@ -86,7 +90,14 @@ def r26_same_gps_region_succid(context):
 def r27_same_c_netsegment_user_activate(context):
     dataAggEvt = __REQ_EVT(context)
     if dataAggEvt.measurement == "c_netsegment_user_activate":
-        ret = BangcleCNetSegment_BizEvt_Obj(dataAggEvt.cnetsegment, "activate", ts_start, ts_end)
+        dt = datetime.date.today()
+        dt = datetime.datetime(dt.year, dt.month, dt.day)
+        unixtime = time.mktime(dt.timetuple())
+        ts0 = int(unixtime)
+        hour2 = ts0 + 2*3600
+        hour6 = ts0 + 6*3600
+
+        ret = BangcleCNetSegment_BizEvt_Obj(dataAggEvt.cnetsegment, "activate", hour2, hour6)
         bizEvts = ret.bizEvtList
         if len(bizEvts) > 100:
             __W_RULE_RET(context , "ALERT: to many user activation on  c network segment %s" % len(bizEvts))
