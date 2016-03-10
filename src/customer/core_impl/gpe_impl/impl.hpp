@@ -791,6 +791,8 @@ class UDFRunner : public ServiceImplBase {
   // return all ontologies of entities as well as behaviour def
   bool RunUDF_GetProfile(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
+    int threshold = request.jsoptions_["threshold"][0].asUInt64();
+
     const Json::Value &prof = semantic_schema[PROF];
     std::set<std::string> obj;
 
@@ -869,7 +871,7 @@ class UDFRunner : public ServiceImplBase {
         it != onto.end(); ++it) {
       jsoptions["name"].append(*it);
     }
-    jsoptions["threshold"].append(100000);
+    jsoptions["threshold"].append(threshold);
     request.jsoptions_ = jsoptions;
 
     // since "tag" ontology needs more peculiar treatment, so save it
