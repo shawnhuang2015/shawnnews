@@ -1,8 +1,8 @@
 
 curl -X POST 'http://localhost:9000/semantic_def' -d '{
-  "object": ["inuser", "picture"],
+  "object": ["user", "pic"],
   "profile": {
-    "target": "inuser",
+    "target": "user",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
       {"name": "age", "datatype": "itemset"}
@@ -13,36 +13,26 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
 
     "behaviour": [
       {
-        "name": "postPicture",
-        "subject": [{"name": "inuser", "etype": "inuser_with_postPicture"}],
-        "object": [{"name": "picture", "etype": "postPicture_with_picture"}]
-      },
-      {
-        "name": "viewPicture",
-        "subject": [{"name": "inuser", "etype": "inuser_with_viewPicture"}],
-        "object": [{"name": "picture", "etype": "viewPicture_with_picture"}]
-      },
-      {
-        "name": "sharePicture",
-        "subject": [{"name": "inuser", "etype": "inuser_with_sharePicture"}],
-        "object": [{"name": "picture", "etype": "sharePicture_with_picture"}]
+        "name": "post",
+        "subject": [{"name": "user", "etype": "user_post"}],
+        "object": [{"name": "pic", "etype": "post_pic"}]
       }
     ]
   },
   "ontology": ["interest", "type", "tag"],
   "object_ontology": [
-    {"object": "inuser", "ontology": ["tag", "interest"]},
-    {"object": "picture", "ontology": ["type"]}
+    {"object": "user", "ontology": ["tag", "interest"]},
+    {"object": "pic", "ontology": ["type"]}
   ]
 }'
 
-curl -X POST 'http://localhost:9000/ontology_import?object=inuser&name=tag' --data-binary @tag.csv
-curl -X POST 'http://localhost:9000/ontology_import?object=picture&name=type' --data-binary @type.csv
-curl -X POST 'http://localhost:9000/set_user_tag?object=inuser&name=tag&sep=;' -d 'u1;gender.male|0.1'
-curl -X GET 'http://localhost:9000/get_tag?object=inuser&id=u1&name=tag&verbose=1'
+curl -X POST 'http://localhost:9000/ontology_import?object=user&name=tag' --data-binary @tag.csv
+curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=type' --data-binary @type.csv
+curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=tag&sep=;' -d 'u1;gender.male|0.1'
+curl -X GET 'http://localhost:9000/get_tag?object=user&id=u1&name=tag&verbose=1'
 curl -X GET 'http://localhost:9000/get_profile'
 curl -X GET 'http://localhost:9000/get_ontology?name=tag'
-curl -X POST 'http://localhost:9000/set_item_tag?object=picture&name=type&sep=;' -d 'p1;apple'
+curl -X POST 'http://localhost:9000/set_item_tag?object=pic&name=type&sep=;' -d 'p1;apple'
 curl -X POST 'http://localhost:9000/clear_semantic'
 
 ### as I found out, cannot put args like this `sep=;&more=true`, otherwise `sep` won't be `;`, why?
