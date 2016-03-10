@@ -78,12 +78,12 @@ exports.getCrowdDetailByPost = function(req, res) {
     if (!req.body.selector) {
         return res.send({
             error: true,
-            message: "Need Parameters 'selector'"
+            message: 'miss "selector"'
         });
     } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
-            message: "wrong 'selector'"
+            message: 'wrong "selector"'
         });
     }
 
@@ -126,12 +126,12 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
     if (!req.body.selector) {
         return res.send({
             error: true,
-            message: "Need Parameters 'selector'"
+            message: 'miss "selector"'
         });
     } else if (!utility.validateSelectorArray(req.body.selector)) {
         return res.send({
             error: true,
-            message: "wrong 'selector'"
+            message: 'wrong "selector"'
         });
     }
 
@@ -178,7 +178,7 @@ exports.getCrowdDetailByGet = function(req, res) {
     if (!crowdName) {
         return res.send({
             error: true,
-            message: "Need Parameters 'cname'"
+            message: 'miss "cname"'
         });
     }
     /*
@@ -213,12 +213,12 @@ exports.getCrowdCountByPost = function(req, res) {
     if (!req.body.selector) {
         return res.send({
             error: true,
-            message: "Need Parameters 'selector'"
+            message: 'miss "selector"'
         });
     } else if (!utility.validateSelector(req.body.selector)) {
         return res.send({
             error: true,
-            message: "wrong 'selector'"
+            message: 'wrong "selector"'
         });
     }
 
@@ -259,12 +259,12 @@ exports.getGroupCrowdCountByPost = function(req, res) {
     if (!req.body.selector) {
         return res.send({
             error: true,
-            message: "Need Parameters 'selector'"
+            message: 'miss "selector"'
         });
     } else if (!utility.validateSelectorArray(req.body.selector)) {
         return res.send({
             error: true,
-            message: "wrong 'selector'"
+            message: 'wrong "selector"'
         });
     }
 
@@ -306,7 +306,7 @@ exports.getCrowdCountByGet = function(req, res) {
     if (!crowdName) {
         return res.send({
             error: true,
-            message: "Need Parameters 'cname'"
+            message: 'miss "cname"'
         });
     }
     /*
@@ -371,7 +371,7 @@ exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition)
         }
 
         SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
-            if (err) {
+            if (err || md === null) {
                 updateTag(name, -1);
                 console.log('Error to create crowd: ' + name);
                 return;
@@ -436,7 +436,7 @@ exports.createSingleCrowdRemote = function(prefix, name, crowdtype,  condition) 
     condition = JSON.parse(condition);
     if (crowdtype === 'static') {
         SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
-            if (err) {
+            if (err || md === null) {
                 updateTag(name, -1);
                 console.log('Error to create crowd: ' + name);
                 return;
@@ -488,7 +488,7 @@ exports.crowdSampleByGet = function(req, res) {
     if (crowdName === undefined || count === undefined || type === undefined) {
         return res.send({
             error: true,
-            message: "Need Parameters 'cname', 'count', 'type'"
+            message: 'miss "cname", "count" or "type"'
         });
     }
 
@@ -504,7 +504,7 @@ exports.crowdSampleByGet = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to sample crowd: ' + crowdName);
             return;
         }
@@ -538,7 +538,7 @@ exports.deleteCrowdRemote = function(name, type) {
         return;
     }
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to delete crowd: ' + name);
             return;
         }
@@ -585,16 +585,13 @@ exports.readMetadata = function(req, res) {
             var TestFlag = false;
 
             if (!TestFlag) {
-                utility.get('get_profile',
-                    '',
-                    function (err, resp) {
+                utility.get('get_profile', 'threshold=' + config.OntoLimit, function (err, resp) {
                         if (err) {
                             return res.send({
                                 error: true,
                                 message: err.message
                             });
                         } else {
-                            //return res.json(resp);
                             var result = JSON.parse(resp);
                             if (result.error === true) {
                                 return res.send({

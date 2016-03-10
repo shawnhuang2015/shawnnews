@@ -69,7 +69,7 @@ module.exports = {
       port: 9000
     }
   },
-  semanticSyncTime: 3600,
+  semanticSyncTime: 1800,
   dataPath: rootPath + "/data/",
   CrowdPrefix: {
     single: "single_",
@@ -78,5 +78,6 @@ module.exports = {
   CrowdFileSuffix: {
     single: ".user.single",
     multi: '.user.multi'
-  }
+  },
+  OntoLimit: 1024
 };

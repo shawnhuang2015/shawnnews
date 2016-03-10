@@ -170,7 +170,7 @@ exports.validateSelectorArray = function(selector) {
 }
 
 exports.getErrorMessage = function(err) {
-    if (err.errors) {
+    if (err && err.errors) {
         for (var errName in err.errors) {
             if (err.errors[errName].message) return err.errors[errName].message;
         }
