@@ -22,10 +22,31 @@ Admin.register(function(app, auth, database, circles) {
     //    menu: 'main'
     //});
     Admin.menus.add({
-        title: 'CROWD_MANAGER',
+        title: 'Crowd_Manager',
         link: 'crowd',
         roles: ['admin'],
-        icon: icons + 'users.png',
+        icon: icons + 'crowd.png',
+        menu: 'admin'
+    });
+    Admin.menus.add({
+        title: 'Create_Crowd',
+        link: 'create crowd',
+        roles: ['admin'],
+        icon: icons + 'create.png',
+        menu: 'admin'
+    });
+    Admin.menus.add({
+        title: 'Group_Manager',
+        link: 'group',
+        roles: ['admin'],
+        icon: icons + 'group.png',
+        menu: 'admin'
+    });
+    Admin.menus.add({
+        title: 'Create_Group',
+        link: 'create group',
+        roles: ['admin'],
+        icon: icons + 'create_group.png',
         menu: 'admin'
     });
     //Admin.menus.add({

@@ -1,6 +1,5 @@
 'use strict';
 var http = require('http');
-var qs = require('qs');
 var config = require('meanio').loadConfig();
 
 function getBytes(string) {
@@ -12,15 +11,13 @@ function getBytes(string) {
 //       2. queryStr - the part after '?' in the url
 //       3. callback function - the format looks like callback(error, result)
 exports.get = function(endpoint, queryStr, cb) {
-    var content = qs.stringify(queryStr);
-    //console.log('content: ' + content);
     var result = '';
     var path = '/' + endpoint;
     if (queryStr !== '') {
         path += '?' + queryStr;
     }
 
-    console.log('request path: ' + path);
+    console.log('GET request path: ' + path);
     var options = {
         hostname: config.remoteServer.crowdServer.host,
         port: config.remoteServer.crowdServer.port,
@@ -31,10 +28,9 @@ exports.get = function(endpoint, queryStr, cb) {
     var req = http.request(options, function (res) {
         res.on('data', function (chunk) {
             result += chunk;
-            console.log(result);
         });
         res.on('end', function() {
-            console.log(result);
+            console.log('GET response: ' + result);
             if (cb) {
                 cb(null, result);
             }
@@ -57,14 +53,13 @@ exports.get = function(endpoint, queryStr, cb) {
 //       3. data - data payload appear in the post data part
 //       4. callback function - the format looks like callback(error, result)
 exports.post = function(endpoint, queryStr, data, cb) {
-    //var content = qs.stringify(queryStr);
     var result = '';
     var path = '/' + endpoint;
     if (queryStr !== '') {
         path += '?' + queryStr;
     }
 
-    console.log('request path: ' + path + '\nbody = ' + data);
+    console.log('POST request path: ' + path + '\nbody = ' + data);
     var options = {
         hostname: config.remoteServer.crowdServer.host,
         port: config.remoteServer.crowdServer.port,
@@ -81,7 +76,7 @@ exports.post = function(endpoint, queryStr, data, cb) {
             result += chunk;
         });
         res.on('end', function() {
-            console.log(result);
+            console.log('POST response: ' + result);
             if (cb) {
                 cb(null, result);
             }
@@ -106,7 +101,7 @@ var validateCondition = function(selector) {
     var behavior = selector.behavior;
 
     if (tag === undefined || ontology === undefined || behavior === undefined) {
-        console.log('Func validateCondition, absent tag, ontology or behavior');
+        console.log('Func validateCondition| miss tag, ontology or behavior');
         return false;
     }
 
@@ -127,7 +122,7 @@ var validateCondition = function(selector) {
             item.operator === undefined ||
             item.weight === undefined ||
             item.name === undefined) {
-            console.log('Field absent in ontology');
+            console.log('Func validateCondition| miss fields in ontology');
             return false;
         }
     }
@@ -141,14 +136,14 @@ var validateCondition = function(selector) {
             item.timeType === undefined ||
             item.startTime === undefined ||
             item.endTime === undefined) {
-            console.log('Field absent in hehavior');
+            console.log('Func validateCondition| miss fields in hehavior');
             return false;
         }
         if ((item.objectType === 'Category' ||
             item.objectType === 'Contains') && (item.ontologyType === undefined ||
             item.objectId === undefined)  ||
             item.objectType === 'Item' && item.objectId === undefined)  {
-            console.log('Field absent in hehavior');
+            console.log('Func validateCondition| miss fields in hehavior');
             return false;
         }
     }
@@ -175,7 +170,7 @@ exports.validateSelectorArray = function(selector) {
 }
 
 exports.getErrorMessage = function(err) {
-    if (err.errors) {
+    if (err && err.errors) {
         for (var errName in err.errors) {
             if (err.errors[errName].message) return err.errors[errName].message;
         }

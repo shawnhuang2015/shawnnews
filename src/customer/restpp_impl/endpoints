@@ -117,6 +117,10 @@
     "GET": {
       "function": "get_profile",
       "parameters": {
+        "threshold": {
+          "type": "UINT64",
+          "default": "100000"
+        }
       },
       "summary": "export profile."
     }
@@ -321,6 +325,21 @@
             "limit": {
               "type": "UINT32",
               "min_count": 0
+            }
+          }
+        }
+      },
+      "delete": {
+        "GET/POST": {
+          "function": "delete_crowd_by_name",
+          "parameters": {
+            "name":{
+              "type":"STRING",
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type":"TYPENAME"
             }
           }
         }

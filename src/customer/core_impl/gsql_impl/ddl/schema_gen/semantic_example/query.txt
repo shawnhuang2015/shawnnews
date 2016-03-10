@@ -5,12 +5,10 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
     "target": "user",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
-      {"name": "age", "datatype": "itemset"},
-      {"name": "quality", "datatype": "itemset"}
+      {"name": "age", "datatype": "itemset"}
     ],
     "interest_intent": [
-      {"ontology": "interest"},
-      {"ontology": "type"}
+      {"ontology": "interest"}
     ],
 
     "behaviour": [
@@ -23,7 +21,7 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
   },
   "ontology": ["interest", "type", "tag"],
   "object_ontology": [
-    {"object": "user", "ontology": ["tag"]},
+    {"object": "user", "ontology": ["tag", "interest"]},
     {"object": "pic", "ontology": ["type"]}
   ]
 }'

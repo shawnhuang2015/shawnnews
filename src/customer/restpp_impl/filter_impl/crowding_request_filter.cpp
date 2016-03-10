@@ -92,6 +92,7 @@ extern "C" {
         return;
       } else {
         std::string payload(user_request->data, user_request->data_length);
+        std::cout << "payload: " << payload << std::endl;
 
         Json::Value &jsoptions = gsql_request->jsoptions;
         Json::Value root;

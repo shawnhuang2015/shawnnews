@@ -10,6 +10,13 @@ angular.module('mean.cipmanager').config(['$stateProvider',
             circles: ['admin']
           }
         })
+        .state('all groups', {
+            url: '/crowd/group',
+            templateUrl: 'cipmanager/views/groupIndex.html',
+            requiredCircles: {
+                circles: ['admin']
+            }
+        })
         .state('create crowd', {
           url: '/crowd/create',
           templateUrl: '/cipmanager/views/createCrowd.html',

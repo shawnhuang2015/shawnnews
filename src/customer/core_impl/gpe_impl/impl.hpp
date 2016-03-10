@@ -115,6 +115,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_UserSearch(serviceapi, request);
     } else if (request.request_function_ == "get_crowd_by_name") {
       return RunUDF_GetCrowdByName(serviceapi, request);
+    } else if (request.request_function_ == "delete_crowd_by_name") {
+      return RunUDF_DeleteCrowdByName(serviceapi, request);
     } else if (request.request_function_ == "get_ontology") {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
@@ -167,6 +169,36 @@ class UDFRunner : public ServiceImplBase {
   bool RunUDF_UserSearch(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     UserSearchMain usm(serviceapi, request);
     return usm.RunUDF_UserSearch();
+  }
+
+  bool RunUDF_DeleteCrowdByName(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+    std::cout << "RunUDF_DeleteCrowdByName" << std::endl;
+    Json::Value& jsoptions = request.jsoptions_;
+    std::cout << jsoptions.toStyledString() << std::endl;
+
+    //parse the request parameters
+    std::string crowdName = jsoptions["name"][0].asString();
+    uint32_t typeId = jsoptions["type"]["typeid"].asUInt();
+    std::string typeStr = boost::lexical_cast<std::string>(typeId);
+
+    VertexLocalId_t local_start;
+    if (!serviceapi.UIdtoVId(request, typeStr + "_" + crowdName, local_start)) {
+      request.error_ = true;
+      request.message_ += std::string("valid id: ") + typeStr + "_" + crowdName ;
+      return true;
+    }
+
+    //make sure the result is valid json format
+    JSONWriter* writer_ = request.outputwriter_;
+    writer_->WriteStartObject();
+    writer_->WriteEndObject();
+
+    //delete vertex
+    boost::shared_ptr<GraphUpdates> graphupdates_ = serviceapi.CreateGraphUpdates(&request);;
+    graphupdates_->DeleteVertex(local_start);
+    graphupdates_->PostUpdate();
+
+    return true;
   }
 
   bool RunUDF_GetCrowdByName(ServiceAPI& serviceapi, EngineServiceRequest& request) {
@@ -759,6 +791,8 @@ class UDFRunner : public ServiceImplBase {
   // return all ontologies of entities as well as behaviour def
   bool RunUDF_GetProfile(ServiceAPI& serviceapi,
                             EngineServiceRequest& request) {
+    int threshold = request.jsoptions_["threshold"][0].asUInt64();
+
     const Json::Value &prof = semantic_schema[PROF];
     std::set<std::string> obj;
 
@@ -837,7 +871,7 @@ class UDFRunner : public ServiceImplBase {
         it != onto.end(); ++it) {
       jsoptions["name"].append(*it);
     }
-    jsoptions["threshold"].append(100000);
+    jsoptions["threshold"].append(threshold);
     request.jsoptions_ = jsoptions;
 
     // since "tag" ontology needs more peculiar treatment, so save it
@@ -848,16 +882,6 @@ class UDFRunner : public ServiceImplBase {
 
     writer->WriteName("ontology");
     RunUDF_GetOntology(serviceapi, request, &save, &tree);
-
-    for (std::map<VertexLocalId_t, std::vector<VertexLocalId_t> >::iterator it = tree.begin();
-        it != tree.end(); ++it) {
-      std::cout << it->first << ":\n";
-      for (std::vector<VertexLocalId_t>::iterator it1 = it->second.begin();
-          it1 != it->second.end(); ++it1) {
-        std::cout << *it1 << ",";
-      }
-      std::cout << std::endl;
-    }
 
     // get interest_indent
     const Json::Value &interest_prof = prof["interest_intent"];
@@ -876,63 +900,61 @@ class UDFRunner : public ServiceImplBase {
     const Json::Value &tag_prof = prof["tag"];
     writer->WriteName("tag");
     writer->WriteStartArray();
-    if (tree.size() == 0) {
-      std::cout << "no tag ontology in schema." << std::endl;
+
+    std::map<std::string, std::string> vetype;
+    if (GetOntologyVEType(tag_onto_name, vetype) != 0) {
+      std::cout << "fail to get vetype for " + tag_onto_name << std::endl;
     } else {
-      std::map<std::string, std::string> vetype;
-      if (GetOntologyVEType(tag_onto_name, vetype) != 0) {
-        std::cout << "fail to get vetype for " + tag_onto_name << std::endl;
-      } else {
-        std::vector<std::pair<std::string, std::string> > uids;
-        int size = tag_prof.size();
-        // find internal vid of each item in profile's "tag"
-        for (int i = 0; i < size; ++i) {
-          uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], 
-                tag_prof[i]["name"].asString()));
+      std::vector<std::pair<std::string, std::string> > uids;
+      int size = tag_prof.size();
+      // find internal vid of each item in profile's "tag"
+      for (int i = 0; i < size; ++i) {
+        uids.push_back(std::pair<std::string, std::string>(vetype["vtype"], 
+              tag_prof[i]["name"].asString()));
+      }
+      std::vector<VertexLocalId_t> vids = serviceapi.UIdtoVId(uids);
+      std::map<std::string, VertexLocalId_t> uid_to_vid;
+      for (int i = 0; i < size; ++i) {
+        if (vids[i] == (VertexLocalId_t)-1) {
+          continue;
         }
-        std::vector<VertexLocalId_t> vids = serviceapi.UIdtoVId(uids);
-        std::map<std::string, VertexLocalId_t> uid_to_vid;
-        for (int i = 0; i < size; ++i) {
-          if (vids[i] == (VertexLocalId_t)-1) {
-            continue;
-          }
-          uid_to_vid[uids[i].second] = vids[i];
-        }
+        uid_to_vid[uids[i].second] = vids[i];
+      }
 
-        for (int i = 0; i < size; ++i) {
-          // find the children of level-1 tag
-          std::string name(tag_prof[i]["name"].asString());
+      for (int i = 0; i < size; ++i) {
+        // find the children of level-1 tag
+        std::string name(tag_prof[i]["name"].asString());
 
-          writer->WriteStartObject();
-          writer->WriteName("name");
-          writer->WriteString(name);
+        writer->WriteStartObject();
+        writer->WriteName("name");
+        writer->WriteString(name);
 
-          std::string dtype = tag_prof[i]["datatype"].asString();
-          writer->WriteName("datatype");
-          writer->WriteString(dtype);
+        std::string dtype = tag_prof[i]["datatype"].asString();
+        writer->WriteName("datatype");
+        writer->WriteString(dtype);
 
-          writer->WriteName("vtype");
-          writer->WriteString(vetype["vtype"]);
+        writer->WriteName("vtype");
+        writer->WriteString(vetype["vtype"]);
 
-          writer->WriteName("element");
-          writer->WriteStartArray();
+        writer->WriteName("element");
+        writer->WriteStartArray();
 
-          if (uid_to_vid.find(name) != uid_to_vid.end()) {
-            VertexLocalId_t vid = uid_to_vid[name];
-            if (tree.find(vid) != tree.end()) {
-              const std::vector<VertexLocalId_t> &children = tree[vid];
+        if (uid_to_vid.find(name) != uid_to_vid.end()) {
+          VertexLocalId_t vid = uid_to_vid[name];
+          if (tree.find(vid) != tree.end()) {
+            const std::vector<VertexLocalId_t> &children = tree[vid];
 
-              int size = children.size();
-              for (int j = 0; j < size; ++j) {
-                writer->WriteMarkVId(children[j]);
-              }
+            int size = children.size();
+            for (int j = 0; j < size; ++j) {
+              writer->WriteMarkVId(children[j]);
             }
           }
-          writer->WriteEndArray();
-          writer->WriteEndObject();
         }
+        writer->WriteEndArray();
+        writer->WriteEndObject();
       }
     }
+
     writer->WriteEndArray();
 
     // get behaviour meta
