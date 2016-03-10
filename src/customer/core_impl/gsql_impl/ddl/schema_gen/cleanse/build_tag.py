@@ -3,7 +3,7 @@ from bisect import bisect_left
 
 AGE_STEP = 5
 AGE_BUCKET = range(1, 101, 5)
-GENDER_BUCKET = ('male', 'female')
+GENDER_BUCKET = ('male', 'female', 'n/a')
 YEAR = time.localtime().tm_year
 
 # "age" ontology is 5yr-segment, e.g. "0~5,5~10"
@@ -33,5 +33,10 @@ def build_user_age(ifp, isep='\t', ofp=sys.stdout, osep=';'):
 
 
 if __name__ == '__main__':
-  with open('/tmp/z', 'r') as fp:
-    build_user_age(fp)
+  if sys.argv[1] == 'age_tree':
+    build_age_tree()
+  elif sys.argv[1] == 'gender_tree':
+    build_gender_tree()
+  elif sys.argv[1] == 'user_age':
+    with open(sys.argv[2], 'r') as fp:
+      build_user_age(fp)
