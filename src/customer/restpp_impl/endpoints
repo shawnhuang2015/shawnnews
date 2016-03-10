@@ -117,6 +117,10 @@
     "GET": {
       "function": "get_profile",
       "parameters": {
+        "threshold": {
+          "type": "UINT64",
+          "default": "100000"
+        }
       },
       "summary": "export profile."
     }
