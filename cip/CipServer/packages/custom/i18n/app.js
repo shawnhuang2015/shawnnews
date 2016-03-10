@@ -16,8 +16,6 @@ I18n.register(function(app, auth, database) {
   //We enable routing. By default the Package Object is passed to the routes
   I18n.routes(app, auth, database);
 
-  //We are adding a link to the main menu for all authenticated users
-
   I18n.aggregateAsset('js', '../lib/i18next/i18next.min.js', { weight: 1 });
   I18n.aggregateAsset('js', '../lib/ng-i18next/dist/ng-i18next.min.js', { weight: 2 });
 

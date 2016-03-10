@@ -228,7 +228,8 @@
                     <td>{{$index+1}}</td>
                     <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}} {{condition.factor}}</b></td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        <span ng-if="condition.count != -1">{{condition.count}}</span>
+                        <span ng-if="condition.count == -2">条件搜索失败,请重试</span>
+                        <span ng-if="condition.count >= 0">{{condition.count}}</span>
                     </td>
                     <td>
                         <span>
@@ -247,7 +248,8 @@
                         {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣为 <b>{{condition.operator}}</b>
                     </td>
                     <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        <span ng-if="condition.count != -1">{{condition.count}}</span>
+                        <span ng-if="condition.count == -2">条件搜索失败,请重试</span>
+                        <span ng-if="condition.count >= 0">{{condition.count}}</span>
                     <td>
                         <span>
                           <button class="btn btn-danger btn-xs"
@@ -295,7 +297,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-4 col-md-3">
-                <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0" class="btn btn-success btn-block">保存人群</button>
+                <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 && crowdDetail.count < 0" class="btn btn-success btn-block">保存人群</button>
             </div>
         </div>
 </section>

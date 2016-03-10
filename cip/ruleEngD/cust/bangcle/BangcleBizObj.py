@@ -28,8 +28,37 @@ class BangcleBizEvtToUdidObj(object):
         self.udids = udids
 
 class BangcleAcctToBizObj(object):
-    def __init__(self, account, ts_start, ts_end):
+    def __init__(self, account, biz_op_type, ts_start, ts_end):
         config = GPathConfig(ruleEngConfigure["gstore"]["host"])
-        gpath = "account[\"%s\"]-bizEvent_account->bizEvent=>.project{bizEvent._external_id}" % account 
+        gpath = "account[\"%s\"]-bizEvent_account->bizEvent{bizEvent.action_type = '%s'}=>.project{bizEvent._external_id}" % ( account , biz_op_type)
+        gpathObj = GPathBizObj(config, gpath)
+        self.bizEvtList = gpathObj.getList()
+
+
+class BangcleIpToBizEvtObj(object):
+    def __init__(self, ip, biz_op_type, ts_start, ts_end):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "ip[\"%s\"]-bizEvent_ip->bizEvent{bizEvent.action_type = '%s'}=>.project{bizEvent._external_id}" % (ip, biz_op_type)
+        gpathObj = GPathBizObj(config, gpath)
+        self.bizEvtList = gpathObj.getList()
+
+class BangcleImeiToBizEvtObj(object):
+    def __init__(self, imei, biz_op_type, ts_start, ts_end):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "imei[\"%s\"]-bizEvent_imei->bizEvent{bizEvent.action_type = '%s'}=>.project{bizEvent._external_id}" % (imei, biz_op_type)
+        gpathObj = GPathBizObj(config, gpath)
+        self.bizEvtList = gpathObj.getList()
+
+class BangcleAcct_BizEvt_Udid_Obj(object):
+    def __init__(self, account, biz_op_type, ts_start, ts_end):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "account[\"%s\"]-bizEvent_account->bizEvent{bizEvent.action_type = '%s'}-bizEvent_udid->udid=>.project{bizEvent._external_id}" % (account, biz_op_type)
+        gpathObj = GPathBizObj(config, gpath)
+        self.udidList = gpathObj.getList()
+
+class BangcleCNetSegment_BizEvt_Obj(object):
+    def __init__(self, cnetsegment, biz_op_type, ts_start, ts_end):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "c_netsegment[\"%s\"]-c_netsegment_ip->ip-bizEvent_ip->bizEvent{bizEvent.action_type = '%s'}-bizEvent_udid->udid=>.project{bizEvent._external_id}" % (cnetsegment, biz_op_type)
         gpathObj = GPathBizObj(config, gpath)
         self.bizEvtList = gpathObj.getList()

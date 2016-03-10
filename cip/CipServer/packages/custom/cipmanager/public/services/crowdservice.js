@@ -2,6 +2,17 @@
  * Created by chenzhuwei on 2/19/16.
  */
 'use strict';
+angular.module('mean.cipmanager').factory('CrowdManager', ['$resource',
+    function($resource) {
+        return $resource('api/db/crowd/:crowdName', {
+            crowdName: '@crowdName'
+        }, {
+            update: {
+                method: 'PUT'
+            },
+        });
+    }
+]);
 
 angular.module('mean.cipmanager').factory('CrowdService', ['$http',
     function($http) {
@@ -35,8 +46,8 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         };
 
-        var getUserList = function(crowdName, callback) {
-            $http.get('/api/rest/crowd/detail',{params:{cname:crowdName}}).
+        var getUserList = function(crowdName, type, callback) {
+            $http.get('/api/rest/crowd/sample',{params:{cname:crowdName,count:10,type:type}}).
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
@@ -97,50 +108,6 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         }
 
-        var getGroupCount = function (callback) {
-            $http.get('/api/db/group/crowdcount').
-            success(function(data, status, headers, config) {
-                callback({
-                    success: !data.error,
-                    length: data.error ? 0 : data.results.count
-                });
-            }).
-            error(function(data, status, headers, config) {
-                callback({
-                    success: false
-                });
-            });
-        }
-
-        var createGroup = function(group, callback) {
-            $http.post('/api/db/group/crowd',group).
-            success(function(data, status, headers, config) {
-                callback({
-                    success: !data.error
-                });
-            }).
-            error(function(data, status, headers, config) {
-                callback({
-                    success: false
-                });
-            });
-        }
-
-        var getGroupUserCount = function(factor, callback) {
-            $http.post('/api/rest/group/crowd/count',factor).
-            success(function(data, status, headers, config) {
-                callback({
-                    success: !data.error,
-                    length: data.error ? 0 : data.results.count
-                });
-            }).
-            error(function(data, status, headers, config) {
-                callback({
-                    success: false
-                });
-            });
-        }
-
         return {
             getCount: getCount,
             getUserCount: getUserCount,
@@ -148,9 +115,9 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             getOntology: getOntology,
             getUserCountByFactor: getUserCountByFactor,
             createCrowd: createCrowd,
-            getGroupCount: getGroupCount,
-            createGroup: createGroup,
-            getGroupUserCount: getGroupUserCount,
+            //getGroupCount: getGroupCount,
+            //createGroup: createGroup,
+            //getGroupUserCount: getGroupUserCount,
         };
     }
 ]);

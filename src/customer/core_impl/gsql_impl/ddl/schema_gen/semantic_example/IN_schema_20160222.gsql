@@ -1,0 +1,103 @@
+drop all
+
+#central vertex
+create vertex inuser        (primary_id inuser_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE" //Here date_time records birthday.
+
+##picture
+create vertex picture         (primary_id picture_id string, date_time uint, isBlack uint) with stats="OUTDEGREE_BY_EDGETYPE"
+##create vertex picture_type    (primary_id picture_type_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex postPicture     (primary_id postPiture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex viewPicture     (primary_id viewPicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex sharePicture    (primary_id sharePicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex commentPicture  (primary_id commentPicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex lovePicture     (primary_id lovePicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex collectPicture  (primary_id collectPicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex downloadPicture (primary_id downloadPicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex pokePicture     (primary_id pokePicture_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+
+##create undirected edge picture_with_type            (from picture, to picture_type, score real)
+create undirected edge inuser_with_postPicture      (from inuser, to postPicture)
+create undirected edge inuser_with_viewPicture      (from inuser, to viewPicture)
+create undirected edge inuser_with_sharePicture     (from inuser, to sharePicture)
+create undirected edge inuser_with_commentPicture   (from inuser, to commentPicture)
+create undirected edge inuser_with_lovePicture      (from inuser, to lovePicture)
+create undirected edge inuser_with_collectPicture   (from inuser, to collectPicture)
+create undirected edge inuser_with_downloadPicture  (from inuser, to downloadPicture)
+create undirected edge inuser_with_pokePicture      (from inuser, to pokePicture)
+create undirected edge postPicture_with_picture     (from postPicture, to picture)
+create undirected edge viewPicture_with_picture     (from viewPicture, to picture)
+create undirected edge sharePicture_with_picture    (from sharePicture, to picture)
+create undirected edge commentPicture_with_picture  (from commentPicture, to picture)
+create undirected edge lovePicture_with_picture     (from lovePicture, to picture)
+create undirected edge collectPicture_with_picture  (from collectPicture, to picture)
+create undirected edge downloadPicture_with_picture (from downloadPicture, to picture)
+create undirected edge pokePicture_with_picture     (from pokePicture, to picture)
+
+##sticker
+create vertex sticker        (primary_id sticker_id string, date_time uint, isBlack uint) with stats="OUTDEGREE_BY_EDGETYPE"
+#create vertex sticker_type   (primary_id sticker_type_id string)  with stats="OUTDEGREE_BY_EDGETYPE"
+#create vertex sticker_type2  (primary_id sticker_type2_id string)  with stats="OUTDEGREE_BY_EDGETYPE"
+#create vertex sticker_type3  (primary_id sticker_type3_id string)  with stats="OUTDEGREE_BY_EDGETYPE"
+#create vertex sticker_author (primary_id sticker_author_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex sticker_sn     (primary_id sticker_sn_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex sticker_set    (primary_id sticker_set_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+#create vertex sticker_style  (primary_id sticker_style_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex useSticker     (primary_id useSticker_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+#create undirected edge sticker_with_author     (from sticker, to sticker_author)
+#create undirected edge sticker_with_type       (from sticker, to sticker_type)
+#create undirected edge sticker_with_type2      (from sticker, to sticker_type2)
+#create undirected edge sticker_with_type3      (from sticker, to sticker_type3)
+create undirected edge sticker_with_sn         (from sticker, to sticker_sn)
+#create undirected edge sticker_with_style      (from sticker, to sticker_style)
+create undirected edge inuser_with_useSticker  (from inuser, to useSticker)
+create undirected edge useSticker_with_sticker (from useSticker, to sticker)
+
+##social
+create vertex phone     (primary_id phone_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex weibo     (primary_id weibo_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex weixin    (primary_id weixin_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+
+create undirected edge inuser_own_phone     (from inuser, to phone, is_active bool)
+create undirected edge inuser_contact_phone     (from inuser, to phone)
+create undirected edge weixin_with_weixin    (from weixin, to weixin)
+
+create directed edge inuser_to_inuser (from inuser, to inuser, is_forward bool, is_reverse bool, is_active bool)
+create directed edge weibo_to_weibo   (from weibo, to weibo, is_forward bool, is_reverse bool)
+create directed edge inuser_to_weibo     (from inuser, to weibo, is_active bool) with reverse_edge="weibo_to_inuser"
+create directed edge inuser_to_weixin    (from inuser, to weixin, is_active bool) with reverse_edge="weixin_to_inuser"
+
+##location
+create vertex grid         (primary_id grid_id string, area string compress) with stats="OUTDEGREE_BY_EDGETYPE"
+create undirected edge grid_with_grid   (from grid, to grid)
+create undirected edge inuser_with_grid (from inuser, to grid, longitude real, latitude real, date_time uint)
+
+##user profile and preference
+create vertex school       (primary_id school_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex company      (primary_id company_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex mac          (primary_id mac_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex theme        (primary_id tag_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex browseTheme  (primary_id browseTheme_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex visitChannel (primary_id visitChannel_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex interest     (primary_id interest_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+create vertex channel      (primary_id channel_id string) with stats="OUTDEGREE_BY_EDGETYPE"
+
+create undirected edge inuser_with_browseTheme   (from inuser, to browseTheme)
+create undirected edge browseTheme_with_theme    (from browseTheme, to theme)
+create undirected edge inuser_with_visitChannel  (from inuser, to visitChannel)
+create undirected edge visitChannel_with_channel (from visitChannel, to channel)
+#create undirected edge inuser_with_interest      (from inuser, to interest)
+create undirected edge inuser_with_school        (from inuser, to school)
+create undirected edge inuser_with_company       (from inuser, to company)
+create undirected edge inuser_with_mac           (from inuser, to mac)
+
+##cross section edges
+#create undirected edge picture_with_tag      (from picture, to tag)
+create undirected edge picture_with_sticker  (from picture, to sticker, date_time uint)
+#create undirected edge picture_with_interest (from picture, to interest, score float) //This needs to be confirmed inuser the future.
+create undirected edge picture_with_grid     (from picture, to grid, longitude real, latitude real, date_time uint)
+
+#create graph
+CREATE GRAPH in_graph(inuser, picture, postPicture, viewPicture, sharePicture, commentPicture, lovePicture, collectPicture, downloadPicture, pokePicture, inuser_with_postPicture, inuser_with_viewPicture, inuser_with_sharePicture, inuser_with_commentPicture, inuser_with_lovePicture, inuser_with_collectPicture, inuser_with_downloadPicture, inuser_with_pokePicture, postPicture_with_picture, viewPicture_with_picture, sharePicture_with_picture, commentPicture_with_picture, lovePicture_with_picture, collectPicture_with_picture, downloadPicture_with_picture, pokePicture_with_picture, sticker, sticker_sn, sticker_set, useSticker, sticker_with_sn, inuser_with_useSticker, useSticker_with_sticker, phone, weibo, weixin, inuser_own_phone, inuser_contact_phone, inuser_to_weibo, inuser_to_weixin, weixin_with_weixin, inuser_to_inuser, weibo_to_weibo, grid, grid_with_grid, inuser_with_grid, school, company, mac, theme, browseTheme, visitChannel, interest, channel, inuser_with_browseTheme, browseTheme_with_theme, inuser_with_visitChannel, visitChannel_with_channel, inuser_with_school, inuser_with_company, inuser_with_mac, picture_with_sticker, picture_with_grid)
+
+#export graph
+EXPORT SCHEMA in_graph
