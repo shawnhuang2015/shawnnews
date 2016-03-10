@@ -24,7 +24,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         ];
 
         $scope.group_logic = [
-            'and',
+            //'and',
             'or'
         ];
 
@@ -107,6 +107,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             }
             if(condition_type == 'ontology' && (!$scope.factors.factor || $scope.factors.factor == '')) {
                 alert("标签不能为空");
+                return;
+            }
+            if(condition_type == 'behavior' && ($scope.factors.timeType == 'day' || $scope.factors.timeType == 'hour') && !$scope.factors.startTime) {
+                alert("时间不能为空");
                 return;
             }
             if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
@@ -278,6 +282,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 $scope.factors.action = $scope.ontology_data.behaviour[0].name;
                 $scope.factors.operator = $scope.behavior_operator[0];
                 $scope.factors.value = 0;
+                $scope.factors.timeType = 'absolute';
             }
         });
 
