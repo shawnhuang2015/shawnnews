@@ -26,10 +26,6 @@ from monitor.Perf import Perf
 
 #########   customization biz objects ################
 from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj 
-from cust.bangcle.BangcleBizObj import BangcleAcctToBizObj 
-from cust.bangcle.BangcleBizObj import BangcleIpToBizEvtObj 
-from cust.bangcle.BangcleBizObj import BangcleImeiToBizEvtObj
-from cust.bangcle.BangcleBizObj import BangcleAcct_BizEvt_Udid_Obj 
 
 #TODO: move global definition to Perf package itself
 perf = Perf("192.168.33.70","rule_result")
@@ -58,32 +54,13 @@ def r4_operation_without_fingerprint(context):
         __W_RULE_RET(context , "ALERT: operation without fingureprint, bizEvtid:%s" % bizEvt.bizEvtId)
         # TODO: make it as a rule action
         perf.post({"rule":"r4_operation_without_fingerprint"}, 1.0)
-def r14_ip_query_frequency(context):
-    return
-    bizEvt = __REQ_EVT(context)
-    now = int(time(time()))
-    ret = BangcleIpToBizEvtObj(bizEvt.ip, "query", now, now-60) 
-    bizEvts = ret.bizEvtList
-    if len(bizEvts)>=300:
-        __W_RULE_RET(context , "ALERT: ip %s has more than 300 query times: %s in past 1 minute" % (bizEvt.ip, len(bizEvts)))
-
-def r18_imei_login_frequency(context):
-    return
-    bizEvt = __REQ_EVT(context)
-    now = int(time(time()))
-    ret = BangcleIpToBizEvtObj(bizEvt.imei, "login", now, now-60*60*24) 
-    bizEvts = ret.bizEvtList
-    if len(bizEvts)>=300:
-        __W_RULE_RET(context , "ALERT: imei %s has more than 10 login events: %s in past 1 day" % (bizEvt.imei, len(bizEvts)))
-
-def r19_diff_device_login(context):
-    return
-    bizEvt = __REQ_EVT(context)
-    now = int(time(time()))
-    ret = BangcleAcct_BizEvt_Udid_Obj(bizEvt.account, "login", now, now-60*60*24) 
-    udidLists  = ret.udidList
-    if len(udidList)>=10:
-        __W_RULE_RET(context , "ALERT: account %s has login more than 10 different devices: %s in past 1 day" % (bizEvt.account, len(bizEvts)))
-
-def r20_gps_query_frequency(context):
+def r21_short_signup(context):
+    pass
+def r24_jifeng_tuiguang_short(context):
+    pass
+def r25_same_c_netsegment_succid(context):
+    pass
+def r26_same_gps_region_succid(context):
+    pass
+def r27_same_c_netsegment_user_activate(context):
     pass
