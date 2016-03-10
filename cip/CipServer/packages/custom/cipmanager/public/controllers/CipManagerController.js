@@ -233,27 +233,22 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.pageGroupChanged = function () {
             $scope.getGroupsByPageId($scope.currentGroupPage - 1);
         };
-
-
-
+        
         //Ontology related
         $scope.traverseTree = function (tree, callback) {
             var list = [];
-            //var queue = new Array();
-            //for (var i in tree) {
-            //    var prefix;
-            //    if (queue.length > 0) {
-            //        prefix = queue.pop() + '/';
-            //    } else {
-            //        prefix = '';
-            //    }
-            //    for (var j in tree[i].children) {
-            //        list.push(prefix + tree[i].children[j]);
-            //        queue.unshift(prefix + tree[i].children[j]);
-            //    }
-            //}
+            var queue = new Array();
             for (var i in tree) {
-                list.push(tree[i].parent);
+                var prefix = '';
+                //if (queue.length > 0) {
+                //    prefix = queue.pop() + '/';
+                //} else {
+                //    prefix = '';
+                //}
+                for (var j in tree[i].children) {
+                    list.push(prefix + tree[i].children[j]);
+                    queue.unshift(prefix + tree[i].children[j]);
+                }
             }
             callback(list);
         };
