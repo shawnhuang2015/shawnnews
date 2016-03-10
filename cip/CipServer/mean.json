@@ -1,5 +1,5 @@
 {
     "dependencies": {},
-    "anonymizedData": true,
+    "anonymizedData": false,
     "name": "CipServer"
 }
