@@ -8,6 +8,7 @@ var CrowdGroup = mongoose.model('CrowdGroup');
 var config = require('meanio').loadConfig();
 
 var generateCond = function(input_cond, metadata) {
+    console.log('Func generateCond');
     //map the vertex name to vertex type
     var tagT = {};
     for (var k = 0; k < metadata.tag.length; ++k) {
@@ -26,7 +27,7 @@ var generateCond = function(input_cond, metadata) {
     if (!(input_cond instanceof Array)) {
         input_cond = [input_cond];
     }
-    //console.log("input_cond: " + input_cond);
+
     console.log("tagT: " + JSON.stringify(tagT));
     console.log("ontoT: " + JSON.stringify(ontoT));
 
@@ -52,9 +53,9 @@ var generateCond = function(input_cond, metadata) {
         for (var k = 0; k < behr.length; ++k) {
             var item = behr[k];
             item.ontologyType = ontoT[item.ontologyType];
-            item.startTime /= 1000; //need remove
-            item.endTime /= 1000;   //need remove
-            if (item.timeType == 'day' || item.timeType == 'hour') {
+            item.startTime /= 1000; //ms -> seconds
+            item.endTime /= 1000;
+            if (item.timeType === 'day' || item.timeType === 'hour') {
                 item.timeType = 'relative';
             }
             cond.behavior.push(item);
@@ -73,6 +74,7 @@ var generateCond = function(input_cond, metadata) {
  Output: 1. user id list 2. user count
  */
 exports.getCrowdDetailByPost = function(req, res) {
+    console.log('Func getCrowdDetailByPost');
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -86,7 +88,7 @@ exports.getCrowdDetailByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -120,6 +122,7 @@ exports.getCrowdDetailByPost = function(req, res) {
  Output: 1. user id list 2. user count
  */
 exports.getGroupCrowdDetailByPost = function(req, res) {
+    console.log('Func getGroupCrowdDetailByPost');
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -134,7 +137,7 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
 
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd detail');
             return res.send({
                 error: true,
@@ -170,6 +173,7 @@ Input: cname - crowd name
 Output: 1. user id list 2. user count
  */
 exports.getCrowdDetailByGet = function(req, res) {
+    console.log('Func getCrowdDetailByGet');
     var crowdName = req.query.cname;
     if (!crowdName) {
         return res.send({
@@ -204,6 +208,7 @@ Method: POST
 Input: selector conditions - which express the crowding condition that the client choose on UI
 */
 exports.getCrowdCountByPost = function(req, res) {
+    console.log('Func getCrowdCountByPost');
     console.log('Get Count: ' + JSON.stringify(req.body));
     if (!req.body.selector) {
         return res.send({
@@ -218,7 +223,7 @@ exports.getCrowdCountByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd count');
             return res.send({
                 error: true,
@@ -250,6 +255,7 @@ exports.getCrowdCountByPost = function(req, res) {
  Input: selector conditions [Array] - which express the crowding condition that the client choose on UI
  */
 exports.getGroupCrowdCountByPost = function(req, res) {
+    console.log('Func getGroupCrowdCountByPost');
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -263,7 +269,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
     }
 
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
-        if (err) {
+        if (err || md === null) {
             console.log('Error to get crowd count');
             return res.send({
                 error: true,
@@ -324,6 +330,7 @@ exports.getCrowdCountByGet = function(req, res) {
 }
 
 function writeUserToFile(res, path) {
+    console.log('Func writeUserToFile');
     var data = 'UserCount: ' + res.results.count + "\n";
     for (var k = 0; k < res.results.userIds.length; ++k) {
         data += res.results.userIds[k] + '\n';
@@ -338,6 +345,7 @@ function writeUserToFile(res, path) {
 }
 
 exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition) {
+    console.log('Func createCombinedCrowdRemote');
     function updateTag(name, value) {
         CrowdGroup.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
@@ -392,7 +400,7 @@ exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition)
                 }
             });
         });
-    } else if (crowdtype == 'dynamic') {
+    } else if (crowdtype === 'dynamic') {
         updateTag(name, 1);
         return;
     } else {
@@ -406,6 +414,7 @@ exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition)
         2. crowd name
  */
 exports.createSingleCrowdRemote = function(prefix, name, crowdtype,  condition) {
+    console.log('Func createSingleCrowdRemote');
     function updateTag(name, value) {
         CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
             if (err) {
@@ -472,24 +481,25 @@ Input: 1. cname - crowd name
 Output: Sample users in the crowd, the number of returned users' size equals to 'count'
  */
 exports.crowdSampleByGet = function(req, res) {
+    console.log('Func crowdSampleByGet');
     var crowdName = req.query.cname;
     var count = req.query.count;
     var type = req.query.type; //single or multi
-    if (crowdName === undefined || count === undefined || type == undefined) {
+    if (crowdName === undefined || count === undefined || type === undefined) {
         return res.send({
             error: true,
             message: "Need Parameters 'cname', 'count', 'type'"
         });
     }
 
-    if (type !== 'single' && type != 'multi') {
+    if (type !== 'single' && type !== 'multi') {
         return res.send({
             error: true,
             message: 'parameter type should be single/multi'
         });
-    } else if (type == 'single') {
+    } else if (type === 'single') {
         crowdName = config.CrowdPrefix.single + crowdName;
-    } else if (type == 'multi') {
+    } else if (type === 'multi') {
         crowdName = config.CrowdPrefix.multi + crowdName;
     }
 
@@ -523,7 +533,8 @@ Input: cname - crowd name
 Output: return the number of persons in the deleted crowd
  */
 exports.deleteCrowdRemote = function(name, type) {
-    if (type == 'dynamic') {
+    console.log('Func deleteCrowdRemote');
+    if (type === 'dynamic') {
         return;
     }
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function (err, md) {
@@ -559,6 +570,7 @@ There is an expiration time for the information stored in mongodb,
 we will update the data if it exceed the expiration time.
 */
 exports.readMetadata = function(req, res) {
+    console.log('Func readMetadata');
     var curTime = new Date().getTime();
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
@@ -570,7 +582,7 @@ exports.readMetadata = function(req, res) {
             console.log('time delta = ' + (curTime - md.created.getTime()));
             return res.send(md.profile);
         } else {
-            var TestFlag = true;
+            var TestFlag = false;
 
             if (!TestFlag) {
                 utility.get('get_profile',
@@ -617,7 +629,7 @@ exports.readMetadata = function(req, res) {
                     }
                 );
             } else {
-                var result = {
+                var result = {/*
                     "error": false,
                     "message": '',
                     "results": {
@@ -718,7 +730,7 @@ exports.readMetadata = function(req, res) {
                             },
                             {"name": "login", "subject": [{"name": "user", "etype": "user_login"}]}
                         ]
-                    }
+                    }*/
                 };
                 SemanticMetaData.remove(function (err) {
                     if (err) {
@@ -746,6 +758,7 @@ exports.readMetadata = function(req, res) {
 }
 
 exports.download = function(req, res) {
+    console.log('Func download');
     var file = req.query.file;
     res.download(config.dataPath + file);
 };

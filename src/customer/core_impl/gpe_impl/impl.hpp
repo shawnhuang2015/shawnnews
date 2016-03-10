@@ -115,6 +115,8 @@ class UDFRunner : public ServiceImplBase {
       return RunUDF_UserSearch(serviceapi, request);
     } else if (request.request_function_ == "get_crowd_by_name") {
       return RunUDF_GetCrowdByName(serviceapi, request);
+    } else if (request.request_function_ == "delete_crowd_by_name") {
+      return RunUDF_DeleteCrowdByName(serviceapi, request);
     } else if (request.request_function_ == "get_ontology") {
       return RunUDF_GetOntology(serviceapi, request);
     } else if (request.request_function_ == "get_profile") {
@@ -167,6 +169,36 @@ class UDFRunner : public ServiceImplBase {
   bool RunUDF_UserSearch(ServiceAPI& serviceapi, EngineServiceRequest& request) {
     UserSearchMain usm(serviceapi, request);
     return usm.RunUDF_UserSearch();
+  }
+
+  bool RunUDF_DeleteCrowdByName(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+    std::cout << "RunUDF_DeleteCrowdByName" << std::endl;
+    Json::Value& jsoptions = request.jsoptions_;
+    std::cout << jsoptions.toStyledString() << std::endl;
+
+    //parse the request parameters
+    std::string crowdName = jsoptions["name"][0].asString();
+    uint32_t typeId = jsoptions["type"]["typeid"].asUInt();
+    std::string typeStr = boost::lexical_cast<std::string>(typeId);
+
+    VertexLocalId_t local_start;
+    if (!serviceapi.UIdtoVId(request, typeStr + "_" + crowdName, local_start)) {
+      request.error_ = true;
+      request.message_ += std::string("valid id: ") + typeStr + "_" + crowdName ;
+      return true;
+    }
+
+    //make sure the result is valid json format
+    JSONWriter* writer_ = request.outputwriter_;
+    writer_->WriteStartObject();
+    writer_->WriteEndObject();
+
+    //delete vertex
+    boost::shared_ptr<GraphUpdates> graphupdates_ = serviceapi.CreateGraphUpdates(&request);;
+    graphupdates_->DeleteVertex(local_start);
+    graphupdates_->PostUpdate();
+
+    return true;
   }
 
   bool RunUDF_GetCrowdByName(ServiceAPI& serviceapi, EngineServiceRequest& request) {

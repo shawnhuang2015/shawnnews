@@ -7,10 +7,12 @@ var config = require('meanio').loadConfig();
 
 //create
 exports.create = function(req, res) {
+    console.log('Single Crowd|Func create');
     var crowd = new CrowdSingle(req.body);
-    console.log('crowd = ' + JSON.stringify(req.body));
+
     crowd.save(function(err) {
         if (err) {
+            console.log('create error: ' + utility.getErrorMessage(err))
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -18,6 +20,7 @@ exports.create = function(req, res) {
         } else {
             rest.createSingleCrowdRemote(config.CrowdPrefix.single, crowd.crowdName,
                 crowd.type, JSON.stringify(crowd.selector));
+            console.log('New Crowd: ' + JSON.stringify(crowd));
             return res.json(crowd);
         }
     });
@@ -25,10 +28,12 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
+    console.log('Single Crowd|Func list');
     var pageId = Number(req.query.pageId);
     var pageSz = Number(req.query.pageSz);
     CrowdSingle.find().sort('-created').exec(function(err, crowds) {
         if (err) {
+            console.log('list error: ' + utility.getErrorMessage(err))
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -46,8 +51,10 @@ exports.list = function(req, res) {
 
 //count
 exports.count = function(req, res) {
+    console.log('Single Crowd|Func count');
     CrowdSingle.find().sort('-created').exec(function(err, crowds) {
         if (err) {
+            console.log('count error: ' + utility.getErrorMessage(err))
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -66,6 +73,7 @@ exports.count = function(req, res) {
 
 //read
 exports.crowdByName = function(req, res, next, name) {
+    console.log('Single Crowd|Func crowdByName');
     CrowdSingle.findOne({crowdName: name}, function(err, crowd) {
         if (err) {
             req.error = utility.getErrorMessage(err);
@@ -77,13 +85,15 @@ exports.crowdByName = function(req, res, next, name) {
 };
 
 exports.read = function(req, res) {
+    console.log('Single Crowd|Func read');
     res.json(req.crowd);
 };
 
 //update
 exports.update = function(req, res) {
+    console.log('Single Crowd|Func update');
     if (req.error) {
-        console.log(req.error);
+        console.log('update error: ' + req.error);
         return res.send({
             error: true,
             message: req.error
@@ -92,17 +102,18 @@ exports.update = function(req, res) {
     var crowd = req.crowd;
 
     for (var field in req.body) {
-        console.log('field: ' + field);
         crowd[field] = req.body[field]
     }
 
     crowd.save(function(err) {
         if (err) {
+            console.log('update error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
             });
         } else {
+            console.log('Updated Crowd: ' + JSON.stringify(crowd));
             return res.json(crowd);
         }
     });
@@ -110,9 +121,9 @@ exports.update = function(req, res) {
 
 //delete
 exports.delete = function(req, res) {
-    console.log('run delete');
+    console.log('Single Crowd|Func delete');
     if (req.error) {
-        console.log(req.error);
+        console.log('delete error: ' + req.error);
         return res.send({
             error: true,
             message: req.error
@@ -123,6 +134,7 @@ exports.delete = function(req, res) {
 
     crowd.remove(function(err) {
         if (err) {
+            console.log('delete error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)

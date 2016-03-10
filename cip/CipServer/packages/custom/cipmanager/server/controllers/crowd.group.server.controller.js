@@ -8,10 +8,12 @@ var config = require('meanio').loadConfig();
 
 //create
 exports.create = function(req, res) {
+    console.log('Combined Crowd|Func create');
     var body = req.body;
     var selector = req.body.selector;
     CrowdSingle.find({crowdName: {$in: selector}}, function(err, crowds) {
         if (err) {
+            console.log('create error: ' + utility.getErrorMessage(err))
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -19,12 +21,12 @@ exports.create = function(req, res) {
         } else {
             body.selector = crowds;
             var crowdGroup = new CrowdGroup(req.body);
-            console.log('selector = ' + JSON.stringify(selector));
-            console.log('crowds = ' + JSON.stringify(crowds));
-            console.log('crowdGroup = ' + JSON.stringify(body));
+
+            console.log('New crowdGroup: ' + JSON.stringify(body));
 
             crowdGroup.save(function(err)    {
                 if (err) {
+                    console.log('create error: ' + utility.getErrorMessage(err))
                     return res.send({
                         error: true,
                         message: utility.getErrorMessage(err)
@@ -42,15 +44,18 @@ exports.create = function(req, res) {
 
 //list
 exports.list = function(req, res) {
+    console.log('Combined Crowd|Func list');
     var pageId = Number(req.query.pageId);
     var pageSz = Number(req.query.pageSz);
     CrowdGroup.find().sort('-created').populate('selector').exec(function(err, crowds) {
         if (err) {
+            console.log('list error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
             });
         } else if (crowds.length <= pageId * pageSz) {
+            console.log('list error: Out of Bound');
             return res.send({
                 error: true,
                 message: 'Out of Bound'
@@ -63,8 +68,10 @@ exports.list = function(req, res) {
 
 //count
 exports.count = function(req, res) {
+    console.log('Combined Crowd|Func count');
     CrowdGroup.find().sort('-created').exec(function(err, crowds) {
         if (err) {
+            console.log('count error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
@@ -83,6 +90,7 @@ exports.count = function(req, res) {
 
 //read
 exports.crowdByName = function(req, res, next, name) {
+    console.log('Combined Crowd|Func crowdByName');
     CrowdGroup.findOne({crowdName: name}).populate('selector').exec(function(err, crowd) {
         if (err) {
             req.error = utility.getErrorMessage(err);
@@ -94,13 +102,15 @@ exports.crowdByName = function(req, res, next, name) {
 };
 
 exports.read = function(req, res) {
+    console.log('Combined Crowd|Func read');
     res.json(req.crowd);
 };
 
 //update
 exports.update = function(req, res) {
+    console.log('Combined Crowd|Func update');
     if (req.error) {
-        console.log(req.error);
+        console.log('update error: ' + req.error);
         return res.send({
             error: true,
             message: req.error
@@ -109,23 +119,20 @@ exports.update = function(req, res) {
     var crowdGroup = req.crowd;
 
     for (var field in req.body) {
-        console.log('field: ' + field);
         crowdGroup[field] = req.body[field]
     }
 
     var selector = req.body.selector;
-    console.log('selector = ' + JSON.stringify(selector));
     CrowdSingle.find({crowdName: {$in: selector}}, function(err, crowds) {
         if (err) {
+            console.log('update error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
             });
         } else {
             crowdGroup.selector = crowds;
-            console.log('selector = ' + JSON.stringify(selector));
-            console.log('crowds = ' + JSON.stringify(crowds));
-            console.log('crowdGroup = ' + JSON.stringify(crowdGroup));
+            console.log('Updated crowdGroup: ' + JSON.stringify(crowdGroup));
 
             crowdGroup.save(function(err) {
                 if (err) {
@@ -143,8 +150,9 @@ exports.update = function(req, res) {
 
 //delete
 exports.delete = function(req, res) {
+    console.log('Combined Crowd|Func delete');
     if (req.error) {
-        console.log(req.error);
+        console.log('delete error: ' + req.error);
         return res.send({
             error: true,
             message: req.error
@@ -155,6 +163,7 @@ exports.delete = function(req, res) {
 
     crowd.remove(function(err) {
         if (err) {
+            console.log('delete error: ' + utility.getErrorMessage(err));
             return res.send({
                 error: true,
                 message: utility.getErrorMessage(err)
