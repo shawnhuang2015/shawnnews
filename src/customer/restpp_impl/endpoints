@@ -324,6 +324,21 @@
             }
           }
         }
+      },
+      "delete": {
+        "GET/POST": {
+          "function": "delete_crowd_by_name",
+          "parameters": {
+            "name":{
+              "type":"STRING",
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type":"TYPENAME"
+            }
+          }
+        }
       }
     }
   },
