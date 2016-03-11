@@ -9,8 +9,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.totalItems = 1;
         $scope.totalGroupItems = 1;
         $scope.currentPage = 1;
+        $scope.currentCrowdPage = 1;
         $scope.currentGroupPage = 1;
-        $scope.currentUserListPage = 1;
         $scope.crowdTodoList = [];
         $scope.global = Global;
         $scope.factors = {};
@@ -236,6 +236,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             $scope.getCrowdsByPageId($scope.currentPage - 1);
         };
 
+        $scope.pageCrowdChanged = function () {
+            $scope.getCrowdsByPageId($scope.currentCrowdPage - 1);
+        };
+
         $scope.pageGroupChanged = function () {
             $scope.getGroupsByPageId($scope.currentGroupPage - 1);
         };
@@ -319,25 +323,19 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 return;
             }
             $scope.object_category = [];
-            $scope.behavior_ontology_type = [];
-
-            $scope.factors.objectCategory = '';
-            $scope.factors.objectId = '';
             $scope.factors.objectType = '';
-            $scope.factors.ontologyType = '';
-
 
             angular.forEach($scope.ontology_data.behaviour, function (val) {
                 if (val.name == nowSelected) {
                     angular.forEach(val.object, function (object) {
                         $scope.object_category.push(object.name);
+                        if(!$scope.object_category || $scope.object_category.length <= 0) {
+                            $scope.factors.objectType = "Behavior";  // For login and other actions who doesn't have object
+                        } else {
+                            $scope.factors.objectType = $scope.object_type[0].id;
+                            $scope.factors.objectCategory = val.object[0].name;
+                        }
                     });
-                    if(!$scope.object_category || $scope.object_category.length <= 0) {
-                        $scope.factors.objectType = "Behavior";
-                    } else {
-                        $scope.factors.objectCategory = val.object[0].name;
-                        $scope.factors.objectType = $scope.object_type[0].id;
-                    }
                 }
             });
         });
@@ -346,7 +344,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             if (!nowSelected) {
                 return;
             }
-            $scope.factors.objectId = '';
             $scope.behavior_ontology_type = [];
             angular.forEach($scope.ontology_data.object_ontology, function (val) {
                 if (val.object == nowSelected) {
@@ -371,14 +368,16 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             }
             $scope.factors.objectId = '';
             $scope.object_id = [];
-            angular.forEach($scope.ontology_data.ontology, function (val) {
-                if (val.name == nowSelected) {
-                    $scope.traverseTree(val.tree, function (itemList) {
-                        $scope.object_id = itemList;
-                        $scope.factors.objectId = itemList[0];
-                    });
-                }
-            });
+            if($scope.factors.objectType == 'Category') {
+                angular.forEach($scope.ontology_data.ontology, function (val) {
+                    if (val.name == nowSelected) {
+                        $scope.traverseTree(val.tree, function (itemList) {
+                            $scope.object_id = itemList;
+                            $scope.factors.objectId = itemList[0];
+                        });
+                    }
+                });
+            }
         });
 
         $scope.$watch('st', function (time) {
