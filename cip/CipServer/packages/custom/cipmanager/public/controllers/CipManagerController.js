@@ -24,7 +24,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         ];
 
         $scope.group_logic = [
-            'and',
+            //'and',
             'or'
         ];
 
@@ -38,7 +38,9 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         //Tag
         $scope.tag_name = [];
         $scope.tag_factor = [];
-        $scope.tag_operator = ['=', '<>'];
+        $scope.tag_operator = [
+            '='//, '<>'
+        ];
 
         //Ontology
         $scope.ontology_type = [];
@@ -105,6 +107,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             }
             if(condition_type == 'ontology' && (!$scope.factors.factor || $scope.factors.factor == '')) {
                 alert("标签不能为空");
+                return;
+            }
+            if(condition_type == 'behavior' && ($scope.factors.timeType == 'day' || $scope.factors.timeType == 'hour') && !$scope.factors.startTime) {
+                alert("时间不能为空");
                 return;
             }
             if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
@@ -233,7 +239,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.pageGroupChanged = function () {
             $scope.getGroupsByPageId($scope.currentGroupPage - 1);
         };
-        
+
         //Ontology related
         $scope.traverseTree = function (tree, callback) {
             var list = [];
@@ -271,9 +277,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             } else if (nowSelected == 'ontology') {
                 $scope.factors.name = $scope.ontology_data.interest_intent[0].ontology;
                 $scope.factors.operator = $scope.operator[0];
+                $scope.factors.weight = 0.0;
             } else if (nowSelected == 'behavior') {
                 $scope.factors.action = $scope.ontology_data.behaviour[0].name;
                 $scope.factors.operator = $scope.behavior_operator[0];
+                $scope.factors.value = 0;
+                $scope.factors.timeType = 'absolute';
             }
         });
 
@@ -661,7 +670,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                     $scope.factors.condition = 'tag';
                     $scope.factors.name = data.content.tag[0].name;
                     $scope.factors.action = data.content.behaviour[0].name;
-
                 }
             });
         };

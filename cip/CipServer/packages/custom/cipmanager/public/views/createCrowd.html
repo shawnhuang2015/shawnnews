@@ -167,7 +167,10 @@
                 </div>
                 <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
                     <input name="object_value" type="number" class="form-control" ng-model="factors.value"
-                           placeholder="值">
+                           placeholder="值" ng-pattern="/^\d+$/">
+                    <div ng-show="factors.value == null" class="help-block">
+                        <p class="text-danger">值必须为0或正整数</p>
+                    </div>
                 </div>
                 <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
                     <ui-select ng-model="factors.timeType" append-to-body="'true'">
@@ -297,7 +300,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-4 col-md-3">
-                <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 && crowdDetail.count < 0" class="btn btn-success btn-block">保存人群</button>
+                <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-success btn-block">保存人群</button>
             </div>
         </div>
 </section>
