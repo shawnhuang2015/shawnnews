@@ -177,7 +177,7 @@ namespace UDIMPL {
     ALWAYS_INLINE void EdgeMap( const VertexLocalId_t& srcvid, V_ATTR* srcvertexattr, const V_VALUE& srcvertexvalue,
                   const VertexLocalId_t& targetvid, V_ATTR* targetvertexattr, const V_VALUE& targetvertexvalue,
                   E_ATTR* edgeattr, SingleValueMapContext<MESSAGE>* context) {
-        std::cout << "UDF EdgeMap" << std::endl;
+        //std::cout << "UDF EdgeMap" << std::endl;
         size_t iter = context->Iteration();
         if ((srcvertexattr->type() != pathVertexT_[iter - 1] && pathVertexT_[iter - 1] != AnyType)
             || targetvertexattr->type() != pathVertexT_[iter]) {
@@ -198,7 +198,7 @@ namespace UDIMPL {
             }
           }
           if (nmask != 0) {
-            std::cout << "SendMsg nmask = " << nmask << ", sz = " << sz << std::endl; 
+            //std::cout << "SendMsg nmask = " << nmask << ", sz = " << sz << std::endl; 
             MESSAGE mesg(nmask, sz);
             context->Write(targetvid, mesg);
           }
@@ -211,7 +211,7 @@ namespace UDIMPL {
 
     ALWAYS_INLINE void VertexMap(const VertexLocalId_t& vid, V_ATTR* vertexattr,const V_VALUE& vertexvalue,
                                gpelib4::SingleValueMapContext<MESSAGE> * context) {
-        std::cout << "UDF VertexMap" << std::endl;
+        //std::cout << "UDF VertexMap" << std::endl;
         if (sp_ == PathOntoUser) {
         } else if (sp_ == PathItemUser) {
         } else if (sp_ == PathOntoItemUser) {
@@ -220,14 +220,14 @@ namespace UDIMPL {
     
     ALWAYS_INLINE void Reduce( const VertexLocalId_t& vid, V_ATTR* vertexattr, const V_VALUE& singlevalue,
                  const MESSAGE& accumulator, SingleValueContext<V_VALUE>* context) {
-        std::cout << "UDF Reduce" << std::endl;
+        //std::cout << "UDF Reduce" << std::endl;
         size_t iter = context->Iteration();
         if (vertexattr->type() != pathVertexT_[iter]) return;
         if (sp_ == PathOntoUser) {
           uint64_t mask = accumulator.mask;
           size_t sz = accumulator.sz;
           if (pow2(sz) - 1 == mask) {
-            std::cout << "Reduce mask = " << mask << ", sz = " << sz << ", pow2 = " << pow2(sz) - 1 << std::endl;
+            //std::cout << "Reduce mask = " << mask << ", sz = " << sz << ", pow2 = " << pow2(sz) - 1 << std::endl;
             context->GlobalVariable_Reduce<VertexLocalId_t>(GV_USER_LIST, vid);
           }
         } else if (sp_ == PathItemUser) {
@@ -252,7 +252,7 @@ namespace UDIMPL {
           } else { //user vertex - check the count filter
             uint64_t mask = accumulator.mask;
             size_t sz = accumulator.sz;
-            std::cout << "Reduce mask = " << mask << ", sz = " << sz << std::endl;
+            //std::cout << "Reduce mask = " << mask << ", sz = " << sz << std::endl;
             for (size_t k = 0; k < sz; ++k) {
               bool good = false;
               if ((mask & pow2(k)) != 0) {
@@ -261,7 +261,7 @@ namespace UDIMPL {
                 if (Compare(op, times, accumulator.count[k])) {
                   good = true;
                 }
-                std::cout << "Reduce op = " << op << ", times = " << times << ", count = " << accumulator.count[k] << std::endl;
+                //std::cout << "Reduce op = " << op << ", times = " << times << ", count = " << accumulator.count[k] << std::endl;
               }
               if (!good) return;
             }
@@ -289,7 +289,7 @@ namespace UDIMPL {
           } else { // user vertex - check the count filter
             uint64_t mask = accumulator.mask;
             size_t sz = accumulator.sz;
-            std::cout << "Reduce mask = " << mask << ", sz = " << sz << std::endl;
+            //std::cout << "Reduce mask = " << mask << ", sz = " << sz << std::endl;
             for (size_t k = 0; k < sz; ++k) {
               bool good = false;
               if ((mask & pow2(k)) != 0) {
@@ -298,7 +298,7 @@ namespace UDIMPL {
                 if (Compare(op, times, accumulator.count[k])) {
                   good = true;
                 }
-                std::cout << "Reduce op = " << op << ", times = " << times << ", count = " << accumulator.count[k] << std::endl;
+                //std::cout << "Reduce op = " << op << ", times = " << times << ", count = " << accumulator.count[k] << std::endl;
               }
               if (!good) return;
             }
