@@ -4,47 +4,41 @@ CLEAR GRAPH STORE -HARD
 # Create loading job
 #
 
-SET sys.data_root="/tmp/bangcle/data/"
+SET sys.data_root="/tmp/bangcle/data/guotai/"
 
 DROP JOB load
 
 CREATE LOADING JOB load FOR GRAPH bangcleGraph {
 
-    DEFINE HEADER header_devices = "uuid", "udid", "imei", "android_id", "brand", "model", "manufacturer", "os_name", "os_version", "sdk_version", "run_mode", "is_root", "resolution_h", "resolution_w", "mac", "cpu", "imsi", "created_at", "installed_at_24";
-    DEFINE HEADER header_biz = "id", "md5", "ts", "ip", "account", "imei", "mac", "action_type";
+    DEFINE HEADER header_deviceInitEvent = "id", "idfa", "fingerprint", "ip", "c_subnet", "os_type", "udid", "ts";
+    DEFINE HEADER header_userActivationEvent = "id", "idfa", "fingerprint", "ip", "c_subnet", "os_type", "account", "action_type", "ts"; # lack of: ref_id, geo_hash
 
-    LOAD "$sys.data_root/devices.csv"
-    TO VERTEX deviceEvent VALUES ($"uuid", $"created_at"),
-    TO VERTEX udid VALUES ($"udid"),
-    TO VERTEX imei VALUES ($"imei"),
-    TO VERTEX imsi VALUES ($"imsi"),
-    TO VERTEX mac VALUES ($"mac"),
-    TO EDGE deviceEvent_udid VALUES (
-        gsql_concat($"uuid", $"udid"),
-    TO EDGE deviceEvent_imei VALUES (
-        gsql_concat($"uuid", $"imei"),
-    TO EDGE deviceEvent_imsi VALUES (
-        gsql_concat($"uuid", $"imsi"),
-    TO EDGE deviceEvent_mac VALUES (
-        gsql_concat($"uuid", $"mac"),
-    TO EDGE udid_imei VALUES ($"udid", $"imei"),
-    TO EDGE udid_imsi VALUES ($"udid", $"imsi"),
-    TO EDGE udid_mac VALUES ($"udid", $"mac")
-    USING user_defined_header="header_devices", separator=",";
+    LOAD "$sys.data_root/DeviceInitEvent.csv"
+    TO VERTEX deviceInitEvent VALUES ($"id", $"ts", $"ts"),
+    TO VERTEX idfa VALUES ($"idfa", $"ts"),
+    TO VERTEX fingerprint VALUES ($"idfa", $"ts"),
+    TO VERTEX ip VALUES ($"ip", $"ts"),
+    TO VERTEX cSubnet VALUES ($"c_subnet", $"ts"),
+    TO VERTEX udid VALUES ($"udid", $"ts"),
+    TO EDGE deviceInitEvent_idfa VALUES ($"id", $"idfa"),
+    TO EDGE deviceInitEvent_fingerprint VALUES ($"id", $"fingerprint"),
+    TO EDGE deviceInitEvent_ip VALUES ($"id", $"ip"),
+    TO EDGE deviceInitEvent_udid VALUES ($"id", $"udid"),
+    TO EDGE ip_cSubnet VALUES ($"ip", $"c_subnet")
+    USING user_defined_header="header_deviceInitEvent", separator=",";
 
-    LOAD "$sys.data_root/biz.csv"
-    TO VERTEX bizEvent VALUES ($"id", $"ts", $"action_type"),
-    TO VERTEX imei VALUES ($"imei"),
-    TO VERTEX mac VALUES ($"mac"),
-    TO VERTEX ip VALUES ($"ip"),
-    TO VERTEX md5 VALUES ($"md5"),
-    TO VERTEX account VALUES ($"account"),
-    TO EDGE bizEvent_imei VALUES ($"id", $"imei"),
-    TO EDGE bizEvent_mac VALUES ($"id", $"mac"),
-    TO EDGE bizEvent_mac VALUES ($"id", $"ip"),
-    TO EDGE bizEvent_account VALUES ($"id", $"account")
-    TO EDGE bizEvent_md5 VALUES ($"id", $"md5")
-    USING user_defined_header="header_biz", separator=",";
+    LOAD "$sys.data_root/UserActivationEvent.csv"
+    TO VERTEX userActivationEvent VALUES ($"id", $"ts", $"ts", $"os_type", _),
+    TO VERTEX idfa VALUES ($"idfa", $"ts"),
+    TO VERTEX fingerprint VALUES ($"idfa", $"ts"),
+    TO VERTEX ip VALUES ($"ip", $"ts"),
+    TO VERTEX cSubnet VALUES ($"c_subnet", $"ts"),
+    TO VERTEX account VALUES ($"account", $"ts"),
+    TO EDGE userActivationEvent_idfa VALUES ($"id", $"idfa"),
+    TO EDGE userActivationEvent_fingerprint VALUES ($"id", $"fingerprint"),
+    TO EDGE userActivationEvent_ip VALUES ($"id", $"ip"),
+    TO EDGE ip_cSubnet VALUES ($"ip", $"c_subnet")
+    USING user_defined_header="header_userActivationEvent", separator=",";
 
 }	
 
