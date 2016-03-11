@@ -44,11 +44,7 @@ angular.module('mean.system').controller('IndexController', ['$scope', 'Global',
     };
 
     $scope.initIndex = function() {
-      if(MeanUser.isAdmin) {
-        $state.go('crowd')
-      } else {
-        $state.go('auth.login')
-      }
+
     }
 
     $scope.$watch(function () {
