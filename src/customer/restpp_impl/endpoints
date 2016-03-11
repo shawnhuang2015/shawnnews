@@ -351,5 +351,20 @@
       "function": "clear_semantic",
       "summary": "clear semantic schema in GPE."
     }
+  },
+  "auto_tag": {
+    "POST": {
+      "function": "auto_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING",
+          "max_count": 100000
+        }
+      },
+      "summary": "auto tag."
+    }
   }
 }
