@@ -33,9 +33,11 @@
         </tr>
         </tbody>
     </table>
-    <div class="text-center " ng-if="crowds.length>0">
-        <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" ng-change="pageChanged()"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+    <div class="text-center " ng-show="crowds.length>0">
+        <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentCrowdPage" class="pagination-sm"
+                        ng-change="pageCrowdChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                        items-per-page="page_size">
         </uib-pagination>
     </div>
 
