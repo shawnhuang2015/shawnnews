@@ -63,11 +63,9 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
           success = false;
           break;
         }
-        if (k % 1000 == 0) {
-           if (success && !gsql_request->FlushDelta(error_message)) {
-             success = false;
-             break;
-           }
+        if (k == 5000) {  //hack - need fix
+          std::cout << "Connect 5000 vertices to Crowd Index" << "\n";
+          break;
         }
       }
     } else {
