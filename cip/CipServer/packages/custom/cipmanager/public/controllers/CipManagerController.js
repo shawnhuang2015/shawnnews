@@ -1,7 +1,7 @@
 'use strict';
 angular.module("mean.cipmanager").controller('CipmanagerController',
-    ['$scope', '$stateParams', '$location', 'Global', '$state', 'CrowdManager', 'GroupManager', 'CrowdService', 'GroupService',
-    function ($scope, $stateParams, $location, Global, $state, CrowdManager, GroupManager, CrowdService, GroupService) {
+    ['$scope', '$stateParams', '$location', 'Global', '$state', 'CrowdManager', 'GroupManager', 'CrowdService', 'GroupService','MeanUser',
+    function ($scope, $stateParams, $location, Global, $state, CrowdManager, GroupManager, CrowdService, GroupService, MeanUser) {
 
         //Initial variables
         $scope.valid = false;
@@ -225,6 +225,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         };
 
         $scope.initSaveCrowd = function () {
+            checkLogin();
+
             $scope.crowdDetail = $stateParams.crowdDetail;
             $scope.crowdDetail.type = 'static';
         };
@@ -408,6 +410,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         ///////////////////////Network query////////////////////////
         //Init the crowds, query first page and total count
         $scope.init = function () {
+            checkLogin();
+
             CrowdManager.query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
                 $scope.crowds = crowds;
             });
@@ -494,6 +498,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
 
         //Get crowd details from server
         $scope.findOne = function () {
+            checkLogin();
             if (!$stateParams.crowdName) {
                 $scope.crowdDetail = {};
                 $scope.crowdDetail.selector = {};
@@ -570,6 +575,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
 
         //Get group details from server
         $scope.findGroup = function () {
+            checkLogin();
+
             if (!$stateParams.groupName) {
                 $scope.groupDetail = {};
                 $scope.groupDetail.selector = [];
@@ -675,5 +682,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
 
         ///////////////////////Network query////////////////////////
 
+        var checkLogin = function() {
+            if(!MeanUser.isAdmin) {
+                $state.go('auth.login')
+            }
+        }
     }
 ]);
