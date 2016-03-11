@@ -79,5 +79,6 @@ module.exports = {
     single: ".user.single",
     multi: '.user.multi'
   },
-  OntoLimit: 1024
+  OntoLimit: 1024,
+  maxUserLimit: 3000000
 };

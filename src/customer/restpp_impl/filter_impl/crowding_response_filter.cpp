@@ -76,7 +76,7 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
   std::string respStr = gsql_response->response;
   std::string cname = user_request->params["name"][0];
   std::string reqStr(user_request->data, user_request->data_length); 
-  std::cout << "restpStr: " << respStr << std::endl; 
+  //std::cout << "restpStr: " << respStr << std::endl; 
 
   Json::Reader reader;
   Json::Value JsonNewReq;
@@ -87,6 +87,7 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
   if (reader.parse(reqStr, JsonOldReq)) {
     JsonNewReq["vtype"] = JsonOldReq["crowdIndex"]["vtype"];
     JsonNewReq["etype"] = JsonOldReq["crowdIndex"]["etype"];
+    JsonNewReq["target"] = JsonOldReq["searchCond"]["target"];
   }
 
   if (reader.parse(respStr, JsonOldResp)) {
@@ -102,7 +103,7 @@ RequestObject* CreateCrowdResponseFilter(FilterHelper *filter_helper,
   postReq->method = "POST";
   postReq->url = "crowd/v1/create_crowd_update";
   postReq->data = JsonNewReq.toStyledString();
-  std::cout << "create_crowd_update:\n" << JsonNewReq.toStyledString() << std::endl;
+  //std::cout << "create_crowd_update:\n" << JsonNewReq.toStyledString() << std::endl;
   return postReq;
 
 }

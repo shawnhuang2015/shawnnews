@@ -62,3 +62,10 @@ class BangcleCNetSegment_BizEvt_Obj(object):
         gpath = "c_netsegment[\"%s\"]-c_netsegment_ip->ip-bizEvent_ip->bizEvent{bizEvent.action_type = '%s'}-bizEvent_udid->udid=>.project{bizEvent._external_id}" % (cnetsegment, biz_op_type)
         gpathObj = GPathBizObj(config, gpath)
         self.bizEvtList = gpathObj.getList()
+
+class BangcleCNetSegment_Stat_Obj(object):
+    def __init__(self, cnetsegment, datetag, measurement):
+        config = GPathConfig(ruleEngConfigure["gstore"]["host"])
+        gpath = "c_netsegment[\"%s\"]-c_netsegment_stat[\"%s:%s\"]=>.project{bizEvent.intval}" % (cnetsegment, datetag, measurement)
+        gpathObj = GPathBizObj(config, gpath)
+        self.stat = gpathObj.getList()

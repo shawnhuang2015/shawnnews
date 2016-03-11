@@ -30,7 +30,8 @@ exports.get = function(endpoint, queryStr, cb) {
             result += chunk;
         });
         res.on('end', function() {
-            console.log('GET response: ' + result);
+            var len = Math.min(result.length, 1024);
+            console.log('GET response: ' + result.substr(0, len));
             if (cb) {
                 cb(null, result);
             }
@@ -76,7 +77,8 @@ exports.post = function(endpoint, queryStr, data, cb) {
             result += chunk;
         });
         res.on('end', function() {
-            console.log('POST response: ' + result);
+            var len = Math.min(result.length, 1024);
+            console.log('POST response: ' + result.substr(0, len));
             if (cb) {
                 cb(null, result);
             }

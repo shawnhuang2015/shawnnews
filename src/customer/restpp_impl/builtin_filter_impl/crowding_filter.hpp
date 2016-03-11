@@ -11,6 +11,7 @@
  ******************************************************************************/
 #ifndef BUILTIN_CROWDING_FILTER_HPP
 #define BUILTIN_CROWDING_FILTER_HPP
+#include <boost/lexical_cast.hpp>
 
 /******************************************************************************
 * Do NOT edit on this file. Follow this file to create you own filters in a 
@@ -40,8 +41,12 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
     std::string crowdName = root["name"].asString();
     std::string vtype = root["vtype"].asString();
     std::string etype = root["etype"].asString();
+    std::string target = root["target"].asString();
     Json::Value &results = root["results"];
     uint32_t userCount = results["count"].asUInt();
+    std::cout << "CreateCrowdUpdateFilter|name:" + crowdName \
+        + "|vtype:" + vtype + "|etype:" + etype + "|target:" + target \
+        + "|count:" + boost::lexical_cast<std::string>(userCount) << "\n";
     std::vector<std::string> userIds;
     for (uint32_t k = 0 ; k < results["userIds"].size(); ++k) {
       userIds.push_back(results["userIds"][k].asString());
@@ -54,8 +59,12 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
     if (gsql_request->UpsertVertex(attr, vtype, crowdName, error_message)) {
       for (size_t k = 0; k < userIds.size(); ++k) {
         attr.Clear();
-        if (!gsql_request->UpsertEdge(attr, vtype, crowdName, etype, "user", userIds[k], error_message)) {
+        if (!gsql_request->UpsertEdge(attr, vtype, crowdName, etype, target, userIds[k], error_message)) {
           success = false;
+          break;
+        }
+        if (k == 5000) {  //hack - need fix
+          std::cout << "Connect 5000 vertices to Crowd Index" << "\n";
           break;
         }
       }
