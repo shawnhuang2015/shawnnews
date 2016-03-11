@@ -42,6 +42,11 @@ module.exports = function(Cipmanager, app, auth, database) {
   //download
   app.route('/api/download').get(rest.download);
 
+  app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next()
+  });
   /*
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');

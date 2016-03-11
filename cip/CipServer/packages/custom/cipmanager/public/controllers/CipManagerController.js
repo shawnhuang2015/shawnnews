@@ -1,7 +1,7 @@
 'use strict';
 angular.module("mean.cipmanager").controller('CipmanagerController',
-    ['$scope', '$stateParams', '$location', 'Global', '$state', 'CrowdManager', 'GroupManager', 'CrowdService', 'GroupService','MeanUser',
-    function ($scope, $stateParams, $location, Global, $state, CrowdManager, GroupManager, CrowdService, GroupService, MeanUser) {
+    ['$scope', '$stateParams', '$location', '$state', 'CrowdManager', 'GroupManager', 'CrowdService', 'GroupService','MeanUser',
+    function ($scope, $stateParams, $location, $state, CrowdManager, GroupManager, CrowdService, GroupService, MeanUser) {
 
         //Initial variables
         $scope.valid = false;
@@ -12,7 +12,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.currentCrowdPage = 1;
         $scope.currentGroupPage = 1;
         $scope.crowdTodoList = [];
-        $scope.global = Global;
         $scope.factors = {};
         $scope.package = {
             name: 'cipmanager'
