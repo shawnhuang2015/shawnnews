@@ -63,12 +63,12 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
           success = false;
           break;
         }
-        if (k % 1000 == 0) {
-           if (success && !gsql_request->FlushDelta(error_message)) {
-             success = false;
-             break;
-           }
-        }
+       // if (k % 1000 == 0) {
+       //    if (success && !gsql_request->FlushDelta(error_message)) {
+       //      success = false;
+       //      break;
+       //    }
+       // }
       }
     } else {
       success = false;
