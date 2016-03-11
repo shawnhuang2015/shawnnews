@@ -40,6 +40,7 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
     std::string crowdName = root["name"].asString();
     std::string vtype = root["vtype"].asString();
     std::string etype = root["etype"].asString();
+    std::string target = root["target"].asString();
     Json::Value &results = root["results"];
     uint32_t userCount = results["count"].asUInt();
     std::vector<std::string> userIds;
@@ -54,7 +55,7 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
     if (gsql_request->UpsertVertex(attr, vtype, crowdName, error_message)) {
       for (size_t k = 0; k < userIds.size(); ++k) {
         attr.Clear();
-        if (!gsql_request->UpsertEdge(attr, vtype, crowdName, etype, "user", userIds[k], error_message)) {
+        if (!gsql_request->UpsertEdge(attr, vtype, crowdName, etype, target, userIds[k], error_message)) {
           success = false;
           break;
         }
