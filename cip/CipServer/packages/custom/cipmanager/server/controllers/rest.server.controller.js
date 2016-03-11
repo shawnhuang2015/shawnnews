@@ -335,7 +335,7 @@ function writeUserToFile(res, path) {
     for (var k = 0; k < res.results.userIds.length; ++k) {
         data += res.results.userIds[k] + '\n';
     }
-    fs.writeFile(path, data,  function(err) {
+    fs.writeFile(path, data, function(err) {
         if (err) {
             console.log('Error to wirte file: ' + path);
         } else {
@@ -384,7 +384,7 @@ exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition)
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name + '&limit=' + config.maxUserLimit, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);
@@ -449,7 +449,7 @@ exports.createSingleCrowdRemote = function(prefix, name, crowdtype,  condition) 
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name + '&limit=' + config.maxUserLimit, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);
