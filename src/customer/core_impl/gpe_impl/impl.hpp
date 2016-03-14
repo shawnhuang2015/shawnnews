@@ -128,8 +128,6 @@ class UDFRunner : public ServiceImplBase {
     } else if (request.request_function_ == "clear_semantic") {
       semantic_schema = Json::Value();
       return true;
-    } else if (request.request_function_ == "auto_tag") {
-      return AutoTag(serviceapi, request);
     }
     
     return false;  /// not a valid request
