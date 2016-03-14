@@ -11,13 +11,13 @@ module.exports = function(Cipmanager, app, auth, database) {
   //call remote
   app.route('/api/ontology').get(rest.readMetadata);
 
-  app.route('/api/rest/crowd/detail').get(rest.getCrowdDetailByGet).post(rest.getCrowdDetailByPost);
+  app.route('/api/rest/crowd/detail').post(rest.getCrowdDetailByPost);
 
-  app.route('/api/rest/crowd/count').get(rest.getCrowdCountByGet).post(rest.getCrowdCountByPost);
+  app.route('/api/rest/crowd/count').post(rest.getCrowdCountByPost);
 
-  app.route('/api/rest/group/crowd/detail').get(rest.getCrowdDetailByGet).post(rest.getGroupCrowdDetailByPost);
+  app.route('/api/rest/group/crowd/detail').post(rest.getGroupCrowdDetailByPost);
 
-  app.route('/api/rest/group/crowd/count').get(rest.getCrowdCountByGet).post(rest.getGroupCrowdCountByPost);
+  app.route('/api/rest/group/crowd/count').post(rest.getGroupCrowdCountByPost);
 
   app.route('/api/rest/crowd/sample').get(rest.crowdSampleByGet);
 
@@ -42,6 +42,11 @@ module.exports = function(Cipmanager, app, auth, database) {
   //download
   app.route('/api/download').get(rest.download);
 
+  app.all('/', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next()
+  });
   /*
   app.get('/api/cipmanager/example/anyone', function(req, res, next) {
     res.send('Anyone can access this');

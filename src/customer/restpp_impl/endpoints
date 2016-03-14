@@ -154,6 +154,10 @@
         "more": {
           "type": "UINT32",
           "default": "1"
+        },
+        "tag_all": {
+          "type": "UINT32",
+          "default": "0"
         }
       },
       "request_filter": "PreSetTagRequest",
@@ -190,6 +194,10 @@
         "more": {
           "type": "UINT32",
           "default": "1"
+        },
+        "tag_all": {
+          "type": "UINT32",
+          "default": "0"
         }
       },
       "request_filter": "PreSetTagRequest",
@@ -240,6 +248,10 @@
           "default": "{}"
         },
         "more": {
+          "type": "UINT32",
+          "default": "0"
+        },
+        "tag_all": {
           "type": "UINT32",
           "default": "0"
         }

@@ -165,42 +165,6 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
     });
 }
 
-/*
-Get the user id list which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
-Output: 1. user id list 2. user count
- */
-exports.getCrowdDetailByGet = function(req, res) {
-    console.log('Func getCrowdDetailByGet');
-    var crowdName = req.query.cname;
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: 'miss "cname"'
-        });
-    }
-    /*
-     utility.get('getCrowd', 'crowdName=' + crowdName, function(err, result) {
-         if (err) {
-             return res.send({
-             message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-     */
-    res.send({
-        results: {
-            count: 3,
-            userIds: ['user_1', 'user_2', 'user_3']
-        },
-        error: false,
-        message: ''
-    });
-}
 
 /*
 Get the number of users which belong to the crowd.
@@ -210,6 +174,7 @@ Input: selector conditions - which express the crowding condition that the clien
 exports.getCrowdCountByPost = function(req, res) {
     console.log('Func getCrowdCountByPost');
     console.log('Get Count: ' + JSON.stringify(req.body));
+    var rid = req.query.rid;
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -222,6 +187,13 @@ exports.getCrowdCountByPost = function(req, res) {
         });
     }
 
+    if (rid === null) {
+        return res.send({
+            error: true,
+            message: 'rid missed'
+        });
+    }
+
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err || md === null) {
             console.log('Error to get crowd count');
@@ -235,7 +207,7 @@ exports.getCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0&rid=' + rid, bodyStr, function(err, resp) {
             if (err) {
                 console.log('Error to create crowd count');
                 return res.send({
@@ -243,7 +215,16 @@ exports.getCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    var ret = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    if (rid.length > 0) {
+                        ret.results.requestId = rid;
+                    }
+                    return res.send(ret);
+                } else {
+                    return res.send(resp);
+                }
             }
         });
     });
@@ -256,6 +237,8 @@ exports.getCrowdCountByPost = function(req, res) {
  */
 exports.getGroupCrowdCountByPost = function(req, res) {
     console.log('Func getGroupCrowdCountByPost');
+    console.log('Get Count: ' + JSON.stringify(req.body));
+    var rid = req.query.rid;
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -265,6 +248,13 @@ exports.getGroupCrowdCountByPost = function(req, res) {
         return res.send({
             error: true,
             message: 'wrong "selector"'
+        });
+    }
+
+    if (rid === null) {
+        return res.send({
+            error: true,
+            message: 'rid missed'
         });
     }
 
@@ -281,7 +271,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0&rid=' + rid, bodyStr, function(err, resp) {
             if (err) {
                 console.log('Error to create crowd count');
                 return res.send({
@@ -289,43 +279,18 @@ exports.getGroupCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    var ret = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    if (rid.length > 0) {
+                        ret.results.requestId = rid;
+                    }
+                    return res.send(ret);
+                } else {
+                    return res.send(resp);
+                }
             }
         });
-    });
-}
-
-/*
-Get the number of users which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
- */
-exports.getCrowdCountByGet = function(req, res) {
-    var crowdName = req.query.cname;
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: 'miss "cname"'
-        });
-    }
-    /*
-     utility.get('getCrowdCount', 'crowdName=' + crowdName, fucntion(err, result) {
-         if (err) {
-             return res.send({
-                message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-    */
-    res.send({
-        results: {
-            count: 3
-        },
-        error: false,
-        message: ''
     });
 }
 
@@ -335,7 +300,7 @@ function writeUserToFile(res, path) {
     for (var k = 0; k < res.results.userIds.length; ++k) {
         data += res.results.userIds[k] + '\n';
     }
-    fs.writeFile(path, data,  function(err) {
+    fs.writeFile(path, data, function(err) {
         if (err) {
             console.log('Error to wirte file: ' + path);
         } else {
@@ -384,7 +349,7 @@ exports.createCombinedCrowdRemote = function(prefix, name, crowdtype, condition)
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name + '&limit=' + config.maxUserLimit, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);
@@ -449,7 +414,7 @@ exports.createSingleCrowdRemote = function(prefix, name, crowdtype,  condition) 
                 }
             };
             var bodyStr = JSON.stringify(body);
-            utility.post('crowd/v1/create', 'name=' + prefix + name, bodyStr, function (err, res) {
+            utility.post('crowd/v1/create', 'name=' + prefix + name + '&limit=' + config.maxUserLimit, bodyStr, function (err, res) {
                 if (err) {
                     updateTag(name, -1);
                     console.log('Error to create crowd: ' + name);

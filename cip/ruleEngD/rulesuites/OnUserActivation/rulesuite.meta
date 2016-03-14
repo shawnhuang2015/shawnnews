@@ -5,6 +5,6 @@ resolution: ALL
 #Pri is only meaningful in case resolution is HPW
 pri:
 -   dummy 
-checkpoint: OnDataAggregate
+checkpoint: OnUserActivation
 owner:  Demo
 
