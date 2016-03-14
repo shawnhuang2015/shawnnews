@@ -29,7 +29,7 @@ angular.module('mean.cipmanager').factory('GroupService', ['$http',
                     success: false
                 });
             });
-        }
+        };
 
         var createGroup = function(group, callback) {
             $http.post('/api/db/group/crowd',group).
@@ -43,13 +43,14 @@ angular.module('mean.cipmanager').factory('GroupService', ['$http',
                     success: false
                 });
             });
-        }
+        };
 
-        var getGroupUserCount = function(factor, callback) {
-            $http.post('/api/rest/group/crowd/count',factor).
+        var getGroupUserCount = function(rid, factor, callback) {
+            $http.post('/api/rest/group/crowd/count?rid='+rid,factor).
             success(function(data, status, headers, config) {
                 callback({
                     success: !data.error,
+                    requestId: data.results.requestId,
                     length: data.error ? 0 : data.results.count
                 });
             }).
@@ -58,7 +59,7 @@ angular.module('mean.cipmanager').factory('GroupService', ['$http',
                     success: false
                 });
             });
-        }
+        };
 
         return {
             getGroupCount: getGroupCount,

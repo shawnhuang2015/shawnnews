@@ -77,12 +77,13 @@ angular.module('mean.cipmanager').factory('CrowdService', ['$http',
             });
         }
 
-        var getUserCountByFactor = function(factor, callback) {
+        var getUserCountByFactor = function(rid, factor, callback) {
             // Temporary - probably it should to be resource based.
-            $http.post('/api/rest/crowd/count',factor).
+            $http.post('/api/rest/crowd/count?rid='+rid, factor).
             success(function(data, status, headers, config) {
                 callback(factor, {
                     success: !data.error,
+                    requestId: data.results.requestId,
                     length: data.error ? 0 : data.results.count
                 });
             }).

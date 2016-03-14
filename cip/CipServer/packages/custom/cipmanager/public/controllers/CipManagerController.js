@@ -5,6 +5,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
 
         //Initial variables
         $scope.valid = false;
+        $scope.lastRid = '';
         $scope.page_size = 10;
         $scope.totalItems = 1;
         $scope.totalGroupItems = 1;
@@ -120,7 +121,10 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 alert("开始时间不能大于结束时间");
                 return;
             }
-
+            if(condition_type == 'behavior' && ($scope.factors.value < 0 || $scope.factors.value > 2147483647)) {
+                alert("次数必须在0~2147483647之间");
+                return;
+            }
             //Start add
             if (!$scope.crowdDetail) {
                 $scope.crowdDetail = {};
@@ -140,8 +144,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
             $scope.factors = {};
             $scope.st = '';
             $scope.et = '';
-
-            CrowdService.getUserCountByFactor(param, function (param, data) {
+            $scope.lastRid = Date.parse(new Date());
+            CrowdService.getUserCountByFactor($scope.lastRid, param, function (param, data) {
                 if(data.success) {
                     param.selector[condition_type][0].count = data.length;
                 } else {
@@ -149,9 +153,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 }
             });
             $scope.crowdDetail.count = -1;
-            CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
+            CrowdService.getUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
                 if(data.success) {
-                    $scope.crowdDetail.count = data.length;
+                    if($scope.lastRid == data.requestId) {
+                        $scope.crowdDetail.count = data.length;
+                    }
                 } else {
                     $scope.crowdDetail.count = -2;
                 }
@@ -161,9 +167,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.deleteFactor = function (factor, index) {
             factor.splice(index, 1);
             $scope.crowdDetail.count = -1;
-            CrowdService.getUserCountByFactor($scope.crowdDetail, function (param, data) {
+            CrowdService.getUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
                 if(data.success) {
-                    $scope.crowdDetail.count = data.length;
+                    if($scope.lastRid == data.requestId) {
+                        $scope.crowdDetail.count = data.length;
+                    }
                 } else {
                     $scope.crowdDetail.count = -2;
                 }
@@ -445,14 +453,6 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                     $scope.userList = [];
                 }
             });
-
-            CrowdService.getUserCount($stateParams.crowdName, function (data) {
-                if (data.success) {
-                    $scope.userCount = data.length;
-                } else {
-                    $scope.userCount = 1;
-                }
-            });
         };
 
         $scope.initGroupUserList = function () {
@@ -643,9 +643,12 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 param.selector.push($scope.groupDetail.selector[index].selector);
             }
             $scope.groupDetail.count = -1;
-            GroupService.getGroupUserCount(param, function (data) {
+            $scope.lastRid = Date.parse(new Date());
+            GroupService.getGroupUserCount($scope.lastRid, param, function (data) {
                 if (data.success) {
-                    $scope.groupDetail.count = data.length;
+                    if($scope.lastRid == data.requestId) {
+                        $scope.groupDetail.count = data.length;
+                    }
                 } else {
                     $scope.groupDetail.count = -2;
                 }

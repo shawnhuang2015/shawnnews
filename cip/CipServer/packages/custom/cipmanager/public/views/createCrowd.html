@@ -169,7 +169,7 @@
                     <input name="object_value" type="number" class="form-control" ng-model="factors.value"
                            placeholder="值" ng-pattern="/^\d+$/">
                     <div ng-show="factors.value == null" class="help-block">
-                        <p class="text-danger">值必须为0或正整数</p>
+                        <p class="text-danger">值必须为0~2147483647</p>
                     </div>
                 </div>
                 <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
