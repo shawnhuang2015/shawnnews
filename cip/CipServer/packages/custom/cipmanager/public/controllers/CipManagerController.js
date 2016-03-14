@@ -109,11 +109,11 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 alert("标签不能为空");
                 return;
             }
-            if(condition_type == 'behavior' && ($scope.factors.timeType == 'day' || $scope.factors.timeType == 'hour') && !$scope.factors.startTime) {
+            if(condition_type == 'behavior' && ($scope.factors.timeType == 'day' || $scope.factors.timeType == 'hour') && $scope.factors.startTime <= 0.1) {
                 alert("时间不能为空");
                 return;
             }
-            if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && (!$scope.factors.startTime || !$scope.factors.endTime)) {
+            if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && ($scope.factors.startTime <= 0.1 || $scope.factors.endTime <= 0.1)) {
                 alert("时间不能为空");
                 return;
             }
@@ -121,8 +121,8 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
                 alert("开始时间不能大于结束时间");
                 return;
             }
-            if(condition_type == 'behavior' && ($scope.factors.value < 0 || $scope.factors.value > 2147483647)) {
-                alert("次数必须在0~2147483647之间");
+            if(condition_type == 'behavior' && ($scope.factors.value < 1 || $scope.factors.value > 2147483647)) {
+                alert("次数必须在1~2147483647之间");
                 return;
             }
             //Start add
