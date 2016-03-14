@@ -160,10 +160,12 @@ extern "C" {
     const std::string weight_sep = std::string(1, params["weight_sep"][0][0]);
     const std::string eol = std::string(1, params["eol"][0][0]);
     const bool more = (params["more"][0] == "1");
+    const bool tag_all = (params["tag_all"][0] == "1");
 
     std::cout << "sep=" << sep << "@, tag_sep=" << tag_sep
         << "@, weight_sep=" << weight_sep << "@, eol="
-        << eol << "@, more=" << more << std::endl;
+        << eol << "@, more=" << more << "@, tag_all="
+        << tag_all << std::endl;
 
     // parse inverted_tags
     Json::Value inverted_tags;
@@ -253,6 +255,28 @@ extern "C" {
                 object_ontology_etype, ontology_vtype, t, msg)) {
             gsql_request->Respond("fail to upsert edge, " + msg);
             return;
+          }
+
+          // NOTE: connect obj to a.b.c, a.b, a
+          if (tag_all) {
+            const char sep = '.';
+            int pos = t.size();
+            while (pos > 0) {
+              int cur = t.find_last_of(sep, pos);
+              if (cur < pos && cur > 0) {
+                const std::string &sub(t.substr(0, cur));
+                attr.Clear();
+                attr.SetFloat("weight", w);
+                if (! gsql_request->UpsertEdge(attr, object_vtype, obj_id, 
+                      object_ontology_etype, ontology_vtype, sub, msg)) {
+                  gsql_request->Respond("fail to upsert edge, " + msg);
+                  return;
+                }
+                pos = cur - 1;
+              } else {
+                break;
+              }
+            }
           }
         }
       }
