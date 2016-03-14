@@ -10,7 +10,7 @@ DROP JOB load_guotai
 
 CREATE LOADING JOB load_guotai FOR GRAPH bangcleGraph {
 
-    DEFINE HEADER header_deviceInitEvent = "uuid","ref_id","idfa","ostype","fingerprint","ip","csubnet","timestamp";
+    DEFINE HEADER header_deviceInitEvent = "uuid","ref_id","idfa","ostype","fingerprint","ip","csubnet","self_idfa","timestamp";
     # DEFINE HEADER header_deviceInitEvent = "id", "idfa", "fingerprint", "ip", "c_subnet", "os_type", "udid", "ts";
     DEFINE HEADER header_userActivationEvent = "uuid","ref_id","idfa","ostype","fingerprint","geo_hash","latitude","longitude","ip","csubnet","account","actiontype","signup_duration","account_input_duration","TimeStamp";
     # DEFINE HEADER header_userActivationEvent = "id", "idfa", "fingerprint", "ip", "c_subnet", "os_type", "account", "action_type", "ts"; # lack of: ref_id, geo_hash
