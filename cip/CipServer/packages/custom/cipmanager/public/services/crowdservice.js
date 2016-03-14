@@ -9,7 +9,7 @@ angular.module('mean.cipmanager').factory('CrowdManager', ['$resource',
         }, {
             update: {
                 method: 'PUT'
-            },
+            }
         });
     }
 ]);

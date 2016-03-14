@@ -294,6 +294,10 @@
               "type": "STRING",
               "min_count": 1,
               "max_count": 1
+            },
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
             }
           },
           "request_filter": "CreateCrowdRequestFilter",
