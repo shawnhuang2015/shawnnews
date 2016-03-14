@@ -281,6 +281,10 @@
             "limit": {
               "type": "UINT32",
               "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
             }
           },
           "request_filter": "UserSearchFilter"
@@ -297,6 +301,10 @@
             },
             "limit": {
               "type": "UINT32",
+              "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
               "min_count": 0
             }
           },
@@ -329,6 +337,10 @@
             "limit": {
               "type": "UINT32",
               "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
             }
           }
         }
@@ -344,6 +356,10 @@
             },
             "type": {
               "type":"TYPENAME"
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
             }
           }
         }

@@ -213,6 +213,11 @@ class UDFRunner : public ServiceImplBase {
     if (jsoptions.isMember("limit") && jsoptions["limit"].size() > 0) {
       limit = jsoptions["limit"][0].asUInt();
     }
+    //request id
+    std::string rid; 
+    if (jsoptions.isMember("rid") && jsoptions["rid"].size() > 0) {
+      rid = jsoptions["rid"][0].asString();
+    }
 
     std::string typeStr = boost::lexical_cast<std::string>(typeId);
     VertexLocalId_t local_start;
@@ -235,6 +240,10 @@ class UDFRunner : public ServiceImplBase {
     //output the final resutls
     JSONWriter* writer_ = request.outputwriter_;
     writer_->WriteStartObject();
+    if (rid.length() > 0) {
+      writer_->WriteName("requestId");
+      writer_->WriteString(rid);
+    }
     writer_->WriteName("count");
     writer_->WriteUnsignedInt(userIds.size());
     writer_->WriteName("userIds");
