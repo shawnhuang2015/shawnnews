@@ -174,6 +174,7 @@ Input: selector conditions - which express the crowding condition that the clien
 exports.getCrowdCountByPost = function(req, res) {
     console.log('Func getCrowdCountByPost');
     console.log('Get Count: ' + JSON.stringify(req.body));
+    var rid = req.query.rid;
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -183,6 +184,13 @@ exports.getCrowdCountByPost = function(req, res) {
         return res.send({
             error: true,
             message: 'wrong "selector"'
+        });
+    }
+
+    if (rid === null) {
+        return res.send({
+            error: true,
+            message: 'rid missed'
         });
     }
 
@@ -199,7 +207,7 @@ exports.getCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0&rid=' + rid, bodyStr, function(err, resp) {
             if (err) {
                 console.log('Error to create crowd count');
                 return res.send({
@@ -209,7 +217,11 @@ exports.getCrowdCountByPost = function(req, res) {
             } else {
                 var jsresp = JSON.parse(resp);
                 if (jsresp.error === true) {
-                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    var ret = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    if (rid.length > 0) {
+                        ret.results.requestId = rid;
+                    }
+                    return res.send(ret);
                 } else {
                     return res.send(resp);
                 }
@@ -225,6 +237,8 @@ exports.getCrowdCountByPost = function(req, res) {
  */
 exports.getGroupCrowdCountByPost = function(req, res) {
     console.log('Func getGroupCrowdCountByPost');
+    console.log('Get Count: ' + JSON.stringify(req.body));
+    var rid = req.query.rid;
     if (!req.body.selector) {
         return res.send({
             error: true,
@@ -234,6 +248,13 @@ exports.getGroupCrowdCountByPost = function(req, res) {
         return res.send({
             error: true,
             message: 'wrong "selector"'
+        });
+    }
+
+    if (rid === null) {
+        return res.send({
+            error: true,
+            message: 'rid missed'
         });
     }
 
@@ -250,7 +271,7 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             selector: generateCond(req.body.selector, md.profile)
         };
         var bodyStr = JSON.stringify(body);
-        utility.post('crowd/v1/user_search', 'limit=0', bodyStr, function(err, resp) {
+        utility.post('crowd/v1/user_search', 'limit=0&rid=' + rid, bodyStr, function(err, resp) {
             if (err) {
                 console.log('Error to create crowd count');
                 return res.send({
@@ -260,7 +281,11 @@ exports.getGroupCrowdCountByPost = function(req, res) {
             } else {
                 var jsresp = JSON.parse(resp);
                 if (jsresp.error === true) {
-                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    var ret = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                    if (rid.length > 0) {
+                        ret.results.requestId = rid;
+                    }
+                    return res.send(ret);
                 } else {
                     return res.send(resp);
                 }
