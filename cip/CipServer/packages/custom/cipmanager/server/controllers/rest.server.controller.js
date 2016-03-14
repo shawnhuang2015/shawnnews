@@ -165,42 +165,6 @@ exports.getGroupCrowdDetailByPost = function(req, res) {
     });
 }
 
-/*
-Get the user id list which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
-Output: 1. user id list 2. user count
- */
-exports.getCrowdDetailByGet = function(req, res) {
-    console.log('Func getCrowdDetailByGet');
-    var crowdName = req.query.cname;
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: 'miss "cname"'
-        });
-    }
-    /*
-     utility.get('getCrowd', 'crowdName=' + crowdName, function(err, result) {
-         if (err) {
-             return res.send({
-             message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-     */
-    res.send({
-        results: {
-            count: 3,
-            userIds: ['user_1', 'user_2', 'user_3']
-        },
-        error: false,
-        message: ''
-    });
-}
 
 /*
 Get the number of users which belong to the crowd.
@@ -243,7 +207,12 @@ exports.getCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                } else {
+                    return res.send(resp);
+                }
             }
         });
     });
@@ -289,43 +258,14 @@ exports.getGroupCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                } else {
+                    return res.send(resp);
+                }
             }
         });
-    });
-}
-
-/*
-Get the number of users which belong to the crowd.
-It can be called just when the crowd has been create on crowding service.
-Method: GET
-Input: cname - crowd name
- */
-exports.getCrowdCountByGet = function(req, res) {
-    var crowdName = req.query.cname;
-    if (!crowdName) {
-        return res.send({
-            error: true,
-            message: 'miss "cname"'
-        });
-    }
-    /*
-     utility.get('getCrowdCount', 'crowdName=' + crowdName, fucntion(err, result) {
-         if (err) {
-             return res.send({
-                message: err.message
-             });
-         } else {
-             return res.send(result);
-         }
-     });
-    */
-    res.send({
-        results: {
-            count: 3
-        },
-        error: false,
-        message: ''
     });
 }
 

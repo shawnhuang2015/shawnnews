@@ -26,8 +26,9 @@ from monitor.Perf import Perf
 
 #########   customization biz objects ################
 from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj 
-from cust.bangcle.BangcleBizObj import BangcleCNetSegment_BizEvt_Obj 
+from cust.bangcle.BangcleBizObj import BangcleCNetSegment_ActEvt_Obj 
 from cust.bangcle.BangcleBizObj import BangcleCNetSegment_Stat_Obj 
+from cust.bangcle.BangcleBizObj import BangcleIpToActEvtObj 
 
 # TODO: Below two move to util
 import datetime
@@ -51,32 +52,32 @@ def end(context):
 ############Data load segment#################
 
 ############Rule segment#################
-def r14_ip_query_frequency(context):
+def r14_ip_activation_frequency(context):
     return
-    bizEvt = __REQ_EVT(context)
+    actEvt = __REQ_EVT(context)
     now = int(time(time()))
-    ret = BangcleIpToBizEvtObj(bizEvt.ip, "query", now, now-60) 
-    bizEvts = ret.bizEvtList
-    if len(bizEvts)>=300:
-        __W_RULE_RET(context , "ALERT: ip %s has more than 300 query times: %s in past 1 minute" % (bizEvt.ip, len(bizEvts)))
+    ret = BangcleIpToActEvtObj(actEvt.ip, now, now-60) 
+    evts = ret.evtList
+    if len(evts)>=300:
+        __W_RULE_RET(context , "ALERT: ip %s has more than 300 query times: %s in past 1 minute" % (actEvt.ip, len(evts)))
 
-def r18_imei_login_frequency(context):
+def r18_imei_activation_frequency(context):
     return
-    bizEvt = __REQ_EVT(context)
+    actEvt = __REQ_EVT(context)
     now = int(time(time()))
-    ret = BangcleIpToBizEvtObj(bizEvt.imei, "login", now, now-60*60*24) 
-    bizEvts = ret.bizEvtList
-    if len(bizEvts)>=300:
-        __W_RULE_RET(context , "ALERT: imei %s has more than 10 login events: %s in past 1 day" % (bizEvt.imei, len(bizEvts)))
+    ret = BangcleIpToActEvtObj(actEvt.imei, now, now-60*60*24) 
+    evts = ret.evtList
+    if len(evts)>=300:
+        __W_RULE_RET(context , "ALERT: imei %s has more than 10 login events: %s in past 1 day" % (actEvt.imei, len(evts)))
 
 def r19_diff_device_login(context):
     return
-    bizEvt = __REQ_EVT(context)
+    actEvt = __REQ_EVT(context)
     now = int(time(time()))
-    ret = BangcleAcct_BizEvt_Udid_Obj(bizEvt.account, "login", now, now-60*60*24) 
-    udidLists  = ret.udidList
+    ret = BangcleAcct_ActEvt_Udid_Obj(actEvt.account, now, now-60*60*24) 
+    udidList  = ret.udidList
     if len(udidList)>=10:
-        __W_RULE_RET(context , "ALERT: account %s has login more than 10 different devices: %s in past 1 day" % (bizEvt.account, len(bizEvts)))
+        __W_RULE_RET(context , "ALERT: account %s has login more than 10 different devices: %s in past 1 day" % (actEvt.account, len(udidList)))
 
 def r20_gps_query_frequency(context):
     pass
@@ -126,10 +127,10 @@ def r27_same_c_netsegment_user_activate(context):
         hour2 = ts0 + 2*3600
         hour6 = ts0 + 6*3600
 
-        ret = BangcleCNetSegment_BizEvt_Obj(activationEvt.cnetsegment, "activate", hour2, hour6)
-        bizEvts = ret.bizEvtList
-        if len(bizEvts) > 100:
-            __W_RULE_RET(context , "ALERT: to many user activation on  c network segment %s" % len(bizEvts))
+        ret = BangcleCNetSegment_ActEvt_Obj(activationEvt.cnetsegment,  hour2, hour6)
+        evts = ret.evtList
+        if len(evts) > 100:
+            __W_RULE_RET(context , "ALERT: to many user activation on  c network segment %s" % len(evts))
             perf.post({"rule":"r27_same_c_netsegment_user_activate"}, 1.0)
 
 def r28_cnet_activation_increase(context):

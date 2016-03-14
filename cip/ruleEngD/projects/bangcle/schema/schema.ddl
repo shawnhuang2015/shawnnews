@@ -31,7 +31,7 @@ CREATE VERTEX deviceInitEvent (primary_id id string NOT NULL, ts uint, gs_touch_
 #  - uuid as PK
 CREATE VERTEX userActivationEvent (primary_id id string NOT NULL, ts uint, gs_touch_time uint, os_type string, ref_id string )
 #  - uuid as PK
-CREATE VERTEX bizEvent (primary_id id string NOT NULL, ts uint, action_type string, ref_id uint, gs_touch_time uint)
+# CREATE VERTEX bizEvent (primary_id id string NOT NULL, ts uint, action_type string, ref_id uint, gs_touch_time uint)
 #  - geohash value as PK
 CREATE VERTEX geoHash(primary_id id string NOT NULL, gs_touch_time uint)
 
@@ -57,16 +57,16 @@ CREATE UNDIRECTED EDGE deviceInitEvent_idfa (FROM deviceInitEvent, TO idfa)
 CREATE UNDIRECTED EDGE deviceInitEvent_ip (FROM deviceInitEvent, TO ip)
 #
 # B. bizEvent
-CREATE UNDIRECTED EDGE bizEvent_udid (FROM bizEvent, TO udid)
-CREATE UNDIRECTED EDGE bizEvent_imsi (FROM bizEvent, TO imsi)
-CREATE UNDIRECTED EDGE bizEvent_imei (FROM bizEvent, TO imei)
-CREATE UNDIRECTED EDGE bizEvent_mac (FROM bizEvent, TO mac)
-CREATE UNDIRECTED EDGE bizEvent_fingerprint (FROM bizEvent, TO fingerprint)
-CREATE UNDIRECTED EDGE bizEvent_idfa (FROM bizEvent, TO idfa)
-CREATE UNDIRECTED EDGE bizEvent_account (FROM bizEvent, TO account)
-CREATE UNDIRECTED EDGE bizEvent_geoHash (FROM bizEvent, TO geoHash)
-CREATE UNDIRECTED EDGE bizEvent_ip (FROM bizEvent, TO ip)
-CREATE UNDIRECTED EDGE bizEvent_date (FROM bizEvent, TO dateIndex)
+# CREATE UNDIRECTED EDGE bizEvent_udid (FROM bizEvent, TO udid)
+# CREATE UNDIRECTED EDGE bizEvent_imsi (FROM bizEvent, TO imsi)
+# CREATE UNDIRECTED EDGE bizEvent_imei (FROM bizEvent, TO imei)
+# CREATE UNDIRECTED EDGE bizEvent_mac (FROM bizEvent, TO mac)
+# CREATE UNDIRECTED EDGE bizEvent_fingerprint (FROM bizEvent, TO fingerprint)
+# CREATE UNDIRECTED EDGE bizEvent_idfa (FROM bizEvent, TO idfa)
+# CREATE UNDIRECTED EDGE bizEvent_account (FROM bizEvent, TO account)
+# CREATE UNDIRECTED EDGE bizEvent_geoHash (FROM bizEvent, TO geoHash)
+# CREATE UNDIRECTED EDGE bizEvent_ip (FROM bizEvent, TO ip)
+# CREATE UNDIRECTED EDGE bizEvent_date (FROM bizEvent, TO dateIndex)
 #
 # C. userActivationEvent
 CREATE UNDIRECTED EDGE userActivationEvent_udid(FROM userActivationEvent, TO udid)
@@ -88,6 +88,6 @@ CREATE UNDIRECTED EDGE date_stat (FROM dateIndex, TO stat)
 # Graph
 #
 ###############################################################################
-CREATE GRAPH bangcleGraph (udid,imei,imsi,mac,ip,account,cSubnet,fingerprint,idfa,deviceInitEvent,userActivationEvent,bizEvent,geoHash,dateIndex,stat,deviceInitEvent_udid,deviceInitEvent_imei,deviceInitEvent_imsi,deviceInitEvent_mac,deviceInitEvent_fingerprint,deviceInitEvent_idfa,deviceInitEvent_ip,bizEvent_udid,bizEvent_imsi,bizEvent_imei,bizEvent_mac,bizEvent_fingerprint,bizEvent_idfa,bizEvent_account,bizEvent_geoHash,bizEvent_ip,bizEvent_date,userActivationEvent_udid,userActivationEvent_imsi,userActivationEvent_imei,userActivationEvent_mac,userActivationEvent_fingerprint,userActivationEvent_idfa,userActivationEvent_account,userActivationEvent_geoHash,userActivationEvent_ip,userActivationEvent_date, ip_cSubnet, date_stat)
+CREATE GRAPH bangcleGraph (udid,imei,imsi,mac,ip,account,cSubnet,fingerprint,idfa,deviceInitEvent,userActivationEvent,geoHash,dateIndex,stat,deviceInitEvent_udid,deviceInitEvent_imei,deviceInitEvent_imsi,deviceInitEvent_mac,deviceInitEvent_fingerprint,deviceInitEvent_idfa,deviceInitEvent_ip,userActivationEvent_udid,userActivationEvent_imsi,userActivationEvent_imei,userActivationEvent_mac,userActivationEvent_fingerprint,userActivationEvent_idfa,userActivationEvent_account,userActivationEvent_geoHash,userActivationEvent_ip,userActivationEvent_date, ip_cSubnet, date_stat)
 EXPORT SCHEMA bangcleGraph
 

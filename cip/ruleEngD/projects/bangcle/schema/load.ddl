@@ -41,18 +41,18 @@ CREATE LOADING JOB load_guotai FOR GRAPH bangcleGraph {
     TO EDGE ip_cSubnet VALUES ($"ip", $"csubnet")
     USING user_defined_header="header_userActivationEvent", separator=",";
 
-    LOAD "$sys.data_root/BizEvent.csv"
-    TO VERTEX bizEvent VALUES ($"uuid", $"updateTime", $"isActive", $"ref_id", $"updateTime"),
-    TO VERTEX idfa VALUES ($"idfa", $"updateTime"),
-    TO VERTEX fingerprint VALUES ($"fingerprint", $"updateTime"),
-    TO VERTEX ip VALUES ($"ip", $"updateTime"),
-    # TO VERTEX cSubnet VALUES ($"csubnet", $"updateTime"),
-    # TO VERTEX account VALUES ($"account", $"updateTime"),
-    TO EDGE bizEvent_idfa VALUES ($"uuid", $"idfa"),
-    TO EDGE bizEvent_fingerprint VALUES ($"uuid", $"fingerprint"),
-    TO EDGE bizEvent_ip VALUES ($"uuid", $"ip")
-    # TO EDGE ip_cSubnet VALUES ($"ip", $"csubnet")
-    USING user_defined_header="header_bizEvent", separator=",";
+#     LOAD "$sys.data_root/BizEvent.csv"
+    # TO VERTEX bizEvent VALUES ($"uuid", $"updateTime", $"isActive", $"ref_id", $"updateTime"),
+    # TO VERTEX idfa VALUES ($"idfa", $"updateTime"),
+    # TO VERTEX fingerprint VALUES ($"fingerprint", $"updateTime"),
+    # TO VERTEX ip VALUES ($"ip", $"updateTime"),
+    # # TO VERTEX cSubnet VALUES ($"csubnet", $"updateTime"),
+    # # TO VERTEX account VALUES ($"account", $"updateTime"),
+    # TO EDGE bizEvent_idfa VALUES ($"uuid", $"idfa"),
+    # TO EDGE bizEvent_fingerprint VALUES ($"uuid", $"fingerprint"),
+    # TO EDGE bizEvent_ip VALUES ($"uuid", $"ip")
+    # # TO EDGE ip_cSubnet VALUES ($"ip", $"csubnet")
+    # USING user_defined_header="header_bizEvent", separator=",";
 }	
 
 END
