@@ -167,6 +167,7 @@ angular.module("mean.cipmanager").controller('CipmanagerController',
         $scope.deleteFactor = function (factor, index) {
             factor.splice(index, 1);
             $scope.crowdDetail.count = -1;
+            $scope.lastRid = Date.parse(new Date());
             CrowdService.getUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
                 if(data.success) {
                     if($scope.lastRid == data.requestId) {
