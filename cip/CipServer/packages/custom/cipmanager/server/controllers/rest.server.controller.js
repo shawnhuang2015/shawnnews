@@ -207,7 +207,12 @@ exports.getCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                } else {
+                    return res.send(resp);
+                }
             }
         });
     });
@@ -253,7 +258,12 @@ exports.getGroupCrowdCountByPost = function(req, res) {
                     message: err.message
                 });
             } else {
-                return res.send(resp);
+                var jsresp = JSON.parse(resp);
+                if (jsresp.error === true) {
+                    return res.send('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
+                } else {
+                    return res.send(resp);
+                }
             }
         });
     });
