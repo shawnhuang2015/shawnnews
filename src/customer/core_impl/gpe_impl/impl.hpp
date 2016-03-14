@@ -1270,6 +1270,10 @@ class UDFRunner : public ServiceImplBase {
     return true;
   }
 
+  bool AutoTag(ServiceAPI& serviceapi,
+                EngineServiceRequest& request) {
+    return true;
+  }
 
 };
 }  // namespace UDIMPL

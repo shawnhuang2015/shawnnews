@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mean.system').controller('IndexController', ['$scope', 'Global',
-  function($scope, Global) {
+angular.module('mean.system').controller('IndexController', ['$scope', 'Global', 'MeanUser', '$state',
+  function($scope, Global, MeanUser, $state) {
     $scope.global = Global;
     $scope.sites = {
       'makeapoint':{
@@ -42,6 +42,10 @@ angular.module('mean.system').controller('IndexController', ['$scope', 'Global',
         'image':'http://cdn.designbyhumans.com/pictures/blog/09-2013/pop-culture-cats/Pop_Culture_Cats_Hamilton_Hipster.jpg'
       }
     };
+
+    $scope.initIndex = function() {
+
+    }
 
     $scope.$watch(function () {
       for (var i = 0; i < $scope.sites.length; i+=1) {

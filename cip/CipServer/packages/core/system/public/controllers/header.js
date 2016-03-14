@@ -34,12 +34,12 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
 
     $rootScope.$on('loggedin', function() {
       queryMenu('main', defaultMainMenu);
-
       vm.hdrvars = {
         authenticated: MeanUser.loggedin,
         user: MeanUser.user,
         isAdmin: MeanUser.isAdmin
       };
+      $state.go('crowd')
     });
 
     vm.logout = function(){

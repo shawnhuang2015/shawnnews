@@ -34,7 +34,7 @@
         </tr>
         </tbody>
     </table>
-    <div class="text-center" ng-if="grouplist.length>0">
+    <div class="text-center" ng-show="grouplist.length>0">
         <uib-pagination boundary-links="true" total-items="totalGroupItems" ng-model="currentGroupPage" class="pagination-sm" ng-change="pageGroupChanged()"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
 
