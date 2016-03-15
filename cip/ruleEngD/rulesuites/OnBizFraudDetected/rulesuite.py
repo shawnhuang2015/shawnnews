@@ -29,7 +29,6 @@ from cust.bangcle.BangcleBizObj import BangcleBizEvtToUdidObj
 from cust.bangcle.BangcleBizObj import BangcleAcctToBizObj 
 from cust.bangcle.BangcleBizObj import BangcleIpToBizEvtObj 
 from cust.bangcle.BangcleBizObj import BangcleImeiToBizEvtObj
-from cust.bangcle.BangcleBizObj import BangcleAcct_BizEvt_Udid_Obj 
 
 #TODO: move global definition to Perf package itself
 perf = Perf("192.168.33.70","rule_result")
@@ -76,14 +75,6 @@ def r18_imei_login_frequency(context):
     if len(bizEvts)>=300:
         __W_RULE_RET(context , "ALERT: imei %s has more than 10 login events: %s in past 1 day" % (bizEvt.imei, len(bizEvts)))
 
-def r19_diff_device_login(context):
-    return
-    bizEvt = __REQ_EVT(context)
-    now = int(time(time()))
-    ret = BangcleAcct_BizEvt_Udid_Obj(bizEvt.account, "login", now, now-60*60*24) 
-    udidLists  = ret.udidList
-    if len(udidList)>=10:
-        __W_RULE_RET(context , "ALERT: account %s has login more than 10 different devices: %s in past 1 day" % (bizEvt.account, len(bizEvts)))
 
 def r20_gps_query_frequency(context):
     pass

@@ -35,7 +35,7 @@ const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_DIFF_PATH = "/tmp/diff.json";
-const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
+const std::string SCHEMA_CHANGE_SCRIPT_PATH = "bash /tmp/sc.sh";
 const std::string CROWD_INDEX("crowdIndex");
 const std::string CROWD_INDEX_VTYPE = "__crowd_index";
 const std::string USER_CROWD_INDEX_ETYPE = "__user_to_crowd_index";
@@ -379,17 +379,26 @@ class UDFRunner : public ServiceImplBase {
     fp1.close();
 
     std::cout << "before system call" << std::endl;
+    int rez = std::system("ls");
+    std::cout << "ls rez = " << rez << std::endl;
+
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
-    if ((! delta.isNull()) && 
-        (system((SCHEMA_CHANGE_SCRIPT_PATH + " " 
+    if (! delta.isNull()) {
+      const std::string cmd(SCHEMA_CHANGE_SCRIPT_PATH + " " 
           + SCHEMA_DIFF_PATH + " "
           + SEMANTIC_SCHEMA_PATH + " "
-          + SEMANTIC_SCHEMA_PATH + ".rc").c_str()) != 0)) {
-      request.error_ = true;
-      request.message_ += "fail to do schema change.";
-      return false;
+          + SEMANTIC_SCHEMA_PATH + ".rc");
+      std::cout << "cmd: " << cmd << std::endl;
+      int rez = system(cmd.c_str());
+      std::cout << "error: " << strerror(errno) << std::endl;
+      if (rez != 0) {
+        request.error_ = true;
+        request.message_ += "fail to do schema change, error code is " + 
+              boost::lexical_cast<std::string>(rez);
+        return false;
+      }
     }
     std::cout << "done system call" << std::endl;
 

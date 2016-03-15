@@ -2,13 +2,17 @@ r4_operation_without_fingerprint:
 -   start
 r14_ip_activation_frequency:
 -   start
-r18_imei_activation_frequency:
+r18_fingerprint_activation_frequency:
 -   start
 r19_diff_device_login:
 -   start
-r20_gps_query_frequency:
+r20_geo_activation_frequency:
 -   start
 r21_short_signup:
+-   start
+r22_short_typing_gap:
+-   start
+r23_typing_gap_vibiration:
 -   start
 r24_jifeng_tuiguang_short:
 -   start
@@ -22,10 +26,12 @@ r27_same_c_netsegment_user_activate:
 end:
 -   r4_operation_without_fingerprint
 -   r14_ip_activation_frequency
--   r18_imei_activation_frequency
+-   r18_fingerprint_activation_frequency
 -   r19_diff_device_login
--   r20_gps_query_frequency
+-   r20_geo_activation_frequency 
 -   r21_short_signup
+-   r22_short_typing_gap   
+-   r23_typing_gap_vibiration 
 -   r24_jifeng_tuiguang_short
 -   r25_same_c_netsegment_succid
 -   r26_same_gps_region_succid
