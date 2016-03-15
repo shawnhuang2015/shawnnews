@@ -392,6 +392,7 @@ class UDFRunner : public ServiceImplBase {
           + SEMANTIC_SCHEMA_PATH + ".rc");
       std::cout << "cmd: " << cmd << std::endl;
       int rez = system(cmd.c_str());
+      std::cout << "error: " << strerror(errno) << std::endl;
       if (rez != 0) {
         request.error_ = true;
         request.message_ += "fail to do schema change, error code is " + 
