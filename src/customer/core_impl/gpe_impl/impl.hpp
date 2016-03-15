@@ -382,14 +382,19 @@ class UDFRunner : public ServiceImplBase {
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
-    if ((! delta.isNull()) && 
-        (system((SCHEMA_CHANGE_SCRIPT_PATH + " " 
+    if (! delta.isNull()) {
+      const std::string cmd(SCHEMA_CHANGE_SCRIPT_PATH + " " 
           + SCHEMA_DIFF_PATH + " "
           + SEMANTIC_SCHEMA_PATH + " "
-          + SEMANTIC_SCHEMA_PATH + ".rc").c_str()) != 0)) {
-      request.error_ = true;
-      request.message_ += "fail to do schema change.";
-      return false;
+          + SEMANTIC_SCHEMA_PATH + ".rc");
+      std::cout << "cmd: " << cmd << std::endl;
+      int rez = system(cmd.c_str());
+      if (rez != 0) {
+        request.error_ = true;
+        request.message_ += "fail to do schema change, error code is " + 
+              boost::lexical_cast<std::string>(rez);
+        return false;
+      }
     }
     std::cout << "done system call" << std::endl;
 
