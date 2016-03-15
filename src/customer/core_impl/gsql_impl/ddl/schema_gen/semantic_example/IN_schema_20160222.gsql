@@ -1,7 +1,7 @@
 drop all
 
 #central vertex
-create vertex inuser        (primary_id inuser_id string, date_time uint) with stats="OUTDEGREE_BY_EDGETYPE" //Here date_time records birthday.
+create vertex inuser        (primary_id inuser_id string, date_time uint, gender string) with stats="OUTDEGREE_BY_EDGETYPE" //Here date_time records birthday.
 
 ##picture
 create vertex picture         (primary_id picture_id string, date_time uint, isBlack uint) with stats="OUTDEGREE_BY_EDGETYPE"

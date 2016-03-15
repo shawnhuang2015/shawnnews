@@ -1,8 +1,8 @@
 
 curl -X POST 'http://localhost:9000/semantic_def' -d '{
-  "object": ["user", "pic"],
+  "object": ["inuser", "picture", "channel", "theme"],
   "profile": {
-    "target": "user",
+    "target": "inuser",
     "tag": [
       {"name": "gender", "datatype": "itemset"},
       {"name": "age", "datatype": "itemset"}
@@ -10,21 +10,46 @@ curl -X POST 'http://localhost:9000/semantic_def' -d '{
     "interest_intent": [
       {"ontology": "interest"}
     ],
-
     "behaviour": [
       {
-        "name": "post",
-        "subject": [{"name": "user", "etype": "user_post"}],
-        "object": [{"name": "pic", "etype": "post_pic"}]
+        "name": "postPicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_postPicture"}],
+        "object": [{"name": "picture", "etype": "postPicture_with_picture"}]
+      },
+      {
+        "name": "downloadPicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_downloadPicture"}],
+        "object": [{"name": "picture", "etype": "downloadPicture_with_picture"}]
+      },
+      {
+        "name": "lovePicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_lovePicture"}],
+        "object": [{"name": "picture", "etype": "lovePicture_with_picture"}]
+      },
+      {
+        "name": "commentPicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_commentPicture"}],
+        "object": [{"name": "picture", "etype": "commentPicture_with_picture"}]
+      },
+      {
+        "name": "viewPicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_viewPicture"}],
+        "object": [{"name": "picture", "etype": "viewPicture_with_picture"}]
+      },
+      {
+        "name": "sharePicture",
+        "subject": [{"name": "inuser", "etype": "inuser_with_sharePicture"}],
+        "object": [{"name": "picture", "etype": "sharePicture_with_picture"}]
       }
     ]
   },
-  "ontology": ["interest", "type", "tag"],
+  "ontology": ["interest", "pictype", "tag", "pictag"],
   "object_ontology": [
-    {"object": "user", "ontology": ["tag", "interest"]},
-    {"object": "pic", "ontology": ["type"]}
+    {"object": "inuser", "ontology": ["tag", "interest"]},
+    {"object": "picture", "ontology": ["pictype", "pictag"]}
   ]
 }'
+
 
 curl -X POST 'http://localhost:9000/ontology_import?object=user&name=tag' --data-binary @tag.csv
 curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=type' --data-binary @type.csv
