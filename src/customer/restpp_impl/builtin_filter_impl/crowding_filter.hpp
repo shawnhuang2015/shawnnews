@@ -67,13 +67,13 @@ bool CreateCrowdUpdateFilter(FilterHelper *filter_helper,
         //  std::cout << "Connect 5000 vertices to Crowd Index" << "\n";
         //  break;
         //}
-        if (k % 5000 == 0) {
-          std::cout << "FlushDelta vertices index = " << k << "\n";
-          if (!gsql_request->FlushDelta(error_message)) {
-            success = false;
-            break;
-          }
-        }
+        //if (k % 1 == 0) {
+        //  std::cout << "FlushDelta vertices index = " << k << "\n";
+        //  if (!gsql_request->FlushDelta(error_message)) {
+        //    success = false;
+        //    break;
+        //  }
+        //}
       }
     } else {
       success = false;
