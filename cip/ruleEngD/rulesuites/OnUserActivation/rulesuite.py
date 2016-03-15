@@ -155,11 +155,12 @@ def r23_typing_gap_vibiration(context):
     __W_RULE_RET(context , "ALERT: all typing gaps are within 20% vibration")
 
 def r24_jifeng_tuiguang_short(context):
-    return
-#      activationEvt = __REQ_EVT(context)
-        #  if activationEvt.tuiguang - activationEvt.jifengqiang > 30:
-            #  __W_RULE_RET(context , "ALERT: to short signup duration from tuiguang to jifengqiang" % activationEvt.account)
-            #  perf.post({"rule":"r24_jifeng_tuiguang_short"}, 1.0)
+    activationEvt = __REQ_EVT(context)
+    if not (hasattr(activationEvt, "tuiguang") and hasattr(activationEvt, "jifengqiang")):
+        return
+    if activationEvt.tuiguang - activationEvt.jifengqiang < 30:
+        __W_RULE_RET(context , "ALERT: to short signup duration from tuiguang to jifengqiang account:%s" % activationEvt.account)
+        perf.post({"rule":"r24_jifeng_tuiguang_short"}, 1.0)
 
 def r25_same_c_netsegment_succid(context):
     activationEvt = __REQ_EVT(context)
