@@ -35,9 +35,12 @@ CREATE LOADING JOB load_guotai FOR GRAPH bangcleGraph {
     TO VERTEX ip VALUES ($"ip", $"TimeStamp"),
     TO VERTEX cSubnet VALUES ($"csubnet", $"TimeStamp"),
     TO VERTEX account VALUES ($"account", $"TimeStamp"),
+    TO VERTEX geoHash VALUES ($"geo_hash", $"TimeStamp"),
     TO EDGE userActivationEvent_idfa VALUES ($"uuid", $"idfa"),
     TO EDGE userActivationEvent_fingerprint VALUES ($"uuid", $"fingerprint"),
     TO EDGE userActivationEvent_ip VALUES ($"uuid", $"ip"),
+    TO EDGE userActivationEvent_account VALUES ($"uuid", $"account"),
+    TO EDGE userActivationEvent_geoHash VALUES ($"uuid", $"geo_hash"),
     TO EDGE ip_cSubnet VALUES ($"ip", $"csubnet")
     USING user_defined_header="header_userActivationEvent", separator=",";
 
