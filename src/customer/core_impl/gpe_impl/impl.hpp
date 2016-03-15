@@ -379,6 +379,9 @@ class UDFRunner : public ServiceImplBase {
     fp1.close();
 
     std::cout << "before system call" << std::endl;
+    int rez = std::system("ls");
+    std::cout << "ls rez = " << rez << std::endl;
+
     // trigger dynamic schema change job (external script)
     // generate/run ddl job via an external script.
     // if sc job is good, the script will replace old schema file with the new one
