@@ -35,7 +35,7 @@ const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
 const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
 const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
 const std::string SCHEMA_DIFF_PATH = "/tmp/diff.json";
-const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
+const std::string SCHEMA_CHANGE_SCRIPT_PATH = "bash /tmp/sc.sh";
 const std::string CROWD_INDEX("crowdIndex");
 const std::string CROWD_INDEX_VTYPE = "__crowd_index";
 const std::string USER_CROWD_INDEX_ETYPE = "__user_to_crowd_index";
