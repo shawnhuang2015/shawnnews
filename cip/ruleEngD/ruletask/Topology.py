@@ -1,5 +1,5 @@
 import yaml
-from toposort import toposort, toposort_flatten
+#from toposort import toposort, toposort_flatten
 
 class Topology(object):
     def init(self,topoFile):
