@@ -20,7 +20,8 @@ namespace UDIMPL {
 enum SearchPath { 
     PathOntoUser      = 0,  //ontology -> user 
     PathItemUser      = 1,  //item -> behavior -> user
-    PathOntoItemUser  = 2   //ontology -> item -> behavior -> user
+    PathOntoItemUser  = 2,  //ontology -> item -> behavior -> user
+    PathBehrUser      = 3   //behavior -> user
 };
 
 //operator used in ontology and behavior conditions
@@ -42,6 +43,17 @@ struct OntologyCond {
   Operator op; 
   double weight;
   friend std::ostream& operator<<(std::ostream& os, const OntologyCond& obj);
+};
+
+//search condition: behavior -> user
+struct BehrUserCond {
+  SearchPath sp;
+  Operator op;
+  uint64_t behrT;
+  uint32_t times;
+  uint64_t timeStart;
+  uint64_t timeEnd;
+  friend std::ostream& operator<<(std::ostream& os, const BehrUserCond& obj);
 };
 
 //search condition: (ontology ->) item -> behavior -> user 

@@ -8,509 +8,19 @@
 
 
 
-[34m[RUN    ][0m rm -rf ~/.gsql/gstore_g*_autostart_flag
-[34m[FAB    ][2016-03-01 18:25:05] gsql_mon_alert_off[0m
-[34m[FAB    ][2016-03-01 18:25:06] shutdown_gsql_subsystems:RESTPP[0m
-[34m[FAB    ][2016-03-01 18:25:06] shutdown_visualizations[0m
-[34m[FAB    ][2016-03-01 18:25:06] shutdown_gsql_subsystems:GPE[0m
-[34m[FAB    ][2016-03-01 18:25:06] shutdown_gsql_subsystems:GSE[0m
-[34m[FAB    ][2016-03-01 18:25:07] shutdown_kafkas[0m
-[34m[FAB    ][2016-03-01 18:25:07] shutdown_zookeepers[0m
-[34m[RUN    ][0m rm -rf /home/danhu/graphsql/kafka/log_dir/*
-reset tid in config files under /home/danhu/graphsql/gstore
-[34m[RUN    ][0m rm -rf /home/danhu/graphsql/logs/*.pid 
-[34m[FAB    ][2016-03-01 18:25:07] launch_zookeepers[0m
-[34m[FAB    ][2016-03-01 18:25:19] launch_kafkas[0m
-[34m[FAB    ][2016-03-01 18:25:35] gsql_mon_alert_on[0m
-[32m=== zk ===[0m
-[SUMMARY][ZK] process is up
-[SUMMARY][ZK] /home/danhu/graphsql/zk is ready
-[32m=== kafka ===[0m
-[SUMMARY][KAFKA] process is up
-[SUMMARY][KAFKA] queue is ready
-[32m=== gse ===[0m
-[SUMMARY][GSE] process is [1m[31mdown[0m
-[SUMMARY][GSE] id service is ready
-[32m=== graph ===[0m
-[SUMMARY][GRAPH] graph is ready
-[32m=== restpp ===[0m
-[SUMMARY][RESTPP] process is [1m[31mdown[0m
-[SUMMARY][RESTPP] restpp has [1m[31mNOT[0m been initialized
-[32m=== gpe ===[0m
-[SUMMARY][GPE] process is [1m[31mdown[0m
-[SUMMARY][GPE] graph is ready
-Done.
-
-
-rm: cannot remove `./output/load_output.log': No such file or directory
-Everything is dropped.
-Vertex user is created.
-Vertex crowd_index is created.
-Vertex demo is created.
-Vertex interest is created.
-Vertex browse is created.
-Vertex pic is created.
-Vertex pic_tag is created.
-Edge user_crowd_index is created.
-Edge user_demo is created.
-Edge user_interest is created.
-Edge user_browse is created.
-Edge browse_pic is created.
-Edge pic_tag_pic is created.
-Graph cip is created.
-Graph schema file /home/danhu/graphsql/product/ptest/.working_dir/end2end/regress1/user_search/./output/graph_config.yaml has been generated!
-Graph store /home/danhu/graphsql/gstore/0 has been cleared!
-Graph schema file /home/danhu/graphsql/product/ptest/.working_dir/end2end/regress1/user_search/./output/graph_config.yaml has been generated!
-Init store successfully!
-GraphSQL Canonical Loader: 
- --- Version --- 
-product              poc4.3_cip           e279e15672e30076afa8bab2a3b7090cf0dacdee  2016-03-01 23:26:25 +0800
-olgp                 4.3                  9a53693d477a3daa5988d61abf0f9691740e78f0  2016-03-01 10:18:21 -0500
-topology             4.3                  4e4daa8b9cb4aa3205739f4c197143de3c9530f2  2016-02-09 12:29:37 -0600
-gpe                  4.3                  674aba32de3223d5740f82c57f231421a531676b  2016-02-04 15:54:36 -0800
-gse                  4.3                  63d0769a88d3b39df6d63db1b7915bb1d56f26fe  2016-02-08 16:41:05 -0800
-third_party          master               52777aed021267c3c2c776d467c07d456860250b  2016-02-25 01:31:45 -0800
-utility              4.3                  4b127c48c7f55abaade29dea7f12a39a4c54de57  2016-02-17 01:10:34 -0800
-realtime             4.3                  1a6a7372e062f074a54d5efd711f1c2dd20daea5  2016-02-22 15:46:31 -0800
-msg_layer            master               dc2846cc91c7d72c1f08c36b62615ff66613bc41  2016-01-02 20:19:51 -0800
-er                   4.3                  a0d84388aa8f2df34b6488e0f1a93eb2ad3a33a1  2016-02-20 09:12:53 -0500
-gle                  4.3.2                9912732cf39cf88afe9bfcb57e76ba0bddaf644f  2015-12-22 15:48:19 -0800
-bigtest              master               05136e9db07d1f1d7ef4658c457b9c745a96e3c2  2016-02-15 04:18:13 -0800
-gpath                gpath_v1_stable      6b0abaf303886a96695cf1d2989c03110187db8a  2015-12-11 16:37:08 -0800
-
-/home/danhu/graphsql/product/ptest/.working_dir/end2end/regress1/user_search/./.tmp/InitStore.yaml
---- SYS Configuration ---
-=========================
-Kafka Connection    : 127.0.0.1:30002
-Zookeeper Connection: 127.0.0.1:19999
-GLOG_DIR            : /home/danhu/graphsql/logs
--------------------------
-Server Workers:
- Prefix: ids_
- Machines: 
-  - 1: 127.0.0.1
-
--------------------------
-Client Workers:
- StartID: 1000
- Limit: 12
- ClinetIDs: 
-  - 1011: client_worker_1011
-  - 1010: client_worker_1010
-  - 1009: client_worker_1009
-  - 1007: client_worker_1007
-  - 1004: client_worker_1004
-  - 1003: client_worker_1003
-  - 1005: client_worker_1005
-  - 1002: client_worker_1002
-  - 1006: client_worker_1006
-  - 1001: client_worker_1001
-  - 1008: client_worker_1008
-  - 1000: client_worker_1000
-
--------------------------
-Queues:
- id_requestQueue: id_requestQ
- id_responseQueue2GPE: id_responseQ_GPE
- id_responseQueue2REST: id_responseQ_REST
- number_rest_servers: 1
- request_queue: requestQ
- response_queue: responseQ
- post_queue: postQ
- delta_queue: deltaQ
- time out: 10
- Server_Queues: 
-  - 1: ids_serverQ_1
- Client_Queues:
-  - 1011: ids_clientQ_1011
-  - 1010: ids_clientQ_1010
-  - 1009: ids_clientQ_1009
-  - 1007: ids_clientQ_1007
-  - 1004: ids_clientQ_1004
-  - 1003: ids_clientQ_1003
-  - 1005: ids_clientQ_1005
-  - 1002: ids_clientQ_1002
-  - 1006: ids_clientQ_1006
-  - 1001: ids_clientQ_1001
-  - 1008: ids_clientQ_1008
-  - 1000: ids_clientQ_1000
-
--------------------------
-Redis:
- IP: 127.0.0.1 Port: 6379 Lock_expire_time: 100000ms
-
--------------------------
-Graphs:
- storage_root: /home/danhu/graphsql/gstore
- NextID: 1
- currentGraph: 0
- Graphs: 
-  - any: 0
-
-=========================
-
---- Graph Configuration ---
- Name              : cip
- ID                : 0
- segSizeInBits     : 20
----------------------------
-Worker-segments   :[]
- =========================
-
-CREATE partition path /home/danhu/graphsql/gstore/0/part/
-Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 1.
-(18:25:45.082633): MessageQueue|Kafka|CreateReader|ids_serverQ_1
-ids_serverQ_1 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082655): MessageQueue|Kafka|CreateWriter|ids_serverQ_1
-ids_clientQ_1011 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082662): MessageQueue|Kafka|CreateWriter|ids_clientQ_1011
-ids_clientQ_1010 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082669): MessageQueue|Kafka|CreateWriter|ids_clientQ_1010
-ids_clientQ_1009 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082675): MessageQueue|Kafka|CreateWriter|ids_clientQ_1009
-ids_clientQ_1007 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082680): MessageQueue|Kafka|CreateWriter|ids_clientQ_1007
-ids_clientQ_1004 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082686): MessageQueue|Kafka|CreateWriter|ids_clientQ_1004
-ids_clientQ_1003 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082691): MessageQueue|Kafka|CreateWriter|ids_clientQ_1003
-ids_clientQ_1002 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082697): MessageQueue|Kafka|CreateWriter|ids_clientQ_1002
-ids_clientQ_1005 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082703): MessageQueue|Kafka|CreateWriter|ids_clientQ_1005
-ids_clientQ_1001 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082709): MessageQueue|Kafka|CreateWriter|ids_clientQ_1001
-ids_clientQ_1006 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082714): MessageQueue|Kafka|CreateWriter|ids_clientQ_1006
-ids_clientQ_1000 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082744): MessageQueue|Kafka|CreateWriter|ids_clientQ_1000
-ids_clientQ_1008 Kafka Config: queue.buffering.max.ms 1, queue.buffering.max.messages 64, batch.num.messages 64, fetch.wait.max.ms 10, queued.min.messages 64, fetch.error.backoff.ms 0, compression.codec none, message.max.bytes 10485760, request.required.acks 0.
-(18:25:45.082752): MessageQueue|Kafka|CreateWriter|ids_clientQ_1008
-Opening TokenBank1.so
-Opening TokenBankM.so
-Opening ConditionBank1.so
-Opening ConditionBankM.so
-Opening ReducerBank.so
-Start loading from batch loader 
-All src files are: 
-/tmp/vertexuser1456985854298948046.csv
-
-Parsing File /tmp/vertexuser1456985854298948046.csv: 1 bufferUnitSize is 104857600
-
-
-File vertexuser1456985854298948046.csv has 1 number of lines been processed!
-(18:25:45.101448): (16.417 ms) parse file /tmp/vertexuser1456985854298948046.csv completed.
-End loading from batch loader 
-[GSE_SERVER_1[18:25:45.103638]] All IDMAPs are saved
-Enumerators are saved to /home/danhu/graphsql/gstore/0/1/ids/
-[GSE_SERVER_1[18:25:45.103844]] Start parallel partition on 1 segments 
-[GSE_SERVER_1[18:25:45.104431]] processing segment 0 
-Opening ReducerBank.so
-[GSE_SERVER_1[18:25:45.115131]] Finished partition of local 1 segments.
-Total run time is 30 ms!
- Message 2: 32 ms
-Enumerators are saved to /home/danhu/graphsql/gstore/0/1/ids/
-Enumerators are saved to /home/danhu/graphsql/gstore/0/1/ids/
-
-
-
-[34m[RUN    ][0m rm -rf /home/danhu/graphsql/logs/*.pid 
-[34m[FAB    ][2016-03-01 18:25:46] gsql_mon_alert_off[0m
-[34m[FAB    ][2016-03-01 18:25:46] shutdown_gsql_subsystems:RESTPP[0m
-[34m[FAB    ][2016-03-01 18:25:46] shutdown_visualizations[0m
-[34m[FAB    ][2016-03-01 18:25:47] shutdown_gsql_subsystems:GPE[0m
-[34m[FAB    ][2016-03-01 18:25:47] shutdown_gsql_subsystems:GSE[0m
-[34m[FAB    ][2016-03-01 18:25:47] shutdown_kafkas[0m
-[34m[FAB    ][2016-03-01 18:25:48] shutdown_zookeepers[0m
-[32m=== zk ===[0m
-[SUMMARY][ZK] process is [1m[31mdown[0m
-[SUMMARY][ZK] /home/danhu/graphsql/zk is ready
-[32m=== kafka ===[0m
-[SUMMARY][KAFKA] process is [1m[31mdown[0m
-[SUMMARY][KAFKA] queue has [1m[31mNOT[0m been initialized
-[32m=== gpe ===[0m
-[SUMMARY][GPE] process is [1m[31mdown[0m
-[SUMMARY][GPE] graph is ready
-[32m=== restpp ===[0m
-[SUMMARY][RESTPP] process is [1m[31mdown[0m
-[SUMMARY][RESTPP] restpp has [1m[31mNOT[0m been initialized
-[32m=== gse ===[0m
-[SUMMARY][GSE] process is [1m[31mdown[0m
-[SUMMARY][GSE] id service is ready
-[34m[FAB    ][2016-03-01 18:25:50] launch_zookeepers[0m
-[34m[FAB    ][2016-03-01 18:26:01] launch_kafkas[0m
-[34m[FAB    ][2016-03-01 18:26:18] launch_gsql_subsystems:GPE[0m
-[34m[FAB    ][2016-03-01 18:26:20] launch_gsql_subsystems:RESTPP[0m
-[34m[FAB    ][2016-03-01 18:26:22] launch_gsql_subsystems:GSE[0m
-[34m[FAB    ][2016-03-01 18:26:23] launch_visualizations[0m
-[34m[FAB    ][2016-03-01 18:26:25] gsql_mon_alert_on[0m
-[32m=== zk ===[0m
-[SUMMARY][ZK] process is up
-[SUMMARY][ZK] /home/danhu/graphsql/zk is ready
-[32m=== kafka ===[0m
-[SUMMARY][KAFKA] process is up
-[SUMMARY][KAFKA] queue is ready
-[32m=== gse ===[0m
-[SUMMARY][GSE] process is up
-[SUMMARY][GSE] id service is ready (online)
-[32m=== graph ===[0m
-[SUMMARY][GRAPH] graph is ready
-[32m=== restpp ===[0m
-[SUMMARY][RESTPP] process is up
-[SUMMARY][RESTPP] restpp is ready
-[32m=== gpe ===[0m
-[SUMMARY][GPE] process is up
-[SUMMARY][GPE] graph is ready (online)
-Done.
 
 
 
 
-{"vertices":{"demo":{"demo":{"name":{"value":"demo"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    98    0    42  100    56   3428   4571 --:--:-- --:--:-- --:--:--  5090
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"gender":{"name":{"value":"gender"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   102    0    42  100    60  25594  36563 --:--:-- --:--:-- --:--:-- 60000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"age":{"name":{"value":"age"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    96    0    42  100    54  34090  43831 --:--:-- --:--:-- --:--:-- 54000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"male":{"name":{"value":"male"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    98    0    42  100    56  12750  17000 --:--:-- --:--:-- --:--:-- 56000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"female":{"name":{"value":"female"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   102    0    42  100    60  48780  69686 --:--:-- --:--:-- --:--:-- 60000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"10-20":{"name":{"value":"10-20"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   100    0    42  100    58  38147  52679 --:--:-- --:--:-- --:--:-- 58000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"demo":{"20-30":{"name":{"value":"20-30"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   100    0    42  100    58  16451  22718 --:--:-- --:--:-- --:--:-- 29000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"interest":{"interest":{"name":{"value":"interest"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   110    0    42  100    68  28965  46896 --:--:-- --:--:-- --:--:-- 68000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"interest":{"food":{"name":{"value":"food"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   102    0    42  100    60  21298  30425 --:--:-- --:--:-- --:--:-- 60000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"interest":{"shoes":{"name":{"value":"shoes"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   104    0    42  100    62  27704  40897 --:--:-- --:--:-- --:--:-- 62000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user0":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  16679  13502 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user1":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  26315  21303 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user2":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  12345   9994 --:--:-- --:--:-- --:--:-- 21000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user3":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  11751   9513 --:--:-- --:--:-- --:--:-- 14000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user4":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  18758  15185 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"user":{"user5":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    76    0    42  100    34  30746  24890 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse0":{"date_time":{"value":1450726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  18189  30316 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse1":{"date_time":{"value":1451726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  22963  38272 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse2":{"date_time":{"value":1452726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  27522  45871 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse3":{"date_time":{"value":1453726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  32992  54988 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse4":{"date_time":{"value":1454726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  31343  52238 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse5":{"date_time":{"value":1455726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  20937  34895 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse6":{"date_time":{"value":1456726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  20628  34381 --:--:-- --:--:-- --:--:-- 70000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"browse":{"browse7":{"date_time":{"value":1457726395}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   112    0    42  100    70  11952  19920 --:--:-- --:--:-- --:--:-- 35000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic":{"pic0":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    74    0    42  100    32  36874  28094 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic":{"pic1":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    74    0    42  100    32  18056  13757 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic":{"pic2":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    74    0    42  100    32   5789   4411 --:--:-- --:--:-- --:--:--  7000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic":{"pic3":{}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    74    0    42  100    32  32684  24902 --:--:-- --:--:-- --:--:-- 42000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic_tag":{"pic_tag":{"name":{"value":"pic_tag"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   107    0    42  100    65  21683  33557 --:--:-- --:--:-- --:--:-- 65000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic_tag":{"blue":{"name":{"value":"blue"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   101    0    42  100    59  22459  31550 --:--:-- --:--:-- --:--:-- 59000
-{"accepted_vertices":1,"accepted_edges":0}{"vertices":{"pic_tag":{"red":{"name":{"value":"red"}}}}}
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    99    0    42  100    57  31963  43378 --:--:-- --:--:-- --:--:-- 57000
-{"accepted_vertices":1,"accepted_edges":0}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   129    0    42  100    87  28532  59103 --:--:-- --:--:-- --:--:-- 87000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   129    0    42  100    87  29914  61965 --:--:-- --:--:-- --:--:-- 87000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   129    0    42  100    87  10741  22250 --:--:-- --:--:-- --:--:-- 29000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   131    0    42  100    89  11538  24450 --:--:-- --:--:-- --:--:-- 29666
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   131    0    42  100    89  24333  51564 --:--:-- --:--:-- --:--:-- 89000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   131    0    42  100    89  12754  27027 --:--:-- --:--:-- --:--:-- 44500
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   130    0    42  100    88  34118  71486 --:--:-- --:--:-- --:--:-- 88000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   130    0    42  100    88  35653  74702 --:--:-- --:--:-- --:--:-- 88000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   130    0    42  100    88  10176  21322 --:--:-- --:--:-- --:--:-- 29333
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   130    0    42  100    88   9010  18880 --:--:-- --:--:-- --:--:-- 22000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    88    0     0  100    88      0  16858 --:--:-- --:--:-- --:--:-- 17600100   130    0    42  100    88   6385  13379 --:--:-- --:--:-- --:--:-- 14666
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   130    0    42  100    88  29432  61667 --:--:-- --:--:-- --:--:-- 88000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   137    0    42  100    95  32812  74218 --:--:-- --:--:-- --:--:-- 95000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   137    0    42  100    95   5514  12473 --:--:-- --:--:-- --:--:-- 13571
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   137    0    42  100    95  22047  49868 --:--:-- --:--:-- --:--:-- 95000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   138    0    42  100    96  25990  59405 --:--:-- --:--:-- --:--:-- 96000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   138    0    42  100    96   2372   5422 --:--:-- --:--:-- --:--:--  5647
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   138    0    42  100    96  34739  79404 --:--:-- --:--:-- --:--:-- 96000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   138    0    42  100    96  24866  56838 --:--:-- --:--:-- --:--:-- 96000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   138    0    42  100    96  11272  25764 --:--:-- --:--:-- --:--:-- 48000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  29515  50597 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  23595  40449 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  29005  49723 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72   3975   6814 --:--:-- --:--:-- --:--:--  7200
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  31650  54257 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  18237  31263 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  33070  56692 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   114    0    42  100    72  24124  41355 --:--:-- --:--:-- --:--:-- 72000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  21516  35348 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  30259  49711 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  26465  43478 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69   8241  13540 --:--:-- --:--:-- --:--:-- 17250
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  28282  46464 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  24575  40374 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  13875  22794 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   111    0    42  100    69  17478  28714 --:--:-- --:--:-- --:--:-- 69000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   110    0    42  100    68  12500  20238 --:--:-- --:--:-- --:--:-- 34000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   110    0    42  100    68   5912   9573 --:--:-- --:--:-- --:--:-- 11333
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   109    0    42  100    67  19858  31678 --:--:-- --:--:-- --:--:-- 67000
-{"accepted_vertices":0,"accepted_edges":1}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   109    0    42  100    67   7410  11820 --:--:-- --:--:-- --:--:-- 16750
-{"accepted_vertices":0,"accepted_edges":1}
+
+
+
+
+
+
+
+
+[GTEST_LINE]{"results":{"count":1,"userIds":["user0"]},"error":false,"message":"","debug":""}
 
 [GTEST_LINE]{"results":{"count":2,"userIds":["user0","user2"]},"error":false,"message":"","debug":""}
 
@@ -554,14 +64,29 @@ Done.
 
 
 
-[34m[RUN    ][0m rm -rf /home/danhu/graphsql/logs/*.pid 
-[34m[RUN    ][0m rm -rf ~/.gsql/gstore_g*_autostart_flag
-[34m[FAB    ][2016-03-01 18:26:34] gsql_mon_alert_off[0m
-[34m[FAB    ][2016-03-01 18:26:34] shutdown_gsql_subsystems:RESTPP[0m
-[34m[FAB    ][2016-03-01 18:26:35] shutdown_visualizations[0m
-[34m[FAB    ][2016-03-01 18:26:35] shutdown_gsql_subsystems:GPE[0m
-[34m[FAB    ][2016-03-01 18:26:36] shutdown_gsql_subsystems:GSE[0m
-[34m[FAB    ][2016-03-01 18:26:36] shutdown_kafkas[0m
-[34m[FAB    ][2016-03-01 18:26:36] shutdown_zookeepers[0m
-Done.
+
+[GTEST_LINE]{"results":{"count":3,"userIds":["user0","user1","user2"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":1,"userIds":["user0"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":1,"userIds":["user1"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":1,"userIds":["user2"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":2,"userIds":["user0","user1"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":3,"userIds":["user0","user1","user2"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":2,"userIds":["user0","user2"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]{"results":{"count":1,"userIds":["user1"]},"error":false,"message":"","debug":""}
+
+[GTEST_LINE]../../../.././drivers/end2end.sh: eval: line 14: unexpected EOF while looking for matching `''
+../../../.././drivers/end2end.sh: eval: line 15: syntax error: unexpected end of file
+
+../../../.././drivers/end2end.sh: eval: line 14: unexpected EOF while looking for matching `''
+../../../.././drivers/end2end.sh: eval: line 15: syntax error: unexpected end of file
+
+
+
 

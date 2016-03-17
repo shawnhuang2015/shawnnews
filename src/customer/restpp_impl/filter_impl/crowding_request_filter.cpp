@@ -70,6 +70,8 @@ extern "C" {
           gsql_request->AddId(ontoT, ontoId);
         } else if (enumStr == "Contains") {
           //substring
+        } else if (enumStr == "Behavior") {
+          //behavior -> user
         } else {
           gsql_request->Respond(errorMsg("payload invalid"));
           return;

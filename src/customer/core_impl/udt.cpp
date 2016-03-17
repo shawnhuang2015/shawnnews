@@ -16,6 +16,15 @@ std::ostream& operator<<(std::ostream& os, const OntologyCond& obj){
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const BehrUserCond& obj) {
+  os << "sp = " << obj.sp << ", "
+     << "op = " << obj.op << ", "
+     << "behrT = " << obj.behrT << ", "
+     << "times = " << obj.times << ", "
+     << "timeStart = " << obj.timeStart << ", "
+     << "timeEnd = " << obj.timeEnd << "\n";
+}
+
 std::ostream& operator<<(std::ostream& os, const BehaviorCond& obj) {
   os << "sp = " << obj.sp << ", "
      << "startId Size = " << obj.startId.size() << ", "

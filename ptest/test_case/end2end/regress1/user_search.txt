@@ -19,46 +19,70 @@
 # MUST use -s option with curl to avoid error msg or progress meter. E.g. curl -s -X GET 'xxxxx'
 :;bash ./resources/load_test_data.sh
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic0","operator":"<","is_sub":false,"value":18,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+#substring
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Contains","ontologyType":"pic_tag","objectId":"blu","operator":"=","value":3,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10","operator":"=","is_sub":true,"weight":1.0,"sequence":1}],"behavior":[]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic0","operator":"<","is_sub":false,"value":18,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":true,"weight":1.0,"sequence":1}],"behavior":[]}]}'
 
 #Select from multiple ontology
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"demo","factor":"10-20","operator":"=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":1.0,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":0.5,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"<=","is_sub":false,"weight":0.5,"sequence":1},{"type":"interest","factor":"food","operator":"<=","is_sub":false,"weight":1.0,"sequence":1}]}]}'
 
 #Sinlge Behavior
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"<","is_sub":false,"value":18,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"<","is_sub":false,"value":18,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
 
 #using number of path filter
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">","is_sub":false,"value":1,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">","is_sub":false,"value":1,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
 
 #using time filter, filter out browse7 using 1456726395
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":2,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":2,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1456726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1456726395,"timeType":"absolute","sequence":5}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":1,"startTime":1456726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":"=","is_sub":false,"value":1,"startTime":1456726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
 
 #Without interest path
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
 
 #using interest path to do filter
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"=","is_sub":false,"weight":0.6,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"=","is_sub":false,"weight":0.6,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"=","is_sub":false,"weight":0.5,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"shoes","operator":"=","is_sub":false,"weight":0.5,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
 
-curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"food","operator":"=","is_sub":false,"weight":0.7,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"food","operator":"=","is_sub":false,"weight":0.7,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5}]}]}'
 
 #multiple behavior
 
-#curl -s -X POST 'http://localhost:9000/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"food","operator":"=","is_sub":false,"weight":0.7,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5},{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic0","operator":"=","is_sub":false,"value":0,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":6}]}]}'
+#curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"food","operator":"=","is_sub":false,"weight":0.7,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5},{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic0","operator":"=","is_sub":false,"value":0,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":6}]}]}'
+
+#behavior -> user search
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCate":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"<","value":18,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":3,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":1,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":4,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"<","value":4,"startTime":1450726395,"endTime":1457726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCate":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":1,"startTime":1452726395,"endTime":1454726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCate":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":2,"startTime":1451726395,"endTime":1455726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"<","value":2,"startTime":1451726395,"endTime":1455726395,"timeType":"absolute","sequence":5}]}]}'
+
+curl -s -X POST 'http://localhost:9000/crowd/v1/user_search?limit=5' -d '{"target":"user","selector":[{"ontology":[{"type":"interest","factor":"food","operator":"=","is_sub":false, "weight":0.7,"sequence":1}],"behavior":[{"action":"browse","objectCategory":"pic","objectType":"Item","ontologyType":"","objectId":"pic1","operator":">=","is_sub":false,"value":1,"startTime":1450726395,"endTime":1458726395,"timeType":"absolute","sequence":5},
+{"action":"browse","objectCategory":"pic","objectType":"Behavior","ontologyType":"","objectId":"","operator":"=","value":1,"startTime":1451726395,"endTime":1454726395,"timeType":"absolute","sequence":5}]}]}'
 
 # keep this line intact which stop all service
 ~/.gium/gsql_admin stop -f -y

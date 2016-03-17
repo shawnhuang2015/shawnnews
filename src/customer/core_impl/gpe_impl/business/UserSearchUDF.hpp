@@ -112,6 +112,25 @@ namespace UDIMPL {
       std::cout << std::endl;
     }
 
+    UserSearchUDF(std::vector<BehrUserCond>& cond,
+                  std::vector<uint32_t> pathVertexT)
+        : SingleActive_VertexMap_BaseUDF(2), 
+          sp_(PathBehrUser), 
+          bhr_user_cond_(cond), 
+          cond_size_(cond.size()),
+          pathVertexT_(pathVertexT) {
+      std::cout << "Constructor UserSearchUDF BehrUserCond" << std::endl;
+      for (size_t k = 0; k < cond.size(); ++k) {
+        std::cout << cond[k] << std::endl;
+      }
+      
+      std::cout << "pathVertexT ";
+      for (size_t k = 0; k < pathVertexT_.size(); ++k) {
+        std::cout << pathVertexT_[k] << ", ";
+      }
+      std::cout << std::endl;
+    }
+
     void mergeValue(uint64_t id, V_VALUE val, 
             std::map<uint64_t, V_VALUE> &initVal) {
       if (initVal.find(id) == initVal.end()) {
@@ -154,12 +173,24 @@ namespace UDIMPL {
             mergeValue(startIds[i], value, initValue);
           }
         }
+      } else if (sp_ == PathBehrUser) {
+        for (size_t k = 0; k < bhr_user_cond_.size(); ++k) {
+          uint32_t vtype_id_ = bhr_user_cond_[k].behrT;
+          V_VALUE value(pow2(k), cond_size_);
+          value.resize();
+          value.count[k] = 1;
+          mergeValue(vtype_id_, value, initValue);
+        }
       }
 
       //active the start nodes here
       for (std::map<uint64_t, V_VALUE>::iterator it = initValue.begin();
               it != initValue.end(); ++it) {
-        context->Write(it->first, it->second);
+        if (sp_ == PathBehrUser) {
+          context->WriteAllForType(it->first, it->second, true);
+        } else {
+          context->Write(it->first, it->second);
+        }
       }
     }
 
@@ -206,6 +237,9 @@ namespace UDIMPL {
           context->Write(targetvid, srcvertexvalue);
         } else if (sp_ == PathOntoItemUser) {
           context->Write(targetvid, srcvertexvalue);
+        } else if (sp_ == PathBehrUser) {
+          if (iter == 1) return;
+          context->Write(targetvid, srcvertexvalue);
         }
     }
 
@@ -215,6 +249,27 @@ namespace UDIMPL {
         if (sp_ == PathOntoUser) {
         } else if (sp_ == PathItemUser) {
         } else if (sp_ == PathOntoItemUser) {
+        } else if (sp_ == PathBehrUser) {
+          size_t iter = context->Iteration();
+          if (iter != 1) return;
+          uint64_t datetime = vertexattr->GetUInt(datetime_attr, 0);
+          uint64_t mask = vertexvalue.mask;
+          size_t sz = vertexvalue.sz;
+          bool good = true;
+          for (size_t k = 0; k < sz; ++k) {
+            if ((mask & pow2(k)) != 0) {
+              uint64_t timeStart = bhr_user_cond_[k].timeStart;
+              uint64_t timeEnd = bhr_user_cond_[k].timeEnd;
+              if (timeStart > datetime || datetime > timeEnd) {
+                good = false;
+                break;
+              }
+            }
+          }
+          //std::cout << "sp_ = " << sp_ << ", datetime = " << datetime << ", mask = " << mask << ", sz = " << sz << ", good = " << good << std::endl;
+          if (good) {
+            context->Write(vid, vertexvalue);
+          }
         }
     }
     
@@ -304,6 +359,26 @@ namespace UDIMPL {
             }
             context->GlobalVariable_Reduce<VertexLocalId_t>(GV_USER_LIST, vid);
           }
+        } else if (sp_ == PathBehrUser) {
+          if (iter == 1) {
+            context->Write(vid, accumulator);
+          } else if (iter == 2) {
+            uint64_t mask = accumulator.mask;
+            size_t sz = accumulator.sz;
+            //std::cout << "sp_ = " << sp_ << ", mask = " << mask << ", sz = " << sz << std::endl;
+            for (size_t k = 0; k < sz; ++k) {
+              bool good = false;
+              if ((mask & pow2(k)) != 0) {
+                uint64_t times = bhr_user_cond_[k].times;
+                Operator op = bhr_user_cond_[k].op;
+                if (Compare(op, times, accumulator.count[k])) {
+                  good = true;
+                }
+              }
+              if (!good) return;
+            }
+            context->GlobalVariable_Reduce<VertexLocalId_t>(GV_USER_LIST, vid);
+          }
         }
     }
 
@@ -329,6 +404,7 @@ namespace UDIMPL {
     std::vector<OntologyCond> onto_cond_;
     std::vector<ItemBehaviorCond> item_bhr_cond_;
     std::vector<OntoBehaviorCond> onto_bhr_cond_;
+    std::vector<BehrUserCond> bhr_user_cond_;
     uint32_t cond_size_;
     std::vector<uint32_t> pathVertexT_;
     std::vector<VertexLocalId_t> translate_ids_;

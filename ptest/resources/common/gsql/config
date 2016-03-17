@@ -1,5 +1,5 @@
-CanonnicalLoader=/home/danhu/.ptest/bin_root/generic_batch_loader
-GSELoaderConfig=/home/danhu/.ptest/config_root/gse_loader/gse_loader1.conf
+CanonnicalLoader=/home/xun.yang/.ptest/bin_root/generic_batch_loader
+GSELoaderConfig=/home/xun.yang/.ptest/config_root/gse_loader/gse_loader1.conf
 OutputTokenBufferSize=50000
 DoNotPersistCatalog=true
 TokenBankSrc=./resources/common/TokenBank
