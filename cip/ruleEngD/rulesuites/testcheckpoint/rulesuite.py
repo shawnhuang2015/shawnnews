@@ -18,7 +18,7 @@ from ruletask.Context import __RULE_RET
 from rulebase.BizObjBase import BizObjBase
 from rulebase.JsonBizObj import JsonBizObj 
 from rulebase.RestBizObj import RestBizObj 
-from rulebase import util
+from util.func import __R_MERGE_DICT_ARRAY
 
 #########   customization biz objects ################
 from cust.sample.LakalaRecommendProxy import LakalaRecommendProxy
@@ -26,7 +26,7 @@ from cust.sample.LakalaRecommendProxy import LakalaRecommendProxy
 def use_my_conflict(context):
     prod1 = __RULE_RET(context,"rule2")
     prod2 = __RULE_RET(context,"rule3")
-    prods = util.__R_MERGE_DICT_ARRAY(prod1, prod2) 
+    prods = __R_MERGE_DICT_ARRAY(prod1, prod2) 
     __W_RET(context,prods)
 
 def resolve_conflict(context):

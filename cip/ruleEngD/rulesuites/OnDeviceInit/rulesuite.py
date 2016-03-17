@@ -18,7 +18,7 @@ from ruletask.Context import __RULE_RET
 from rulebase.BizObjBase import BizObjBase
 from rulebase.JsonBizObj import JsonBizObj 
 from rulebase.RestBizObj import RestBizObj 
-from rulebase import util
+from util.func import __R_MERGE_DICT_ARRAY
 
 ########   performance   #########################
 from logger.Decorators import Performance

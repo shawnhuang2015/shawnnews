@@ -1,7 +1,6 @@
 import sys
 sys.path.append("../")
 
-from rulebase.util import *
 from algorithm import RuleConfltSol
 
 import json
@@ -19,6 +18,7 @@ from init.Const import REST_BAD_REQ
 from init.Const import REST_INTERNAL_ERROR
 from monitor.Perf import Perf
 from util.ErrHandler import buildAppResult 
+from util.func import __R_MERGE_DICT_ARRAY
 from validator.validator import appSchemaValidator 
 from logger.Decorators import logTxn
 from logger.Decorators import Performance 
