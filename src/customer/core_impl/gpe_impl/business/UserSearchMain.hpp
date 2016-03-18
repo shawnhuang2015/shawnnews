@@ -89,6 +89,10 @@ namespace UDIMPL {
         res.push_back(itemT);
         res.push_back(behrT);
         res.push_back(targetId);
+      } else if (objectType == D_Behavior_enum) {
+        res.push_back(behrT);
+        res.push_back(behrT);
+        res.push_back(targetId);
       }
       
       return res;
@@ -199,6 +203,26 @@ namespace UDIMPL {
       return true;
     }
 
+    bool generateBehrUserCond(Json::Value &jsCond, BehrUserCond& cond) {
+      cond.sp = PathBehrUser;
+      cond.op = toOperator(jsCond[D_operator_key].asString());
+      cond.times = jsCond[D_value_key].asUInt(); 
+      if (jsCond[D_timeType_key].asString() == D_absolute_enum) {
+        cond.timeStart = jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = jsCond[D_endTime_key].asUInt();
+      } else if (jsCond[D_timeType_key].asString() == D_relative_enum) {
+        time_t cur = time(NULL);
+        cond.timeStart = cur - jsCond[D_startTime_key].asUInt();
+        cond.timeEnd = cur - jsCond[D_endTime_key].asUInt();
+      }
+
+      std::string action = jsCond[D_action_key].asString();
+      uint32_t behrT;
+      graphInfo.getVertexTypeIndex(action, behrT);
+      cond.behrT = behrT; 
+      return true;
+    }
+
     //calc all the matched userIds for a single crowd group
     bool calcCrowdCondUserIds(ServiceAPI& serviceapi, EngineServiceRequest& request, 
             Json::Value& cond, std::set<VertexLocalId_t>& userIds) {
@@ -292,6 +316,33 @@ namespace UDIMPL {
       }
       for (std::map<std::vector<uint32_t>, std::vector<OntoBehaviorCond> >::iterator it = OntoBehrCond.begin();
               it != OntoBehrCond.end(); ++it) {
+        UDF_t udf(it->second, it->first);
+        serviceapi.RunUDF(&request, &udf);
+        std::set<VertexLocalId_t> tmpUserIds;
+        udf.getUserSet(tmpUserIds);
+        if (doIt) {
+          IntersectSet(userIds, tmpUserIds);
+        } else {
+          doIt = true;
+          userIds = tmpUserIds;
+        }
+      }
+
+      //search path: behavior - user
+      std::map<std::vector<uint32_t>, std::vector<BehrUserCond> > BehrUserCondMap;
+      for (uint32_t k = 0; k < condBehr.size(); ++k) {
+        Json::Value& condItem = condBehr[k];
+        std::string objectType = condItem[D_objectType_key].asString();
+        if (objectType == D_Behavior_enum) {
+          std::vector<uint32_t> key = getPathKey(condItem);
+          BehrUserCond itemCond;
+          if (!generateBehrUserCond(condItem, itemCond)) return false;
+          BehrUserCondMap[key].push_back(itemCond);
+          std::cout << "key = " << getCondBehaviorKey(condItem) << ", cond = " << itemCond << std::endl;
+        }
+      }
+      for (std::map<std::vector<uint32_t>, std::vector<BehrUserCond> >::iterator it = BehrUserCondMap.begin();
+              it != BehrUserCondMap.end(); ++it) {
         UDF_t udf(it->second, it->first);
         serviceapi.RunUDF(&request, &udf);
         std::set<VertexLocalId_t> tmpUserIds;
