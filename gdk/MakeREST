@@ -62,6 +62,7 @@ LDFLAGS += -lhiredis
 LDFLAGS += -lzookeeper_mt
 LDFLAGS += -lzmq
 LDFLAGS += -lrdkafka
+LDFLAGS += -lrdkafka++
 LDFLAGS += -lz
 #LDFLAGS += -lmpi
 LDFLAGS +=-lfcgi
