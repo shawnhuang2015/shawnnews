@@ -771,6 +771,14 @@ class UDFRunner : public ServiceImplBase {
       writer_->WriteString(name);
       writer_->WriteName("vtype");
       writer_->WriteString(rez["vtype"]);
+      writer_->WriteName("etype");
+      writer_->WriteStartObject();
+      writer_->WriteName("up");
+      writer_->WriteString(rez["up_etype"]);
+      writer_->WriteName("down");
+      writer_->WriteString(rez["down_etype"]);
+      writer_->WriteEndObject();
+
       writer_->WriteName("large");
       writer_->WriteBool(large);
       writer_->WriteName("tree");

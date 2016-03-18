@@ -2,8 +2,11 @@ import sys, os
 
 SET_USER_AGE = "curl -X POST 'http://localhost:9000/set_user_tag?object=inuser&name=tag&more=0&tag_all=1&sep=;' --data-binary @{0}"
 SET_USER_GENDER = "curl -X POST 'http://localhost:9000/set_user_tag?object=inuser&name=tag&more=0&tag_all=1&sep=,' --data-binary @{0}"
+SET_USER_INTEREST = "curl -X POST 'http://localhost:9000/set_user_tag?object=inuser&name=interest&tag_all=1&more=1&sep=,&tag_sep=|' --data-binary @{0}"
+
 SET_PICTURE_TYPE = "curl -X POST 'http://localhost:9000/set_item_tag?object=picture&name=pictype&more=0&tag_all=1&sep=;' --data-binary @{0}"
-SET_TAG = SET_USER_AGE
+
+SET_TAG = SET_USER_INTEREST
 
 if __name__ == '__main__':
   ifile = sys.argv[1]
