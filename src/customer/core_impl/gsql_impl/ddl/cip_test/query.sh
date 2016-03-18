@@ -5,8 +5,9 @@ curl -X POST 'http://localhost:9000/ontology_import?object=user&name=tag' --data
 curl -X POST 'http://localhost:9000/ontology_import?object=pic&name=pic_tag' --data-binary @pic_tag.csv
 curl -X POST 'http://localhost:9000/ontology_import?object=user&name=interest' --data-binary @interest.csv
 
-echo "sleep 10 seconds ..."
-sleep 10
+#need sleep, ensure the above ontologies are added to the graph
+echo "sleep 100 seconds ..."
+sleep 100
 
 #set user-tag
 curl -X POST 'http://localhost:9000/set_user_tag?object=user&name=tag&sep=;' -d 'user0;gender.male|1.0'
