@@ -1192,7 +1192,10 @@ class UDFRunner : public ServiceImplBase {
           writer->WriteEndArray();
           uniq.insert(t);
         } else {
-          refresh_inverted_tag_cache = true;
+          // FIXME: when system is up, we should load all tags for once,
+          // later, if new tags come in, they will be inserted or not (depends on `more`),
+          // but we will not reload the tags, since it might be very time-consuming.
+          //refresh_inverted_tag_cache = true;
         }
       }
       writer->WriteEndObject();
