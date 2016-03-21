@@ -1,0 +1,8 @@
+r1_merchant_continuous_txn_fail:
+-   start
+r3_merchant_dc_amount_exceed:
+-   start
+
+end:
+-   r1_merchant_continuous_txn_fail
+-   r3_merchant_dc_amount_exceed
