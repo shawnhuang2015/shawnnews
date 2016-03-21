@@ -177,6 +177,7 @@ extern "C" {
 
     std::cout << "parsed inverted_tags = " << inverted_tags << std::endl;
 
+    std::string data_msg;
     boost::tokenizer<boost::char_separator<char> > lines(
         payload, boost::char_separator<char>(eol.c_str()));
     std::vector<std::string> fields;
@@ -222,8 +223,10 @@ extern "C" {
             t = inverted_tags[t][0].asString();
           } else {
             // error, tag not unique
-            gsql_request->Respond("tag (" + t + ") is not unique.");
-            return;
+            data_msg += "tag (" + t + ") is not unique.";
+            continue;
+            //gsql_request->Respond("tag (" + t + ") is not unique.");
+            //return;
           }
         } else if (more) {
           // add this new tag into ontology tree, insert vertex/edge
@@ -287,7 +290,7 @@ extern "C" {
       return;
     }
 
-    gsql_request->Respond("done.");
+    gsql_request->Respond("done. " + data_msg);
   }
 
   // parse payload to get all tags
