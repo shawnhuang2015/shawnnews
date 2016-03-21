@@ -1182,7 +1182,8 @@ class UDFRunner : public ServiceImplBase {
         }
         it = inverted_tag_cache.find(t);
         if (it != inverted_tag_cache.end()) {
-          writer->WriteName(t.c_str());
+          // FIXME: tag might contain "
+          writer->WriteNameString(t.c_str());
           writer->WriteStartArray();
           int size1 = it->second.size();
           for (int j = 0; j < size1; ++j) {
