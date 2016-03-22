@@ -61,6 +61,18 @@ def r1_merchant_continuous_txn_fail(context):
         __W_RULE_RET(context , "ALERT: merchant %s has too many fail trans(Cnt:%s) in short time" % (tranEvt.merc_id, transCount))
         perf.post({"rule":"r1_merchant_continuous_txn_fail"}, 1.0)
 
+def r2_merchant_large_small_txn(context):
+    tranEvt = __REQ_EVT(context)
+    if not hasattr(tranEvt, "merc_id"):
+        return
+
+    now = int(time.time())
+    transCount, transAmount = lakalaBizObjManager.getMerchantTransCntAmt(tranEvt.merc_id, now-60*60*24*7, now)
+    if transAmount < 10 and transCount > 10:
+        __W_RULE_RET(context , "ALERT: merchant %s has too many small trans(Cnt:%s, amount:%s) in past 1 week" % (tranEvt.merc_id, transCount, transAmount))
+        perf.post({"rule":"r2_merchant_large_small_txn"}, 1.0)
+
+
 def r3_merchant_dc_amount_exceed(context):
     tranEvt = __REQ_EVT(context)
     # TODO: move it as a library
@@ -73,3 +85,18 @@ def r3_merchant_dc_amount_exceed(context):
     if totalAmount > 3:
         __W_RULE_RET(context , "ALERT: merchant DC %s amount exceeds" % (tranEvt.card_no, totalAmount))
         perf.post({"rule":"r3_merchant_dc_amount_exceed"}, 1.0)
+
+def r4_merchant_dup_txn_amount(context):
+    tranEvt = __REQ_EVT(context)
+    # TODO: move it as a library
+    if not hasattr(tranEvt, "merc_id"):
+        return
+
+    now = int(time.time())
+
+    txnSummary = lakalaBizObjManager.getSmallDupTranAmount(tranEvt.merc_id, 5, 100, now-60*60*24, now)
+    for k, v in txnSummary:
+        if v > 5:
+            __W_RULE_RET(context , "ALERT: merchant %s has dup small txns %s" % (tranEvt.card_no, txnSummary))
+            perf.post({"rule":"r4_merchant_dup_txn_amount"}, 1.0)
+            return
