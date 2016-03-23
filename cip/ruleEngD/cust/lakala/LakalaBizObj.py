@@ -19,29 +19,29 @@ class LakalaBizObjManager(object):
         return count
 
     def getMercCardTranAmount(self, card_no, ts_start, ts_end):
-        gpath = "MercCard[\"%s\"]-CardApp_MercCard->CardApp-Merchant_CardApp->Merchant-Merchant_Txn->Txn{Txn.trans_time > %s and Txn.trans_end < %s}=>.group{1 as all}[SUM(Txn.trans_amt) as amount]" %s (card_no, ts_start, ts_end)
+        gpath = "MercCard[\"%s\"]-CardApp_MercCard->CardApp-Merchant_CardApp->Merchant-Merchant_Txn->Txn{Txn.trans_time > %s and Txn.trans_end < %s}=>.group{1 as all}[SUM(Txn.trans_amt) as amount]" % (card_no, ts_start, ts_end)
         gpathObj = GPathBizObj(self.config, gpath)
         amount = 0
         if gpathObj.getList() != []:
             amount = gpathObj.getList()[0][1]
         return amount
 
-    def getMerchantTransCntAmt(self, merc_id, tran_status, ts_start, ts_end):
+    def getMerchantTransCntAmt(self, merc_id, ts_start, ts_end):
         count = 0
         amount = 0
-        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_time > %s and trans_time < %s }=>.group{1 as all}[COUNT(Txn._internal_id) as cnt]" % (merc_id, tran_status, ts_start, ts_end)
+        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_time > %s and trans_time < %s }=>.group{1 as all}[COUNT(Txn._internal_id) as cnt]" % (merc_id, ts_start, ts_end)
         gpathObj = GPathBizObj(self.config, gpath)
         if gpathObj.getList() != []:
             count = gpathObj.getList()[0][1]
 
-        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_time > %s and trans_time < %s }=>.group{1 as all}[SUM(Txn.trans_amt) as amount]" % (merc_id, tran_status, ts_start, ts_end)
+        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_time > %s and trans_time < %s }=>.group{1 as all}[SUM(Txn.trans_amt) as amount]" % (merc_id, ts_start, ts_end)
         gpathObj = GPathBizObj(self.config, gpath)
         if gpathObj.getList() != []:
             amount = gpathObj.getList()[0][1]
         return count, amount
 
     def getSmallDupTranAmount(self, merc_id, minVal, maxVal, ts_start, ts_end):
-        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_amt > minAmt and trans_amt < maxAmt and trans_time > %s and trans_time < %s }=>.group{trans_amt}[COUNT(Txn._internal_id) as cnt]" % (merc_id, minVal, maxVal,ts_start, ts_end)
+        gpath = "Merchant[\"%s\"]-Merchant_Txn->Txn{trans_amt > %s and trans_amt < %s and trans_time > %s and trans_time < %s }=>.group{trans_amt}[COUNT(Txn._internal_id) as cnt]" % (merc_id, minVal, maxVal,ts_start, ts_end)
         gpathObj = GPathBizObj(self.config, gpath)
         result = {}
         for item in gpathObj.getList():

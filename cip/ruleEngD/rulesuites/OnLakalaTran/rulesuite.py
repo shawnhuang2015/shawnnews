@@ -81,7 +81,7 @@ def r3_merchant_dc_amount_exceed(context):
 
     now = int(time.time())
 
-    totalAmount = lakalaBizObjManager.getMercCardTranAmount(tranEvt.card_no, "fail", now-60*60*24, now)
+    totalAmount = lakalaBizObjManager.getMercCardTranAmount(tranEvt.card_no, now-60*60*24, now)
     if totalAmount > 3:
         __W_RULE_RET(context , "ALERT: merchant DC %s amount exceeds" % (tranEvt.card_no, totalAmount))
         perf.post({"rule":"r3_merchant_dc_amount_exceed"}, 1.0)
