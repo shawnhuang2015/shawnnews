@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cipApp')
-  .config(function($routeProvider) {
+  .config(['$routeProvider', function($routeProvider) {
     $routeProvider
         .when('/cip', {
           templateUrl: 'cip.html'

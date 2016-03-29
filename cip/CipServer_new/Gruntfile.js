@@ -37,7 +37,7 @@ module.exports = function (grunt) {
     },
     express: {
       options: {
-        port: process.env.PORT || 9000
+        port: process.env.PORT || 3000
       },
       dev: {
         options: {
@@ -696,7 +696,7 @@ module.exports = function (grunt) {
       'postcss',
       'express:dev',
       'wait',
-      'open',
+      //'open',
       'watch'
     ]);
   });
