@@ -1,0 +1,65 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="initGroupUserList()">
+
+    <fieldset>
+        <!-- Show -->
+        <div class="col-md-12 row">
+            <table class="table table-hover">
+                <h4>人群选择列表</h4>
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>人群名称</th>
+                    <th>覆盖人数</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="crowd in groupDetail.selector">
+                    <td>{{$index+1}}</td>
+                    <td>{{crowd.crowdName}}</td>
+                    <td>{{crowd.count}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{groupDetail.count}}人</h5></div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>用户列表明细</legend>
+        <div class="text-center row" ng-if="!userList && groupDetail.type == 'static'">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>数据正在获取中...
+        </div>
+        <div class="text-center row" ng-if="crowdDetail.type == 'dynamic'">
+            动态人群暂时不支持显示用户列表
+        </div>
+        <div class="col-md-offset-3 col-md-6">
+            <table class="table table-hover table-bordered" ng-if="userList.length>0 && groupDetail.type == 'static'">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>UID</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="user in userList">
+                    <td>{{$index+1}}</td>
+                    <td>{{user}}</td>
+                    <td>
+                    <span>
+                        <button class="btn btn-info btn-xs">探索此用户
+                        </button>
+                    </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+
+    <div class="col-md-offset-5 col-md-2">
+        <a target="_self" id="downloadUserlist" href="/api/download?file={{groupDetail.file}}" download="userlist.xml"
+           class="btn btn-info btn-block" ng-if="userList.length>0 && groupDetail.type == 'static'">下载UID集合</a>
+    </div>
+
+</section>

@@ -1,0 +1,123 @@
+<section data-ng-controller="CipmanagerController" data-ng-init="findGroup()">
+
+    <form name="groupForm" class="form-horizontal" role="form" data-ng-submit="updateGroup(groupForm.$valid)"
+          novalidate>
+        <fieldset>
+            <legend>基本信息</legend>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && groupForm.crowd_name.$invalid }">
+                <label mean-token="'create-group_name'" class="col-md-2 control-label">人群组合名称</label>
+                <div class="col-md-4">
+                    <input name="group_name" type="text" class="form-control" data-ng-model="groupDetail.crowdName"
+                           id="group_name" placeholder="Group Name" ng-pattern="/^\w+$/" required>
+                    <div ng-show="groupForm.group_name.$invalid" class="help-block">
+                        <p ng-show="groupForm.group_name.$error.required" class="text-danger">人群名字不能为空</p>
+                        <p ng-show="!groupForm.group_name.$error.required" class="text-danger">人群名称只能包含英文,数字,或下划线</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
+                <label mean-token="'create-description'" class="col-md-2 control-label">描述</label>
+                <div class="col-md-4">
+                    <input name="description" type="text" class="form-control" data-ng-model="groupDetail.description"
+                           id="description" placeholder="Description" required>
+                    <div ng-show="groupForm.description.$invalid" class="help-block">
+                        <p ng-show="groupForm.description.$error.required" class="text-danger">描述不能为空</p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border">已选人群:</legend>
+            <div class="row">
+                <table class="table table-hover" ng-if="groupDetail.selector.length>0">
+                    <div class="col-md-1"><h6>组合逻辑:</h6></div>
+                    <div class="col-md-2">
+                        <ui-select ng-model="groupDetail.logic" append-to-body="'true'">
+                            <ui-select-match placeholder="人群组合逻辑">{{groupDetail.logic}}</ui-select-match>
+                            <ui-select-choices repeat=" x in group_logic | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>人群名称</th>
+                        <th>覆盖人数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="crowd in groupDetail.selector">
+                        <td>{{$index+1}}</td>
+                        <td>{{crowd.crowdName}}</td>
+                        <td>{{crowd.count}}</td>
+                        <td>
+                    <span>
+                        <button class="btn btn-danger btn-xs" type="button" data-ng-click="removeFromList($index);">移除
+                        </button>
+                    </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="col-md-offset-8 col-md-3">
+                    <h5 ng-if="groupDetail.count >= -1">满足上面所有条件的人数为
+                        <span ng-if="groupDetail.count >= 0">{{groupDetail.count}}</span>
+                    <span ng-if="groupDetail.count == -1"
+                          class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                        人</h5>
+                    <h5 ng-if="groupDetail.count == -2">
+                        全部人数获取失败,请重试条件
+                    </h5>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-3">
+                <button mean-token="'create-save'" type="submit"
+                        ng-disabled="groupForm.$invalid || groupDetail.count < 0 || groupDetail.selector.length <= 0" class="btn btn-success btn-block">
+                    保存组合
+                </button>
+            </div>
+        </div>
+
+        <table class="table table-hover">
+            <h4>可选人群</h4>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>人群名称</th>
+                <th>类型</th>
+                <th>覆盖人数</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="crowd in crowds">
+                <td>{{$index+1}}</td>
+                <td>{{crowd.crowdName}}</td>
+                <td>{{crowd.type}}</td>
+                <td>{{crowd.count}}</td>
+                <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+                <td>
+                <span>
+                    <button class="btn btn-info btn-xs" type="button" data-ng-click="addToList(crowd);">添加</button>
+                </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-offset-5">
+            <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm"
+                            ng-change="pageChanged()"
+                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+                            items-per-page="page_size">
+
+            </uib-pagination>
+        </div>
+
+    </form>
+</section>
