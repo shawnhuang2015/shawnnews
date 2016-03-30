@@ -4,28 +4,28 @@ angular.module('cipApp')
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
         .when('/cip', {
-          templateUrl: 'cip.html'
+          templateUrl: 'app/cip/cip.html'
         })
         .when('/cip/crowd/group', {
-            templateUrl: 'groupIndex.html'
+            templateUrl: 'app/cip/groupIndex.html'
         })
         .when('/cip/crowd/create', {
-          templateUrl: 'createCrowd.html'
+          templateUrl: 'app/cip/createCrowd.html'
         })
         .when('/cip/crowd/save', {
-            templateUrl: 'saveCrowd.html',
+            templateUrl: 'app/cip/saveCrowd.html',
             params: {
                 crowdDetail: null
             }
         })
         .when('/cip/crowd/:crowdName/userlist', {
-            templateUrl: 'userlist.html'
+            templateUrl: 'app/cip/userlist.html'
         })
         .when('/cip/crowd/group', {
-            templateUrl: 'createGroup.html'
+            templateUrl: 'app/cip/createGroup.html'
         })
         .when('/cip/crowd/group/:groupName/userlist', {
-            templateUrl: 'groupUserlist.html'
+            templateUrl: 'app/cip/groupUserlist.html'
         })
   }
 ]);

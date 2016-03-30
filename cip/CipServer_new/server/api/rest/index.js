@@ -4,7 +4,7 @@ var express = require('express');
 var controller = require('./rest.controller');
 
 var router = express.Router();
-
+console.log("rest api required.");
 //call remote
 router.get('/ontology', controller.readMetadata);
 router.get('/crowd/sample', controller.crowdSampleByGet);

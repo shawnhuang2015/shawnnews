@@ -69,6 +69,17 @@ var all = {
     multi: '.user.multi'
   },
 
+  remoteServer: {
+    ruleEngine: {
+    },
+    crowdServer: {
+      host: '127.0.0.1',
+      port: 9000
+    }
+  },
+
+  semanticSyncTime: 1800,
+
   OntoLimit: 1024,
   
   maxUserLimit: 3000000

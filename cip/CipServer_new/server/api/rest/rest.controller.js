@@ -538,7 +538,7 @@ There is an expiration time for the information stored in mongodb,
 we will update the data if it exceed the expiration time.
 */
 exports.readMetadata = function(req, res) {
-    console.log('Func readMetadata');
+    
     var curTime = new Date().getTime();
     SemanticMetaData.findOne({name: 'SemanticMetaData'}, function(err, md) {
         if (err) {
@@ -551,7 +551,7 @@ exports.readMetadata = function(req, res) {
             return res.send(md.profile);
         } else {
             var TestFlag = false;
-
+            console.log('Func readMetadata');
             if (!TestFlag) {
                 utility.get('get_profile', 'threshold=' + config.OntoLimit, function (err, resp) {
                         if (err) {

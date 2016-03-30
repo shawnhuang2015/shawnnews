@@ -65,7 +65,8 @@ module.exports = {
     ruleEngine: {
     },
     crowdServer: {
-      host: '192.168.33.66',
+      // host: '192.168.33.66',
+      host: '127.0.0.1',
       port: 9000
     }
   },

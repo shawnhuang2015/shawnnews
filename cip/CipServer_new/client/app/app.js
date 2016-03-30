@@ -14,6 +14,9 @@ angular.module('cipApp', [
 ])
   .config(function($routeProvider, $locationProvider) {
     $routeProvider
+      // .when('/test', {
+      //   redirectTo : '/cip'
+      // })
       .otherwise({
         redirectTo: '/'
       });
