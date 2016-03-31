@@ -30,9 +30,12 @@ exports.create = function(req, res) {
 //list
 exports.list = function(req, res) {
     console.log('Single Crowd|Func list');
+    var debObj = {test:10};
     var pageId = Number(req.query.pageId);
     var pageSz = Number(req.query.pageSz);
+    //debugger;
     CrowdSingle.find().sort('-created').exec(function(err, crowds) {
+        debugger;
         if (err) {
             console.log('list error: ' + utility.getErrorMessage(err))
             return res.send({

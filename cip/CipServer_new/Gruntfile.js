@@ -193,7 +193,12 @@ module.exports = function (grunt) {
     'node-inspector': {
       custom: {
         options: {
-          'web-host': 'localhost'
+          'web-host': 'localhost',
+          'web-port': 3030,
+          'debug-port': 5858,
+          'save-live-edit': true,
+          'preload': false,
+          'hidden': ['node_modules']
         }
       }
     },
@@ -205,7 +210,7 @@ module.exports = function (grunt) {
         options: {
           nodeArgs: ['--debug-brk'],
           env: {
-            PORT: process.env.PORT || 9000
+            PORT: process.env.PORT || 3001
           },
           callback: function (nodemon) {
             nodemon.on('log', function (event) {
