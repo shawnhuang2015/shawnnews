@@ -8,7 +8,8 @@
  */
 function mainCtrl($scope, $state, $interval) {
 
-    this.userName = 'asdfExample user';
+    this.userName = 'Example user';
+    this.userRole = 'Manager';
     this.helloText = 'Welcome in SeedProject';
     this.descriptionText = 'It is an application skeleton for a typical AngularJS web app. You can use it to quickly bootstrap your angular webapp projects and dev environment for these project.';
 
@@ -24,8 +25,21 @@ function minorCtrl($scope) {
   this.descriptionText = 'It dsfasfasddf sdfsadprojecsdfaasdfts anddsfasfasddf sdfsadprojecsdfaasdfts anddsfasfasddf sdfsadprojecsdfaasdfts andipsdsfasfasddf sdfsadprojecsdfaasdfts and dev environmsdfasdent for these project.';
 }
 
+function translateCtrl($translate, $scope) {
+    $scope.changeLanguage = function (langKey) {
+        $translate.use(langKey);
+        $scope.language = langKey;
+    };
+}
+
 
 angular
   .module('cipApp')
   .controller('mainCtrl', mainCtrl)
   .controller('minorCtrl', minorCtrl)
+  .controller('translateCtrl', translateCtrl)
+
+
+
+
+  

@@ -9,27 +9,39 @@
                                 <span class="block m-t-xs">
                                     <strong class="font-bold">{{main.userName}}</strong>
                              </span>
-                                <span class="text-muted text-xs block">Example menu<b class="caret"></b></span>
+                                <span class="text-muted text-xs block">{{main.userRole}}<b class="caret"></b></span>
                             </span>
                     </a>
-                    <ul uib-dropdown-menu class="animated flipInX m-t-xs">
-                        <li><a href="">Logout</a></li>
+                    <ul uib-dropdown-menu class="animated fadeInRight m-t-xs">
+                        <li><a ui-sref="app.profile">Profile</a></li>
+                        <li><a ui-sref="app.setting">Setting</a></li>
+                        <li class="divider"></li>
+                        <li><a ui-sref="login">Logout</a></li>
                     </ul>
                 </div>
                 <div class="logo-element">
-                    IN+
+                    CIP
                 </div>
 
             </li>
 
-            <li ui-sref-active="active">
-                <a ui-sref="index.main"><i class="fa fa-laptop"></i> <span class="nav-label">View Crowd Lists</span> </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="index.create_single_crowd"><i class="fa fa-laptop"></i> <span class="nav-label">Create Single Crowd</span> </a>
-            </li>
-            <li ui-sref-active="active">
-                <a ui-sref="index.minor"><i class="fa fa-desktop"></i> <span class="nav-label">Minor page</span></a>
+            <!-- <li ng-class="{active: $state.includes('dashboards')}"> -->
+            <li ng-class="{active: !$state.includes('dashboards')}">
+                <a href="index.html"><i class="fa fa-list"></i> <span class="nav-label">{{ 'CrowdManagement' | translate }}</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: !$state.includes('dashboards')}">
+                    <li ui-sref-active="active">
+                        <a ui-sref="index.main"><i class="fa fa-user"></i>{{'ViewCrowdList' | translate }}</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="#"><i class="fa fa-users"></i>{{'ViewGroupList' | translate }}</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="index.create_single_crowd"><i class="fa fa-user-plus"></i>{{'CreateCrowd' | translate}}</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="#"><i class="fa fa-google-plus"></i>{{'CreateGroup' | translate}}</a>
+                    </li>
+                </ul>
             </li>
         </ul>
 
