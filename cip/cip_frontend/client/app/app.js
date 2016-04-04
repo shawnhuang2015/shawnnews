@@ -21,7 +21,7 @@ angular
 });
 
 function config($stateProvider, $urlRouterProvider, $locationProvider) {
-  $urlRouterProvider.otherwise("/index/main");
+  $urlRouterProvider.otherwise("/index/crowd_view");
 
   $stateProvider
   .state('index', {
@@ -29,25 +29,41 @@ function config($stateProvider, $urlRouterProvider, $locationProvider) {
       url: "/index",
       templateUrl: "template/views/common/content.html",
       controller: 'mainCtrl',
-      controllerAs: 'main'
+      controllerAs : 'main'
   })
   .state('index.main', {
       url: "/main",
-      templateUrl: "template/views/main.html",
-      data: { pageTitle: 'Example view index main' }
+      templateUrl: "template/views/main.html"
   })
-  .state('index.create_single_crowd', {
-      url: "/create_single_crowd",
-      templateUrl: "template/views/main.html",
-      data: { pageTitle: 'create_single_crowd' }
+  .state('index.crowd_view', {
+      url: "/crowd_view",
+      templateUrl: "app/crowd/crowd.view.html",
+      controller: 'crowdCtrl',
+      controllerAs : 'vm'
   })
-  .state('index.minor', {
-      url: "/minor",
-      templateUrl: "template/views/minor.html",
-      data: {},
-      controller: 'minorCtrl',
-      controllerAs : 'minor'
+  .state('index.crowd_create', {
+      url: "/crowd_create",
+      templateUrl: "app/crowd/crowd.create.html",
+      controller: 'crowdCtrl',
+      controllerAs : 'vm'
+  })
+  .state('index.group_view', {
+      url: "/group_view",
+      templateUrl: "app/group/group.view.html",
+      controller: 'groupCtrl',
+      controllerAs : 'vm'
+  })
+  .state('index.group_create', {
+      url: "/group_create",
+      templateUrl: "app/group/group.create.html",
+      controller: 'groupCtrl',
+      controllerAs : 'vm'
   })
 
   $locationProvider.html5Mode(true);
 }
+
+
+
+
+

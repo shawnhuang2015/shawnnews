@@ -1,0 +1,215 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_create()">
+  <fieldset>
+    <legend>圈人条件</legend>
+    <!-- Edit -->
+    <div class="form-group row">
+        <div class="col-md-2"> <!-- TAG/Interest_intent/Behavior-->
+            <h5>圈人方法</h5>
+        </div>
+        <!-- Tag -->
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <h5>标签名称</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <h5>运算逻辑</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <h5>标签属性</h5>
+        </div>
+
+        <!-- Ontology -->
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <h5>标签分类体系</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <h5>标签</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <h5>运算逻辑</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <h5>标签置信权重</h5>
+        </div>
+
+        <!-- Behavior-->
+        <div class="col-md-2" ng-if="factors.condition == 'behavior'">
+            <h5>动作</h5>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && object_category.length>0">
+            <h5>对象</h5>
+        </div>
+        <div class="col-md-offset-1 col-md-4" ng-if="factors.condition == 'behavior' && object_category.length>0">
+            <h5>对象所属类目/属性体系</h5>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-2">
+            <ui-select ng-model="factors.condition" append-to-body="'true'">
+                <ui-select-match placeholder="条件">{{$select.selected.name}}
+                </ui-select-match>
+                <ui-select-choices repeat="x.id as x in condition_type | filter:$select.search">{{x.name}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <!-- For tag -->
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <ui-select ng-model="factors.name" append-to-body="'true'">
+                <ui-select-match placeholder="标签名称">{{factors.name}}
+                </ui-select-match>
+                <ui-select-choices repeat=" x in tag_name | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <ui-select ng-model="factors.operator" append-to-body="'true'">
+                <ui-select-match placeholder="逻辑">{{factors.operator}}</ui-select-match>
+                <ui-select-choices repeat=" x in tag_operator | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'tag'">
+            <ui-select ng-model="factors.factor" append-to-body="'true'">
+                <ui-select-match placeholder="标签名称">{{factors.factor}}
+                </ui-select-match>
+                <ui-select-choices repeat=" x in tag_factor | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <!-- For ontology -->
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <ui-select ng-model="factors.name">
+                <ui-select-match placeholder="标签体系">{{factors.name}}
+                </ui-select-match>
+                <ui-select-choices repeat=" x in ontology_type | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology' && ontology_factor.length > 0">
+            <ui-select ng-model="factors.factor" append-to-body="'true'">
+                <ui-select-match placeholder="标签">{{factors.factor}}</ui-select-match>
+                <ui-select-choices repeat=" x in ontology_factor | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology' && ontology_factor.length <= 0">
+            <input name="factor" type="text" class="form-control" ng-model="factors.factor" placeholder="标签">
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'ontology'">
+            <ui-select ng-model="factors.operator" append-to-body="'true'">
+                <ui-select-match placeholder="逻辑">{{factors.operator}}</ui-select-match>
+                <ui-select-choices repeat=" x in operator | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2"  ng-if="factors.condition == 'ontology' && factors.operator != 'like' && factors.operator != 'dislike'">
+            <input name="weight" type="number" class="form-control" ng-model="factors.weight" placeholder="标签置信权重">
+        </div>
+
+        <!-- For behavior -->
+        <div class="col-md-2" ng-if="factors.condition == 'behavior'">
+            <ui-select ng-model="factors.action" append-to-body="'true'">
+                <ui-select-match placeholder="动作">{{factors.action}}</ui-select-match>
+                <ui-select-choices repeat=" x in action | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && object_category.length>0">
+            <ui-select ng-model="factors.objectCategory" append-to-body="'true'">
+                <ui-select-match placeholder="对象">{{factors.objectCategory}}</ui-select-match>
+                <ui-select-choices repeat=" x in object_category | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && object_category.length>0">
+            <ui-select ng-model="factors.objectType" append-to-body="'true'">
+                <ui-select-match placeholder="查询方法">{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="x.id as x in object_type | filter:$select.search">{{x.name}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && (factors.objectType == 'Category' || factors.objectType == 'Contains') && object_category.length>0">
+            <ui-select ng-model="factors.ontologyType" append-to-body="'true'">
+                <ui-select-match placeholder="对象所属分类体系">{{factors.ontologyType}}</ui-select-match>
+                <ui-select-choices repeat=" x in behavior_ontology_type | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.objectType == 'Category' && object_category.length>0 && object_id.length>0">
+            <ui-select ng-model="factors.objectId" append-to-body="'true'">
+                <ui-select-match placeholder="对象值">{{factors.objectId}}</ui-select-match>
+                <ui-select-choices repeat=" x in object_id | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && object_category.length>0 &&
+            (factors.objectType != 'Category' ||(factors.objectType == 'Category' && object_id.length<=0))">
+            <input name="item_id" type="text" class="form-control" ng-model="factors.objectId"
+                   placeholder="对象值">
+        </div>
+    </div>
+    <div class="form-group row">
+        <!-- Behavior-->
+        <div class="col-md-4" ng-if="factors.condition == 'behavior' && factors.action">
+            <h5>发生次数</h5>
+        </div>
+        <div class="col-md-4" ng-if="factors.condition == 'behavior' && factors.action">
+            <h5>发生时间</h5>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
+            <ui-select ng-model="factors.operator" append-to-body="'true'">
+                <ui-select-match placeholder="逻辑">{{factors.operator}}</ui-select-match>
+                <ui-select-choices repeat=" x in behavior_operator | filter:$select.search">{{x}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
+            <input name="object_value" type="number" class="form-control" ng-model="factors.value"
+                   placeholder="值" ng-pattern="/^\d+$/">
+            <div ng-show="factors.value == null" class="help-block">
+                <p class="text-danger">值必须为0~2147483647</p>
+            </div>
+        </div>
+        <div class="col-md-2" ng-if="factors.condition == 'behavior' && factors.action">
+            <ui-select ng-model="factors.timeType" append-to-body="'true'">
+                <ui-select-match placeholder="日期类型">{{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat=" x.id as x in date_type | filter:$select.search">{{x.name}}
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" ng-show="factors.condition == 'behavior' && (factors.timeType == 'day' || factors.timeType == 'hour')">
+            <input name="time_start" type="number" class="form-control" ng-model="st">
+        </div>
+        <div class="col-md-2" ng-show="factors.condition == 'behavior' && factors.timeType == 'absolute'">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                       ng-model="st" is-open="popup1.opened" min-date="minDate" max-date="maxDate"
+                       datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                       close-text="Close" alt-input-formats="altInputFormats" />
+                  <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+            </p>
+        </div>
+        <div class="col-md-2" ng-show="factors.condition == 'behavior' && factors.timeType == 'absolute'">
+            <p class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                       ng-model="et" is-open="popup2.opened" min-date="minDate" max-date="maxDate"
+                       datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                       close-text="Close" alt-input-formats="altInputFormats" />
+                <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-offset-10 col-md-2">
+        <button mean-token="'create-add-factor'" type="button"
+                ng-click="addFactor(factors.condition)" class="btn btn-info btn-block">添加条件
+        </button>
+    </div>
+  </fieldset>
+</div>
