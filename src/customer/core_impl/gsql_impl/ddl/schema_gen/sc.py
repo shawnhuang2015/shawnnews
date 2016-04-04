@@ -1,7 +1,8 @@
 # parse semantic schema and do dynamic schema change
 import json, sys, os.path, subprocess, time
 
-GSQL_PATH = os.path.expanduser('~/graphsql/dev/gsql/gsql')
+#GSQL_PATH = os.path.expanduser('~/graphsql/dev/gsql/gsql')
+GSQL_PATH = os.path.expanduser('gsql')
 BASIC_SCHEMA_PATH = '/tmp/basic.gsql'
 JOB_DIR = '/tmp/'
 GRAPH_NAME = 'cip'

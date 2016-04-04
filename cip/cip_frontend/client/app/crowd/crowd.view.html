@@ -1,14 +1,14 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_view()">
   <div class="row">
-    <h4 class="text-center" ng-if="!crowds || crowds.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
+    <h4 class="text-center" ng-if="!crowd.list || crowd.list.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
 
     <div class="col-md-offset-3 col-md-6">
         <button data-ng-click="goToCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
     </div>
   </div>
   <div class="row">
-    <table class="table table-hover" ng-if="crowds.length>0">
-        <h4 ng-if="crowds.length>0">{{'Crowd_view.CrowdList' | translate}}</h4>
+    <table class="table table-hover" ng-if="crowd.list.length>0">
+        <h4 ng-if="crowd.list.length>0">{{'Crowd_view.CrowdList' | translate}}</h4>
         <thead>
         <tr>
             <th>{{'Crowd_view.CrowdID' | translate}}</th>
@@ -21,25 +21,25 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="crowd in crowds">
+        <tr ng-repeat="crowd_item in crowd.list">
             <td>{{$index+1}}</td>
-            <td>{{crowd.crowdName}}</td>
-            <td>{{crowd.type}}</td>
-            <td>{{crowd.count}}</td>
-            <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
-            <td ng-if="crowd.tagAdded == 1" class="text-success">{{'Crowd_view.CreateComplete' | translate}}</td>
-            <td ng-if="crowd.tagAdded == 0" class="text-warning">{{'Crowd_view.CreateInProcessing' | translate}}</td>
-            <td ng-if="crowd.tagAdded == -1" class="text-danger">{{'Crowd_view.CreateFailed' | translate}}</td>
+            <td>{{crowd_item.crowdName}}</td>
+            <td>{{crowd_item.type}}</td>
+            <td>{{crowd_item.count}}</td>
+            <td>{{crowd_item.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd_item.tagAdded == 1" class="text-success">{{'Crowd_view.CreateComplete' | translate}}</td>
+            <td ng-if="crowd_item.tagAdded == 0" class="text-warning">{{'Crowd_view.CreateInProcessing' | translate}}</td>
+            <td ng-if="crowd_item.tagAdded == -1" class="text-danger">{{'Crowd_view.CreateFailed' | translate}}</td>
             <td>
                 <span>
-                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd.crowdName}}/userlist">{{ 'Crowd_view.CrowdDetail' | translate }}</a>
-                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd);">{{ 'Crowd_view.CrowdDelete' | translate }}</button>
+                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd_item.crowdName}}/crowd_user">{{ 'Crowd_view.CrowdDetail' | translate }}</a>
+                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd_item);">{{ 'Crowd_view.CrowdDelete' | translate }}</button>
                 </span>
             </td>
         </tr>
         </tbody>
     </table>
-    <div class="text-center " ng-show="crowds.length>0">
+    <div class="text-center " ng-show="crowd.list.length>0">
         <uib-pagination 
         boundary-links="true" 
         total-items="page.total_items" 
@@ -56,7 +56,7 @@
     </div>
 
   </div>
-  <div class="row" ng-show="crowds.length>10">
+  <div class="row" ng-show="crowd.list.length>10">
     <div class="col-md-offset-3 col-md-6">
         <button data-ng-click="goToCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
     </div>

@@ -27,7 +27,9 @@ function config($translateProvider) {
                 CreateComplete: 'Create Complete',
                 CreateFailed: 'Create Failed',
                 CrowdDetail: 'Detail',
-                CrowdDelete: 'Delete'
+                CrowdDelete: 'Delete',
+                CrowdDeleteComfirmMessage: 'Do you want to delete the crowd?'
+
             }
         })
         .translations('zh', {
@@ -52,7 +54,8 @@ function config($translateProvider) {
                 CreateComplete: '创建完成',
                 CreateFailed: '创建失败',
                 CrowdDetail: '详情',
-                CrowdDelete: '删除'
+                CrowdDelete: '删除',
+                CrowdDeleteComfirmMessage: '确定要删除这个人群吗？'
             }
         });
 
