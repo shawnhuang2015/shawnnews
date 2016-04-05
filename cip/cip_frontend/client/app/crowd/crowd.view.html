@@ -2,8 +2,8 @@
   <div class="row">
     <h4 class="text-center" ng-if="!crowd.list || crowd.list.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
 
-    <div class="col-md-offset-3 col-md-6">
-        <button data-ng-click="goToCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
+    <div class="col-sm-offset-3 col-sm-6">
+        <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
     </div>
   </div>
   <div class="row">
@@ -57,8 +57,8 @@
 
   </div>
   <div class="row" ng-show="crowd.list.length>10">
-    <div class="col-md-offset-3 col-md-6">
-        <button data-ng-click="goToCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
+    <div class="col-sm-offset-3 col-sm-6">
+        <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
     </div>
   </div>
 </div>

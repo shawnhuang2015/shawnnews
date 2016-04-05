@@ -1,67 +1,175 @@
-/**
- * INSPINIA - Responsive Admin Theme
- *
- */
+
 function config($translateProvider) {
-    //$translateProvider.useSanitizeValueStrategy('sanitize');
-    $translateProvider
-        .translations('en', {
-            // Define all menu elements
-            CrowdManagement: 'Crowd Management',
-            ViewCrowdList: 'View Crowd List',
-            ViewGroupList: 'View Group List',
-            CreateCrowd: 'Create Crowd',
-            CreateGroup: 'Create Group',
-            Crowd_view : {
-                NoCrowdExist: 'No crowd exist, please create one!',
-                CrowdList: 'Crowd List',
-                CreateNewCrowdList: 'Create New Crowd List',
-                CrowdID: 'ID',
-                CrowdName: 'Name',
-                CrowdType: 'Type',
-                AmountPeople: 'Users',
-                CreateDate: 'Date',
-                Status: 'Status',
-                Operation: 'Operation',
-                CreateInProcessing: 'Creating',
-                CreateComplete: 'Create Complete',
-                CreateFailed: 'Create Failed',
-                CrowdDetail: 'Detail',
-                CrowdDelete: 'Delete',
-                CrowdDeleteComfirmMessage: 'Do you want to delete the crowd?'
+  //$translateProvider.useSanitizeValueStrategy('sanitize');
+  $translateProvider
+    .translations('en', {
+      // Define all menu elements
+      Menu : {
+        CrowdManagement: 'Crowd Management',
+        ViewCrowdList: 'View Crowd List',
+        ViewGroupList: 'View Group List',
+        CreateCrowd: 'Create Crowd',
+        CreateGroup: 'Create Group',
+      },
+      Crowd_view : {
+        NoCrowdExist: 'No crowd exist, please create one!',
+        CrowdList: 'Crowd List',
+        CreateNewCrowdList: 'Create New Crowd List',
+        CrowdID: 'ID',
+        CrowdName: 'Name',
+        CrowdType: 'Type',
+        AmountPeople: 'Users',
+        CreateDate: 'Date',
+        Status: 'Status',
+        Operation: 'Operation',
+        CreateInProcessing: 'Creating',
+        CreateComplete: 'Create Complete',
+        CreateFailed: 'Create Failed',
+        CrowdDetail: 'Detail',
+        CrowdDelete: 'Delete',
+        CrowdDeleteComfirmMessage: 'Do you want to delete the crowd?'
+      },
+      Ontology: {
+        Tag: 'User Tag',
+        Interest: 'Interest Preference',
+        Behavior:  'Behavior',
+        Category: 'In the category',
+        Item: 'Item ID =',
+        Contains: 'Contains Characters',
+        AbsoluteDate: 'Between Date N and M',
+        PassedDays: 'In the passed N days',
+        PassedHours: 'In the passed N hours'
+      },
+      Crowd_create: {
+        AddCondition: 'Add Condition',
+        ArithmeticLogic: 'Aarithmetic Logic',
+        Action: 'Action',
+        Behavior: 'Behavior',
+        CrowdCondition: 'Crowding Condition',
+        CrowdMethod: 'Crowding Method',
+        CrowdAmount: 'Crowd Amount',
+        Condition: 'Condition',
+        ConditionList: 'Condition List',
+        DeleteCondition: 'Delete Condition',
+        DateType: 'Date Type',
+        Index: 'Index',
+        InterestWeightIs: 'Intererst Weight is',
+        InterestIs: 'Interest is',
+        Logic: 'Logic',
+        Object: 'Object',
+        ObjectCategory: 'Object Category',
+        ObjectValue: 'Object Value',
+        Of: 'of',
+        Frequency: 'Frequency',
+        OccurenceDate: 'Occurence Date',
+        TagName: 'Tag Name',
+        TagAttribute: 'Tag Attribute',
+        TagCategory: 'Tag Category',
+        Tag: 'Tag',
+        TagConfidenceWeight: 'Tag Confidence Weight',
+        SaveCrowd: 'Save Crowd',
+        QueryMethod: 'Query Method',
+        QueryFailed: 'Condition Query Failed, Please try again!',
+        QueryAllCountFailed: 'Get total amount failed, please try conditions again!',
+        QueryMatchAmount: 'Amount of people that match all conditions:',
+        Value: 'Value',
+        ValueBetween: 'Value between',
+        Of: 'of',
+        In: 'In',
+        To: 'To',
+        Folder: 'Folder',
+        ContainsCharacters: 'Contains Characters',
+        DateBetween: 'Date Between',
+        InThePassed: 'In The Passed',
+        Days: 'Days',
+        Hours: 'Hours'
+      }
+    })
+    .translations('zh', {
+      // Define all menu elements
+      CrowdManagement: '圈人管理',
+      ViewCrowdList: '查看人群列表',
+      ViewGroupList: '查看人群组合列表',
+      CreateCrowd: '创建人群',
+      CreateGroup: '创建人群组合',
+      Crowd_view: {
+        NoCrowdExist: '您还没有创建人群,现在开始创建一个人群吧!',
+        CrowdList: '人群列表',
+        CreateNewCrowdList: '创建新的人群',
+        CrowdID: '序号',
+        CrowdName: '人群名称',
+        CrowdType: '类型',
+        AmountPeople: '覆盖人数',
+        CreateDate: '创建时间',
+        Status: '状态',
+        Operation: '操作',
+        CreateInProcessing: '创建中',
+        CreateComplete: '创建完成',
+        CreateFailed: '创建失败',
+        CrowdDetail: '详情',
+        CrowdDelete: '删除',
+        CrowdDeleteComfirmMessage: '确定要删除这个人群吗？'
+      },
+      Ontology : {
+        Tag: '用户标签',
+        Interest: '兴趣偏好/意图',
+        Behavior:  '行为',
+        Category: '在分类...中',
+        Item: '物品 ID =',
+        Contains: '包含字段',
+        AbsoluteDate: '在日期N-M之间',
+        PassedDays: '过去N天',
+        PassedHours: '过去N小时'
+      },
+      Crowd_create: {
+        AddCondition: '添加条件',
+        ArithmeticLogic: '运算逻辑',
+        Action: '操作',
+        Behavior: '动作',
+        CrowdCondition: '圈人条件',
+        CrowdMethod: '圈人方法',
+        CrowdAmount: '覆盖人数',
+        Condition: '条件',
+        ConditionList: '条件列表',
+        DeleteCondition: '删除此条件',
+        DateType: '日期类型',
+        Index: '序号',
+        InterestWeightIs: '的兴趣的权重',
+        InterestIs: '的兴趣为',
+        Logic: '逻辑',
+        Object: '对象',
+        ObjectCategory: '对象所属类目/属性体系',
+        ObjectValue: '对象值',
+        Of: '之',
+        Frequency: '发生次数',
+        OccurenceDate: '发生时间',
+        TagName: '标签名称',
+        TagAttribute: '标签属性',
+        TagCategory: '标签分类体系',
+        Tag: '标签',
+        TagConfidenceWeight: '标签置信权重',
+        SaveCrowd: '保存人群',
+        QueryMethod: '查询方法',
+        QueryFailed: '条件搜索失败,请重试',
+        QueryAllCountFailed: '全部人数获取失败,请重试条件',
+        QueryMatchAmount: '满足上面所有条件的人数为',
+        Value: 'Value',
+        ValueBetween: '值必须为',
+        In: '位于',
+        To: '到',
+        Folder: '目录下',
+        Item: '物品 ID =',
+        ContainsCharacters: '包含字段',
+        DateBetween: '在日期',
+        InThePassed: '在过去',
+        Days: '天内',
+        Hours: '小时内'
+      }
+    });
 
-            }
-        })
-        .translations('zh', {
-            // Define all menu elements
-            CrowdManagement: '圈人管理',
-            ViewCrowdList: '查看人群列表',
-            ViewGroupList: '查看人群组合列表',
-            CreateCrowd: '创建人群',
-            CreateGroup: '创建人群组合',
-            Crowd_view: {
-                NoCrowdExist: '您还没有创建人群,现在开始创建一个人群吧!',
-                CrowdList: '人群列表',
-                CreateNewCrowdList: '创建新的人群',
-                CrowdID: '序号',
-                CrowdName: '人群名称',
-                CrowdType: '类型',
-                AmountPeople: '覆盖人数',
-                CreateDate: '创建时间',
-                Status: '状态',
-                Operation: '操作',
-                CreateInProcessing: '创建中',
-                CreateComplete: '创建完成',
-                CreateFailed: '创建失败',
-                CrowdDetail: '详情',
-                CrowdDelete: '删除',
-                CrowdDeleteComfirmMessage: '确定要删除这个人群吗？'
-            }
-        });
-
-    $translateProvider.preferredLanguage('en');
+  $translateProvider.preferredLanguage('en');
 }
 
 angular
-    .module('cipApp')
-    .config(config)
+  .module('cipApp')
+  .config(config)

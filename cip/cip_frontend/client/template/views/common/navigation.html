@@ -27,19 +27,19 @@
 
             <!-- <li ng-class="{active: $state.includes('dashboards')}"> -->
             <li ng-class="{active : true}">
-                <a href="index.html"><i class="fa fa-list"></i> <span class="nav-label">{{ 'CrowdManagement' | translate }}</span> <span class="fa arrow"></span></a>
+                <a href="index.html"><i class="fa fa-list"></i> <span class="nav-label">{{ 'Menu.CrowdManagement' | translate }}</span> <span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse" ng-class="{in : true}">
                     <li ui-sref-active="active">
-                        <a ui-sref="crowd.crowd_view"><i class="fa fa-user"></i>{{'ViewCrowdList' | translate }}</a>
+                        <a ui-sref="crowd.crowd_view"><i class="fa fa-user"></i>{{'Menu.ViewCrowdList' | translate }}</a>
                     </li>
                     <li ui-sref-active="active">
-                        <a ui-sref="crowd.group_view"><i class="fa fa-users"></i>{{'ViewGroupList' | translate }}</a>
+                        <a ui-sref="crowd.crowd_create"><i class="fa fa-user-plus"></i>{{'Menu.CreateCrowd' | translate}}</a>
                     </li>
                     <li ui-sref-active="active">
-                        <a ui-sref="crowd.crowd_create"><i class="fa fa-user-plus"></i>{{'CreateCrowd' | translate}}</a>
+                        <a ui-sref="crowd.group_view"><i class="fa fa-users"></i>{{'Menu.ViewGroupList' | translate }}</a>
                     </li>
                     <li ui-sref-active="active">
-                        <a ui-sref="crowd.group_create"><i class="fa fa-google-plus"></i>{{'CreateGroup' | translate}}</a>
+                        <a ui-sref="crowd.group_create"><i class="fa fa-google-plus"></i>{{'Menu.CreateGroup' | translate}}</a>
                     </li>
                 </ul>
             </li>

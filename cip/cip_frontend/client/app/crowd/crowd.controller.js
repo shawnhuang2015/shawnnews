@@ -33,8 +33,26 @@ angular.module('cipApp')
     ]
   }
 
+  // config of factors.
+  $scope.condition_type = [
+    {name: $translate.instant('Ontology.Tag'), id: 'tag'},
+    {name: $translate.instant('Ontology.Interest'), id: 'ontology'},
+    {name: $translate.instant('Ontology.Behavior'), id: 'behavior'}
+  ];
+
+  $scope.tag = {
+    name : [],
+    factor : [],
+    operator : [
+      '=',
+      // '<>'
+    ]
+  };
+
+
   // config of ontology.
   $scope.ontology = {
+    data : {},
     type : [],
     factor : [],
     operator : [
@@ -54,19 +72,47 @@ angular.module('cipApp')
     action : [],
     object : {
       type : [
-        {name: '在分类...中', id: 'Category'},
-        {name: 'Item ID=', id: 'Item'},
-        {name: '包含字段', id: 'Contains'},
+        {name: $translate.instant('Ontology.Category'), id: 'Category'},
+        {name: $translate.instant('Ontology.Item'), id: 'Item'},
+        {name: $translate.instant('Ontology.Contains'), id: 'Contains'},
       ],
       id : []
     },
     date_type : [
-      {name:'在日期N-M之间',id:'absolute'},
-      {name:'过去N天',id:'day'},
-      {name:'过去N小时',id:'hour'},
+      {name:$translate.instant('Ontology.AbsoluteDate'),id:'absolute'},
+      {name:$translate.instant('Ontology.PassedDays'),id:'day'},
+      {name:$translate.instant('Ontology.PassedHours'),id:'hour'},
     ]
   }
 
+  // Initialize the ontology object from backend.
+  $scope.init_ontology = function() {
+    crowdFactory.getOntology(function(data) {
+      if (data.success) {
+        //Convert
+        $scope.ontology.data = data.content;
+
+        $scope.tag.name = [];
+        $scope.ontology.type = [];
+        $scope.ontology.action = [];
+        for (var index in data.content.tag) {
+            $scope.tag.name.push(data.content.tag[index].name);
+        }
+        for (index in data.content.interest_intent) {
+            $scope.ontology.type.push(data.content.interest_intent[index].ontology);
+        }
+        for (index in data.content.behaviour) {
+            $scope.ontology.action.push(data.content.behaviour[index].name);
+        }
+
+        $scope.crowd.factors.condition = 'tag';
+        $scope.crowd.factors.name = data.content.tag[0].name;
+        $scope.crowd.factors.action = data.content.behaviour[0].name;
+      }
+    })
+  }
+
+  // crowd.create.html rlated functions are defined in this function.
   $scope.init_create = function() {
     //$scope.crowd.list = [];
   }
@@ -78,6 +124,9 @@ angular.module('cipApp')
     // .query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
     //     $scope.crowds = crowds;
     // });
+
+    // Testing.
+    $scope.init_ontology();
 
     temp_data = [{
         crowdName: 'AAAA',
@@ -138,7 +187,7 @@ angular.module('cipApp')
       }
     };
 
-    $scope.goToCreate = function() {
+    $scope.goCrowdCreate = function() {
       $state.go('crowd.crowd_create');
     };
   }
