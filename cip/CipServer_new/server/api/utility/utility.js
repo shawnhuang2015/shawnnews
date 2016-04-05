@@ -10,7 +10,7 @@ function getBytes(string) {
 //Input: 1. endpoint
 //       2. queryStr - the part after '?' in the url
 //       3. callback function - the format looks like callback(error, result)
-exports.get = function(endpoint, queryStr, cb) {
+export function get(endpoint, queryStr, cb) {
     var result = '';
     var path = '/' + endpoint;
     if (queryStr !== '') {
@@ -53,7 +53,7 @@ exports.get = function(endpoint, queryStr, cb) {
 //       2. queryStr - the part after '?' in the url
 //       3. data - data payload appear in the post data part
 //       4. callback function - the format looks like callback(error, result)
-exports.post = function(endpoint, queryStr, data, cb) {
+export function post(endpoint, queryStr, data, cb) {
     var result = '';
     var path = '/' + endpoint;
     if (queryStr !== '') {
