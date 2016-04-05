@@ -41,14 +41,36 @@ var all = {
     }
   },
 
+  // Remote server connection options
   remoteServer: {
     ruleEngine: {
     },
     crowdServer: {
-      host: '127.0.0.1',
-      port: 9000
+      host: '192.168.22.51',
+      port: 9001
     }
   },
+
+  // Crowd prefix configuration for parameter in querying
+  CrowdPrefix: {
+    single: "single_",
+    multi: "multi_"
+  },
+
+  // Crowd prefix configuration for file name
+  CrowdFileSuffix: {
+    single: ".user.single",
+    multi: '.user.multi'
+  },
+
+  // The persist time of cache data from engine
+  semanticSyncTime: 1800,
+
+  // The limit for the number of ontology to retrieve
+  ontoLimit: 1024,
+  
+  // The limit for the number of user to restrieve
+  userLimit: 3000000
 };
 
 // Export the config object based on the NODE_ENV

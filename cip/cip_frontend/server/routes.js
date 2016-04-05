@@ -9,7 +9,8 @@ import path from 'path';
 
 export default function(app) {
   // Insert routes below
-  app.use('/api/single_crowd', require('./api/single_crowd'));
+  app.use('/api/single_crowds', require('./api/single_crowd'));
+  app.use('/api/ontologys', require('./api/ontology'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 

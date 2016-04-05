@@ -10,6 +10,7 @@
 'use strict';
 
 import _ from 'lodash';
+import http from 'http';
 import SingleCrowd from './single_crowd.model';
 
 function respondWithResult(res, statusCode) {
@@ -19,6 +20,17 @@ function respondWithResult(res, statusCode) {
       res.status(statusCode).json(entity);
     }
   };
+}
+
+function createAtRemoteServer() {
+  return function(entity) {
+    if (entity) {
+      // call the engine_rest endpoint to create crowd at remote server
+      http.post('/api/engine_rests', entity);
+      return entity;
+    }
+    return null;
+  }
 }
 
 function saveUpdates(updates) {
@@ -61,7 +73,8 @@ function handleError(res, statusCode) {
 
 // Gets a list of SingleCrowds
 export function index(req, res) {
-  return SingleCrowd.find().exec()
+  // return the list sorted by date created in descending order
+  return SingleCrowd.find().sort({ created: -1 }).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -77,6 +90,7 @@ export function show(req, res) {
 // Creates a new SingleCrowd in the DB
 export function create(req, res) {
   return SingleCrowd.create(req.body)
+    .then(createAtRemoteServer())
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
