@@ -2,6 +2,7 @@
 
 var path = require('path');
 var _ = require('lodash');
+var rootPath = path.normalize(__dirname + '/../..');
 
 function requiredProcessEnv(name) {
   if (!process.env[name]) {
@@ -19,7 +20,7 @@ var all = {
   root: path.normalize(__dirname + '/../../..'),
 
   // Server port
-  port: process.env.PORT || 9000,
+  port: process.env.PORT || 3001,
 
   // Server IP
   ip: process.env.IP || '0.0.0.0',
@@ -70,7 +71,9 @@ var all = {
   ontoLimit: 1024,
   
   // The limit for the number of user to restrieve
-  userLimit: 3000000
+  userLimit: 3000000,
+
+  dataPath: rootPath + "/data/"
 };
 
 // Export the config object based on the NODE_ENV
