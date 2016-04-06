@@ -1,9 +1,7 @@
 /**
- *
  * This contains the REST functions to contact with the engine.
  * Includes: GET request.
  *           POST request.
- * 
  */
 
 'use strict'
@@ -12,7 +10,7 @@ import request from 'request';
 import config from '../config/environment';
 
 /**
- * Convert string to byte
+ * Convert string to byte.
  * @param  {string} string [the string to convert to byte]
  * @return {byte}          [the processed string in byte]
  */
@@ -21,7 +19,7 @@ function getBytes(string) {
 }
 
 /**
- * Create the URL from end point and query string
+ * Create the URL from end point and query string.
  * @param  {string} endpoint [the end point on the engine]
  * @param  {string} query    [the query string]
  * @return {string}          [the complete URL]
@@ -52,22 +50,22 @@ exports.get = function(endpoint, query, callback) {
   request({
     url: createURL(endpoint, query),
 		method: 'GET',
-    timeout: 60000
+    timeout: 100000
 	}, (err, res, body) => {
-    // debugger;
-		if (err) {
-			//console.log('Error:', err);
-			callback(err, null);
-		} else {
-  		//console.log('Response body:\n', body);
+    if (err) {
+      //console.log('Error:', err);
+      callback(err, {});
+    } else {
+      //console.log('Response body:\n', body);
       try {
+        // Try to parse the message to check if valid
         JSON.parse(body);
         callback(null, body);
-      }
-      catch (e) {
+      } catch (e) {
+        // If not valid then return the error in the body
         callback(body, null);
       }
-		}
+    }
 	});
 }
 
@@ -91,11 +89,18 @@ exports.post = function(endpoint, query, data, callback) {
     }
   }, (err, res, body) => {
   	if (err) {
-  		console.log('Error:', err);
-  		callback(err, null);
-  	} else {
-  		console.log('Response body:\n', body);
-  		callback(null, body);
-  	}
+      //console.log('Error:', err);
+      callback(err, {});
+    } else {
+      console.log('Response body:\n', body);
+      try {
+        // Try to parse the message to check if valid
+        JSON.parse(body);
+        callback(null, body);
+      } catch (e) {
+        // If not valid then return the error in the body
+        callback(body, null);
+      }
+    }
   });
 }

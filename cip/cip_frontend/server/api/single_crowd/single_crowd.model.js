@@ -29,7 +29,7 @@ var SingleCrowdSchema = new mongoose.Schema({
   }, 
   file: {
     type: String,
-    default: 'test.user'
+    default: ''
   },
   selector: {
     tag: [
