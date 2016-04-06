@@ -33,7 +33,7 @@ function createURL(endpoint, query) {
   if (query != '') {
     url += '?' + query;
   }
-  //console.log('GET request path:', url);
+  //console.log('Request path:', url);
 
   return url;
 }
@@ -54,7 +54,7 @@ exports.get = function(endpoint, query, callback) {
 	}, (err, res, body) => {
     if (err) {
       //console.log('Error:', err);
-      callback(err, {});
+      callback(err, null);
     } else {
       //console.log('Response body:\n', body);
       try {
@@ -86,11 +86,12 @@ exports.post = function(endpoint, query, data, callback) {
 		headers: { 
       'Content-Type': 'application/json',
       'Content-Length': getBytes(data)
-    }
+    },
+    body: data
   }, (err, res, body) => {
   	if (err) {
       //console.log('Error:', err);
-      callback(err, {});
+      callback(err, null);
     } else {
       console.log('Response body:\n', body);
       try {

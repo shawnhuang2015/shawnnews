@@ -292,19 +292,19 @@ export function sample(req, res) {
         // Otherwise, use the utility 'rest.get' function to make request to the engine.
         rest.get('crowd/v1/get', 'name=' + crowdName + '&type=' + 
           onto.profile.crowdIndex.vtype + '&limit=' + count, function(err, response) {
-          var res = JSON.parse(response);
-          if (!res || res.error === true) {
+          var responseJSON = JSON.parse(response);
+          if (!responseJSON || responseJSON.error === true) {
             // If fail to get the data from the server,
             // return the error.
-            if (!res) {
+            if (!responseJSON) {
               return res.status(500).send(err);
             } else {
-              return res.status(500).send(res.message);  
+              return res.status(500).send(responseJSON.message);  
             }
           } else {
             // If succesfully get the data from the server,
             // return the response from engine.
-            return res.status(200).send(res);
+            return res.status(200).send(responseJSON);
           }
         })
       }
@@ -332,19 +332,19 @@ export function userList(req, res) {
 
       // Use the utility 'rest.post' function to make request to the engine.
       rest.post('crowd/v1/user_search', '', body, function (err, response) {
-        var res = JSON.parse(response);
-         if (!res || res.error === true) {
+        var responseJSON = JSON.parse(response);
+         if (!responseJSON || responseJSON.error === true) {
             // If fail to get the data from the server,
             // return the error.
-            if (!res) {
+            if (!responseJSON) {
               return res.status(500).send(err);
             } else {
-              return res.status(500).send(res.message);  
+              return res.status(500).send(responseJSON.message);  
             }
           } else {
             // If succesfully get the data from the server,
             // return the response from engine.
-            return res.status(200).send(res);
+            return res.status(200).send(responseJSON);
           }
       });
     }
