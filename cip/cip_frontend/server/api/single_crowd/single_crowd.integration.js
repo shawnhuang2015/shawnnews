@@ -7,12 +7,12 @@ var newSingleCrowd;
 
 describe('SingleCrowd API:', function() {
 
-  describe('GET /api/single_crowd', function() {
+  describe('GET /api/crowds', function() {
     var singleCrowds;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/single_crowd')
+        .get('/api/crowds')
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -24,19 +24,41 @@ describe('SingleCrowd API:', function() {
         });
     });
 
-    it('should respond with JSON array', function() {
-      singleCrowds.should.be.instanceOf(Array);
+    it('should respond with JSON object', function() {
+      singleCrowds.should.be.instanceOf(Object);
     });
 
   });
 
-  describe('POST /api/single_crowd', function() {
+  describe('POST /api/crowds', function() {
     beforeEach(function(done) {
       request(app)
-        .post('/api/single_crowd')
+        .post('/api/crowds')
         .send({
-          name: 'New SingleCrowd',
-          info: 'This is the brand new singleCrowd!!!'
+          crowdName: 'New SingleCrowd',
+          description: 'This is the brand new singleCrowd!!!',
+          type: 'dynamic',
+          count: 1,
+          selector: {
+            tag: [
+              {
+                factor: 'gender.female',
+                operator: '=',
+                name: 'gender',
+                count: '3'
+              }
+            ],
+            ontology: [
+              {
+                factor: 'food',
+                operator: '>=',
+                weight: 0,
+                name: 'interest',
+                count: '3'
+              }
+            ],
+            behavior: []
+          }
         })
         .expect(201)
         .expect('Content-Type', /json/)
@@ -50,18 +72,47 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the newly created singleCrowd', function() {
-      newSingleCrowd.name.should.equal('New SingleCrowd');
-      newSingleCrowd.info.should.equal('This is the brand new singleCrowd!!!');
+      newSingleCrowd.crowdName.should.equal('New SingleCrowd');
+      newSingleCrowd.description.should.equal('This is the brand new singleCrowd!!!');
     });
 
   });
 
-  describe('GET /api/single_crowd/:id', function() {
+  describe('GET /api/crowds/count', function() {
+    var crowdCount;
+
+    beforeEach(function(done) {
+      request(app)
+        .get('/api/crowds/count')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err,res) => {
+          if (err) {
+            return done(err);
+          }
+
+          crowdCount = Number(res.body);
+          console.log('count:',crowdCount);
+          done();
+        });
+    });
+
+    afterEach(function() {
+      crowdCount = 0;
+    });
+
+    it('should response with the singleCrowd count', function() {
+      crowdCount.should.be.above(0);
+    });
+
+  });
+
+  describe('GET /api/crowds/:id', function() {
     var singleCrowd;
 
     beforeEach(function(done) {
       request(app)
-        .get('/api/single_crowd/' + newSingleCrowd._id)
+        .get('/api/crowds/' + newSingleCrowd._id)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -78,21 +129,21 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the requested singleCrowd', function() {
-      singleCrowd.name.should.equal('New SingleCrowd');
-      singleCrowd.info.should.equal('This is the brand new singleCrowd!!!');
+      singleCrowd.crowdName.should.equal('New SingleCrowd');
+      singleCrowd.description.should.equal('This is the brand new singleCrowd!!!');
     });
 
   });
 
-  describe('PUT /api/single_crowd/:id', function() {
+  describe('PUT /api/crowds/:id', function() {
     var updatedSingleCrowd;
 
     beforeEach(function(done) {
       request(app)
-        .put('/api/single_crowd/' + newSingleCrowd._id)
+        .put('/api/crowds/' + newSingleCrowd._id)
         .send({
-          name: 'Updated SingleCrowd',
-          info: 'This is the updated singleCrowd!!!'
+          crowdName: 'Updated SingleCrowd',
+          description: 'This is the updated singleCrowd!!!'
         })
         .expect(200)
         .expect('Content-Type', /json/)
@@ -110,38 +161,38 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the updated singleCrowd', function() {
-      updatedSingleCrowd.name.should.equal('Updated SingleCrowd');
-      updatedSingleCrowd.info.should.equal('This is the updated singleCrowd!!!');
+      updatedSingleCrowd.crowdName.should.equal('Updated SingleCrowd');
+      updatedSingleCrowd.description.should.equal('This is the updated singleCrowd!!!');
     });
 
   });
 
-  describe('DELETE /api/single_crowd/:id', function() {
+  // describe('DELETE /api/crowds/:id', function() {
 
-    it('should respond with 204 on successful removal', function(done) {
-      request(app)
-        .delete('/api/single_crowd/' + newSingleCrowd._id)
-        .expect(204)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
+  //   it('should respond with 204 on successful removal', function(done) {
+  //     request(app)
+  //       .delete('/api/crowds/' + newSingleCrowd._id)
+  //       .expect(204)
+  //       .end((err, res) => {
+  //         if (err) {
+  //           return done(err);
+  //         }
+  //         done();
+  //       });
+  //   });
 
-    it('should respond with 404 when singleCrowd does not exist', function(done) {
-      request(app)
-        .delete('/api/single_crowd/' + newSingleCrowd._id)
-        .expect(404)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
+  //   it('should respond with 404 when singleCrowd does not exist', function(done) {
+  //     request(app)
+  //       .delete('/api/crowds/' + newSingleCrowd._id)
+  //       .expect(404)
+  //       .end((err, res) => {
+  //         if (err) {
+  //           return done(err);
+  //         }
+  //         done();
+  //       });
+  //   });
 
-  });
+  // });
 
 });

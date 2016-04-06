@@ -12,6 +12,8 @@ import config from '../config/environment';
  * @param  {JSON} condition [the input condition]
  * @param  {JSON} metadata  [the information on Ontology]
  * @return {JSON}           [the generated condition]
+ *
+ * Note: comment out console.log for production.
  */
 exports.generateCond = function(condition, metadata) {
   // Map the vertex name to vertex type.
@@ -36,8 +38,8 @@ exports.generateCond = function(condition, metadata) {
   	condition = [condition];
   }
 
-  console.log('Tag name to type:\n', JSON.stringify(tagT));
-  console.log('Ontology name to type:\n', JSON.stringify(ontoT));
+  //console.log('Tag name to type:\n', JSON.stringify(tagT));
+  //console.log('Ontology name to type:\n', JSON.stringify(ontoT));
 
   var res = [];
   for (var index = 0; index < condition.length; ++index) {
@@ -78,13 +80,13 @@ exports.generateCond = function(condition, metadata) {
 
 /**
  * Write the response from the engine to file.
- * @param  {JSON}   data [response from the engine]
+ * @param  {JSON}   res  [response from the engine]
  * @param  {string} path [the file path]
  */
-function writeToFile(data, path) {
-  var data = 'UserCount: ' + data.results.count + '\n';
-  for (var k = 0; k < data.results.userIds.length; ++k) {
-    data += data.results.userIds[k] + '\n';
+function writeToFile(res, path) {
+  var data = 'UserCount: ' + res.results.count + '\n';
+  for (var k = 0; k < res.results.userIds.length; ++k) {
+    data += res.results.userIds[k] + '\n';
   }
   fs.writeFile(path, data, function(err) {
   	if (err) {

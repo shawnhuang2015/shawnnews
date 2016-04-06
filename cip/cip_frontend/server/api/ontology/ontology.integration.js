@@ -24,8 +24,8 @@ describe('Ontology API:', function() {
         });
     });
 
-    it('should respond with JSON array', function() {
-      ontologys.should.be.instanceOf(Array);
+    it('should respond with JSON object', function() {
+      ontologys.should.be.instanceOf(Object);
     });
 
   });

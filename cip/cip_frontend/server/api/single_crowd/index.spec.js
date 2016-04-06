@@ -4,6 +4,7 @@ var proxyquire = require('proxyquire').noPreserveCache();
 
 var singleCrowdCtrlStub = {
   index: 'singleCrowdCtrl.index',
+  count: 'singleCrowdCtrl.count',
   show: 'singleCrowdCtrl.show',
   create: 'singleCrowdCtrl.create',
   update: 'singleCrowdCtrl.update',
@@ -34,7 +35,7 @@ describe('SingleCrowd API Router:', function() {
     singleCrowdIndex.should.equal(routerStub);
   });
 
-  describe('GET /api/single_crowd', function() {
+  describe('GET /api/crowds', function() {
 
     it('should route to singleCrowd.controller.index', function() {
       routerStub.get
@@ -44,7 +45,17 @@ describe('SingleCrowd API Router:', function() {
 
   });
 
-  describe('GET /api/single_crowd/:id', function() {
+  describe('GET /api/crowds/count', function() {
+
+    it('should route to singleCrowd.controller.count', function() {
+      routerStub.get
+        .withArgs('/count', 'singleCrowdCtrl.count')
+        .should.have.been.calledOnce;
+    });
+
+  });
+
+  describe('GET /api/crowds/:id', function() {
 
     it('should route to singleCrowd.controller.show', function() {
       routerStub.get
@@ -54,7 +65,7 @@ describe('SingleCrowd API Router:', function() {
 
   });
 
-  describe('POST /api/single_crowd', function() {
+  describe('POST /api/crowds', function() {
 
     it('should route to singleCrowd.controller.create', function() {
       routerStub.post
@@ -64,7 +75,7 @@ describe('SingleCrowd API Router:', function() {
 
   });
 
-  describe('PUT /api/single_crowd/:id', function() {
+  describe('PUT /api/crowds/:id', function() {
 
     it('should route to singleCrowd.controller.update', function() {
       routerStub.put
@@ -74,7 +85,7 @@ describe('SingleCrowd API Router:', function() {
 
   });
 
-  describe('PATCH /api/single_crowd/:id', function() {
+  describe('PATCH /api/crowds/:id', function() {
 
     it('should route to singleCrowd.controller.update', function() {
       routerStub.patch
@@ -84,7 +95,7 @@ describe('SingleCrowd API Router:', function() {
 
   });
 
-  describe('DELETE /api/single_crowd/:id', function() {
+  describe('DELETE /api/crowds/:id', function() {
 
     it('should route to singleCrowd.controller.destroy', function() {
       routerStub.delete
