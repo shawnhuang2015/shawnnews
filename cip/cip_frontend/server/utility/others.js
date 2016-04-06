@@ -72,6 +72,7 @@ exports.generateCond = function(condition, metadata) {
     res.push(cond);
   }
 
+  console.log(JSON.stringify(res));
   return res;
 }
 

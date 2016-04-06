@@ -457,8 +457,10 @@ angular.module('cipApp')
 
       // init conditions for UI of crowd create.
       $scope.factors.condition = 'tag';
-      $scope.factors.name = $scope.ontology.data.tag[0].name;
-      $scope.factors.action = $scope.ontology.data.behaviour[0].name;
+      $scope.factors.name = $scope.tag.name[0]
+      $scope.factors.factor = $scope.tag.factor[0];
+      $scope.factors.operator = $scope.tag.operator[0];
+      $scope.factors.weight = 1.0
     };
 
     $scope.deleteFactor = function (factor, index) {

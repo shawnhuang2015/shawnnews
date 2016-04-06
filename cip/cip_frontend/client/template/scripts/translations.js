@@ -82,7 +82,9 @@ function config($translateProvider) {
         DateBetween: ' Date Between',
         InThePassed: ' In The Passed',
         Days: ' Days',
-        Hours: ' Hours'
+        Hours: ' Hours',
+        zh_Range: ' ',
+        zh_People: ' ',
       },
       Warning : {
         ObjectValueNull : 'Input object Value is not valid!',
@@ -171,7 +173,8 @@ function config($translateProvider) {
         InThePassed: '在过去',
         Days: '天',
         Hours: '小时',
-        zh_Range: '内'
+        zh_Range: '内',
+        zh_People: '人'
       },
       Warning : {
         ObjectValueNull : '对象值不能为空',

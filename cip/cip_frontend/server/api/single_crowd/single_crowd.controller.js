@@ -371,10 +371,10 @@ export function userCount(req, res) {
 
       // Use the utility 'rest.post' function to make request to the engine.
       rest.post('crowd/v1/user_search', 'limit=0&rid=' + req.query.rid, body, function(err, response) {
-        var res = JSON.parse(response);
-        if (!res || res.error === true) {
+        var responseJSON = JSON.parse(response);
+        if (!responseJSON || responseJSON.error === true) {
             // If fail to get the data from the server,
-            if (!res) {
+            if (!responseJSON) {
               // return the error,
               return res.status(500).send(err);
             } else {
@@ -388,7 +388,7 @@ export function userCount(req, res) {
           } else {
             // If succesfully get the data from the server,
             // return the response from engine.
-            return res.status(200).send(res);
+            return res.status(200).send(responseJSON);
           }
       })
     }
