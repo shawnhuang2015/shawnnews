@@ -72,6 +72,7 @@ angular.module('cipApp')
     behavior_operator : [
       '>=', '<=', ">", "<", "<>", "="
     ],
+    behavior_type : [],
     action : [],
     object : {
       type : [
@@ -87,6 +88,24 @@ angular.module('cipApp')
       {name:$translate.instant('Ontology.PassedDays'),id:'day'},
       {name:$translate.instant('Ontology.PassedHours'),id:'hour'},
     ]
+  }
+
+  // For Widget
+  $scope.widget = {
+    startTime : "",
+    endTime : "",
+    date_start : function() {
+      this.popup_start = true;
+    },
+    date_end : function() {
+      this.popup_end = true;
+    },
+    popup_start : false,
+    popup_end : false,
+    dateOptions : {
+      formatYear: 'yy',
+      startingDay: 1
+    }
   }
 
   // Initialize the ontology object from backend.
@@ -111,13 +130,10 @@ angular.module('cipApp')
             $scope.ontology.action.push(profile.behaviour[index].name);
         }
 
-        $scope.factors.condition = '';
-        $scope.factors.name = '';
-        $scope.factors.action = '';
-
-        // $scope.factors.condition = 'tag';
-        // $scope.factors.name = profile.tag[0].name;
-        // $scope.factors.action = profile.behaviour[0].name;
+        // init conditions for UI of crowd create.
+        $scope.factors.condition = 'tag';
+        $scope.factors.name = $scope.ontology.data.tag[0].name;
+        $scope.factors.action = $scope.ontology.data.behaviour[0].name;
       }
     })
   }
@@ -210,36 +226,194 @@ angular.module('cipApp')
     //$scope.crowd.list = [];
     // Testing.
     $scope.init_ontology();
+
     $scope.crowdDetail = {};
     $scope.crowdDetail.selector = {};
     $scope.crowdDetail.selector.ontology = [];
     $scope.crowdDetail.selector.behavior = [];
     $scope.crowdDetail.selector.tag = [];
 
+    $scope.$watch('factors.condition', function (nowSelected) {
+        if (!nowSelected) {
+            // here we've initialized selected already
+            // but sometimes that's not the case
+            // then we get null or undefined
+            return;
+        }
+
+        $scope.factors = {};
+        $scope.factors.condition = nowSelected;
+
+        if (nowSelected == 'tag') {
+            $scope.factors.name = $scope.ontology.data.tag[0].name;
+            $scope.factors.operator = $scope.tag.operator[0];
+            $scope.factors.weight = 1.0;
+        } else if (nowSelected == 'ontology') {
+            $scope.factors.name = $scope.ontology.data.interest_intent[0].ontology;
+            $scope.factors.operator = $scope.ontology.operator[0];
+            $scope.factors.weight = 0.0;
+        } else if (nowSelected == 'behavior') {
+            $scope.factors.action = $scope.ontology.data.behaviour[0].name;
+            $scope.factors.operator = $scope.ontology.behavior_operator[0];
+            $scope.factors.value = 0;
+            $scope.factors.timeType = 'absolute';
+        }
+    });
+
+    $scope.$watch('factors.name', function (nowSelected) {
+        if (!nowSelected) {
+            // here we've initialized selected already
+            // but sometimes that's not the case
+            // then we get null or undefined
+            return;
+        }
+
+        if ($scope.factors.condition == 'tag') {
+            angular.forEach($scope.ontology.data.tag, function (val) {
+                if (val.name == nowSelected) {
+                    $scope.factors.factor = val.element[0];
+                    $scope.tag.factor = val.element;
+                }
+            });
+        } else if ($scope.factors.condition == 'ontology') {
+            angular.forEach($scope.ontology.data.ontology, function (val) {
+                if (val.name == nowSelected) {
+                    $scope.traverseTree(val.tree, function (itemList) {
+                        $scope.ontology.factor = itemList;
+                        $scope.factors.factor = itemList[0];
+                        $scope.factors.operator = $scope.ontology.operator[0];
+                    });
+                }
+            });
+        }
+    });
+
+    $scope.$watch('factors.action', function (nowSelected) {
+      if (!nowSelected) {
+          return;
+      }
+      $scope.ontology.object.category = [];
+      $scope.factors.objectType = '';
+
+      angular.forEach($scope.ontology.data.behaviour, function (val) {
+          if (val.name == nowSelected) {
+              angular.forEach(val.object, function (object) {
+                  $scope.ontology.object.category.push(object.name);
+                  if(!$scope.ontology.object.category || $scope.ontology.object.category.length <= 0) {
+                      $scope.factors.objectType = "Behavior";  // For login and other actions who doesn't have object
+                  } else {
+                      $scope.factors.objectType = $scope.ontology.object.type[0].id;
+                      $scope.factors.objectCategory = val.object[0].name;
+                  }
+              });
+          }
+      });
+    });
+
+    $scope.$watch('factors.objectCategory', function (nowSelected) {
+        if (!nowSelected) {
+            return;
+        }
+        $scope.ontology.behavior_type = [];
+        angular.forEach($scope.ontology.data.object_ontology, function (val) {
+            if (val.object == nowSelected) {
+                angular.forEach(val.ontology, function (ontology) {
+                    $scope.ontology.behavior_type.push(ontology.name);
+                });
+                $scope.factors.ontologyType = val.ontology[0].name;
+            }
+        });
+    });
+
+    $scope.$watch('factors.objectType', function (nowSelected) {
+        if (!nowSelected) {
+            return;
+        }
+        $scope.factors.objectId = '';
+    });
+
+    $scope.$watch('factors.ontologyType', function (nowSelected) {
+        if (!nowSelected) {
+            return;
+        }
+        $scope.factors.objectId = '';
+        $scope.ontology.object.id = [];
+        if($scope.factors.objectType == 'Category') {
+            angular.forEach($scope.ontology.data.ontology, function (val) {
+                if (val.name == nowSelected) {
+                    $scope.traverseTree(val.tree, function (itemList) {
+                        $scope.ontology.object.id = itemList;
+                        $scope.factors.objectId = itemList[0];
+                    });
+                }
+            });
+        }
+    });
+
+    $scope.$watch('widget.startTime', function (time) {
+        if (!time) {
+            return;
+        }
+        if ($scope.factors.timeType == 'day') {
+            $scope.factors.startTime = time * 86400000;
+            $scope.factors.endTime = 0;
+        } else if($scope.factors.timeType == 'hour') {
+            $scope.factors.startTime = time * 3600000;
+            $scope.factors.endTime = 0;
+        } else {
+            $scope.factors.startTime = time.valueOf();
+        }
+    });
+
+    $scope.$watch('widget.endTime', function (time) {
+        if (!time) {
+            return;
+        }
+        $scope.factors.endTime = time.valueOf();
+    });
+
+    $scope.traverseTree = function (tree, callback) {
+        var list = [];
+        var queue = new Array();
+        for (var i in tree) {
+            var prefix = '';
+            //if (queue.length > 0) {
+            //    prefix = queue.pop() + '/';
+            //} else {
+            //    prefix = '';
+            //}
+            for (var j in tree[i].children) {
+                list.push(prefix + tree[i].children[j]);
+                queue.unshift(prefix + tree[i].children[j]);
+            }
+        }
+        callback(list);
+    };
+
     $scope.addFactor = function (condition_type) {
       //Check valid
       if(condition_type == 'behavior' && (!$scope.factors.objectId || $scope.factors.objectId == '')) {
-          alert("对象值不能为空");
+          alert($translate.instant('Warning.ObjectValueNull'));
           return;
       }
       if(condition_type == 'ontology' && (!$scope.factors.factor || $scope.factors.factor == '')) {
-          alert("标签不能为空");
+          alert($translate.instant('Warning.TagNull'));
           return;
       }
       if(condition_type == 'behavior' && ($scope.factors.timeType == 'day' || $scope.factors.timeType == 'hour') && ($scope.factors.startTime <= 0.1 || $scope.factors.startTime == null)) {
-          alert("时间不能为空");
+          alert($translate.instant('Warning.DateNull'));
           return;
       }
       if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && ($scope.factors.startTime == null || $scope.factors.endTime == null || $scope.factors.startTime <= 0.1 || $scope.factors.endTime <= 0.1)) {
-          alert("时间不能为空");
+          alert($translate.instant('Warning.DateNull'));
           return;
       }
       if(condition_type == 'behavior' && $scope.factors.timeType == 'absolute' && ($scope.factors.startTime > $scope.factors.endTime)) {
-          alert("开始时间不能大于结束时间");
+          alert($translate.instant('Warning.DateStartEndNull'));
           return;
       }
       if(condition_type == 'behavior' && ($scope.factors.value == null || $scope.factors.value < 0 || $scope.factors.value > 2147483647)) {
-          alert("次数必须在0~2147483647之间");
+          alert($translate.instant('Warning.FrequencyNull'));
           return;
       }
       //Start add
@@ -249,6 +423,7 @@ angular.module('cipApp')
       if (!$scope.crowdDetail.selector[condition_type]) {
           $scope.crowdDetail.selector[condition_type] = [];
       }
+
       var param = {};
       param.selector = {};
       param.selector.ontology = [];
@@ -259,8 +434,8 @@ angular.module('cipApp')
       $scope.crowdDetail.selector[condition_type].push($scope.factors);
 
       $scope.factors = {};
-      $scope.st = '';
-      $scope.et = '';
+      $scope.widget.startTime = '';
+      $scope.widget.endTime = '';
       $scope.lastRid = Date.parse(new Date());
       crowdFactory.getCrowdUserCountByFactor($scope.lastRid, param, function (param, data) {
           if(data.success) {
@@ -279,6 +454,11 @@ angular.module('cipApp')
               $scope.crowdDetail.count = -2;
           }
       });
+
+      // init conditions for UI of crowd create.
+      $scope.factors.condition = 'tag';
+      $scope.factors.name = $scope.ontology.data.tag[0].name;
+      $scope.factors.action = $scope.ontology.data.behaviour[0].name;
     };
 
     $scope.deleteFactor = function (factor, index) {

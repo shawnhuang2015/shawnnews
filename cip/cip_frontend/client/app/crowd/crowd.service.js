@@ -124,7 +124,7 @@ angular.module('cipApp')
             });
         })
         .error(function(data, status, headers, config) {
-            callback({
+            callback(factor, {
                 success: false
             });
         });

@@ -12,7 +12,7 @@
             </ol>
         </div>
     </div> -->
-    
+
   <fieldset>
     <legend>{{'Crowd_create.CrowdCondition' | translate}}</legend>
     
@@ -47,7 +47,7 @@
                         <ui-select ng-model="factors.name" append-to-body="'true'">
                             <ui-select-match placeholder="{{'Crowd_create.TagName' | translate}}">{{factors.name}}
                             </ui-select-match>
-                            <ui-select-choices repeat=" x in tag.name | filter:$select.search">{{x}}
+                            <ui-select-choices repeat="x in tag.name | filter:$select.search">{{x}}
                             </ui-select-choices>
                         </ui-select>
                     </div>
@@ -80,7 +80,7 @@
                         <ui-select ng-model="factors.factor" append-to-body="'true'">
                             <ui-select-match placeholder="{{'Crowd_create.TagName' | translate}}">{{factors.factor}}
                             </ui-select-match>
-                            <ui-select-choices repeat=" x in tag_factor | filter:$select.search">{{x}}
+                            <ui-select-choices repeat=" x in tag.factor | filter:$select.search">{{x}}
                             </ui-select-choices>
                         </ui-select>
                     </div>
@@ -209,7 +209,7 @@
             <div class="col-sm-4" ng-if="factors.objectType == 'Category' || factors.objectType == 'Contains'">
                 <ui-select ng-model="factors.ontologyType" append-to-body="'true'">
                     <ui-select-match placeholder="{{'Crowd_create.ObjectCategory' | translate}}">{{factors.ontologyType}}</ui-select-match>
-                    <ui-select-choices repeat=" x in behavior_ontology_type | filter:$select.search">{{x}}
+                    <ui-select-choices repeat=" x in ontology.behavior_type | filter:$select.search">{{x}}
                     </ui-select-choices>
                 </ui-select>
             </div>
@@ -255,43 +255,44 @@
             <label class="col-sm-12 control-label">{{'Crowd_create.OccurenceDate' | translate}}</label>
         </div>
         <div class="row">
-            <div class="col-sm-2" ng-if="factors.action">
+            <div class="col-sm-4" ng-if="factors.action">
                 <ui-select ng-model="factors.timeType" append-to-body="'true'">
                     <ui-select-match placeholder="{{'Crowd_create.DateType' | translate}}">{{$select.selected.name}}</ui-select-match>
-                    <ui-select-choices repeat=" x.id as x in date_type | filter:$select.search">{{x.name}}
+                    <ui-select-choices repeat=" x.id as x in ontology.date_type | filter:$select.search">{{x.name}}
                     </ui-select-choices>
                 </ui-select>
             </div>
-            <div class="col-sm-2" ng-show="(factors.timeType == 'day' || factors.timeType == 'hour')">
-                <input name="time_start" type="number" class="form-control" ng-model="st">
+            <div class="col-sm-4" ng-show="(factors.timeType == 'day' || factors.timeType == 'hour')">
+                <input name="time_start" type="number" class="form-control" ng-model="widget.startTime">
             </div>
-            <div class="col-sm-2" ng-show="factors.timeType == 'absolute'">
+            <div class="col-sm-4" ng-show="factors.timeType == 'absolute'">
                 <p class="input-group">
                     <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                           ng-model="st" is-open="popup1.opened" min-date="minDate" max-date="maxDate"
-                           datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                           ng-model="widget.startTime" is-open="widget.popup_start" min-date="minDate" max-date="maxDate"
+                           datepicker-options="widget.dateOptions" date-disabled="disabled(date, mode)"
                            close-text="Close" alt-input-formats="altInputFormats" />
                       <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default" ng-click="widget.date_start()"><i class="glyphicon glyphicon-calendar"></i></button>
                       </span>
                 </p>
             </div>
-            <div class="col-sm-2" ng-show="factors.timeType == 'absolute'">
+            <div class="col-sm-4" ng-show="factors.timeType == 'absolute'">
                 <p class="input-group">
                     <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
-                           ng-model="et" is-open="popup2.opened" min-date="minDate" max-date="maxDate"
-                           datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+                           ng-model="widget.endTime" is-open="widget.popup_end" min-date="minDate" max-date="maxDate"
+                           datepicker-options="widget.dateOptions" date-disabled="disabled(date, mode)"
                            close-text="Close" alt-input-formats="altInputFormats" />
                     <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button type="button" class="btn btn-default" ng-click="widget.date_end()"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
                 </p>
             </div>
         </div>
     </div>
     <!-- End Behavior-->
+    <hr />
 
-    <div class="col-sm-offset-8 col-sm-4">
+    <div class="col-sm-offset-9 col-sm-3">
         <button mean-token="'create-add-factor'" type="button"
             ng-click="addFactor(factors.condition)" class="btn btn-info btn-block">{{'Crowd_create.AddCondition' | translate}}
         </button>
@@ -330,7 +331,7 @@
         <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
             <td>{{$index+1+crowdDetail.selector.tag.length}}</td>
             <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
-                {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>{{'Crowd_create.InterestWeightIs' | translate}} <b>{{condition.operator}} {{condition.weight}}</b>
+                {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestWeightIs' | translate}} <b>{{condition.operator}} {{condition.weight}}</b>
             </td>
             <td ng-if="condition.operator=='dislike' || condition.operator=='like'">
                 {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestIs' | translate}} <b>{{condition.operator}}</b>
@@ -368,16 +369,20 @@
                 {{'Crowd_create.DateBetween' | translate}}
                 <b>{{condition.startTime | date:'shortDate'}}</b>
                 {{'Crowd_create.To' | translate}}
-                <b>{{condition.endTime | date:'shortDate'}}</b>内</nobr>
+                <b>{{condition.endTime | date:'shortDate'}}</b>
+                {{Crowd_create.zh_Range | translate}}
+                </nobr>
                 <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;
                 {{'Crowd_create.InThePassed' | translate}}
                 <b>{{condition.startTime/86400000}}</b>
                 {{'Crowd_create.Days' | translate}}
+                {{Crowd_create.zh_Range | translate}}
                 </nobr>
                 <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;
                 {{'Crowd_create.InThePassed' | translate}}
                 <b>{{condition.startTime/3600000}}</b>
                 {{'Crowd_create.Hours' | translate}}
+                {{Crowd_create.zh_Range | translate}}
                 </nobr>
             </td>
             <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
@@ -395,7 +400,8 @@
     </table>
 
     <div class="col-sm-offset-8 col-sm-3" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
-        <h5 ng-if="crowdDetail.count >= -1">{{'Crowd_create.QueryMatchAmount' | translate}}
+        <h5 ng-if="crowdDetail.count >= -1">
+            {{'Crowd_create.QueryMatchAmount' | translate}}
             <span ng-if="crowdDetail.count >= 0">{{crowdDetail.count}}</span>
             <span ng-if="crowdDetail.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
             人</h5>
