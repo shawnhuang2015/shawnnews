@@ -1,5 +1,5 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_save()">
-  <form name="crowdForm" class="form-horizontal" role="form" data-ng-submit="update(crowdForm.$valid)" novalidate>
+  <form name="crowdForm" class="form-horizontal" role="form" data-ng-submit="createCrowd(crowdForm.$valid)" novalidate>
     <fieldset>
         <legend>基本信息</legend>
         <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.crowd_name.$invalid }">
@@ -27,7 +27,7 @@
             <label mean-token="'create-type'" class="col-md-2 control-label">人群类型</label>
             <div class="col-md-4">
                 <select class="form-control" ng-model="crowdDetail.type"
-                        ng-options="x as x for x in crowd_type"></select>
+                        ng-options="x as x for x in crowd.type"></select>
             </div>
         </div>
     </fieldset>

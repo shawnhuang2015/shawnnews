@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cipApp')
-.controller('crowdCtrl', function ($scope, $state, $translate, crowdFactory) {
+.controller('crowdCtrl', function ($scope, $state, $translate, $stateParams, $location, crowdFactory) {
   $scope.message = 'Crowd CRUD controller.';
   $scope.valid = false;
 
@@ -483,12 +483,38 @@ angular.module('cipApp')
     };
 
     $scope.goCrowdSave = function() {
-      $state.go('crowd.crowd_save');
+      $state.go('crowd.crowd_save', {crowdDetail: $scope.crowdDetail});
     };
   }
 
   $scope.init_save = function() {
     console.log('init save');
+    $scope.crowdDetail = $stateParams.crowdDetail || {};
+    $scope.crowdDetail.type = 'static';
+
+    $scope.createCrowd = function (isValid) {
+      if (isValid) {
+          if ($stateParams.crowdName) {
+              var crowd = $scope.crowdDetail;
+              crowd.$update(function () {
+                  alert("保存成功!");
+                  $location.path('crowd/main');
+              });
+          } else {
+              crowdFactory.createCrowd($scope.crowdDetail, function (data) {
+                  if (data.success) {
+                      alert("创建成功!");
+                      $location.path('/crowd/' + $scope.crowdDetail.crowdName + '/crowd_user');
+                  } else {
+                      alert("创建失败!");
+                  }
+              });
+          }
+      } else {
+          alert("数据存在问题");
+          $scope.submitted = true;
+      }
+    };
   }
 
   $scope.init_user = function() {

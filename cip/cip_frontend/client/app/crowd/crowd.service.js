@@ -89,13 +89,13 @@ angular.module('cipApp')
         });
       },
       createCrowd : function(crowd, callback) {
-        $http.post('/api/crowds/',crowd).
-        success(function(data, status, headers, config) {
+        $http.post('/api/crowds/', crowd)
+        .success(function(data, status, headers, config) {
             callback({
                 success: !data.error
             });
-        }).
-        error(function(data, status, headers, config) {
+        })
+        .error(function(data, status, headers, config) {
             callback({
                 success: false
             });

@@ -52,6 +52,9 @@ function config($stateProvider, $urlRouterProvider, $locationProvider) {
       url: "/crowd_save",
       templateUrl: "app/crowd/crowd.save.html",
       controller: 'crowdCtrl',
+      params: {
+        crowdDetail: null
+      },
       controllerAs : 'vm'
   })
   .state('crowd.crowd_user', {
