@@ -26,11 +26,11 @@ function getBytes(string) {
  *
  * Note: comment out console.log for production.
  */
+
 function createURL(endpoint, query) {
-  var url = 'http://' + config.remoteServer.crowdServer.host + ':' 
-                      + config.remoteServer.crowdServer.port + '/'
-                      + endpoint;
-  if (query != '') {
+  var url = 'http://' + config.remoteServer.crowdServer.host + ':' + 
+                        config.remoteServer.crowdServer.port + '/' + endpoint;
+  if (query !== '') {
     url += '?' + query;
   }
   //console.log('Request path:', url);
@@ -93,7 +93,7 @@ exports.post = function(endpoint, query, data, callback) {
       //console.log('Error:', err);
       callback(err, null);
     } else {
-      console.log('Response body:\n', body);
+      //console.log('Response body:\n', body);
       try {
         // Try to parse the message to check if valid
         JSON.parse(body);

@@ -116,11 +116,13 @@ function createAtRemoteServer() {
                 selector: others.generateCond(entity.selector, data.profile)
               }
             });
+            console.log(body);
 
             // Use the utility 'rest.post' function to make request to the engine.
-            rest.post('crowd/v1/create', 'name=' + config.CrowdPrefix.single, 
-              entity.crowdName, crowd.type, body, function(err, response) {
+            rest.post('crowd/v1/create', 'name=' + config.CrowdPrefix.single + 
+              entity.crowdName + '&limit=' + config.userLimit, body, function(err, response) {
               var res = JSON.parse(response);
+              console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
                 // If fail to get the data from the server,
                 // set crowd's tag to -1 (failed).
@@ -132,8 +134,8 @@ function createAtRemoteServer() {
                 // set crowd's file name and
                 updates.file = entity.crowdName + config.CrowdFileSuffix.single;
                 // write the response from engine to file.
-                others.writeToFile(response, config.dataPath + entity.crowdName 
-                  + config.CrowdFileSuffix.single);
+                others.writeToFile(response, config.dataPath + entity.crowdName + 
+                  config.CrowdFileSuffix.single);
               }
             });
           }
@@ -143,10 +145,11 @@ function createAtRemoteServer() {
       } else { // otherwise do nothing.
         console.log('Wrong crowd type:', entity.type);
       }
-    }
-    return entity;
+    } 
+    // Save the new crowd's tag and crowd's file name.
+    return entity.save()
+      .then(saveUpdates(updates));
   }
-    .then(saveUpdates(updates));
 }
 
 /**
@@ -171,7 +174,7 @@ function destroyAtRemoteServer() {
               } else {
                 console.log('Succesfully deleted crowd', entity.crowdName);
               }
-            });
+          });
         }
       });
     }
@@ -258,8 +261,8 @@ export function update(req, res) {
 export function destroy(req, res) {
   return SingleCrowd.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(removeEntity(res))
     .then(destroyAtRemoteServer())
+    .then(removeEntity(res))
     .catch(handleError(res));
 }
 
@@ -381,7 +384,7 @@ export function userCount(req, res) {
               // or if the query has error return 0 as the users count.
               var result = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
               if (req.query.rid.length > 0) {
-                result.results.requestId = rid;
+                result.results.requestId = req.query.rid;
               }
               return res.status(200).send(result);  
             }
