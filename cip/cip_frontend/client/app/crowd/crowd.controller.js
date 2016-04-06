@@ -194,7 +194,9 @@ angular.module('cipApp')
       if (confirm($translate.instant('Crowd_view.CrowdDeleteComfirmMessage'))) {
         console.log('Delete the crowd from server.')
         crowdFactory
-        .deleteCrowd(crowdID)
+        .deleteCrowd(crowdID, function(data) {
+          console.log(data);
+        })
       }
     };
 
@@ -260,7 +262,7 @@ angular.module('cipApp')
       $scope.st = '';
       $scope.et = '';
       $scope.lastRid = Date.parse(new Date());
-      CrowdService.getUserCountByFactor($scope.lastRid, param, function (param, data) {
+      crowdFactory.getCrowdUserCountByFactor($scope.lastRid, param, function (param, data) {
           if(data.success) {
               param.selector[condition_type][0].count = data.length;
           } else {
@@ -268,7 +270,7 @@ angular.module('cipApp')
           }
       });
       $scope.crowdDetail.count = -1;
-      CrowdService.getUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
+      crowdFactory.getCrowdUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
           if(data.success) {
               if($scope.lastRid == data.requestId) {
                   $scope.crowdDetail.count = data.length;
@@ -283,7 +285,7 @@ angular.module('cipApp')
       factor.splice(index, 1);
       $scope.crowdDetail.count = -1;
       $scope.lastRid = Date.parse(new Date());
-      CrowdService.getUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
+      crowdFactory.getCrowdUserCountByFactor($scope.lastRid, $scope.crowdDetail, function (param, data) {
           if(data.success) {
               if($scope.lastRid == data.requestId) {
                   $scope.crowdDetail.count = data.length;
@@ -296,6 +298,10 @@ angular.module('cipApp')
 
     $scope.resetFactor = function () {
         $scope.factors = {};
+    };
+
+    $scope.goCrowdSave = function() {
+      $state.go('crowd.crowd_save');
     };
   }
 

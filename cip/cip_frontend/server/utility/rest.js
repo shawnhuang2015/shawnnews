@@ -54,12 +54,19 @@ exports.get = function(endpoint, query, callback) {
 		method: 'GET',
     timeout: 60000
 	}, (err, res, body) => {
+    // debugger;
 		if (err) {
 			//console.log('Error:', err);
 			callback(err, null);
 		} else {
   		//console.log('Response body:\n', body);
-  		callback(null, body);
+      try {
+        JSON.parse(body);
+        callback(null, body);
+      }
+      catch (e) {
+        callback(body, null);
+      }
 		}
 	});
 }

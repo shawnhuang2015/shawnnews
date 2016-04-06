@@ -101,8 +101,8 @@ angular.module('cipApp')
             });
         });
       },
-      getCrowdSample : function(crowdID, user_count, type, callback) {
-        $http.get('/api/crowds/' + crowdID + '/sample', {params:{count:user_count, type:type}})
+      getCrowdSample : function(crowdID, sample_number, type, callback) {
+        $http.get('/api/crowds/' + crowdID + '/sample', {params:{count:sample_number, type:type}})
         .success(function(data, status, headers, config) {
             callback({
                 success: !data.error
@@ -114,15 +114,16 @@ angular.module('cipApp')
             });
         });
       },
-      getUserList : function(crowdName, type, callback) {
-        $http.get('/api/crowds/'+123+'/sample',{params:{cname:crowdName,count:10,type:type}}).
-        success(function(data, status, headers, config) {
-            callback({
+      getCrowdUserCountByFactor : function(rid, factor, callback) {
+        $http.post('/api/crowds/user_count?rid='+rid, factor)
+        .success(function(data, status, headers, config) {
+            callback(factor, {
                 success: !data.error,
-                userList: data.error ? [] : data.results.userIds
+                requestId: data.results.requestId,
+                length: data.error ? 0 : data.results.count
             });
-        }).
-        error(function(data, status, headers, config) {
+        })
+        .error(function(data, status, headers, config) {
             callback({
                 success: false
             });

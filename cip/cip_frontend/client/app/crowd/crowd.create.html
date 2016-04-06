@@ -12,6 +12,7 @@
             </ol>
         </div>
     </div> -->
+    
   <fieldset>
     <legend>{{'Crowd_create.CrowdCondition' | translate}}</legend>
     
@@ -406,7 +407,7 @@
 
     <div class="form-group">
     <div class="col-sm-offset-4 col-sm-3">
-        <button mean-token="'create-save'" type="button" ng-click="goToSaveCrowd()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-info btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
+        <button mean-token="'create-save'" type="button" ng-click="goCrowdSave()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-info btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
     </div>
     </div>
 </div>
