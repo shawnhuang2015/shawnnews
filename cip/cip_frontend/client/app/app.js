@@ -9,6 +9,7 @@ angular.module('cipApp', [
   'ngSanitize',
   'ui.router',
   'ui.bootstrap',
+  'ui.select',
   'validation.match',
   'pascalprecht.translate'
 ])

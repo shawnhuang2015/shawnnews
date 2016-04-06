@@ -5,7 +5,7 @@ angular.module('cipApp')
   function($http) {
     return {
       getOntology : function (callback) {
-        $http.get('/api/ontology')
+        $http.get('/api/ontologys')
         .success(function(data, status, headers, config) {
             callback({
                 success: !data.error,
@@ -36,15 +36,18 @@ angular.module('cipApp')
       viewCrowds : function(page_id, page_size, callback) {
         $http.get('/api/crowds/',{params:{page_id:page_id,page_size:page_size}})
         .success(function(data, status, headers, config) {
+            console.log('success');
             callback({
-                success: !data.error
+                success: !data.error,
+                list: data.results
             });
         })
         .error(function(data, status, headers, config) {
+            console.log('err');
             callback({
                 success: false
             });
-        });
+        }); 
       },
       getCrowd : function(crowdID, callback) {
         $http.get('/api/crowds/' + crowdID)

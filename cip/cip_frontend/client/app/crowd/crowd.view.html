@@ -32,8 +32,8 @@
             <td ng-if="crowd_item.tagAdded == -1" class="text-danger">{{'Crowd_view.CreateFailed' | translate}}</td>
             <td>
                 <span>
-                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd_item.crowdName}}/crowd_user">{{ 'Crowd_view.CrowdDetail' | translate }}</a>
-                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd_item);">{{ 'Crowd_view.CrowdDelete' | translate }}</button>
+                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd_item._id}}/crowd_user">{{ 'Crowd_view.CrowdDetail' | translate }}</a>
+                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd_item._id);">{{ 'Crowd_view.CrowdDelete' | translate }}</button>
                 </span>
             </td>
         </tr>

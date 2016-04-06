@@ -22,6 +22,7 @@
     "font-awesome": "~4.5.0",
     "lodash": "~2.4.1",
     "angular-ui-router": "~0.2.15",
+    "angular-ui-select": "~0.16.1",
     "angular-validation-match": "~1.5.2",
     "angular-animate": "~1.5.0",
     "angular-sanitize": "~1.5.0",
