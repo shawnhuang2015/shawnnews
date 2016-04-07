@@ -119,12 +119,12 @@ function createAtRemoteServer() {
                 selector: others.generateCond(entity.selector, data.profile)
               }
             });
-
-            // Use the utility 'rest.post' function to make request to the engine.
+            
+            //Use the utility 'rest.post' function to make request to the engine.
             rest.post('crowd/v1/create', 'name=' + config.CrowdPrefix.single + 
               entity.crowdName + '&limit=' + config.userLimit, body, function(err, response) {
               var res = JSON.parse(response);
-              console.log('Response from engine:\n', res);
+              //console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
                 // If fail to create crowd on the engine
                 // set crowd's tag to -1 (failed).
@@ -137,7 +137,7 @@ function createAtRemoteServer() {
                 // set crowd's file name and
                 updates.file = entity.crowdName + config.CrowdFileSuffix.single;
                 // write the response from engine to file.
-                others.writeToFile(response, config.dataPath + entity.crowdName + 
+                others.writeToFile(response, config.dataPath, entity.crowdName + 
                   config.CrowdFileSuffix.single);
               }
             })

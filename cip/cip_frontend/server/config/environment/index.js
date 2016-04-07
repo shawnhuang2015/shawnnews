@@ -1,6 +1,7 @@
 'use strict';
 
 var path = require('path');
+var rootPath = path.normalize(__dirname + '/../..');
 var _ = require('lodash');
 
 function requiredProcessEnv(name) {
@@ -70,7 +71,9 @@ var all = {
   ontoLimit: 1024,
   
   // The limit for the number of user to restrieve
-  userLimit: 3000000
+  userLimit: 3000000,
+
+  dataPath: rootPath + "/data/",
 };
 
 // Export the config object based on the NODE_ENV

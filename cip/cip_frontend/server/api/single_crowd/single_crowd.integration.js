@@ -161,32 +161,32 @@ describe('SingleCrowd API:', function() {
 
   });
 
-  // describe('DELETE /api/crowds/:id', function() {
+  describe('DELETE /api/crowds/:id', function() {
 
-  //   it('should respond with 204 on successful removal', function(done) {
-  //     request(app)
-  //       .delete('/api/crowds/' + newSingleCrowd._id)
-  //       .expect(204)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         done();
-  //       });
-  //   });
+    it('should respond with 204 on successful removal', function(done) {
+      request(app)
+        .delete('/api/crowds/' + newSingleCrowd._id)
+        .expect(204)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          done();
+        });
+    });
 
-  //   it('should respond with 404 when singleCrowd does not exist', function(done) {
-  //     request(app)
-  //       .delete('/api/crowds/' + newSingleCrowd._id)
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         done();
-  //       });
-  //   });
+    it('should respond with 404 when singleCrowd does not exist', function(done) {
+      request(app)
+        .delete('/api/crowds/' + newSingleCrowd._id)
+        .expect(404)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          done();
+        });
+    });
 
-  // });
+  });
 
 });

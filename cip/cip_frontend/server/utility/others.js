@@ -75,7 +75,6 @@ exports.generateCond = function(condition, metadata) {
     res.push(cond);
   }
 
-  console.log(JSON.stringify(res));
   return res;
 }
 
@@ -84,16 +83,21 @@ exports.generateCond = function(condition, metadata) {
  * @param  {JSON}   res  [response from the engine]
  * @param  {string} path [the file path]
  */
-function writeToFile(res, path) {
+exports.writeToFile = function(res, path, fileName) {
+  res = JSON.parse(res);
+
   var data = 'UserCount: ' + res.results.count + '\n';
   for (var k = 0; k < res.results.userIds.length; ++k) {
     data += res.results.userIds[k] + '\n';
   }
-  fs.writeFile(path, data, function(err) {
-  	if (err) {
-      console.log('Error to write to file:', path);
-    } else {
-      console.log('Success to write to file:', path);
-    }
-  });
+  fs.mkdir(path, function() {
+    fs.writeFile(path + '/' + fileName, data, function(err) {
+      if (err) {
+        console.log('Error to write to file:', path);
+      } else {
+        console.log('Success to write to file:', path);
+      }
+    });
+  })
+  
 }
