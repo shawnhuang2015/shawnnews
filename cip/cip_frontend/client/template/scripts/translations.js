@@ -92,6 +92,11 @@ function config($translateProvider) {
         Hours: ' Hours',
         zh_Range: ' ',
         zh_People: ' ',
+        UserDetail: 'User Detail Information',
+        UserDataLoading: 'User Detail is loading',
+        DynamicCrowdUserList: 'Dynamic Crowd does not provide user detail information',
+        ExploreUser: 'Explore user',
+        DownloadUserList: 'Download User ID List'
       },
       Warning : {
         ObjectValueNull : 'Input object Value is not valid!',
@@ -190,7 +195,12 @@ function config($translateProvider) {
         Days: '天',
         Hours: '小时',
         zh_Range: '内',
-        zh_People: '人'
+        zh_People: '人',
+        UserDetail: '用户列表明细',
+        UserDataLoading: '数据正在获取中...',
+        DynamicCrowdUserList: '动态人群暂时不支持显示用户列表',
+        ExploreUser: '探索此用户',
+        DownloadUserList: '下载UID集合'
       },
       Warning : {
         ObjectValueNull : '对象值不能为空',

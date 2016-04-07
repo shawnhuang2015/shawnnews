@@ -186,6 +186,8 @@ angular.module('cipApp')
                 $scope.crowd.list.splice(i, 1);
             }
           }
+
+          
         })
       }
     };
@@ -512,11 +514,16 @@ angular.module('cipApp')
     var sample_number = 10;
     crowdFactory.getCrowdSample($stateParams.crowdID, sample_number, 'single', function (data) {
         if (data.success) {
-            $scope.userList = data.data;
+            $scope.userList = data.data.userIds;
         } else {
             $scope.userList = [];
         }
     });
+  }
+
+
+  $scope.comingSoon = function() {
+    alert('Coming soon!');
   }
 
 });

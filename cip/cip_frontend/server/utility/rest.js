@@ -79,8 +79,10 @@ exports.get = function(endpoint, query, callback) {
  * Note: comment out console.log for production.
  */
 exports.post = function(endpoint, query, data, callback) {
+  var URL = createURL(endpoint, query);
+  console.log("Rest Post URL : " + URL);
   request({
-  	url: createURL(endpoint, query),
+  	url: URL,
     method: 'POST',
     timeout: 60000,
 		headers: { 
@@ -89,12 +91,11 @@ exports.post = function(endpoint, query, data, callback) {
     },
     body: data
   }, (err, res, body) => {
-    debugger
   	if (err) {
       //console.log('Error:', err);
       callback(err, null);
     } else {
-      console.log('Response body:\n', body);
+      console.log('Rest Post Response body: \n', body);
       var cbErr = null;
       var cbRes = null;
       try {
