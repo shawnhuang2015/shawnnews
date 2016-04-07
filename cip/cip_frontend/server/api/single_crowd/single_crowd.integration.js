@@ -48,15 +48,7 @@ describe('SingleCrowd API:', function() {
                 count: '3'
               }
             ],
-            ontology: [
-              {
-                factor: 'food',
-                operator: '>=',
-                weight: 0,
-                name: 'interest',
-                count: '3'
-              }
-            ],
+            ontology: [],
             behavior: []
           }
         })
@@ -93,6 +85,10 @@ describe('SingleCrowd API:', function() {
           crowdCount = res.body.count;
           done();
         });
+    });
+
+    afterEach(function() {
+      crowdCount = 0;
     });
 
     it('should response with the singleCrowd count', function() {
@@ -157,6 +153,73 @@ describe('SingleCrowd API:', function() {
     it('should respond with the updated singleCrowd', function() {
       updatedSingleCrowd.crowdName.should.equal('TestCrowd');
       updatedSingleCrowd.description.should.equal('This is the updated singleCrowd!!!');
+    });
+
+  });
+
+  describe('GET /api/crowds/:id/sample', function() {
+    var crowdSample;
+
+    beforeEach(function(done) {
+      request(app)
+        .get('/api/crowds/' + newSingleCrowd._id + '/sample')
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          crowdSample = res.body;
+          done();
+        });
+    });
+
+    afterEach(function() {
+      crowdSample = {};
+    });
+
+    it('should respond with JSON object', function() {
+      crowdSample.should.be.instanceOf(Object);
+    });
+
+  });
+
+  describe('POST /api/crowds/user_count', function() {
+    var userCount;
+
+    beforeEach(function(done) {
+      request(app)
+        .post('/api/crowds/user_count?rid=44441112233')    
+        .expect(200)
+        .send({
+          selector: {
+            tag: [
+              { 
+                condition: 'tag',
+                factor: 'gender.female',
+                operator: '=',
+                weight: 1,
+                name: 'gender'
+              }
+            ],
+            ontology: [],
+            behavior: []
+          }
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          userCount = res.body;
+          done();
+        });
+    });
+
+    afterEach(function() {
+      userCount = {};
+    });
+
+    it('should respond with JSON object', function() {
+      userCount.should.be.instanceOf(Object);
     });
 
   });

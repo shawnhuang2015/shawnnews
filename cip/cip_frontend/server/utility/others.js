@@ -79,9 +79,26 @@ exports.generateCond = function(condition, metadata) {
 }
 
 /**
- * Write the response from the engine to file.
- * @param  {JSON}   res  [response from the engine]
- * @param  {string} path [the file path]
+ * Helper function to write response to file.
+ * @param  {string} path     [the file path]
+ * @param  {string} fileName [the file name]
+ * @param  {JSON}   data     [the response from server]
+ */
+function write(path, fileName, data) {
+  fs.writeFile(path + '/' + fileName, data, function(err) {
+    if (err) {
+      console.log('Error in writing to file:', path, '\n', err);
+    } else {
+      //console.log('Success in writing to file:', path);
+    }
+  });
+}
+
+/**
+ * Write the response from engine to file.
+ * @param  {string} res      [the response from server]
+ * @param  {string} path     [the file path]
+ * @param  {string} fileName [the file name]
  */
 exports.writeToFile = function(res, path, fileName) {
   res = JSON.parse(res);
@@ -90,19 +107,17 @@ exports.writeToFile = function(res, path, fileName) {
   for (var k = 0; k < res.results.userIds.length; ++k) {
     data += res.results.userIds[k] + '\n';
   } 
-  fs.mkdir(path, function(err) {
-    if (err) {
-      console.log('Error in creating folder:', path);
-    }
-    else {
-      fs.writeFile(path + '/' + fileName, data, function(err) {
-        if (err) {
-          console.log('Error in writing to file:', path);
-        } else {
-          console.log('Success in writing to file:', path);
-        }
-      });
-    }
-  })
+  if (!fs.existsSync(path)) { // if the folder does not exist.
+    fs.mkdir(path, function(err) { // try to create new folder.
+      if (err) {
+        console.log('Error in creating folder:', path, '\n', err);
+      }
+      else {
+        write(path, fileName, data);
+      }
+    })
+  } else { // if the folder exists, just create new file.
+    write(path, fileName, data);
+  }
   
 }

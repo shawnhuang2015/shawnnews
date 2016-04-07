@@ -13,7 +13,7 @@ router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 router.get('/:id/sample', controller.sample);
-router.post('/user_list', controller.userList);
+//router.post('/user_list', controller.userList);
 router.post('/user_count', controller.userCount);
 
 module.exports = router;
