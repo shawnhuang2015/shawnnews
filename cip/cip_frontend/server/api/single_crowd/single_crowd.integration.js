@@ -37,7 +37,7 @@ describe('SingleCrowd API:', function() {
         .send({
           crowdName: 'New SingleCrowd',
           description: 'This is the brand new singleCrowd!!!',
-          type: 'dynamic',
+          type: 'static',
           count: 1,
           selector: {
             tag: [
@@ -90,19 +90,13 @@ describe('SingleCrowd API:', function() {
           if (err) {
             return done(err);
           }
-
-          crowdCount = Number(res.body);
-          console.log('count:',crowdCount);
+          crowdCount = res.body.count;
           done();
         });
     });
 
-    afterEach(function() {
-      crowdCount = 0;
-    });
-
     it('should response with the singleCrowd count', function() {
-      crowdCount.should.be.above(0);
+      crowdCount.should.be.equal(1);
     });
 
   });
@@ -167,32 +161,32 @@ describe('SingleCrowd API:', function() {
 
   });
 
-  // describe('DELETE /api/crowds/:id', function() {
+  describe('DELETE /api/crowds/:id', function() {
 
-  //   it('should respond with 204 on successful removal', function(done) {
-  //     request(app)
-  //       .delete('/api/crowds/' + newSingleCrowd._id)
-  //       .expect(204)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         done();
-  //       });
-  //   });
+    it('should respond with 204 on successful removal', function(done) {
+      request(app)
+        .delete('/api/crowds/' + newSingleCrowd._id)
+        .expect(204)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          done();
+        });
+    });
 
-  //   it('should respond with 404 when singleCrowd does not exist', function(done) {
-  //     request(app)
-  //       .delete('/api/crowds/' + newSingleCrowd._id)
-  //       .expect(404)
-  //       .end((err, res) => {
-  //         if (err) {
-  //           return done(err);
-  //         }
-  //         done();
-  //       });
-  //   });
+    it('should respond with 404 when singleCrowd does not exist', function(done) {
+      request(app)
+        .delete('/api/crowds/' + newSingleCrowd._id)
+        .expect(404)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          done();
+        });
+    });
 
-  // });
+  });
 
 });

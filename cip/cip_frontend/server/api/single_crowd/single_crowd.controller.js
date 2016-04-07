@@ -169,6 +169,7 @@ function destroyAtRemoteServer() {
           rest.get('crowd/v1/delete', 'name=' + entity.crowdName + '&type=' + 
             data.profile.crowdIndex.vtype, function (err, response) {
               var res = JSON.parse(response);
+              console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
                 console.log('Error in deleting crowd at remote server');
               } else {
@@ -208,9 +209,13 @@ export function index(req, res) {
  * @param  res [response object]
  */
 export function count(req, res) {
-  return SingleCrowd.count()
-    .then(respondWithResult(res))
-    .then(handleError(res));
+  return SingleCrowd.count(function(err, data) {
+    if (err) {
+      return res.status(500).send(err);
+    } else {
+      return res.status(200).json({ count: data });
+    }
+  });
 }
 
 /**
