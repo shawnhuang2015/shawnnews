@@ -141,68 +141,84 @@ angular.module('cipApp')
 
   // crowd.view.html related functions are defined in this function.
   $scope.init_view = function() {
-    // crowdFactory
-    // .query({pageId: 0, pageSz: $scope.page_size}, function (crowds) {
-    //     $scope.crowds = crowds;
-    // });
 
-    temp_data = [{
-        _id: -3,
-        crowdName: 'AAAA',
-        type: 'static',
-        count:3,
-        created: '2016-04-03',
-        tagAdded : 0,
-    },
-    {
-        _id: -2,
-        crowdName: 'BBB',
-        type: 'static',
-        count:4,
-        created: '2016-04-03',
-        tagAdded : 1
-    },
-    {
-        _id: -1,
-        crowdName: 'CCC',
-        type: 'static',
-        count:6,
-        created: '2016-04-03',
-        tagAdded : -1
-    }]
+    crowdFactory
+    .getCrowdsCount(function(data) {
+      if (data.success) {
+        $scope.page.total_items = data.count;
+      }
+      else {
+        $scope.page.total_items = 0;
+      }
+    })
 
-    for (var i=0; i<110; ++i) {
-      var v = Math.random();
-      temp_data.push({
-        _id: i,
-        crowdName: 'AAAA',
-        type: 'static',
-        count:v,
-        created: '2016-04-03',
-        tagAdded : function() {
-          if (v < 0.7) return 1;
-          if (v >= 0.7 && v <0.8) return -1;
-          if (v > 0.8) return 0;
-        }(),
-      })
-    }
+    crowdFactory
+    .viewCrowds(0, $scope.page_size, function (data) {
+      if (data.success) {
+        $scope.crowd.list = data.list;
+      }
+      else {
+        $scope.crowd.list = [];
+      }
+    });
+
+    // temp_data = [{
+    //     _id: -3,
+    //     crowdName: 'AAAA',
+    //     type: 'static',
+    //     count:3,
+    //     created: '2016-04-03',
+    //     tagAdded : 0,
+    // },
+    // {
+    //     _id: -2,
+    //     crowdName: 'BBB',
+    //     type: 'static',
+    //     count:4,
+    //     created: '2016-04-03',
+    //     tagAdded : 1
+    // },
+    // {
+    //     _id: -1,
+    //     crowdName: 'CCC',
+    //     type: 'static',
+    //     count:6,
+    //     created: '2016-04-03',
+    //     tagAdded : -1
+    // }]
+
+    // for (var i=0; i<110; ++i) {
+    //   var v = Math.random();
+    //   temp_data.push({
+    //     _id: i,
+    //     crowdName: 'AAAA',
+    //     type: 'static',
+    //     count:v,
+    //     created: '2016-04-03',
+    //     tagAdded : function() {
+    //       if (v < 0.7) return 1;
+    //       if (v >= 0.7 && v <0.8) return -1;
+    //       if (v > 0.8) return 0;
+    //     }(),
+    //   })
+    // }
 
     $scope.crowdPageChanged = function () {
       $scope.getCrowdsByPageId($scope.page.current_page - 1);
     };
 
     $scope.getCrowdsByPageId = function (pageId) {
-      // crowdFactory
-      // .viewCrowds(pageId, $scope.page.page_size, function(data) {
-      //   $scope.crowd.list = data.list;
-      // })
+      crowdFactory
+      .viewCrowds(pageId, $scope.page.page_size, function(data) {
+        $scope.crowd.list = data.list;
+      })
 
       $scope.crowd.list = temp_data.slice(pageId*$scope.page.page_size, (pageId+1)*$scope.page.page_size)
     };
 
     //Testing
-    $scope.crowdPageChanged();
-    $scope.page.total_items += temp_data.length;
+    // $scope.crowdPageChanged();
+    // $scope.page.total_items += temp_data.length;
     //End Testing
 
     // remove a crowd by name.
@@ -223,8 +239,7 @@ angular.module('cipApp')
 
   // crowd.create.html related functions are defined in this function.
   $scope.init_create = function() {
-    //$scope.crowd.list = [];
-    // Testing.
+
     $scope.init_ontology();
 
     $scope.crowdDetail = {};

@@ -22,9 +22,10 @@ angular.module('cipApp')
         // Temporary - probably it should to be resource based.
         $http.get('/api/crowds/count')
         .success(function(data, status, headers, config) {
+            var success = status == 200;
             callback({
-                success: !data.error,
-                length: data.error ? 0 : data.results.count
+                success: success,
+                count: !success ? 0 : data.count
             });
         })
         .error(function(data, status, headers, config) {
@@ -36,10 +37,10 @@ angular.module('cipApp')
       viewCrowds : function(page_id, page_size, callback) {
         $http.get('/api/crowds/',{params:{page_id:page_id,page_size:page_size}})
         .success(function(data, status, headers, config) {
-            console.log('success');
+            var success = status == 200;
             callback({
-                success: !data.error,
-                list: data.results
+                success: success,
+                list: data
             });
         })
         .error(function(data, status, headers, config) {
@@ -52,8 +53,10 @@ angular.module('cipApp')
       getCrowd : function(crowdID, callback) {
         $http.get('/api/crowds/' + crowdID)
         .success(function(data, status, headers, config) {
+            var success = status == 200;
             callback({
-                success: !data.error
+                success: success,
+                data: data
             });
         })
         .error(function(data, status, headers, config) {
