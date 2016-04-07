@@ -263,7 +263,7 @@
                 </ui-select>
             </div>
             <div class="col-sm-4" ng-show="(factors.timeType == 'day' || factors.timeType == 'hour')">
-                <input name="time_start" type="number" class="form-control" ng-model="widget.startTime">
+                <input name="time_start" type="text" class="form-control" ng-model="widget.startTime">
             </div>
             <div class="col-sm-4" ng-show="factors.timeType == 'absolute'">
                 <p class="input-group">
@@ -414,7 +414,7 @@
 
     <div class="form-group">
     <div class="col-sm-offset-4 col-sm-3">
-        <button mean-token="'create-save'" type="button" ng-click="goCrowdSave()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-info btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
+        <button mean-token="'create-save'" type="button" ng-click="goCrowdSave()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-success btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
     </div>
     </div>
 </div>

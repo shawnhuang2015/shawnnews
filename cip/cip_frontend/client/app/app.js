@@ -58,7 +58,7 @@ function config($stateProvider, $urlRouterProvider, $locationProvider) {
       controllerAs : 'vm'
   })
   .state('crowd.crowd_user', {
-      url: "/:crowdName/crowd_user",
+      url: "/:crowdID/crowd_user",
       templateUrl: "app/crowd/crowd.user.html",
       controller: 'crowdCtrl',
       controllerAs : 'vm'

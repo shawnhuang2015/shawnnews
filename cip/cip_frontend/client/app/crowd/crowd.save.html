@@ -1,30 +1,30 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_save()">
   <form name="crowdForm" class="form-horizontal" role="form" data-ng-submit="createCrowd(crowdForm.$valid)" novalidate>
     <fieldset>
-        <legend>基本信息</legend>
+        <legend>{{'Crowd_create.BasicInformation' | translate}}</legend>
         <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.crowd_name.$invalid }">
-            <label mean-token="'create-crowd_name'" class="col-md-2 control-label">人群名称</label>
+            <label mean-token="'create-crowd_name'" class="col-md-2 control-label">{{'Crowd_create.CrowdName' | translate}}</label>
             <div class="col-md-4">
                 <input name="crowd_name" type="text" class="form-control" ng-model="crowdDetail.crowdName"
                        id="crowd_name" placeholder="Crowd Name" ng-pattern="/^\w+$/" required>
                 <div ng-show="crowdForm.crowd_name.$invalid" class="help-block">
-                    <p ng-show="crowdForm.crowd_name.$error.required" class="text-danger">人群名字不能为空</p>
-                    <p ng-show="!crowdForm.crowd_name.$error.required" class="text-danger">人群名称只能包含英文,数字,或下划线</p>
+                    <p ng-show="crowdForm.crowd_name.$error.required" class="text-danger">{{'Warning.CrowdNameNull' | translate}}</p>
+                    <p ng-show="!crowdForm.crowd_name.$error.required" class="text-danger">{{'Warning.CrowdNameValid' | translate}}</p>
                 </div>
             </div>
         </div>
         <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
-            <label mean-token="'create-description'" class="col-md-2 control-label">描述</label>
+            <label mean-token="'create-description'" class="col-md-2 control-label">{{'Crowd_create.Description' | translate}}</label>
             <div class="col-md-4">
                 <input name="description" type="text" class="form-control" data-ng-model="crowdDetail.description"
                        id="description" placeholder="Description" required>
                 <div ng-show="crowdForm.description.$invalid" class="help-block">
-                    <p ng-show="crowdForm.description.$error.required" class="text-danger">描述不能为空</p>
+                    <p ng-show="crowdForm.description.$error.required" class="text-danger">{{'Warning.DescriptionNull' | translate}}</p>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label mean-token="'create-type'" class="col-md-2 control-label">人群类型</label>
+            <label mean-token="'create-type'" class="col-md-2 control-label">{{'Crowd_create.CrowdType' | translate}}</label>
             <div class="col-md-4">
                 <select class="form-control" ng-model="crowdDetail.type"
                         ng-options="x as x for x in crowd.type"></select>
@@ -34,13 +34,13 @@
 
     <fieldset>
         <!-- Show -->
-        <legend>条件列表</legend>
+        <legend>{{'Crowd_create.CrowdCondition' | translate}}</legend>
         <table class="table table-hover" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
             <thead>
             <tr>
-                <th>序号</th>
-                <th>圈人条件</th>
-                <th>覆盖人数</th>
+                <th>{{'Crowd_create.Index' | translate}}</th>
+                <th>{{'Crowd_create.CrowdCondition' | translate}}</th>
+                <th>{{'Crowd_create.CrowdAmount' | translate}}</th>
             </tr>
             </thead>
             <tbody>
@@ -52,10 +52,10 @@
             <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
                 <td>{{$index+1+crowdDetail.selector.tag.length}}</td>
                 <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
-                    {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣的权重 <b>{{condition.operator}} {{condition.weight}}</b>
+                    {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestWeightIs' | translate}} <b>{{condition.operator}} {{condition.weight}}</b>
                 </td>
                 <td ng-if="condition.operator=='dislike' || condition.operator=='like'">
-                    {{condition_type[1].name}}:&nbsp;&nbsp;对<b>{{condition.name}}</b>之<b>{{condition.factor}}</b>的兴趣为 <b>{{condition.operator}}</b>
+                    {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestIs' | translate}} <b>{{condition.operator}}</b>
                 </td>
                 <td>{{condition.count}}</td>
             </tr>
@@ -63,13 +63,39 @@
                 <td>{{$index+1+crowdDetail.selector.tag.length+crowdDetail.selector.ontology.length}}</td>
                 <td>
                     {{condition_type[2].name}}:&nbsp;&nbsp;<b>{{condition.action}}</b>&nbsp;<b>{{condition.objectCategory}}</b>
-                    <nobr ng-if="condition.objectType=='Category'">&nbsp;&nbsp;位于<b>{{condition.ontologyType}}/{{condition.objectId}}</b>目录下</nobr>
-                    <nobr ng-if="condition.objectType=='Contains'">&nbsp;&nbsp;包含字段<b>{{condition.ontologyType}}/{{condition.objectId}}</b></nobr>
-                    <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;物品ID=<b>{{condition.objectId}}</b></nobr>
-                    &nbsp;&nbsp;发生次数 <b>{{condition.operator}} {{condition.value}}</b>次
-                    <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;在日期<b>{{condition.startTime | date:'shortDate'}}</b>到<b>{{condition.endTime | date:'shortDate'}}</b>内</nobr>
-                    <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;在过去<b>{{condition.startTime/86400000}}</b>天内</nobr>
-                    <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;在过去<b>{{condition.startTime/3600000}}</b>小时内</nobr>
+                    <nobr ng-if="condition.objectType=='Category'">&nbsp;&nbsp;
+                    {{'Crowd_create.In' | translate}}
+                    <b>{{condition.ontologyType}}/{{condition.objectId}}</b>
+                    {{'Crowd_create.Folder' | translate}}
+                    </nobr>
+                    <nobr ng-if="condition.objectType=='Contains'">&nbsp;&nbsp;
+                    {{'Crowd_create.ContainsCharacters' | translate}}
+                    <b>{{condition.ontologyType}}/{{condition.objectId}}</b></nobr>
+                    <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;
+                    {{'Crowd_create.Item' | translate}}
+                    <b>{{condition.objectId}}</b></nobr>
+                    &nbsp;&nbsp;
+                    {{'Crowd_create.Frequency' | translate}}
+                    <b>{{condition.operator}} {{condition.value}}</b>
+                    <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;
+                    {{'Crowd_create.DateBetween' | translate}}
+                    <b>{{condition.startTime | date:'shortDate'}}</b>
+                    {{'Crowd_create.To' | translate}}
+                    <b>{{condition.endTime | date:'shortDate'}}</b>
+                    {{Crowd_create.zh_Range | translate}}
+                    </nobr>
+                    <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;
+                    {{'Crowd_create.InThePassed' | translate}}
+                    <b>{{condition.startTime/86400000}}</b>
+                    {{'Crowd_create.Days' | translate}}
+                    {{Crowd_create.zh_Range | translate}}
+                    </nobr>
+                    <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;
+                    {{'Crowd_create.InThePassed' | translate}}
+                    <b>{{condition.startTime/3600000}}</b>
+                    {{'Crowd_create.Hours' | translate}}
+                    {{Crowd_create.zh_Range | translate}}
+                    </nobr>
                 </td>
                 <td>{{condition.count}}</td>
             </tr>
@@ -77,12 +103,17 @@
         </table>
 
 
-        <div class="col-md-offset-8 col-md-3"><h4>满足上面所有条件 共覆盖{{crowdDetail.count}}人</h4></div>
+        <div class="col-md-offset-8 col-md-3">
+        <h4>
+            {{'Crowd_create.QueryMatchAmount' | translate}}
+            <span ng-if="crowdDetail.count >= 0">{{crowdDetail.count}}</span>
+            {{'Crowd_create.zh_People' | translate}}
+        </h4></div>
     </fieldset>
 
     <div class="form-group">
         <div class="col-md-offset-4 col-md-3">
-            <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block">保存人群</button>
+            <button mean-token="'create-save'" type="submit" ng-disabled="crowdForm.$invalid" class="btn btn-success btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
         </div>
     </div>
   </form>

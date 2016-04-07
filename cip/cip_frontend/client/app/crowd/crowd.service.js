@@ -22,7 +22,7 @@ angular.module('cipApp')
         // Temporary - probably it should to be resource based.
         $http.get('/api/crowds/count')
         .success(function(data, status, headers, config) {
-            var success = status == 200;
+            var success = status == 200 || status == 200;
             callback({
                 success: success,
                 count: !success ? 0 : data.count
@@ -37,7 +37,7 @@ angular.module('cipApp')
       viewCrowds : function(page_id, page_size, callback) {
         $http.get('/api/crowds/',{params:{page_id:page_id,page_size:page_size}})
         .success(function(data, status, headers, config) {
-            var success = status == 200;
+            var success = status == 200 || status == 200;
             callback({
                 success: success,
                 list: data
@@ -53,6 +53,7 @@ angular.module('cipApp')
       getCrowd : function(crowdID, callback) {
         $http.get('/api/crowds/' + crowdID)
         .success(function(data, status, headers, config) {
+            console.log("getCrowd ", status)
             var success = status == 200;
             callback({
                 success: success,
@@ -68,8 +69,11 @@ angular.module('cipApp')
       deleteCrowd : function(crowdID, callback) {
         $http.delete('/api/crowds/' + crowdID)
         .success(function(data, status, headers, config) {
+            console.log("deleteCrowd ", status)
+            var success = status == 204;
             callback({
-                success: !data.error
+                success: success,
+                _id: crowdID
             });
         })
         .error(function(data, status, headers, config) {
@@ -94,8 +98,10 @@ angular.module('cipApp')
       createCrowd : function(crowd, callback) {
         $http.post('/api/crowds/', crowd)
         .success(function(data, status, headers, config) {
+            var success = status == 201;
             callback({
-                success: !data.error
+                success: success,
+                data: data
             });
         })
         .error(function(data, status, headers, config) {
@@ -107,8 +113,11 @@ angular.module('cipApp')
       getCrowdSample : function(crowdID, sample_number, type, callback) {
         $http.get('/api/crowds/' + crowdID + '/sample', {params:{count:sample_number, type:type}})
         .success(function(data, status, headers, config) {
+            var success = status == 200;
+            
             callback({
-                success: !data.error
+                success: success,
+                data: data
             });
         })
         .error(function(data, status, headers, config) {

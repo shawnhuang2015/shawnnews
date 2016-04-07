@@ -111,7 +111,7 @@ angular.module('cipApp')
   // Initialize the ontology object from backend.
   $scope.init_ontology = function() {
     crowdFactory.getOntology(function(data) {
-      console.log(data);
+      //console.log(data);
       if (data.success) {
         //Convert
         var profile = data.content.profile;
@@ -153,7 +153,7 @@ angular.module('cipApp')
     })
 
     crowdFactory
-    .viewCrowds(0, $scope.page_size, function (data) {
+    .viewCrowds(0, $scope.page.page_size, function (data) {
       if (data.success) {
         $scope.crowd.list = data.list;
       }
@@ -161,47 +161,6 @@ angular.module('cipApp')
         $scope.crowd.list = [];
       }
     });
-
-    // temp_data = [{
-    //     _id: -3,
-    //     crowdName: 'AAAA',
-    //     type: 'static',
-    //     count:3,
-    //     created: '2016-04-03',
-    //     tagAdded : 0,
-    // },
-    // {
-    //     _id: -2,
-    //     crowdName: 'BBB',
-    //     type: 'static',
-    //     count:4,
-    //     created: '2016-04-03',
-    //     tagAdded : 1
-    // },
-    // {
-    //     _id: -1,
-    //     crowdName: 'CCC',
-    //     type: 'static',
-    //     count:6,
-    //     created: '2016-04-03',
-    //     tagAdded : -1
-    // }]
-
-    // for (var i=0; i<110; ++i) {
-    //   var v = Math.random();
-    //   temp_data.push({
-    //     _id: i,
-    //     crowdName: 'AAAA',
-    //     type: 'static',
-    //     count:v,
-    //     created: '2016-04-03',
-    //     tagAdded : function() {
-    //       if (v < 0.7) return 1;
-    //       if (v >= 0.7 && v <0.8) return -1;
-    //       if (v > 0.8) return 0;
-    //     }(),
-    //   })
-    // }
 
     $scope.crowdPageChanged = function () {
       $scope.getCrowdsByPageId($scope.page.current_page - 1);
@@ -216,18 +175,17 @@ angular.module('cipApp')
       $scope.crowd.list = temp_data.slice(pageId*$scope.page.page_size, (pageId+1)*$scope.page.page_size)
     };
 
-    //Testing
-    // $scope.crowdPageChanged();
-    // $scope.page.total_items += temp_data.length;
-    //End Testing
-
     // remove a crowd by name.
     $scope.remove = function(crowdID) {
       if (confirm($translate.instant('Crowd_view.CrowdDeleteComfirmMessage'))) {
-        console.log('Delete the crowd from server.')
         crowdFactory
         .deleteCrowd(crowdID, function(data) {
           console.log(data);
+          for (var i in $scope.crowd.list) {
+            if ($scope.crowd.list[i]._id === data._id) {
+                $scope.crowd.list.splice(i, 1);
+            }
+          }
         })
       }
     };
@@ -387,6 +345,11 @@ angular.module('cipApp')
         $scope.factors.endTime = time.valueOf();
     });
 
+    $scope.$watch('factors.timeType', function(type) {
+      $scope.widget.startTime = "";
+      $scope.widget.endTime = "";
+    })
+
     $scope.traverseTree = function (tree, callback) {
         var list = [];
         var queue = new Array();
@@ -518,22 +481,42 @@ angular.module('cipApp')
           } else {
               crowdFactory.createCrowd($scope.crowdDetail, function (data) {
                   if (data.success) {
-                      alert("创建成功!");
-                      $location.path('/crowd/' + $scope.crowdDetail.crowdName + '/crowd_user');
+                      alert($translate.instant('Crowd_create.CreatedSuccessfully'));
+                      $location.path('/crowd/' + data.data._id + '/crowd_user');
                   } else {
-                      alert("创建失败!");
+                      alert($translate.instant('Crowd_create.CreatedFailed'));
                   }
               });
           }
       } else {
-          alert("数据存在问题");
+          alert("[Data Error] : It is not a valid crowd.");
           $scope.submitted = true;
       }
     };
   }
 
   $scope.init_user = function() {
-    console.log('init user');
+    console.log($stateParams);
+    console.log($scope);
+
+    crowdFactory.getCrowd($stateParams.crowdID, function(data) {
+      console.log(data);
+      if (data.success) {
+        $scope.crowdDetail = data.data;
+      }
+      else {
+        console.log("init_user error");
+      }
+    })
+
+    var sample_number = 10;
+    crowdFactory.getCrowdSample($stateParams.crowdID, sample_number, 'single', function (data) {
+        if (data.success) {
+            $scope.userList = data.data;
+        } else {
+            $scope.userList = [];
+        }
+    });
   }
 
 });

@@ -45,16 +45,23 @@ function config($translateProvider) {
         ArithmeticLogic: ' Aarithmetic Logic',
         Action: ' Action',
         Behavior: ' Behavior',
+        BasicInformation: 'Basic Information',
         CrowdCondition: ' Crowding Condition',
         CrowdMethod: ' Crowding Method',
         CrowdAmount: ' Crowd Amount',
+        CrowdName: 'Crowd Name',
+        CrowdType: 'Crowd Type',
+        CreatedSuccessfully: 'Created Successfully',
+        CreatedFailed: 'Created Failed',
         Condition: ' Condition',
         ConditionList: ' Condition List',
         DeleteCondition: ' Delete Condition',
         DateType: ' Date Type',
+        Description: 'Description',
         Index: ' Index',
         InterestWeightIs: ' Intererst Weight is',
         InterestIs: ' Interest is',
+        Item: 'Item ID =',
         Logic: ' Logic',
         Object: ' Object',
         ObjectCategory: ' Object Category',
@@ -91,7 +98,10 @@ function config($translateProvider) {
         TagNull : 'Input tag is not valid!',
         DateNull : 'Input date is not valid!',
         DateStartEndNull : 'Start date is later than end date!',
-        FrequencyNull : 'Input frenquency should be between 0~2147483647!'
+        FrequencyNull : 'Input frenquency should be between 0~2147483647!',
+        CrowdNameNull: 'Crowd name is required!',
+        CrowdNameValid: 'Crowd name only contains alphanumeric characters, a dash and an underscore!',
+        DescriptionNull: 'Description is required!'
       }
     })
     .translations('zh', {
@@ -135,13 +145,19 @@ function config($translateProvider) {
         ArithmeticLogic: '运算逻辑',
         Action: '操作',
         Behavior: '动作',
+        BasicInformation: '基本信息',
         CrowdCondition: '圈人条件',
         CrowdMethod: '圈人方法',
         CrowdAmount: '覆盖人数',
+        CrowdName: '人群名称',
+        CrowdType: '人群类型',
+        CreatedSuccessfully: '创建成功!',
+        CreatedFailed: '创建失败!',
         Condition: '条件',
         ConditionList: '条件列表',
         DeleteCondition: '删除此条件',
         DateType: '日期类型',
+        Description: '描述',
         Index: '序号',
         InterestWeightIs: '的兴趣的权重',
         InterestIs: '的兴趣为',
@@ -181,7 +197,10 @@ function config($translateProvider) {
         TagNull : '标签不能为空',
         DateNull : '时间不能为空',
         DateStartEndNull : '开始时间不能大于结束时间',
-        FrequencyNull : '次数必须在0~2147483647之间'
+        FrequencyNull : '次数必须在0~2147483647之间',
+        CrowdNameNull: '人群名字不能为空',
+        CrowdNameValid: '人群名称只能包含英文,数字,或下划线',
+        DescriptionNUll: '描述不能为空',
       }
     });
 
