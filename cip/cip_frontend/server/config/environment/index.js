@@ -73,6 +73,7 @@ var all = {
   // The limit for the number of user to restrieve
   userLimit: 3000000,
 
+  // The data path to save the response from server
   dataPath: rootPath + "/data/",
 };
 

@@ -57,13 +57,16 @@ exports.get = function(endpoint, query, callback) {
       callback(err, null);
     } else {
       //console.log('Response body:\n', body);
+      var cbErr = null;
+      var cbRes = null;
       try {
         // Try to parse the message to check if valid
         JSON.parse(body);
-        callback(null, body);
+        cbRes = body;
       } catch (e) {
-        // If not valid then return the error in the body
-        callback(body, null);
+        cbErr = e;
+      } finally {
+        callback(cbErr, cbRes);
       }
     }
 	});
@@ -89,12 +92,11 @@ exports.post = function(endpoint, query, data, callback) {
     },
     body: data
   }, (err, res, body) => {
-    debugger
   	if (err) {
       //console.log('Error:', err);
       callback(err, null);
     } else {
-      console.log('Response body:\n', body);
+      //console.log('Response body:\n', body);
       var cbErr = null;
       var cbRes = null;
       try {

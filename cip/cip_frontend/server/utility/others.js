@@ -89,15 +89,20 @@ exports.writeToFile = function(res, path, fileName) {
   var data = 'UserCount: ' + res.results.count + '\n';
   for (var k = 0; k < res.results.userIds.length; ++k) {
     data += res.results.userIds[k] + '\n';
-  }
-  fs.mkdir(path, function() {
-    fs.writeFile(path + '/' + fileName, data, function(err) {
-      if (err) {
-        console.log('Error to write to file:', path);
-      } else {
-        console.log('Success to write to file:', path);
-      }
-    });
+  } 
+  fs.mkdir(path, function(err) {
+    if (err) {
+      console.log('Error in creating folder:', path);
+    }
+    else {
+      fs.writeFile(path + '/' + fileName, data, function(err) {
+        if (err) {
+          console.log('Error in writing to file:', path);
+        } else {
+          console.log('Success in writing to file:', path);
+        }
+      });
+    }
   })
   
 }
