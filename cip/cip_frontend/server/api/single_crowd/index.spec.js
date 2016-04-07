@@ -8,7 +8,10 @@ var singleCrowdCtrlStub = {
   show: 'singleCrowdCtrl.show',
   create: 'singleCrowdCtrl.create',
   update: 'singleCrowdCtrl.update',
-  destroy: 'singleCrowdCtrl.destroy'
+  destroy: 'singleCrowdCtrl.destroy',
+  sample: 'singleCrowdCtrl.sample',
+  //userList: 'singleCrowdCtrl.userList',
+  userCount: 'singleCrowdCtrl.userCount'
 };
 
 var routerStub = {
@@ -100,6 +103,26 @@ describe('SingleCrowd API Router:', function() {
     it('should route to singleCrowd.controller.destroy', function() {
       routerStub.delete
         .withArgs('/:id', 'singleCrowdCtrl.destroy')
+        .should.have.been.calledOnce;
+    });
+
+  });
+
+  describe('GET /api/crowds/:id/sample', function() {
+
+    it('should route to singleCrowd.controller.sample', function() {
+      routerStub.get
+        .withArgs('/:id/sample', 'singleCrowdCtrl.sample')
+        .should.have.been.calledOnce;
+    });
+
+  });
+
+  describe('POST /api/crowds/user_count', function() {
+
+    it('should route to singleCrowd.controller.userCount', function() {
+      routerStub.post
+        .withArgs('/user_count', 'singleCrowdCtrl.userCount')
         .should.have.been.calledOnce;
     });
 

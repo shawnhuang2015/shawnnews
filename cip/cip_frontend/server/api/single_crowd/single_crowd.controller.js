@@ -140,7 +140,10 @@ function createAtRemoteServer() {
                 others.writeToFile(response, config.dataPath, entity.crowdName + 
                   config.CrowdFileSuffix.single);
               }
-            })
+              // Save the new crowd's tag and crowd's file name.
+              return entity.save()
+                .then(saveUpdates(updates));
+            });
           }
         });
       } else { // if the crowd type is dynamic.
@@ -164,13 +167,13 @@ function destroyAtRemoteServer() {
       Ontology.findOne({ name: 'MetaData' }, function(err, data) {
         if (err || !data) {
           // If cannot find the meta data, do nothing.
-          console.log('Error in retrieving meta data');
+          //console.log('Error in retrieving meta data');
         } else {
           // Otherwise, use the utility 'rest.get' function to make request to the engine.
-          rest.get('crowd/v1/delete', 'name=' + entity.crowdName + '&type=' + 
-            data.profile.crowdIndex.vtype, function (err, response) {
+          rest.get('crowd/v1/delete', 'name=' + config.CrowdPrefix.single + entity.crowdName + 
+            '&type=' + data.profile.crowdIndex.vtype, function (err, response) {
               var res = JSON.parse(response);
-              console.log('Response from engine:\n', res);
+              //console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
                 console.log('Error in deleting crowd at remote server');
               } else {
@@ -302,6 +305,7 @@ export function sample(req, res) {
         rest.get('crowd/v1/get', 'name=' + crowdName + '&type=' + 
           onto.profile.crowdIndex.vtype + '&limit=' + count, function(err, response) {
           var responseJSON = JSON.parse(response);
+          //console.log('Response from engine:\n', responseJSON);
           if (!responseJSON || responseJSON.error === true) {
             // If fail to get the data from the server,
             // return the error.
@@ -313,57 +317,64 @@ export function sample(req, res) {
           } else {
             // If succesfully get the data from the server,
             // return the response from engine.
-            return res.status(200).send(responseJSON);
+            return res.status(200).send(responseJSON.results);
           }
-        })
+        });
       }
     });
   });
 }
 
 /**
+ * THIS IS NOT USED!
+ * 
  * Rerturn the full list of users from the engine.
  * @param  req [request object]
  * @param  res [response object]
+ *
+ * Note: comment out console.log for production. 
  */
-export function userList(req, res) {
-  Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-    if (err || !data) {
-      // If there is an error in retrieving the meta data,
-      // or the meta data is empty, send the error.
-      return res.status(500).send(err);
-    } else {
-      // Create request body for the engine.
-      var body = JSON.stringify({
-        target: data.profile.target,
-        selector: others.generateCond(req.body.selector, data.profile)
-      });
+// export function userList(req, res) {
+//   Ontology.findOne({ name: 'MetaData' }, function(err, data) {
+//     if (err || !data) {
+//       // If there is an error in retrieving the meta data,
+//       // or the meta data is empty, send the error.
+//       return res.status(500).send(err);
+//     } else {
+//       // Create request body for the engine.
+//       var body = JSON.stringify({
+//         target: data.profile.target,
+//         selector: others.generateCond(req.body.selector, data.profile)
+//       });
 
-      // Use the utility 'rest.post' function to make request to the engine.
-      rest.post('crowd/v1/user_search', '', body, function (err, response) {
-        var responseJSON = JSON.parse(response);
-         if (!responseJSON || responseJSON.error === true) {
-            // If fail to get the data from the server,
-            // return the error.
-            if (!responseJSON) {
-              return res.status(500).send(err);
-            } else {
-              return res.status(500).send(responseJSON.message);  
-            }
-          } else {
-            // If succesfully get the data from the server,
-            // return the response from engine.
-            return res.status(200).send(responseJSON);
-          }
-      });
-    }
-  });
-}
+//       // Use the utility 'rest.post' function to make request to the engine.
+//       rest.post('crowd/v1/user_search', '', body, function (err, response) {
+//         var responseJSON = JSON.parse(response);
+//         console.log('Response from engine:\n', responseJSON);
+//         if (!responseJSON || responseJSON.error === true) {
+//           // If fail to get the data from the server,
+//           // return the error.
+//           if (!responseJSON) {
+//             return res.status(500).send(err);
+//           } else {
+//             return res.status(500).send(responseJSON.message);  
+//           }
+//         } else {
+//           // If succesfully get the data from the server,
+//           // return the response from engine.
+//           return res.status(200).send(responseJSON.results);
+//         }
+//       });
+//     }
+//   });
+// }
 
 /**
  * Return the number of user from the crowd.
  * @param  req [request object]
  * @param  res [response object]
+ *
+ * Note: comment out console.log for production.
  */
 export function userCount(req, res) {
   Ontology.findOne({ name: 'MetaData' }, function(err, data) {
@@ -381,25 +392,21 @@ export function userCount(req, res) {
       // Use the utility 'rest.post' function to make request to the engine.
       rest.post('crowd/v1/user_search', 'limit=0&rid=' + req.query.rid, body, function(err, response) {
         var responseJSON = JSON.parse(response);
+        console.log('Response from engine:\n', responseJSON);
         if (!responseJSON || responseJSON.error === true) {
-            // If fail to get the data from the server,
-            if (!responseJSON) {
-              // return the error,
-              return res.status(500).send(err);
-            } else {
-              // or if the query has error return 0 as the users count.
-              var result = JSON.parse('{"results":{"count":0,"userIds":[]},"error":false,"message":"","debug":""}');
-              if (req.query.rid.length > 0) {
-                result.results.requestId = req.query.rid;
-              }
-              return res.status(200).send(result);  
-            }
+          // If fail to get the data from the server,
+          // return the error.
+          if (!responseJSON) {
+            return res.status(500).send(err);
           } else {
-            // If succesfully get the data from the server,
-            // return the response from engine.
-            return res.status(200).send(responseJSON);
+            return res.status(500).send(responseJSON.message); 
           }
-      })
+        } else {
+          // If succesfully get the data from the server,
+          // return the response from engine.
+          return res.status(200).send(responseJSON.results);
+        }
+      });
     }
   });
 }

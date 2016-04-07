@@ -57,13 +57,16 @@ exports.get = function(endpoint, query, callback) {
       callback(err, null);
     } else {
       //console.log('Response body:\n', body);
+      var cbErr = null;
+      var cbRes = null;
       try {
         // Try to parse the message to check if valid
         JSON.parse(body);
-        callback(null, body);
+        cbRes = body;
       } catch (e) {
-        // If not valid then return the error in the body
-        callback(body, null);
+        cbErr = e;
+      } finally {
+        callback(cbErr, cbRes);
       }
     }
 	});
@@ -79,10 +82,8 @@ exports.get = function(endpoint, query, callback) {
  * Note: comment out console.log for production.
  */
 exports.post = function(endpoint, query, data, callback) {
-  var URL = createURL(endpoint, query);
-  console.log("Rest Post URL : " + URL);
   request({
-  	url: URL,
+  	url: createURL(endpoint, query),
     method: 'POST',
     timeout: 60000,
 		headers: { 
@@ -95,7 +96,7 @@ exports.post = function(endpoint, query, data, callback) {
       //console.log('Error:', err);
       callback(err, null);
     } else {
-      console.log('Rest Post Response body: \n', body);
+      //console.log('Response body:\n', body);
       var cbErr = null;
       var cbRes = null;
       try {
