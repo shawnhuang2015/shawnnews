@@ -60,6 +60,8 @@ function removeEntity(res) {
         .then(() => {
           res.status(204).end();
         });
+    } else {
+      return null;
     }
   };
 }
@@ -91,7 +93,8 @@ function handleError(res, statusCode) {
 }
 
 /**
- * Create the crowd on the engine.
+ * Create the crowd on the engine if the crowd type is static.
+ * If the crowd type is dynamic then just update the tag.
  *
  * Note: comment out console.log for production. 
  */
@@ -116,7 +119,6 @@ function createAtRemoteServer() {
                 selector: others.generateCond(entity.selector, data.profile)
               }
             });
-            console.log(body);
 
             // Use the utility 'rest.post' function to make request to the engine.
             rest.post('crowd/v1/create', 'name=' + config.CrowdPrefix.single + 
@@ -124,11 +126,12 @@ function createAtRemoteServer() {
               var res = JSON.parse(response);
               console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
-                // If fail to get the data from the server,
+                // If fail to create crowd on the engine
                 // set crowd's tag to -1 (failed).
                 updates.tagAdded = -1;
               } else {
-                // If succesfully get the data from the server,
+                entity.save();
+                // If succesfully create crowd on the engine,
                 // set crowd's tag to 1 (success),
                 updates.tagAdded = 1;
                 // set crowd's file name and
@@ -137,13 +140,11 @@ function createAtRemoteServer() {
                 others.writeToFile(response, config.dataPath + entity.crowdName + 
                   config.CrowdFileSuffix.single);
               }
-            });
+            })
           }
         });
-      } else if (entity.type === 'dynamic') { // if the crowd type is dynamic.
+      } else { // if the crowd type is dynamic.
         updates.tagAdded = 1; // update crowd's tag to 1 (success).
-      } else { // otherwise do nothing.
-        console.log('Wrong crowd type:', entity.type);
       }
     } 
     // Save the new crowd's tag and crowd's file name.
@@ -159,7 +160,7 @@ function createAtRemoteServer() {
  */
 function destroyAtRemoteServer() {
   return function(entity) {
-    if (entity) {
+    if (entity && entity.type === 'static') {
       Ontology.findOne({ name: 'MetaData' }, function(err, data) {
         if (err || !data) {
           // If cannot find the meta data, do nothing.
@@ -178,7 +179,7 @@ function destroyAtRemoteServer() {
           });
         }
       });
-    }
+    } 
     return entity;
   }
 }
@@ -236,7 +237,7 @@ export function show(req, res) {
  * @param  res [response object]
  */
 export function create(req, res) {
-  SingleCrowd.create(req.body)
+  return SingleCrowd.create(req.body)
     .then(createAtRemoteServer())
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
