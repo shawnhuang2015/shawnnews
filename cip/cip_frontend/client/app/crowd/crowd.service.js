@@ -117,7 +117,7 @@ angular.module('cipApp')
             
             callback({
                 success: success,
-                data: data.results,
+                data: data,
             });
         })
         .error(function(data, status, headers, config) {
@@ -131,8 +131,8 @@ angular.module('cipApp')
         .success(function(data, status, headers, config) {
             callback(factor, {
                 success: !data.error,
-                requestId: data.results.requestId,
-                length: data.error ? 0 : data.results.count
+                requestId: data.requestId,
+                length: data.error ? 0 : data.count
             });
         })
         .error(function(data, status, headers, config) {
