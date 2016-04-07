@@ -50,7 +50,7 @@ exports.get = function(endpoint, query, callback) {
   request({
     url: createURL(endpoint, query),
 		method: 'GET',
-    timeout: 100000
+    timeout: 60000
 	}, (err, res, body) => {
     if (err) {
       //console.log('Error:', err);

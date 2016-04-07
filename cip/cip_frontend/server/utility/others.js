@@ -16,6 +16,7 @@ import config from '../config/environment';
  * Note: comment out console.log for production.
  */
 exports.generateCond = function(condition, metadata) {
+  condition = JSON.parse(JSON.stringify(condition));
   // Map the vertex name to vertex type.
   var tagT = {};
   var k = 0;

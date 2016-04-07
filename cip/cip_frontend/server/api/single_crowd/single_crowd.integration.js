@@ -35,13 +35,13 @@ describe('SingleCrowd API:', function() {
       request(app)
         .post('/api/crowds')
         .send({
-          crowdName: 'New SingleCrowd',
+          crowdName: 'TestCrowd',
           description: 'This is the brand new singleCrowd!!!',
           type: 'static',
           count: 1,
           selector: {
             tag: [
-              {
+              { 
                 factor: 'gender.female',
                 operator: '=',
                 name: 'gender',
@@ -72,7 +72,7 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the newly created singleCrowd', function() {
-      newSingleCrowd.crowdName.should.equal('New SingleCrowd');
+      newSingleCrowd.crowdName.should.equal('TestCrowd');
       newSingleCrowd.description.should.equal('This is the brand new singleCrowd!!!');
     });
 
@@ -123,7 +123,7 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the requested singleCrowd', function() {
-      singleCrowd.crowdName.should.equal('New SingleCrowd');
+      singleCrowd.crowdName.should.equal('TestCrowd');
       singleCrowd.description.should.equal('This is the brand new singleCrowd!!!');
     });
 
@@ -136,7 +136,7 @@ describe('SingleCrowd API:', function() {
       request(app)
         .put('/api/crowds/' + newSingleCrowd._id)
         .send({
-          crowdName: 'Updated SingleCrowd',
+          crowdName: 'TestCrowd',
           description: 'This is the updated singleCrowd!!!'
         })
         .expect(200)
@@ -155,38 +155,38 @@ describe('SingleCrowd API:', function() {
     });
 
     it('should respond with the updated singleCrowd', function() {
-      updatedSingleCrowd.crowdName.should.equal('Updated SingleCrowd');
+      updatedSingleCrowd.crowdName.should.equal('TestCrowd');
       updatedSingleCrowd.description.should.equal('This is the updated singleCrowd!!!');
     });
 
   });
 
-  describe('DELETE /api/crowds/:id', function() {
+  // describe('DELETE /api/crowds/:id', function() {
 
-    it('should respond with 204 on successful removal', function(done) {
-      request(app)
-        .delete('/api/crowds/' + newSingleCrowd._id)
-        .expect(204)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
+  //   it('should respond with 204 on successful removal', function(done) {
+  //     request(app)
+  //       .delete('/api/crowds/' + newSingleCrowd._id)
+  //       .expect(204)
+  //       .end((err, res) => {
+  //         if (err) {
+  //           return done(err);
+  //         }
+  //         done();
+  //       });
+  //   });
 
-    it('should respond with 404 when singleCrowd does not exist', function(done) {
-      request(app)
-        .delete('/api/crowds/' + newSingleCrowd._id)
-        .expect(404)
-        .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          done();
-        });
-    });
+  //   it('should respond with 404 when singleCrowd does not exist', function(done) {
+  //     request(app)
+  //       .delete('/api/crowds/' + newSingleCrowd._id)
+  //       .expect(404)
+  //       .end((err, res) => {
+  //         if (err) {
+  //           return done(err);
+  //         }
+  //         done();
+  //       });
+  //   });
 
-  });
+  // });
 
 });
