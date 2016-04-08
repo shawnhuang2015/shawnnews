@@ -40,6 +40,7 @@ function respondWithResult(res, statusCode) {
  * @param  {SingleCrowd} updates [the new data]
  */
 function saveUpdates(updates) {
+  console.log(updates);
   return function(entity) {
     var updated = _.merge(entity, updates);
     return updated.save()
@@ -241,7 +242,20 @@ export function show(req, res) {
  */
 export function create(req, res) {
   return SingleCrowd.create(req.body)
-    .then(createAtRemoteServer())
+    .then(() => {
+      return Ontology.findOne({ name: 'MetaData' })
+    })
+    .then(others.createRequestBody(req.body))
+    .then(body => {
+      var crowdName = config.CrowdPrefix.single + req.body.crowdName;
+      return rest.post('crowd/v1/create', 'name=' + crowdName + '&limit=' + config.userLimit, body);
+    })
+    .then(rest.handleResponse(req.body))
+    .then(updates => {
+      return SingleCrowd.findOne({ crowdName: updates.crowdName })
+        .then(handleEntityNotFound(res))
+        .then(saveUpdates(updates));
+    })
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
