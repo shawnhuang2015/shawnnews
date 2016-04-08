@@ -175,9 +175,9 @@ function destroyAtRemoteServer() {
               var res = JSON.parse(response);
               //console.log('Response from engine:\n', res);
               if (!res || res.error === true) {
-                console.log('Error in deleting crowd at remote server');
+                // console.log('Error in deleting crowd at remote server');
               } else {
-                console.log('Succesfully deleted crowd', entity.crowdName);
+                // console.log('Succesfully deleted crowd', entity.crowdName);
               }
           });
         }
@@ -392,7 +392,7 @@ export function userCount(req, res) {
       // Use the utility 'rest.post' function to make request to the engine.
       rest.post('crowd/v1/user_search', 'limit=0&rid=' + req.query.rid, body, function(err, response) {
         var responseJSON = JSON.parse(response);
-        console.log('Response from engine:\n', responseJSON);
+        // console.log('Response from engine:\n', responseJSON);
         if (!responseJSON || responseJSON.error === true) {
           // If fail to get the data from the server,
           // return the error.

@@ -83,9 +83,11 @@ exports.generateCond = function(condition, metadata) {
  * @param  {string} path     [the file path]
  * @param  {string} fileName [the file name]
  * @param  {JSON}   data     [the response from server]
+ *
+ * Note: comment out console.log for production.
  */
 function write(path, fileName, data) {
-  fs.writeFile(path + '/' + fileName, data, function(err) {
+  fs.writeFile(path + '/' + fileName.toLowerCase(), data, function(err) {
     if (err) {
       console.log('Error in writing to file:', path, '\n', err);
     } else {
@@ -99,6 +101,8 @@ function write(path, fileName, data) {
  * @param  {string} res      [the response from server]
  * @param  {string} path     [the file path]
  * @param  {string} fileName [the file name]
+ *
+ * Note: comment out console.log for production.
  */
 exports.writeToFile = function(res, path, fileName) {
   res = JSON.parse(res);
