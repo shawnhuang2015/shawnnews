@@ -75,6 +75,12 @@ function config($stateProvider, $urlRouterProvider, $locationProvider) {
       controller: 'groupCtrl',
       controllerAs : 'vm'
   })
+  .state('crowd.group_user', {
+      url: "/group_user",
+      templateUrl: "app/group/group.user.html",
+      controller: 'groupCtrl',
+      controllerAs : 'vm'
+  })
 
   $locationProvider.html5Mode(true);
 }

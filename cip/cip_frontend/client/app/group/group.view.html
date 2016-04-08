@@ -1,0 +1,50 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="">
+    <h4 class="text-center" ng-if="!crowds || crowds.length<=0">您还没有创建人群,请先创建人群</h4>
+    <h4 class="text-center" ng-if="crowds.length>0 && (!grouplist || grouplist.length<=0)">您还没有创建人群组合,快来创建一个吧</h4>
+
+    <table class="table table-hover" ng-if="grouplist.length>0">
+        <h4 ng-if="grouplist.length>0">人群组合列表</h4>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>人群组合名称</th>
+            <th>类型</th>
+            <th>覆盖人数</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="crowd in grouplist">
+            <td>{{$index+1}}</td>
+            <td>{{crowd.crowdName}}</td>
+            <td>{{crowd.type}}</td>
+            <td>{{crowd.count}}</td>
+            <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd.tagAdded == 1" class="text-success">创建完成</td>
+            <td ng-if="crowd.tagAdded == 0" class="text-warning">创建中</td>
+            <td ng-if="crowd.tagAdded == -1" class="text-danger">创建失败</td>
+            <td>
+                <span>
+                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/group/{{crowd.crowdName}}/userlist">详情</a>
+                    <button class="btn btn-danger btn-xs" data-ng-click="removeGroup(crowd);">删除</button>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-center" ng-show="grouplist.length>0">
+        <uib-pagination boundary-links="true" total-items="totalGroupItems" ng-model="currentGroupPage" class="pagination-sm" ng-change="pageGroupChanged()"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" items-per-page="page_size">
+
+        </uib-pagination>
+    </div>
+
+    <div class="col-md-offset-5 col-md-2">
+        <button data-ng-click="goToCreateGroup()" ng-if="crowds.length>0" class="btn btn-info btn-block">创建人群组合</button>
+    </div>
+
+
+
+</div>

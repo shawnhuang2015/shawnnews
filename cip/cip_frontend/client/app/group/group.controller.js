@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('cipApp')
-  .controller('GroupCtrl', function ($scope) {
+  .controller('groupCtrl', function ($scope) {
     $scope.message = 'Hello';
   });
