@@ -87,7 +87,7 @@ exports.generateCond = function(condition, metadata) {
  * Note: comment out console.log for production.
  */
 function write(path, fileName, data) {
-  fs.writeFile(path + '/' + fileName.toLowerCase(), data, function(err) {
+  fs.writeFile(path + '/' + fileName, data, function(err) {
     if (err) {
       console.log('Error in writing to file:', path, '\n', err);
     } else {
