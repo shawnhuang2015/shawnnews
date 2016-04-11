@@ -72,29 +72,21 @@ function handleError(res, statusCode) {
  * Note: comment out console.log for production.
  */
 export function index(req, res) {
-  Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-    if (err) {
-      // If error happens.
-      return res.status(500).send(err);
-    }
-    if (!data) {
-      // If not found then call the engine to fetch a new meta data.
-      //console.log('Create new ontology');
-      return create(req, res);
-    } else {
-      var curTime = new Date().getTime(); // get the current time
-      if (curTime - data.created.getTime() >= config.semanticSyncTime * 1000) {
-        // If the meta data expires we neet to update it.
-        //console.log('Update ontology'); 
-        return update(req, res);
+  Ontology.findOne({ name: 'MetaData' })
+    .then(onto => {
+      if (!onto) {
+        return create(res);
+      } else {
+        var curTime = new Date().getTime(); // get the current time
+        if (curTime - onto.created.getTime() >= config.semanticSyncTime * 1000) {
+          return update(res);
+        } else {
+          return onto;
+        }
       }
-      else {
-        // Otherwise simply return the meta data.
-        //console.log('Return ontology');
-        return res.status(200).json(data);
-      }
-    }
-  })
+    })
+    .then(respondWithResult(res, 200))
+    .catch(handleError(res));
 }
 
 /**
@@ -104,32 +96,26 @@ export function index(req, res) {
  * 
  * Note: comment out console.log for production. 
  */
-function create(req, res) {
+function create(res) {
   // Use the utility 'rest.get' function to make request to the engine.
-  rest.get('get_profile', 'threshold=' + config.ontoLimit, function(err, response) {
-    var data = JSON.parse(response);
-    //console.log('Data fetch from server:', data);
-    if (!data || data.error === true) {
-      // If fail to get the data from the server,
-      // return the error.
-      if (!data) {
-        return res.status(500).send(err);
-      } else {
-        return res.status(500).send(data.message);
+  rest.get('get_profile', 'threshold=' + config.ontoLimit)
+    .then(response => {
+      if (response.error === true) {
+        res.status(500).send(response.message);
+        return null;
       }
-    } else {
-      // If succesfully get the data from the server,
-      // create a new ontology.
-      var newOntology = new Ontology({
-        name: 'MetaData',
-        profile: data.results
-      });
-
-      return Ontology.create(newOntology)
-        .then(respondWithResult(res, 200))
-        .catch(handleError(res)); 
-    }
-  })
+      else {
+        // If succesfully get the data from the server,
+        var newOntology = {
+          name: 'MetaData',
+          profile: response.message
+        };
+        
+        return Ontology.create(newOntology)
+          .then(respondWithResult(res, 200))
+          .catch(handleError(res));
+      }
+    });
 }
 
 /**
@@ -139,27 +125,19 @@ function create(req, res) {
  * 
  * Note: comment out console.log for production.
  */
-function update(req, res) {
+function update(res) {
   // Use the utility 'rest.get' function to make request to the engine.
-  rest.get('get_profile', 'threshold=' + config.ontoLimit, function(err, response) {
-    var data = JSON.parse(response);
-    //console.log('Data fetch from server:', data);
-    if (!data || data.error === true) {
-      // If fail to get the data from the server,
-      // return the error.
-      if (!data) {
-        return res.status(500).send(err);
+  rest.get('get_profile', 'threshold=' + config.ontoLimit)
+    .then(response => {
+      if (response.error === true) {
+        res.status(500).send(response.message);
+        return null;
       } else {
-        return res.status(500).send(data.message);
+        return Ontology.findOne({ name: 'MetaData' }).exec()
+          .then(handleEntityNotFound(res))
+          .then(saveUpdates(response.message))
+          .then(respondWithResult(res, 200))
+          .catch(handleError(res));
       }
-    } else {
-      // If succesfully get the data from the server,
-      // update the ontology.
-      return Ontology.findOne({ name: 'MetaData' }).exec()
-        .then(handleEntityNotFound(res))
-        .then(saveUpdates(data.results))
-        .then(respondWithResult(res))
-        .catch(handleError(res));
-    }
-  })
+    })
 }

@@ -40,7 +40,6 @@ function respondWithResult(res, statusCode) {
  * @param  {SingleCrowd} updates [the new data]
  */
 function saveUpdates(updates) {
-  console.log(updates);
   return function(entity) {
     var updated = _.merge(entity, updates);
     return updated.save()
@@ -94,116 +93,16 @@ function handleError(res, statusCode) {
 }
 
 /**
- * Create the crowd on the engine if the crowd type is static.
- * If the crowd type is dynamic then just update the tag.
- *
- * Note: comment out console.log for production. 
- */
-function createAtRemoteServer() {
-  // Create a default updates.
-  var updates = { tagAdded: 0, file: '' };
-
-  return function(entity) {
-    if (entity) {
-      if (entity.type === 'static') { // if the crowd type is static.
-        Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-          if (err || !data) {
-            // If the meta data can not be found,
-            // set crowd's tag to -1 (failed).
-            updates.tagAdded = -1;
-          } else {
-            // Create request body for the engine.
-            var body = JSON.stringify({
-              crowdIndex: data.profile.crowdIndex,
-              searchCond: {
-                target: data.profile.target,
-                selector: others.generateCond(entity.selector, data.profile)
-              }
-            });
-            
-            //Use the utility 'rest.post' function to make request to the engine.
-            rest.post('crowd/v1/create', 'name=' + config.CrowdPrefix.single + 
-              entity.crowdName + '&limit=' + config.userLimit, body, function(err, response) {
-              var res = JSON.parse(response);
-              //console.log('Response from engine:\n', res);
-              if (!res || res.error === true) {
-                // If fail to create crowd on the engine
-                // set crowd's tag to -1 (failed).
-                updates.tagAdded = -1;
-              } else {
-                entity.save();
-                // If succesfully create crowd on the engine,
-                // set crowd's tag to 1 (success),
-                updates.tagAdded = 1;
-                // set crowd's file name and
-                updates.file = entity.crowdName + config.CrowdFileSuffix.single;
-                // write the response from engine to file.
-                others.writeToFile(response, config.dataPath, entity.crowdName + 
-                  config.CrowdFileSuffix.single);
-              }
-              // Save the new crowd's tag and crowd's file name.
-              return entity.save()
-                .then(saveUpdates(updates));
-            });
-          }
-        });
-      } else { // if the crowd type is dynamic.
-        updates.tagAdded = 1; // update crowd's tag to 1 (success).
-      }
-    } 
-    // Save the new crowd's tag and crowd's file name.
-    return entity.save()
-      .then(saveUpdates(updates));
-  }
-}
-
-/**
- * Delete the crowd on the engine.
- *
- * Note: comment out console.log for production. 
- */
-function destroyAtRemoteServer() {
-  return function(entity) {
-    if (entity && entity.type === 'static') {
-      Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-        if (err || !data) {
-          // If cannot find the meta data, do nothing.
-          //console.log('Error in retrieving meta data');
-        } else {
-          // Otherwise, use the utility 'rest.get' function to make request to the engine.
-          rest.get('crowd/v1/delete', 'name=' + config.CrowdPrefix.single + entity.crowdName + 
-            '&type=' + data.profile.crowdIndex.vtype, function (err, response) {
-              var res = JSON.parse(response);
-              //console.log('Response from engine:\n', res);
-              if (!res || res.error === true) {
-                // console.log('Error in deleting crowd at remote server');
-              } else {
-                // console.log('Succesfully deleted crowd', entity.crowdName);
-              }
-          });
-        }
-      });
-    } 
-    return entity;
-  }
-}
-
-/**
  * Get a list of SingleCrowds.
  * @param  req [request object]
  * @param  res [response object]
  */
 export function index(req, res) {
-  // Retrieve the query parameters.
-  var pageId = Number(req.query.page_id);
-  var pageSz = Number(req.query.page_size);
-  //console.log('Page ID:', pageId, ', Page size:', pageSz);
-
   // Sort the single crowds by date created
   // and return the crowds within the required range.
   return SingleCrowd.find().sort({ created: -1 })
-                           .limit((pageId + 1) * pageSz)
-                           .skip(pageId * pageSz).exec()
+                           .limit((req.query.page_id + 1) * req.query.page_size)
+                           .skip(req.query.page_id * req.query.page_size).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -214,13 +113,9 @@ export function index(req, res) {
  * @param  res [response object]
  */
 export function count(req, res) {
-  return SingleCrowd.count(function(err, data) {
-    if (err) {
-      return res.status(500).send(err);
-    } else {
-      return res.status(200).json({ count: data });
-    }
-  });
+  return SingleCrowd.count()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 /**
@@ -235,6 +130,48 @@ export function show(req, res) {
     .catch(handleError(res));
 }
 
+function createAtRemoteServer() {
+  return function(crowd) {
+    if (crowd) {
+      if (crowd.type === 'dynamic') {
+        crowd.tagAdded = 1;
+        return crowd;
+      }
+      else if (crowd.type === 'static') {
+        return Ontology.findOne({name: 'MetaData'}).exec()
+          .then(onto => {
+            return JSON.stringify({
+              crowdIndex: onto.profile.crowdIndex,
+              searchCond: {
+                target: onto.profile.target,
+                selector: others.createCondition(crowd.selector, onto.profile)
+              }
+            });
+          })
+          .then(body => {
+            var crowdName = config.CrowdPrefix.single + crowd.crowdName;
+            return rest.post('crowd/v1/create', 'name=' + crowdName + '&limit=' + config.userLimit, body);
+          })
+          .then(response => {
+            if (response.error === true) {
+              crowd.tagAdded = -1;
+            }
+            else {
+              crowd.tagAdded = 1;
+              crowd.file = crowd.crowdName + config.CrowdFileSuffix.single;
+              others.writeToFile(response.message, config.dataPath, crowd.file);
+            }
+            return crowd;
+          })
+          .catch(() => {
+            crowd.tagAdded = -1;
+            return crowd;
+          })
+      }
+    }
+  }
+}
+
 /**
  * Create a new SingleCrowd in the database.
  * @param  req [request object]
@@ -242,21 +179,14 @@ export function show(req, res) {
  */
 export function create(req, res) {
   return SingleCrowd.create(req.body)
-    .then(() => {
-      return Ontology.findOne({ name: 'MetaData' })
-    })
-    .then(others.createRequestBody(req.body))
-    .then(body => {
-      var crowdName = config.CrowdPrefix.single + req.body.crowdName;
-      return rest.post('crowd/v1/create', 'name=' + crowdName + '&limit=' + config.userLimit, body);
-    })
-    .then(rest.handleResponse(req.body))
-    .then(updates => {
-      return SingleCrowd.findOne({ crowdName: updates.crowdName })
+    .then(createAtRemoteServer())
+    .then(crowd => {
+      return SingleCrowd.findOne({ crowdName: crowd.crowdName }).exec()
         .then(handleEntityNotFound(res))
-        .then(saveUpdates(updates));
+        .then(saveUpdates(crowd))
+        .then(respondWithResult(res, 201))
+        .catch(handleError(res));
     })
-    .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
@@ -274,6 +204,33 @@ export function update(req, res) {
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
     .catch(handleError(res));
+}
+
+function destroyAtRemoteServer() {
+  return function(crowd){
+    if (crowd) {
+      if (crowd.type === 'dynamic') {
+        return crowd;
+      } else if (crowd.type === 'static') {
+        return Ontology.findOne({ name: 'MetaData' }).exec()
+          .then(onto => {
+            var crowdName = config.CrowdPrefix.single + crowd.crowdName;
+            return rest.get('crowd/v1/delete', 'name=' + crowdName + '&type=' + onto.profile.crowdIndex.vtype);
+          })
+          .then(response => {
+            if (response.error === true) {
+              console.log('Error in deleting crowd at remote server\n', response.message);
+            } else {
+              // console.log('Succesfully deleted crowd', crowd.crowdName);
+            }
+            return crowd;
+          })
+          .catch(err => {
+            console.log('Error in deleting crowd\n', err);
+          })
+      }
+    }
+  }
 }
 
 /**
@@ -297,91 +254,27 @@ export function destroy(req, res) {
  * Note: comment out console.log for production. 
  */
 export function sample(req, res) {
-  var count = req.query.count || 10;
-  //console.log('Count:', count);
-  
-  SingleCrowd.findById(req.params.id).exec(function(err, data) {
-    if (err) { // if there is an error in retrieving the crowd.
-      return res.status(500).send(err);
-    }
-    if (!data) { // if cannot find the crowd.
-      return res.status(404).send(err);
-    }
-    // Create the crowd name with prefix to query on the engine.
-    var crowdName = config.CrowdPrefix.single + data.crowdName;
-    Ontology.findOne({ name: 'MetaData' }, function(err, onto) {
-      if (err || !onto) {
-        // If there is an error in retrieving the meta data,
-        // or the meta data is empty, send the error.
-        return res.status(500).send(err);
-      } else {
-        // Otherwise, use the utility 'rest.get' function to make request to the engine.
-        rest.get('crowd/v1/get', 'name=' + crowdName + '&type=' + 
-          onto.profile.crowdIndex.vtype + '&limit=' + count, function(err, response) {
-          var responseJSON = JSON.parse(response);
-          //console.log('Response from engine:\n', responseJSON);
-          if (!responseJSON || responseJSON.error === true) {
-            // If fail to get the data from the server,
-            // return the error.
-            if (!responseJSON) {
-              return res.status(500).send(err);
-            } else {
-              return res.status(500).send(responseJSON.message);  
-            }
+  return SingleCrowd.findById(req.params.id).exec()
+    .then(crowd => {
+      return Ontology.findOne({ name: 'MetaData' }).exec()
+        .then(onto => {
+          var crowdName = config.CrowdPrefix.single + crowd.crowdName;
+          return rest.get('crowd/v1/get', 'name=' + crowdName + '&type=' + 
+            onto.profile.crowdIndex.vtype + '&limit=' + req.query.count);
+        })
+        .then(response => {
+          if (response.error === true) {
+            res.status(500).send(response.message);
+            return null;
           } else {
-            // If succesfully get the data from the server,
-            // return the response from engine.
-            return res.status(200).send(responseJSON.results);
+            return response.message;
           }
-        });
-      }
-    });
-  });
+        })
+        .catch(handleError(res));
+    })
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
-
-/**
- * THIS IS NOT USED!
- * 
- * Rerturn the full list of users from the engine.
- * @param  req [request object]
- * @param  res [response object]
- *
- * Note: comment out console.log for production. 
- */
-// export function userList(req, res) {
-//   Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-//     if (err || !data) {
-//       // If there is an error in retrieving the meta data,
-//       // or the meta data is empty, send the error.
-//       return res.status(500).send(err);
-//     } else {
-//       // Create request body for the engine.
-//       var body = JSON.stringify({
-//         target: data.profile.target,
-//         selector: others.generateCond(req.body.selector, data.profile)
-//       });
-
-//       // Use the utility 'rest.post' function to make request to the engine.
-//       rest.post('crowd/v1/user_search', '', body, function (err, response) {
-//         var responseJSON = JSON.parse(response);
-//         console.log('Response from engine:\n', responseJSON);
-//         if (!responseJSON || responseJSON.error === true) {
-//           // If fail to get the data from the server,
-//           // return the error.
-//           if (!responseJSON) {
-//             return res.status(500).send(err);
-//           } else {
-//             return res.status(500).send(responseJSON.message);  
-//           }
-//         } else {
-//           // If succesfully get the data from the server,
-//           // return the response from engine.
-//           return res.status(200).send(responseJSON.results);
-//         }
-//       });
-//     }
-//   });
-// }
 
 /**
  * Return the number of user from the crowd.
@@ -391,36 +284,24 @@ export function sample(req, res) {
  * Note: comment out console.log for production.
  */
 export function userCount(req, res) {
-  Ontology.findOne({ name: 'MetaData' }, function(err, data) {
-    if (err || !data) {
-      // If there is an error in retrieving the meta data,
-      // or the meta data is empty, send the error.
-      return res.status(500).send(err);
-    } else {
-      // Create request body for the engine.
-      var body = JSON.stringify({
-        target: data.profile.target,
-        selector: others.generateCond(req.body.selector, data.profile)
+  return Ontology.findOne({ name: 'MetaData' })
+    .then(onto => {
+      return JSON.stringify({
+        target: onto.profile.target,
+        selector: others.createCondition(req.body.selector, onto.profile)
       });
-
-      // Use the utility 'rest.post' function to make request to the engine.
-      rest.post('crowd/v1/user_search', 'limit=0&rid=' + req.query.rid, body, function(err, response) {
-        var responseJSON = JSON.parse(response);
-        // console.log('Response from engine:\n', responseJSON);
-        if (!responseJSON || responseJSON.error === true) {
-          // If fail to get the data from the server,
-          // return the error.
-          if (!responseJSON) {
-            return res.status(500).send(err);
-          } else {
-            return res.status(500).send(responseJSON.message); 
-          }
-        } else {
-          // If succesfully get the data from the server,
-          // return the response from engine.
-          return res.status(200).send(responseJSON.results);
-        }
-      });
-    }
-  });
+    })
+    .then(body => {
+      return rest.post('crowd/v1/user_search', 'limit=0&rid=' + req.query.rid, body)
+    })
+    .then(response => {
+      if (response.error === true) {
+        res.status(500).send(response.message);
+        return null;
+      } else {
+        return response.message;
+      }
+    })
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
