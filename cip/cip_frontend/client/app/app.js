@@ -76,7 +76,7 @@ function config($stateProvider, $urlRouterProvider, $locationProvider) {
       controllerAs : 'vm'
   })
   .state('crowd.group_user', {
-      url: "/group_user",
+      url: "/:groupID/group_user",
       templateUrl: "app/group/group.user.html",
       controller: 'groupCtrl',
       controllerAs : 'vm'

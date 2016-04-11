@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('cipApp')
-.controller('crowdCtrl', function ($scope, $state, $translate, $stateParams, $location, crowdFactory) {
+.controller('crowdCtrl', function ($rootScope, $scope, $state, $translate, $stateParams, $location, crowdFactory) {
+  $rootScope.crowd = $scope;
+
   $scope.message = 'Crowd CRUD controller.';
   $scope.valid = false;
 

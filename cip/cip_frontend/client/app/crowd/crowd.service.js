@@ -25,7 +25,7 @@ angular.module('cipApp')
             var success = status == 200 || status == 200;
             callback({
                 success: success,
-                count: !success ? 0 : data.count
+                count: !success ? 0 : data
             });
         })
         .error(function(data, status, headers, config) {

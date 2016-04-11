@@ -98,6 +98,23 @@ function config($translateProvider) {
         ExploreUser: 'Explore user',
         DownloadUserList: 'Download User ID List'
       },
+      Group_view : {
+        NoGroupExist: 'No group exist, please create one!',
+        GroupList: 'Group List',
+        GroupIndex: 'Index',
+        GroupName: 'Group Name',
+        GroupType: 'Type',
+        GroupCoverAomunt: 'Group People',
+        GroupCreateDate: 'Create Date',
+        GroupStatus: 'Status',
+        GroupAction: 'Action',
+        CreateGroup: 'Create Group',
+        CreateInProcessing: 'Creating',
+        CreateComplete: 'Create Complete',
+        CreateFailed: 'Create Failed',
+        Detail: 'Detail',
+        Delete: 'Delete'
+      },
       Warning : {
         ObjectValueNull : 'Input object Value is not valid!',
         TagNull : 'Input tag is not valid!',
@@ -201,6 +218,23 @@ function config($translateProvider) {
         DynamicCrowdUserList: '动态人群暂时不支持显示用户列表',
         ExploreUser: '探索此用户',
         DownloadUserList: '下载UID集合'
+      },
+      Group_view : {
+        NoGroupExist: '您还没有创建人群组合,现在开始创建一个人群组合吧!',
+        GroupList: '人群组合列表',
+        GroupIndex: '序号',
+        GroupName: '人群组合名称',
+        GroupType: '类型',
+        GroupCoverAomunt: '覆盖人数',
+        GroupCreateDate: '创建时间',
+        GroupStatus: '状态',
+        GroupAction: '操作',
+        CreateGroup: '创建人群组合',
+        CreateInProcessing: '创建中',
+        CreateComplete: '创建完成',
+        CreateFailed: '创建失败',
+        Detail: '详情',
+        Delete: '删除'
       },
       Warning : {
         ObjectValueNull : '对象值不能为空',
