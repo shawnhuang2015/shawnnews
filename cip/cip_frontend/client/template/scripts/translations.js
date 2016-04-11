@@ -104,7 +104,7 @@ function config($translateProvider) {
         GroupIndex: 'Index',
         GroupName: 'Group Name',
         GroupType: 'Type',
-        GroupCoverAomunt: 'Group People',
+        GroupCoverAomunt: 'Group Amount',
         GroupCreateDate: 'Create Date',
         GroupStatus: 'Status',
         GroupAction: 'Action',
@@ -113,7 +113,8 @@ function config($translateProvider) {
         CreateComplete: 'Create Complete',
         CreateFailed: 'Create Failed',
         Detail: 'Detail',
-        Delete: 'Delete'
+        Delete: 'Delete',
+        GroupDeleteComfirmMessage: 'Do you want to delete the group?'
       },
       Warning : {
         ObjectValueNull : 'Input object Value is not valid!',
@@ -234,7 +235,8 @@ function config($translateProvider) {
         CreateComplete: '创建完成',
         CreateFailed: '创建失败',
         Detail: '详情',
-        Delete: '删除'
+        Delete: '删除',
+        GroupDeleteComfirmMessage: '确定要删除这个人群组合吗？'
       },
       Warning : {
         ObjectValueNull : '对象值不能为空',

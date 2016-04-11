@@ -27,7 +27,6 @@ angular.module('cipApp')
   }
 
 
-
   // config of group view.
   $scope.group = {
     logic : [

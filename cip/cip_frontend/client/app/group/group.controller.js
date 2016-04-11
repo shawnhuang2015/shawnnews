@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cipApp')
-  .controller('groupCtrl', function ($rootScope, $scope, groupFactory, crowdFactory) {
+  .controller('groupCtrl', function ($rootScope, $scope, $state, $translate, $stateParams, $location, groupFactory, crowdFactory) {
     $rootScope.group = $scope;
     $scope.message = 'Hello';
 
@@ -14,6 +14,7 @@ angular.module('cipApp')
     }
 
     $scope.crowd = {
+      length: 0
     };
 
     $scope.group = {
@@ -23,22 +24,39 @@ angular.module('cipApp')
     $scope.init_view = function() {
       console.log('init view of group.');
 
-      $scope.crowds = [];
       $scope.group.list = [1,2,3,4,5];
 
-      groupFactory
-      .viewGroups(0, $scope.page.page_size, function (data) {
-        if (data.success) {
-          $scope.group.list = data.list;
-        }
-        else {
-          $scope.group.list = [];
-        }
-      });
+      crowdFactory
+      .getCrowdsCount(function(data) {
+        if (data.success)
+          $scope.crowd.length = data.count;
+        else 
+          $scope.crowd.length = 0;
+      })
+
+      // groupFactory
+      // .viewGroups(0, $scope.page.page_size, function (data) {
+      //   if (data.success) {
+      //     $scope.group.list = data.list;
+      //   }
+      //   else {
+      //     $scope.group.list = [];
+      //   }
+      // });
 
 
       $scope.remove = function(groupID) {
         console.log("Delete a group by ID");
+        if (confirm($translate.instant('Group_view.GroupDeleteComfirmMessage'))) {
+          groupFactory
+          .deleteGroup(groupID, function(data) {
+            for (var i in $scope.group.list) {
+              if ($scope.group.list[i]._id === data._id) {
+                  $scope.group.list.splice(i, 1);
+              }
+            } 
+          })
+        }
       }
 
       $scope.groupPageChanged = function() {
@@ -57,7 +75,16 @@ angular.module('cipApp')
           }
         });
       };
+
+      $scope.goToCreateGroup = function() {
+        $state.go('crowd.group_create');
+      }
     }
 
+    $scope.init_user = function() {
+      console.log("init user.")
 
+      console.log($stateParams);
+      console.log($scope);
+    }
   });
