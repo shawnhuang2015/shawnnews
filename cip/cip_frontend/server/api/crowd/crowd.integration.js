@@ -5,7 +5,7 @@ import request from 'supertest';
 
 var newSingleCrowd;
 
-describe('SingleCrowd API:', function() {
+describe('Single Crowd API:', function() {
 
   describe('GET /api/crowds', function() {
     var singleCrowds;

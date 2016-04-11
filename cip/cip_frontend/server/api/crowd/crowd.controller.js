@@ -15,7 +15,7 @@
 'use strict';
 
 import _ from 'lodash';
-import SingleCrowd from './single_crowd.model';
+import SingleCrowd from './crowd.model';
 import Ontology from '../ontology/ontology.model';
 import rest from '../../utility/rest';
 import others from '../../utility/others';
