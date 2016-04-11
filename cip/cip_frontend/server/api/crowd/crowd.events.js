@@ -5,11 +5,11 @@
 'use strict';
 
 import {EventEmitter} from 'events';
-import SingleCrowd from './single_crowd.model';
-var SingleCrowdEvents = new EventEmitter();
+import SingleCrowd from './crowd.model';
+var crowdEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)
-SingleCrowdEvents.setMaxListeners(0);
+crowdEvents.setMaxListeners(0);
 
 // Model events
 var events = {
@@ -25,9 +25,9 @@ for (var e in events) {
 
 function emitEvent(event) {
   return function(doc) {
-    SingleCrowdEvents.emit(event + ':' + doc._id, doc);
-    SingleCrowdEvents.emit(event, doc);
+    crowdEvents.emit(event + ':' + doc._id, doc);
+    crowdEvents.emit(event, doc);
   }
 }
 
-export default SingleCrowdEvents;
+export default crowdEvents;
