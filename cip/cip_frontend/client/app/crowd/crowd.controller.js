@@ -174,10 +174,9 @@ angular.module('cipApp')
           for (var i in $scope.crowd.list) {
             if ($scope.crowd.list[i]._id === data._id) {
                 $scope.crowd.list.splice(i, 1);
+                $scope.init_view();
             }
-          }
-
-          
+          }     
         })
       }
     };

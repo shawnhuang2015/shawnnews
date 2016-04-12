@@ -19,7 +19,7 @@
                 </tr>
                 </tbody>
             </table>
-            <div class="col-md-offset-8 col-md-3"><h5>{{'Group_user.QueryMatchAmount' | translate}}{{groupDetail.count}}</h5></div>
+            <div class="col-md-offset-8 col-md-3"><h5>{{'Group_user.QueryMatchAmount' | translate}} : <strong>{{groupDetail.count}}</strong></h5></div>
         </div>
     </fieldset>
 
@@ -34,19 +34,19 @@
         <div class="col-md-offset-3 col-md-6">
             <table class="table table-hover table-bordered" ng-if="userList.length>0 && groupDetail.type == 'static'">
                 <thead>
-                <tr>
+                <tr align="center">
                     <th>{{'Group_user.Index' | translate}}</th>
                     <th>UID</th>
                     <th>{{'Group_user.QueryMatchAmount' | translate}}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr data-ng-repeat="user in userList">
+                <tr data-ng-repeat="user in userList" align="center">
                     <td>{{$index+1}}</td>
                     <td>{{user}}</td>
                     <td>
                     <span>
-                        <button class="btn btn-info btn-xs">{{'Group_user.ExploreUser' | translate}}
+                        <button class="btn btn-info btn-xs" data-ng-click="comingSoon()">{{'Group_user.ExploreUser' | translate}}
                         </button>
                     </span>
                     </td>
@@ -56,7 +56,7 @@
         </div>
     </fieldset>
 
-    <div class="col-md-offset-5 col-md-2">
+    <div class="col-md-offset-3 col-md-6">
         <a target="_self" id="downloadUserlist" href="/api/miscs/download?file={{groupDetail.file}}" download="userlist.xml"
            class="btn btn-info btn-block" ng-if="userList.length>0 && groupDetail.type == 'static'">{{'Group_user.DownloadUserList' | translate}}</a>
     </div>

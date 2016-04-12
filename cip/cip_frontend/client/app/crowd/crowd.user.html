@@ -88,14 +88,14 @@
       <div class="col-md-offset-3 col-md-6">
           <table class="table table-hover table-bordered" ng-if="userList.length>=0 && crowdDetail.type == 'static'">
               <thead>
-              <tr>
+              <tr align="center">
                   <th>{{'Crowd_create.Index' | translate}}</th>
                   <th>UID</th>
                   <th>{{'Crowd_create.Action' | translate}}</th>
               </tr>
               </thead>
               <tbody>
-              <tr data-ng-repeat="user in userList">
+              <tr data-ng-repeat="user in userList" align="center">
                   <td>{{$index+1}}</td>
                   <td>{{user}}</td>
                   <td>

@@ -8,8 +8,10 @@ angular.module('cipApp')
         createGroup : function(group, callback) {
           $http.post('/api/groups', group)
           .success(function(data, status, headers, config) {
+              var success = status == 200 
               callback({
-                  success: !data.error
+                  success: !data.error,
+                  _id:data._id
               });
           })
           .error(function(data, status, headers, config) {
@@ -21,7 +23,7 @@ angular.module('cipApp')
         viewGroups : function(page_id, page_size, callback) {
           $http.get('/api/groups/',{params:{page_id:page_id,page_size:page_size}})
           .success(function(data, status, headers, config) {
-              var success = status == 200 || status == 200;
+              var success = status == 200 || status == 304;
               callback({
                   success: success,
                   list: data
@@ -33,6 +35,38 @@ angular.module('cipApp')
                   success: false
               });
           }); 
+        },
+        getGroup : function(groupID, callback) {
+          $http.get('/api/groups/' + groupID)
+          .success(function(data, status, headers, config) {
+              console.log("getCrowd ", status)
+              var success = status == 200;
+              callback({
+                  success: success,
+                  data: data
+              });
+          })
+          .error(function(data, status, headers, config) {
+              callback({
+                  success: false
+              });
+          });
+        },
+        getGroupsCount : function(callback) {
+          // Temporary - probably it should to be resource based.
+          $http.get('/api/groups/count')
+          .success(function(data, status, headers, config) {
+              var success = status == 200 || status == 304;
+              callback({
+                  success: success,
+                  count: !success ? 0 : data
+              });
+          })
+          .error(function(data, status, headers, config) {
+              callback({
+                  success: false
+              });
+          });
         },
         deleteGroup : function(groupID, callback) {
           $http.delete('/api/groups/' + groupID)
@@ -51,12 +85,12 @@ angular.module('cipApp')
           });
         },
         getGroupUserCount : function(rid, factor, callback) {
-          $http.post('/api/groups/user_count?rid='+rid,factor)
+          $http.post('/api/groups/user_count?rid='+rid, factor)
           .success(function(data, status, headers, config) {
               callback({
                   success: !data.error,
-                  requestId: data.results.requestId,
-                  length: data.error ? 0 : data.results.count
+                  requestId: data.requestId,
+                  length: data.error ? 0 : data.count
               });
           })
           .error(function(data, status, headers, config) {
@@ -68,11 +102,12 @@ angular.module('cipApp')
         getGroupSample : function(groupID, sample_number, type, callback) {
           $http.get('/api/groups/' + groupID + '/sample', {params:{count:sample_number, type:type}})
           .success(function(data, status, headers, config) {
-              var success = status == 200;
+              var success = status == 200 || status == 304;
               
               callback({
                   success: success,
-                  data: data,
+                  userList: data.userIds,
+                  count: data.count
               });
           })
           .error(function(data, status, headers, config) {

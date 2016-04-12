@@ -62,8 +62,8 @@
                     </tbody>
                 </table>
                 <div class="col-md-offset-8 col-md-3">
-                    <h5 ng-if="groupDetail.count >= -1">{{ 'Group_create.QueryMatchAmount' | translate}}
-                        <span ng-if="groupDetail.count >= 0">{{groupDetail.count}}</span>
+                    <h5 ng-if="groupDetail.count >= -1">{{ 'Group_create.QueryMatchAmount' | translate}} : 
+                        <strong ng-if="groupDetail.count >= 0">{{groupDetail.count}}</strong>
                     <span ng-if="groupDetail.count == -1"
                           class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
                         {{ 'Group_create.zh_People' | translate}}</h5>
@@ -106,13 +106,14 @@
                 <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
                 <td>
                 <span>
-                    <button class="btn btn-info btn-xs" type="button" data-ng-click="addToList(crowd);">{{ 'Group_create.AddCrowd' | translate}}</button>
+                    <button ng-if="!crowd.__selected" class="btn btn-info btn-xs" type="button" data-ng-click="addToList(crowd);">{{ 'Group_create.AddCrowd' | translate}}</button>
+                    <button ng-if="crowd.__selected" class="btn btn-danger btn-xs" type="button">{{ 'Group_create.AlreadAddedCrowd' | translate}}</button>
                 </span>
                 </td>
             </tr>
             </tbody>
         </table>
-        <div class="col-md-offset-5">
+        <div class="col-md-offset-5" ng-show="crowd_page.total_items>crowd_page.page_size">
             <uib-pagination 
             boundary-links="true" 
             total-items="crowd_page.total_items" 
@@ -130,5 +131,6 @@
 
     </form>
 
-
+    <br />
+    <br />
 </div>

@@ -138,6 +138,7 @@ function config($translateProvider) {
         UpdatedSuccessfully: 'Updated Successfully',
         CreatedSuccessfully: 'Created Successfully',
         CreatedFailed: 'Created Failed',
+        AlreadAddedCrowd: 'Added'
       },
       Group_user : {
         CrowdList : 'Selected Crowds',
@@ -296,6 +297,7 @@ function config($translateProvider) {
         UpdatedSuccessfully: '更新成功',
         CreatedSuccessfully: '创建成功!',
         CreatedFailed: '创建失败!',
+        AlreadAddedCrowd: '已添加'
       },
       Group_user : {
         CrowdList : '人群选择列表',
