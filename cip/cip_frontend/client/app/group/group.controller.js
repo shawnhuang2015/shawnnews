@@ -171,17 +171,17 @@ angular.module('cipApp')
             $scope.groupDetail.selector = [];
             $scope.groupDetail.type = 'static';
             for (var index in selectorlist) {
-                $scope.groupDetail.selector.push(selectorlist[index]._id);
+                $scope.groupDetail.selector_id.push(selectorlist[index]._id);
                 if (selectorlist[index].type == 'dynamic') {
                     $scope.groupDetail.type = 'dynamic';
                 }
             }
 
-            if ($stateParams.groupID) {
+            if ($stateParams.groupID !== undefined) {
                 var group = $scope.groupDetail;
                 group.$update(function () {
                     alert($translate.instant('Group_create.UpdatedSuccessfully'));
-                    $location.path('crowd/main');
+                    $location.path('/crowd/group_view');
                 });
             } else {
                 groupFactory.createGroup($scope.groupDetail, function (data) {

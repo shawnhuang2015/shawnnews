@@ -135,6 +135,9 @@ function config($translateProvider) {
         CreateDate: 'Create Date',
         AddCrowd: 'Add Crowd',
         zh_People: ' ',
+        UpdatedSuccessfully: 'Updated Successfully',
+        CreatedSuccessfully: 'Created Successfully',
+        CreatedFailed: 'Created Failed',
       },
       Group_user : {
         CrowdList : 'Selected Crowds',
