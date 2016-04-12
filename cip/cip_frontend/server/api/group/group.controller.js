@@ -139,7 +139,7 @@ export function create(req, res) {
     .then(group => {      
       // Find the selector of the group crowd from the single crowds.
       var selector = [];
-      return Promise.map(group.selector_id, crowdId => {
+      return Promise.map(group.selector, crowdId => {
         // Find each crowd and push its selector to the selector variable.
         return SingleCrowd.findById(crowdId).exec()
           .then(crowd => {
