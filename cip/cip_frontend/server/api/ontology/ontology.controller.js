@@ -75,12 +75,15 @@ export function index(req, res) {
   Ontology.findOne({ name: 'MetaData' })
     .then(onto => {
       if (!onto) {
+        // If there is no Ontology, get new one from the engine.
         return create(res);
       } else {
         var curTime = new Date().getTime(); // get the current time
         if (curTime - onto.created.getTime() >= config.semanticSyncTime * 1000) {
+          // If the Ontology expired, get new one from the engine.
           return update(res);
         } else {
+          // Otherwise return the Ontology.
           return onto;
         }
       }
@@ -91,26 +94,27 @@ export function index(req, res) {
 
 /**
  * Get a new Ontology from the engine.
- * @param  req [request object]
  * @param  res [response object]
  * 
  * Note: comment out console.log for production. 
  */
 function create(res) {
-  // Use the utility 'rest.get' function to make request to the engine.
-  rest.get('get_profile', 'threshold=' + config.ontoLimit)
+  // Make request to the engine.
+  return rest.getOntology()
     .then(response => {
       if (response.error === true) {
+        // If there is error from the engine,
+        // send the error to the client.
         res.status(500).send(response.message);
         return null;
       }
       else {
-        // If succesfully get the data from the server,
+        // Otherwise, create a new Ontology on the database.
         var newOntology = {
           name: 'MetaData',
           profile: response.message
         };
-        
+
         return Ontology.create(newOntology)
           .then(respondWithResult(res, 200))
           .catch(handleError(res));
@@ -126,13 +130,16 @@ function create(res) {
  * Note: comment out console.log for production.
  */
 function update(res) {
-  // Use the utility 'rest.get' function to make request to the engine.
-  rest.get('get_profile', 'threshold=' + config.ontoLimit)
+  // Make request to the engine.
+  return rest.getOntology()
     .then(response => {
       if (response.error === true) {
+        // If there is error from the engine,
+        // send the error to the client.
         res.status(500).send(response.message);
         return null;
       } else {
+        // Otherwise, update the Ontology on the database.
         return Ontology.findOne({ name: 'MetaData' }).exec()
           .then(handleEntityNotFound(res))
           .then(saveUpdates(response.message))

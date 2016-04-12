@@ -53,15 +53,15 @@ var all = {
   },
 
   // Crowd prefix configuration for parameter in querying
-  CrowdPrefix: {
-    single: "single_",
-    multi: "multi_"
+  crowdPrefix: {
+    single: 'single_',
+    group : 'group_'
   },
 
   // Crowd prefix configuration for file name
-  CrowdFileSuffix: {
-    single: ".user.single",
-    multi: '.user.multi'
+  crowdFileSuffix: {
+    single: '.user.single',
+    group : '.user.group'
   },
 
   // The persist time of cache data from engine
@@ -73,8 +73,17 @@ var all = {
   // The limit for the number of user to restrieve
   userLimit: 3000000,
 
+  // Define status code
+  statusCode: {
+    SUCCESS : 200,
+    CREATED : 201,
+    DELETED : 204,
+    NOTFOUND: 404,
+    ERROR   : 500,
+  },
+
   // The data path to save the response from server
-  dataPath: rootPath + "/data/",
+  dataPath: rootPath + "/data/"
 };
 
 // Export the config object based on the NODE_ENV

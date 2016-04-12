@@ -5,7 +5,6 @@
 'use strict'
 
 import fs from 'fs-promise';
-import config from '../config/environment';
 
 /**
  * Generate the condition to create vertex on the engine.
@@ -87,12 +86,12 @@ exports.createCondition = function(condition, metadata) {
  * Note: comment out console.log for production.
  */
 function write(path, fileName, data) {
-  fs.writeFile(path + '/' + fileName.toLowerCase(), data)
+  fs.writeFile(path + '/' + fileName, data)
     .then(() => {
       // console.log('Success in writing to file:', path);
     })
     .catch(err => {
-      console.log('Error in writing to file:', path, '\n', err);
+      // console.log('Error in writing to file:', path, '\n', err);
     });
 }
 
@@ -105,16 +104,17 @@ function write(path, fileName, data) {
  * Note: comment out console.log for production.
  */
 exports.writeToFile = function(res, path, fileName) {
+  // Generate JSON object to save to file.
   var data = 'UserCount: ' + res.count + '\n';
   for (var k = 0; k < res.userIds.length; ++k) {
     data += res.userIds[k] + '\n';
   } 
 
-  if (!fs.existsSync(path)) { // if the folder does not exist.
-    fs.mkdir(path) // try to create new folder.
-      .then(write(path, fileName, data))
+  if (!fs.existsSync(path)) { // if the folder does not exist,
+    fs.mkdir(path) // try to create new folder,
+      .then(write(path, fileName, data)) // then create file.
       .catch(err => {
-        console.log('Error in creating folder:', path, '\n', err);
+        // console.log('Error in creating folder:', path, '\n', err);
       });
   } else { // if the folder exists, just create new file.
     write(path, fileName, data);
