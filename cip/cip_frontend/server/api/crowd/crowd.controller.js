@@ -135,11 +135,11 @@ export function show(req, res) {
 export function create(req, res) {
   return SingleCrowd.create(req.body)
     .then(rest.createAtRemoteServer('single'))
-    .then(crowd => {
+    .then(updates => {
       // Save the new information.
-      return SingleCrowd.findOne({ crowdName: crowd.crowdName }).exec()
+      return SingleCrowd.findOne({ crowdName: updates.crowdName }).exec()
         .then(handleEntityNotFound(res))
-        .then(saveUpdates(crowd))
+        .then(saveUpdates(updates))
         .then(respondWithResult(res, config.statusCode.CREATED))
         .catch(handleError(res));
     })

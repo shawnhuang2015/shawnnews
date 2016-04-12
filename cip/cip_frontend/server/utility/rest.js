@@ -7,6 +7,7 @@
 'use strict'
 
 import Ontology from '../api/ontology/ontology.model';
+import SingleCrowd from '../api/crowd/crowd.model';
 import request from 'request-promise';
 import others from './others';
 import config from '../config/environment';
@@ -136,6 +137,12 @@ exports.getOntology = function() {
 exports.createAtRemoteServer = function(format) {
   return function(crowd) {
     if (crowd) {
+      var updates = { 
+        crowdName: crowd.crowdName,
+        tagAdded: 0,
+        file: ''
+      }
+
       // Check the crowd format to determine prefix and suffix.
       var prefix, suffix;
       if (format === 'single') {
@@ -149,8 +156,8 @@ exports.createAtRemoteServer = function(format) {
       if (crowd.type === 'dynamic') {
         // If the crowd type is dynamic then set the tag to 1
         // and return the crowd.
-        crowd.tagAdded = 1;
-        return crowd;
+        updates.tagAdded = 1;
+        return updates;
       }
       else if (crowd.type === 'static') {
         // If the crowd type is static, create it on the engine.
@@ -166,31 +173,33 @@ exports.createAtRemoteServer = function(format) {
             });
           })
           .then(body => {
+            console.log(body);
             // Make request to the engine.
             var crowdName = prefix + crowd.crowdName;
             return post('crowd/v1/create', 'name=' + crowdName + '&limit=' + config.userLimit, body);
           })
           .then(response => {
+            console.log(response);
             if (response.error === true) {
               // If there is error from the engine,
               // set the tag to -1
-              crowd.tagAdded = -1;
+              updates.tagAdded = -1;
             }
             else {
               // Otherwise set the tag to 1,
-              crowd.tagAdded = 1;
+              updates.tagAdded = 1;
               // set the file name,
-              crowd.file = crowd.crowdName + suffix;
+              updates.file = crowd.crowdName + suffix;
               // and write the response from the engine to file.
-              others.writeToFile(response.message, config.dataPath, crowd.file);
+              others.writeToFile(response.message, config.dataPath, updates.file);
             }
-            return crowd;
+            return updates;
           })
           .catch(() => {
             // If there is other error in the process,
             // set the tag to -1.
-            crowd.tagAdded = -1;
-            return crowd;
+            updates.tagAdded = -1;
+            return updates;
           })
       }
     }
