@@ -1,6 +1,6 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/miscs/donwload     ->  download
+ * GET     /api/miscs/download     ->  download
  */
 
 'use strict';

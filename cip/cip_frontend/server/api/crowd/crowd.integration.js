@@ -7,6 +7,29 @@ var newSingleCrowd;
 
 describe('Single Crowd API:', function() {
 
+  describe('GET /api/ontologys', function() {
+    var ontologys;
+
+    beforeEach(function(done) {
+      request(app)
+        .get('/api/ontologys')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          ontologys = res.body;
+          done();
+        });
+    });
+
+    it('should respond with JSON object', function() {
+      ontologys.should.be.instanceOf(Object);
+    });
+
+  });
+
   describe('GET /api/crowds', function() {
     var singleCrowds;
 
@@ -24,8 +47,8 @@ describe('Single Crowd API:', function() {
         });
     });
 
-    it('should respond with JSON object', function() {
-      singleCrowds.should.be.instanceOf(Object);
+    it('should respond with JSON array', function() {
+      singleCrowds.should.be.instanceOf(Array);
     });
 
   });

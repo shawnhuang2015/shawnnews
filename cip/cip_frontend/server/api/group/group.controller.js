@@ -1,20 +1,20 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/crowds              ->  index
- * GET     /api/crowds/count        ->  count
- * POST    /api/crowds              ->  create
- * GET     /api/crowds/:id          ->  show
- * PUT     /api/crowds/:id          ->  update
- * PATCH   /api/crowds/:id          ->  update
- * DELETE  /api/crowds/:id          ->  destroy
- * GET     /api/crowds/:id/sample   ->  sample
- * POST    /api/crowds/user_count   ->  userCount
+ * GET     /api/groups              ->  index
+ * GET     /api/groyps/count        ->  count
+ * POST    /api/groups              ->  create
+ * GET     /api/groups/:id          ->  show
+ * PUT     /api/groups/:id          ->  update
+ * PATCH   /api/groups/:id          ->  update
+ * DELETE  /api/groups/:id          ->  destroy
+ * GET     /api/groups/:id/sample   ->  sample
+ * POST    /api/groups/user_count   ->  userCount
  */
 
 'use strict';
 
 import _ from 'lodash';
-import SingleCrowd from './crowd.model';
+import GroupCrowd from './group.model';
 import rest from '../../utility/rest';
 import config from '../../config/environment';
 
@@ -90,51 +90,51 @@ function handleError(res, statusCode) {
 }
 
 /**
- * Get a list of SingleCrowds.
+ * Get a list of GroupCrowds.
  * @param  req [request object]
  * @param  res [response object]
  */
 export function index(req, res) {
   // Sort the single crowds by date created
   // and return the crowds within the required range.
-  return SingleCrowd.find().sort({ created: -1 })
-                           .limit((req.query.page_id + 1) * req.query.page_size)
-                           .skip(req.query.page_id * req.query.page_size).exec()
+  return GroupCrowd.find().sort({ created: -1 })
+                          .limit((req.query.page_id + 1) * req.query.page_size)
+                          .skip(req.query.page_id * req.query.page_size).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 /**
- * Get the number of SingleCrowd objects.
+ * Get the number of GroupCrowd objects.
  * @param  req [request object]
  * @param  res [response object]
  */
 export function count(req, res) {
-  return SingleCrowd.count()
+  return GroupCrowd.count()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 /**
- * Get a single SingleCrowd from the database.
+ * Get a single GroupCrowd from the database.
  * @param  req [request object]
  * @param  res [response object]
  */
 export function show(req, res) {
-  return SingleCrowd.findById(req.params.id).exec()
+  return GroupCrowd.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 /**
- * Create a new SingleCrowd in the database.
+ * Create a new GroupCrowd in the database.
  * @param  req [request object]
  * @param  res [response object]
  */
 export function create(req, res) {
-  return SingleCrowd.create(req.body)
-    .then(rest.createAtRemoteServer('single'))
+  return GroupCrowd.create(req.body)
+    then(rest.createAtRemoteServer('group'))
     .then(crowd => {
       // Save the new information.
       return SingleCrowd.findOne({ crowdName: crowd.crowdName }).exec()
@@ -155,7 +155,7 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return SingleCrowd.findById(req.params.id).exec()
+  return GroupCrowd.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
@@ -168,9 +168,9 @@ export function update(req, res) {
  * @param  res [response object]
  */
 export function destroy(req, res) {
-  return SingleCrowd.findById(req.params.id).exec()
+  return GroupCrowd.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(rest.destroyAtRemoteServer('single'))
+    .then(rest.destroyAtRemoteServer('group'))
     .then(removeEntity(res))
     .catch(handleError(res));
 }
@@ -182,7 +182,7 @@ export function destroy(req, res) {
  */
 export function sample(req, res) {
   return SingleCrowd.findById(req.params.id).exec()
-    .then(rest.sample('single', req, res))
+    .then(rest.sample('group', req, res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -193,7 +193,7 @@ export function sample(req, res) {
  * @param  res [response object]
  */
 export function userCount(req, res) {
-  return rest.userCount('single', req, res)
+  return rest.userCount('group', req, res)
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

@@ -1,15 +1,15 @@
 /**
- * SingleCrowd model events
+ * Group model events
  */
 
 'use strict';
 
 import {EventEmitter} from 'events';
-import SingleCrowd from './crowd.model';
-var CrowdEvents = new EventEmitter();
+import GroupCrowd from './group.model';
+var GroupEvents = new EventEmitter();
 
 // Set max event listeners (0 == unlimited)
-CrowdEvents.setMaxListeners(0);
+GroupEvents.setMaxListeners(0);
 
 // Model events
 var events = {
@@ -20,14 +20,14 @@ var events = {
 // Register the event emitter to the model events
 for (var e in events) {
   var event = events[e];
-  SingleCrowd.schema.post(e, emitEvent(event));
+  GroupCrowd.schema.post(e, emitEvent(event));
 }
 
 function emitEvent(event) {
   return function(doc) {
-    CrowdEvents.emit(event + ':' + doc._id, doc);
-    CrowdEvents.emit(event, doc);
+    GroupEvents.emit(event + ':' + doc._id, doc);
+    GroupEvents.emit(event, doc);
   }
 }
 
-export default CrowdEvents;
+export default GroupEvents;

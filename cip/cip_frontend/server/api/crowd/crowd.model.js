@@ -25,7 +25,7 @@ var SingleCrowdSchema = new mongoose.Schema({
   tagAdded: {
     type: Number,
     required: true,
-    default: 0 //done ＝1, ongoing ＝0, failed ＝－1
+    default: 0 // done ＝1, ongoing ＝0, failed ＝－1
   }, 
   file: {
     type: String,
@@ -41,7 +41,7 @@ var SingleCrowdSchema = new mongoose.Schema({
         },
         operator: {
           type: String,
-          enum:['<>', '='],
+          enum:[ '<>', '=' ],
           required: true
         },
         weight: {
@@ -68,7 +68,7 @@ var SingleCrowdSchema = new mongoose.Schema({
         },
         operator: {
           type: String,
-          enum:[ '>=','<=', '>', '<', '<>', '=', 'like', 'dislike' ],
+          enum:[ '>=', '<=', '>', '<', '<>', '=', 'like', 'dislike' ],
           required: true
         },
         weight: {
@@ -93,7 +93,7 @@ var SingleCrowdSchema = new mongoose.Schema({
         },
         objectType: {
           type: String,
-          enum:[ 'Category','Item','Contains', 'Behavior' ],
+          enum:[ 'Category', 'Item', 'Contains', 'Behavior' ],
         },
         objectCategory: {
           type: String,
@@ -106,7 +106,7 @@ var SingleCrowdSchema = new mongoose.Schema({
         },
         operator: {
           type: String,
-          enum:[ '>=','<=', '>', '<', '<>', '=' ],
+          enum:[ '>=', '<=', '>', '<', '<>', '=' ],
           required: true
         },
         value: {
