@@ -29,7 +29,7 @@ var GroupCrowdSchema = new mongoose.Schema({
   }, // done ＝1, ongoing ＝0, failed ＝－1
   file: {
     type: String,
-    default: 'test.user'
+    default: ''
   },
   logic: {
     type: String,

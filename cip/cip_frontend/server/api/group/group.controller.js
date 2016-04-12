@@ -134,12 +134,19 @@ export function show(req, res) {
  */
 export function create(req, res) {
   return GroupCrowd.create(req.body)
-    then(rest.createAtRemoteServer('group'))
-    .then(crowd => {
+    .then(group => {      
+      // Find the selector of the group crowd from the single crowds.
+      for (var index = 0; index < group.selector.length; ++index) {
+        console.log(group.selector[index]);
+      }
+      return group
+    })
+    .then(rest.createAtRemoteServer('group'))
+    .then(updates => {
       // Save the new information.
-      return SingleCrowd.findOne({ crowdName: crowd.crowdName }).exec()
+      return GroupCrowd.findOne({ crowdName: updates.crowdName }).exec()
         .then(handleEntityNotFound(res))
-        .then(saveUpdates(crowd))
+        .then(saveUpdates(updates))
         .then(respondWithResult(res, config.statusCode.CREATED))
         .catch(handleError(res));
     })
@@ -181,7 +188,7 @@ export function destroy(req, res) {
  * @param  res [response object]
  */
 export function sample(req, res) {
-  return SingleCrowd.findById(req.params.id).exec()
+  return GroupCrowd.findById(req.params.id).exec()
     .then(rest.sample('group', req, res))
     .then(respondWithResult(res))
     .catch(handleError(res));
