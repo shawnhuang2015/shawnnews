@@ -3,7 +3,8 @@
 var app = require('../..');
 import request from 'supertest';
 
-var newSingleCrowd;
+var newSingleCrowd1;
+var newSingleCrowd2;
 var newGroupCrowd;
 
 describe('Group Crowd API:', function() {
@@ -59,8 +60,8 @@ describe('Group Crowd API:', function() {
       request(app)
         .post('/api/crowds')
         .send({
-          crowdName: 'TestSingleCrowd',
-          description: 'This is the brand new singleCrowd!!!',
+          crowdName: 'TestSingleCrowd1',
+          description: 'This is the brand new singleCrowd number 1!!!',
           type: 'dynamic',
           count: 3,
           selector: {
@@ -82,17 +83,59 @@ describe('Group Crowd API:', function() {
           if (err) {
             return done(err);
           }
-          newSingleCrowd = res.body;
+          newSingleCrowd1 = res.body;
           done();
         });
     });
 
     it('should respond with the newly created singleCrowd', function() {
-      newSingleCrowd.crowdName.should.equal('TestSingleCrowd');
-      newSingleCrowd.description.should.equal('This is the brand new singleCrowd!!!');
+      newSingleCrowd1.crowdName.should.equal('TestSingleCrowd1');
+      newSingleCrowd1.description.should.equal('This is the brand new singleCrowd number 1!!!');
     });
 
   });
+
+
+  describe('POST /api/crowds', function() {
+    beforeEach(function(done) {
+      request(app)
+        .post('/api/crowds')
+        .send({
+          crowdName: 'TestSingleCrowd2',
+          description: 'This is the brand new singleCrowd number 2!!!',
+          type: 'dynamic',
+          count: 3,
+          selector: {
+            tag: [
+              { 
+                factor: 'gender.male',
+                operator: '=',
+                name: 'gender',
+                count: '3'
+              }
+            ],
+            ontology: [],
+            behavior: []
+          }
+        })
+        .expect(201)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          newSingleCrowd2 = res.body;
+          done();
+        });
+    });
+
+    it('should respond with the newly created singleCrowd', function() {
+      newSingleCrowd2.crowdName.should.equal('TestSingleCrowd2');
+      newSingleCrowd2.description.should.equal('This is the brand new singleCrowd number 2!!!');
+    });
+
+  });
+
 
   describe('POST /api/groups', function() {
     beforeEach(function(done) {
@@ -104,7 +147,7 @@ describe('Group Crowd API:', function() {
           type: 'static',
           count: 3,
           logic: 'or',
-          selector: [newSingleCrowd._id]
+          selector: [newSingleCrowd1._id, newSingleCrowd2._id]
         })
         .expect(201)
         .expect('Content-Type', /json/)
@@ -125,7 +168,7 @@ describe('Group Crowd API:', function() {
   });
 
   describe('GET /api/groups/count', function() {
-    var crowdCount;
+    var groupCount;
 
     beforeEach(function(done) {
       request(app)
@@ -136,17 +179,17 @@ describe('Group Crowd API:', function() {
           if (err) {
             return done(err);
           }
-          crowdCount = res.body;
+          groupCount = res.body;
           done();
         });
     });
 
     afterEach(function() {
-      crowdCount = 0;
+      groupCount = 0;
     });
 
     it('should response with the singleCrowd count', function() {
-      crowdCount.should.be.equal(1);
+      groupCount.should.be.equal(1);
     });
 
   });
@@ -212,6 +255,74 @@ describe('Group Crowd API:', function() {
 
   });
 
+
+  describe('GET /api/groups/:id/sample', function() {
+    var groupSample;
+
+    beforeEach(function(done) {
+      request(app)
+        .get('/api/groups/' + newGroupCrowd._id + '/sample?count=10')
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          groupSample = res.body;
+          done();
+        });
+    });
+
+    afterEach(function() {
+      groupSample = {};
+    });
+
+    it('should respond with JSON object', function() {
+      groupSample.should.be.instanceOf(Object);
+    });
+
+  });
+
+  describe('POST /api/groups/user_count', function() {
+    var userCount;
+
+    beforeEach(function(done) {
+      request(app)
+        .post('/api/groups/user_count?rid=44441112233')    
+        .expect(200)
+        .send({
+          selector: {
+            tag: [
+              { 
+                condition: 'tag',
+                factor: 'gender.female',
+                operator: '=',
+                weight: 1,
+                name: 'gender'
+              }
+            ],
+            ontology: [],
+            behavior: []
+          }
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          userCount = res.body;
+          done();
+        });
+    });
+
+    afterEach(function() {
+      userCount = {};
+    });
+
+    it('should respond with JSON object', function() {
+      userCount.should.be.instanceOf(Object);
+    });
+
+  });
+
   describe('DELETE /api/groups/:id', function() {
 
     it('should respond with 204 on successful removal', function(done) {
@@ -244,7 +355,23 @@ describe('Group Crowd API:', function() {
 
     it('should respond with 204 on successful removal', function(done) {
       request(app)
-        .delete('/api/crowds/' + newSingleCrowd._id)
+        .delete('/api/crowds/' + newSingleCrowd1._id)
+        .expect(204)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          done();
+        });
+    });
+
+  });
+
+  describe('DELETE /api/crowds/:id', function() {
+
+    it('should respond with 204 on successful removal', function(done) {
+      request(app)
+        .delete('/api/crowds/' + newSingleCrowd2._id)
         .expect(204)
         .end((err, res) => {
           if (err) {

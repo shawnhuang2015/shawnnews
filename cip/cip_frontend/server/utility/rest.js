@@ -173,13 +173,11 @@ exports.createAtRemoteServer = function(format) {
             });
           })
           .then(body => {
-            console.log(body);
             // Make request to the engine.
             var crowdName = prefix + crowd.crowdName;
             return post('crowd/v1/create', 'name=' + crowdName + '&limit=' + config.userLimit, body);
           })
           .then(response => {
-            console.log(response);
             if (response.error === true) {
               // If there is error from the engine,
               // set the tag to -1
