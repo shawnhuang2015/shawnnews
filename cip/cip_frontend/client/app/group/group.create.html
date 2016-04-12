@@ -1,6 +1,6 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_create()">
 
-    <form name="groupForm" class="form-horizontal" role="form" data-ng-submit="updateGroup(groupForm.$valid)"
+    <form name="groupForm" class="form-horizontal" role="form" data-ng-submit="createGroup(groupForm.$valid)"
           novalidate>
         <fieldset>
             <legend>{{ 'Group_create.BasicInformation' | translate }}</legend>
@@ -35,7 +35,7 @@
                     <div class="col-md-4">
                         <ui-select ng-model="groupDetail.logic" append-to-body="'true'">
                             <ui-select-match placeholder="{{ 'Group_create.GroupLogic' | translate}}">{{groupDetail.logic}}</ui-select-match>
-                            <ui-select-choices repeat=" x in group_logic | filter:$select.search">{{x}}
+                            <ui-select-choices repeat=" x in group.logic | filter:$select.search">{{x}}
                             </ui-select-choices>
                         </ui-select>
                     </div>
@@ -66,7 +66,7 @@
                         <span ng-if="groupDetail.count >= 0">{{groupDetail.count}}</span>
                     <span ng-if="groupDetail.count == -1"
                           class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-                        人</h5>
+                        {{ 'Group_create.zh_People' | translate}}</h5>
                     <h5 ng-if="groupDetail.count == -2">
                         {{ 'Group_create.QueryAllCountFailed' | translate}}
                     </h5>
@@ -86,7 +86,7 @@
         </div>
 
         <table class="table table-hover">
-            <h4>{{ 'Group_create.QueryAllCountFailed' | translate}}</h4>
+            <h4>{{ 'Group_create.AvailableCrowd' | translate}}</h4>
             <thead>
             <tr>
                 <th>{{ 'Group_create.Index' | translate}}</th>
@@ -98,7 +98,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="crowd in crowds">
+            <tr ng-repeat="crowd in crowd.list">
                 <td>{{$index+1}}</td>
                 <td>{{crowd.crowdName}}</td>
                 <td>{{crowd.type}}</td>
@@ -113,11 +113,18 @@
             </tbody>
         </table>
         <div class="col-md-offset-5">
-            <uib-pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm"
-                            ng-change="pageChanged()"
-                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
-                            items-per-page="page_size">
-
+            <uib-pagination 
+            boundary-links="true" 
+            total-items="crowd_page.total_items" 
+            ng-model="crowd_page.current_page" 
+            class="pagination-sm"
+            ng-change="crowdPageChanged()"
+            previous-text="&lsaquo;" 
+            next-text="&rsaquo;" 
+            first-text="&laquo;" 
+            last-text="&raquo;"
+            max-size="crowd_page.max_size"
+            items-per-page="crowd_page.page_size">
             </uib-pagination>
         </div>
 

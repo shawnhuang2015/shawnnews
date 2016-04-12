@@ -133,7 +133,8 @@ function config($translateProvider) {
         AvailableCrowd: 'Available Crowds',
         Type: 'Crowd Type',
         CreateDate: 'Create Date',
-        AddCrowd: 'Add Crowd'
+        AddCrowd: 'Add Crowd',
+        zh_People: ' ',
       },
       Group_user : {
         CrowdList : 'Selected Crowds',
@@ -287,7 +288,11 @@ function config($translateProvider) {
         AvailableCrowd: '可选人群',
         Type: '类型',
         CreateDate: '创建时间',
-        AddCrowd: '添加'
+        AddCrowd: '添加',
+        zh_People: '人',
+        UpdatedSuccessfully: '更新成功',
+        CreatedSuccessfully: '创建成功!',
+        CreatedFailed: '创建失败!',
       },
       Group_user : {
         CrowdList : '人群选择列表',

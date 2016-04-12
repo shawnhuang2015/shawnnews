@@ -26,15 +26,6 @@ angular.module('cipApp')
     ]
   }
 
-
-  // config of group view.
-  $scope.group = {
-    logic : [
-      'or', 
-      // 'and' // not support yet.
-    ]
-  }
-
   // config of factors.
   $scope.factors = {};
 
@@ -172,8 +163,6 @@ angular.module('cipApp')
       .viewCrowds(pageId, $scope.page.page_size, function(data) {
         $scope.crowd.list = data.list;
       })
-
-      $scope.crowd.list = temp_data.slice(pageId*$scope.page.page_size, (pageId+1)*$scope.page.page_size)
     };
 
     // remove a crowd by name.
