@@ -269,7 +269,6 @@ exports.sample = function(format, req, res) {
       } else {
         prefix = config.crowdPrefix.group;
       }
-
       return Ontology.findOne({ name: 'MetaData' }).exec()
         .then(onto => {
           // Make request to the engine.

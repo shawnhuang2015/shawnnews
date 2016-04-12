@@ -92,6 +92,37 @@ function handleError(res, statusCode) {
 }
 
 /**
+ * Create the selector body for GroupCrowd with either the entire SingleCrowds
+ * or just the SingleCrowds' selector.
+ * @return {JSON} [the GroupCrowd object with the SingleCrowd's selector]
+ */
+function createSelector(type) {
+  return function(group) {
+    if (group) {
+      var selector = [];
+      return Promise.map(group.selector, crowdId => {
+        // Find each crowd and push its selector to the selector variable.
+        return SingleCrowd.findById(crowdId).exec()
+          .then(crowd => {
+            if (type === 'full') {
+              // If the request is the full body of SingleCrowds.
+              selector.push(crowd);
+            } else if (type === 'selector') {
+              // If the request is the selectors of SingleCrowds.
+              selector.push(crowd.selector);
+            }
+            return selector;
+          })
+      }).then(() => {
+        // After finish, set the group selector the set of single crowds' selector.
+        group.selector = selector;
+        return group;
+      })
+    }
+  }
+}
+
+/**
  * Get a list of GroupCrowds.
  * @param  req [request object]
  * @param  res [response object]
@@ -125,6 +156,7 @@ export function count(req, res) {
 export function show(req, res) {
   return GroupCrowd.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
+    .then(createSelector('full'))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -136,22 +168,7 @@ export function show(req, res) {
  */
 export function create(req, res) {
   return GroupCrowd.create(req.body)
-    .then(group => {      
-      // Find the selector of the group crowd from the single crowds.
-      var selector = [];
-      return Promise.map(group.selector, crowdId => {
-        // Find each crowd and push its selector to the selector variable.
-        return SingleCrowd.findById(crowdId).exec()
-          .then(crowd => {
-            selector.push(crowd.selector);
-            return selector;
-          })
-      }).then(() => {
-        // After finish, set the group selector the set of single crowds' selector.
-        group.selector = selector;
-        return group;
-      })
-    })
+    .then(createSelector('selector'))
     .then(rest.createAtRemoteServer('group'))
     .then(updates => {
       // Save the new information.
