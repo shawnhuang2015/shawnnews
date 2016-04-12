@@ -14,7 +14,9 @@
 'use strict';
 
 import _ from 'lodash';
+import Promise from 'bluebird';
 import GroupCrowd from './group.model';
+import SingleCrowd from '../crowd/crowd.model';
 import rest from '../../utility/rest';
 import config from '../../config/environment';
 
@@ -136,10 +138,19 @@ export function create(req, res) {
   return GroupCrowd.create(req.body)
     .then(group => {      
       // Find the selector of the group crowd from the single crowds.
-      for (var index = 0; index < group.selector.length; ++index) {
-        console.log(group.selector[index]);
-      }
-      return group
+      var selector = [];
+      return Promise.map(group.selector, crowdId => {
+        // Find each crowd and push its selector to the selector variable.
+        return SingleCrowd.findById(crowdId).exec()
+          .then(crowd => {
+            selector.push(crowd.selector);
+            return selector;
+          })
+      }).then(() => {
+        // After finish, set the group selector the set of single crowds' selector.
+        group.selector = selector;
+        return group;
+      })
     })
     .then(rest.createAtRemoteServer('group'))
     .then(updates => {
