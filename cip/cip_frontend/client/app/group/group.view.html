@@ -1,9 +1,11 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_view()">
+<fieldset>
+  <legend>{{'Group_view.GroupList' | translate}}</legend>
     <h4 class="text-center" ng-if="!crowd || crowd.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
     <h4 class="text-center" ng-if="crowd.length>0 && (!group.list || group.list.length<=0)">{{'Group_view.NoGroupExist' | translate}}</h4>
 
     <table class="table table-hover" ng-if="group.list.length>0">
-        <h4 ng-if="group.list.length>0">{{'Group_view.GroupList' | translate}}</h4>
+        <!-- <h4 ng-if="group.list.length>0">{{'Group_view.GroupList' | translate}}</h4> -->
         <thead>
         <tr>
             <th>{{'Group_view.GroupIndex' | translate}}</th>
@@ -50,10 +52,10 @@
         </uib-pagination>
     </div>
 
-    <div class="col-md-offset-5 col-md-2">
+    <div class="col-md-offset-3 col-md-6">
         <button data-ng-click="goToCreateGroup()" ng-if="crowd.length>0" class="btn btn-info btn-block">{{'Group_view.CreateGroup' | translate}}</button>
     </div>
 
-
+</fieldset>
 
 </div>

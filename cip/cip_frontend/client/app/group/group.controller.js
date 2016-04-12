@@ -81,10 +81,16 @@ angular.module('cipApp')
       }
     }
 
+    $scope.init_create = function() {
+      console.log ("get crowd list")
+      console.log ("get group amount of people.")
+    }
+
     $scope.init_user = function() {
       console.log("init user.")
 
       console.log($stateParams);
       console.log($scope);
     }
+
   });

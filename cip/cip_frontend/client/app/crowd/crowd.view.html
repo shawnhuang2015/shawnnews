@@ -1,14 +1,16 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_view()">
+<fieldset>
+  <legend>{{'Crowd_view.CrowdList' | translate}}</legend>
   <div class="row">
     <h4 class="text-center" ng-if="!crowd.list || crowd.list.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
 
-    <div class="col-sm-offset-3 col-sm-6">
+    <!-- <div class="col-sm-offset-3 col-sm-6">
         <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
-    </div>
+    </div> -->
   </div>
   <div class="row">
     <table class="table table-hover" ng-if="crowd.list.length>0">
-        <h4 ng-if="crowd.list.length>0">{{'Crowd_view.CrowdList' | translate}}</h4>
+        <!-- <h4 ng-if="crowd.list.length>0">{{'Crowd_view.CrowdList' | translate}}</h4> -->
         <thead>
         <tr>
             <th>{{'Crowd_view.CrowdID' | translate}}</th>
@@ -56,9 +58,10 @@
     </div>
 
   </div>
-  <div class="row" ng-show="crowd.list.length>10">
+  <div class="row" ng-show="crowd.list.length>0">
     <div class="col-sm-offset-3 col-sm-6">
         <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
     </div>
   </div>
+</fieldset>
 </div>

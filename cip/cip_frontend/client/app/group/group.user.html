@@ -1,14 +1,14 @@
 <div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_user()">
     <fieldset>
+        <legend>{{'Group_user.CrowdList' | translate}}</legend>
         <!-- Show -->
         <div class="col-md-12 row">
             <table class="table table-hover">
-                <h4>人群选择列表</h4>
                 <thead>
                 <tr>
-                    <th>序号</th>
-                    <th>人群名称</th>
-                    <th>覆盖人数</th>
+                    <th>{{'Group_user.Index' | translate}}</th>
+                    <th>{{'Group_user.Name' | translate}}</th>
+                    <th>{{'Group_user.Amount' | translate}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -19,25 +19,25 @@
                 </tr>
                 </tbody>
             </table>
-            <div class="col-md-offset-8 col-md-3"><h5>满足上面所有条件 共覆盖{{groupDetail.count}}人</h5></div>
+            <div class="col-md-offset-8 col-md-3"><h5>{{'Group_user.QueryMatchAmount' | translate}}{{groupDetail.count}}</h5></div>
         </div>
     </fieldset>
 
     <fieldset>
-        <legend>用户列表明细</legend>
+        <legend>{{'Group_user.UserDetail' | translate}}</legend>
         <div class="text-center row" ng-if="!userList && groupDetail.type == 'static'">
-            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>数据正在获取中...
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>{{'Group_user.UserDataLoading' | translate}}
         </div>
         <div class="text-center row" ng-if="crowdDetail.type == 'dynamic'">
-            动态人群暂时不支持显示用户列表
+            {{'Group_user.DynamicCrowdUserList' | translate}}
         </div>
         <div class="col-md-offset-3 col-md-6">
             <table class="table table-hover table-bordered" ng-if="userList.length>0 && groupDetail.type == 'static'">
                 <thead>
                 <tr>
-                    <th>序号</th>
+                    <th>{{'Group_user.Index' | translate}}</th>
                     <th>UID</th>
-                    <th>操作</th>
+                    <th>{{'Group_user.QueryMatchAmount' | translate}}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,7 +46,7 @@
                     <td>{{user}}</td>
                     <td>
                     <span>
-                        <button class="btn btn-info btn-xs">探索此用户
+                        <button class="btn btn-info btn-xs">{{'Group_user.ExploreUser' | translate}}
                         </button>
                     </span>
                     </td>
@@ -57,8 +57,8 @@
     </fieldset>
 
     <div class="col-md-offset-5 col-md-2">
-        <a target="_self" id="downloadUserlist" href="/api/download?file={{groupDetail.file}}" download="userlist.xml"
-           class="btn btn-info btn-block" ng-if="userList.length>0 && groupDetail.type == 'static'">下载UID集合</a>
+        <a target="_self" id="downloadUserlist" href="/api/miscs/download?file={{groupDetail.file}}" download="userlist.xml"
+           class="btn btn-info btn-block" ng-if="userList.length>0 && groupDetail.type == 'static'">{{'Group_user.DownloadUserList' | translate}}</a>
     </div>
 
 

@@ -116,6 +116,38 @@ function config($translateProvider) {
         Delete: 'Delete',
         GroupDeleteComfirmMessage: 'Do you want to delete the group?'
       },
+      Group_create : {
+        BasicInformation: 'Group Information',
+        GroupName: 'Group Name',
+        Description: 'Description',
+        SelectedGroup: 'Selected Group',
+        GroupLogic: 'Group Logic',
+        Index: 'Index',
+        Name: 'Group Name',
+        Amount: 'Group Amount',
+        Action: 'Action',
+        Remove: 'Remove',
+        QueryMatchAmount: ' Amount of people that match conditions',
+        QueryAllCountFailed: ' Get total amount failed, please try conditions again!',
+        SaveGroup: 'Save Group',
+        AvailableCrowd: 'Available Crowds',
+        Type: 'Crowd Type',
+        CreateDate: 'Create Date',
+        AddCrowd: 'Add Crowd'
+      },
+      Group_user : {
+        CrowdList : 'Selected Crowds',
+        Index : 'Index',
+        Name : 'Crowd Name',
+        Amount : 'Crowd Amount',
+        Action : 'Action',
+        QueryMatchAmount: 'Amount of people that match conditions',
+        UserDetail: 'User Detail Information',
+        UserDataLoading: 'User Detail is loading',
+        DynamicCrowdUserList: 'Dynamic Crowd does not provide user detail information',
+        ExploreUser: 'Explore user',
+        DownloadUserList: 'Download User ID List'
+      },
       Warning : {
         ObjectValueNull : 'Input object Value is not valid!',
         TagNull : 'Input tag is not valid!',
@@ -238,6 +270,38 @@ function config($translateProvider) {
         Delete: '删除',
         GroupDeleteComfirmMessage: '确定要删除这个人群组合吗？'
       },
+      Group_create : {
+        BasicInformation: '基本信息',
+        GroupName: '人群组合名称',
+        Description: '描述',
+        SelectedGroup: '已选人群',
+        GroupLogic: '组合逻辑',
+        Index: '序号',
+        Name: '人群名称',
+        Amount: '覆盖人数',
+        Action: '操作',
+        Remove: '移除',
+        QueryMatchAmount: '满足上面所有条件的人数为',
+        QueryAllCountFailed: '全部人数获取失败,请重试条件',
+        SaveGroup: '保存组合',
+        AvailableCrowd: '可选人群',
+        Type: '类型',
+        CreateDate: '创建时间',
+        AddCrowd: '添加'
+      },
+      Group_user : {
+        CrowdList : '人群选择列表',
+        Index : '序号',
+        Name : '人群名称',
+        Amount : '覆盖人数',
+        Action : '操作',
+        QueryMatchAmount: '满足上面所有条件的人数为',
+        UserDetail: '用户列表明细',
+        UserDataLoading: '数据正在获取中...',
+        DynamicCrowdUserList: '动态人群暂时不支持显示用户列表',
+        ExploreUser: '探索此用户',
+        DownloadUserList: '下载UID集合'
+      },
       Warning : {
         ObjectValueNull : '对象值不能为空',
         TagNull : '标签不能为空',
@@ -246,7 +310,7 @@ function config($translateProvider) {
         FrequencyNull : '次数必须在0~2147483647之间',
         CrowdNameNull: '人群名字不能为空',
         CrowdNameValid: '人群名称只能包含英文,数字,或下划线',
-        DescriptionNUll: '描述不能为空',
+        DescriptionNull: '描述不能为空',
       }
     });
 
