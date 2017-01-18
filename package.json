@@ -1,0 +1,29 @@
+{
+  "name": "shawnnews",
+  "version": "1.0.0",
+  "description": "play with angular 2 cli.",
+  "main": "index.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "angular-cli": "^1.0.0-beta.25.5"
+  },
+  "scripts": {
+    "test": "test",
+    "ng": "ng"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shawnhuang2015/shawnnews.git"
+  },
+  "keywords": [
+    "UI",
+    "Angular"
+  ],
+  "author": "Shawn Huang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shawnhuang2015/shawnnews/issues"
+  },
+  "homepage": "https://github.com/shawnhuang2015/shawnnews#readme"
+}
