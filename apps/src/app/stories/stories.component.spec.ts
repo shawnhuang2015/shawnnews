@@ -4,6 +4,8 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { StoriesComponent } from './stories.component';
+import { AppModule } from '../app.module';
+// import { ItemComponent } from './item/item.component';
 
 describe('StoriesComponent', () => {
   let component: StoriesComponent;
@@ -11,7 +13,8 @@ describe('StoriesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StoriesComponent ]
+      // declarations: [ StoriesComponent, ItemComponent ]
+      imports: [ AppModule ]
     })
     .compileComponents();
   }));

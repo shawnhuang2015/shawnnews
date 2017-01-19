@@ -1,7 +1,7 @@
 <div class="main-content">
   <ol>
     <li *ngFor="let item of items; let i = index" class = "post">
-      <story-item class="item-block" itemID="{{ i + 1 }}"></story-item>
+      <story-item class="item-block" itemID="{{ item }}"></story-item>
     </li>
   </ol>
   <div class="nav">
