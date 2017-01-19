@@ -13,12 +13,16 @@ export class StoriesComponent implements OnInit {
   items: number[];
 
   constructor(private newsService: NewsApiService) {
-    this.items = Array(30);
+    this.items = Array();
   }
 
   ngOnInit() {
     this.newsService.fetchItems().subscribe(
-      items => this.items = items,
+      items => {
+        console.log('Story Component.', items.length);
+        this.items = items;
+        return this.items;
+      },
       error => console.log(`Error Fetching Stories: ${JSON.stringify(error)}`)
     );
   }
