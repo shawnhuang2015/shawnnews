@@ -26,4 +26,9 @@ describe('HeaderComponent', () => {
     expect(component).toBeTruthy();
     expect(component).toBeDefined();
   });
+
+  it('should create', () => {
+    let compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('p').textContent).toContain('header works!');
+  });
 });
