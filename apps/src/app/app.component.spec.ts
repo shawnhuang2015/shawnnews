@@ -1,17 +1,24 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
+import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
-
+// import { HeaderComponent } from './header/header.component';
+// import { StoriesComponent } from './stories/stories.component';
+// import { FootComponent } from './foot/foot.component';
 
 describe('AppComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent,
-        HeaderComponent
+        // AppComponent,
+        // HeaderComponent,
+        // StoriesComponent,
+        // FootComponent
       ],
+      imports: [
+        AppModule
+      ]
     });
     TestBed.compileComponents();
   });
@@ -32,6 +39,6 @@ describe('AppComponent', () => {
     let fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     let compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('app works!');
+    expect(compiled.querySelector('h1').textContent).toContain('Angular 2 HN');
   }));
 });
