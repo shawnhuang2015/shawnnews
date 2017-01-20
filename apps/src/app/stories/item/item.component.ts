@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NewsApiService } from '../../news-api.service';
+// import { NewsApiService } from '../../news-api.service';
 
 @Component({
   selector: 'story-item',
@@ -9,7 +9,8 @@ import { NewsApiService } from '../../news-api.service';
 export class ItemComponent implements OnInit {
   @Input() item;
 
-  constructor(private newsService: NewsApiService) { }
+  constructor() { }
+  // constructor(private newsService: NewsApiService) { }
 
   ngOnInit() {
     // this.newsService.fetchItem(this.itemID).subscribe(
