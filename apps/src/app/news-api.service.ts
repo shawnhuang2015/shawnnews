@@ -8,11 +8,12 @@ export class NewsApiService {
   baseUrl: string;
 
   constructor(private http: Http) {
-    this.baseUrl = 'https://hacker-news.firebaseio.com/v0';
+    // this.baseUrl = 'https://hacker-news.firebaseio.co/v0';
+    this.baseUrl = 'https://node-hnapi.herokuapp.com';
   }
 
-  fetchItems(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/topstories.json`)
+  fetchItems(storyType: string, page: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${storyType}?page=${page}`)
     .map(response => response.json());
   }
 

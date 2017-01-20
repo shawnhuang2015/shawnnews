@@ -14,6 +14,5 @@ describe('NewsApiService', () => {
 
   it('should ...', inject([NewsApiService], (service: NewsApiService) => {
     expect(service).toBeTruthy();
-    expect(service.baseUrl).toEqual('https://hacker-news.firebaseio.com/v0');
   }));
 });

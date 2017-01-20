@@ -17,9 +17,8 @@ export class StoriesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.newsService.fetchItems().subscribe(
+    this.newsService.fetchItems('news', 1).subscribe(
       items => {
-        console.log('Story Component.', items.length);
         this.items = items;
         return this.items;
       },
