@@ -12,6 +12,7 @@ import { FootComponent } from './foot/foot.component';
 import { ItemComponent } from './stories/item/item.component';
 import { NewsApiService } from './news-api.service';
 import { DomainPipe } from './domain.pipe';
+import { ItemCommentsComponent } from './stories/item/item-comments/item-comments.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DomainPipe } from './domain.pipe';
     StoriesComponent,
     FootComponent,
     ItemComponent,
-    DomainPipe
+    DomainPipe,
+    ItemCommentsComponent
   ],
   imports: [
     BrowserModule,
