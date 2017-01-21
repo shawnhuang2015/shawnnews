@@ -2,10 +2,10 @@
 
 <div class="item-laptop">
   <p>
-    <a class="title" href="">
+    <a class="title" href="{{item.url}}">
       {{item.title}}
     </a>
-    <span *ngIf="item.domain" class="domain">({{item.domain}})</span>
+    <span *ngIf="item.domain" class="domain">{{item.url | domain}}</span>
   </p>
   <div class="subtext-laptop">
     <span>
@@ -15,7 +15,7 @@
     <span>
       {{item.time_ago}}
       <span> |
-        <a href="">
+        <a [routerLink]="['/item', item.id]">
           <span *ngIf="item.comments_count !== 0">
             {{item.comments_count}}
             <span *ngIf="item.comments_count === 1">comment</span>
@@ -32,4 +32,7 @@
     responsive mobile feel). Same attributes as above
     nothing really new here (but refer to the source
     file if you're interested) -->
+  <a class="title" href="">
+    {{item.title}}
+  </a>
 </div>

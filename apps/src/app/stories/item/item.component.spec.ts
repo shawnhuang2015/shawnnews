@@ -38,7 +38,7 @@ describe('ItemComponent', () => {
 
     let compiled = fixture.nativeElement;
     expect(compiled.querySelector('.title').textContent).toContain('How Deutsche Bank Made a $462M Loss Disappear');
-    expect(compiled.querySelector('.domain').textContent).toContain('www.bloomberg.com');
+    expect(compiled.querySelector('.domain').textContent).toContain('bloomberg.com');
   });
 
   // it('wrapper should create', () => {

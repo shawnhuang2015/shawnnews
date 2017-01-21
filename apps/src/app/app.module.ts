@@ -14,6 +14,12 @@ import { NewsApiService } from './news-api.service';
 import { DomainPipe } from './domain.pipe';
 import { ItemCommentsComponent } from './stories/item/item-comments/item-comments.component';
 
+import { APP_BASE_HREF } from '@angular/common';
+
+import { RouterModule, Routes } from '@angular/router';
+import { routing } from './app.routes';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,9 +34,13 @@ import { ItemCommentsComponent } from './stories/item/item-comments/item-comment
     BrowserModule,
     FormsModule,
     HttpModule,
-    MomentModule
+    MomentModule,
+    routing,
+    RouterModule
   ],
-  providers: [NewsApiService],
+  providers: [
+    NewsApiService,
+    { provide: APP_BASE_HREF, useValue: '/' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
