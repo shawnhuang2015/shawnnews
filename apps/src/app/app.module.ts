@@ -18,6 +18,8 @@ import { APP_BASE_HREF } from '@angular/common';
 
 import { RouterModule, Routes } from '@angular/router';
 import { routing } from './app.routes';
+import { CommentComponent } from './stories/item/item-comments/comment/comment.component';
+import { CommentTreeComponent } from './stories/item/item-comments/comment-tree/comment-tree.component';
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import { routing } from './app.routes';
     FootComponent,
     ItemComponent,
     DomainPipe,
-    ItemCommentsComponent
+    ItemCommentsComponent,
+    CommentComponent,
+    CommentTreeComponent
   ],
   imports: [
     BrowserModule,
