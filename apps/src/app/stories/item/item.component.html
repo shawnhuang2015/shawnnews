@@ -8,9 +8,9 @@
     <span *ngIf="item.domain" class="domain">{{item.url | domain}}</span>
   </p>
   <div class="subtext-laptop">
-    <span>
+    <span *ngIf="item.user">
       {{item.points}} points by
-      <a href="">{{item.user}}</a>
+      <a [routerLink]="['/user', item.user]">{{item.user}}</a>
     </span>
     <span>
       {{item.time_ago}}
@@ -32,7 +32,7 @@
     responsive mobile feel). Same attributes as above
     nothing really new here (but refer to the source
     file if you're interested) -->
-  <a class="title" href="">
+  <a class="title" href="{{item.url}}">
     {{item.title}}
   </a>
 </div>

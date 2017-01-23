@@ -19,7 +19,7 @@
       <div class="subtext">
         <span>
         {{item.points}} points by
-          <a href="">{{item.user}}</a>
+          <a [routerLink]="['/user', item.user]">{{item.user}}</a>
         </span>
         <span>
           {{item.time_ago}}
@@ -35,9 +35,9 @@
           </span>
         </span>
       </div>
-    </div>5
-    <p class="subject" [innerHTML]="item.content"></p>
-    <p class="subject" [innerHTML]="item.comments.length"></p>
-    <!-- <app-comment-tree [commentTree]="item.comments"></app-comment-tree> -->
+    </div>
+<!--     <p class="subject" [innerHTML]="item.content"></p>
+    <p class="subject" [innerHTML]="item.comments.length"></p> -->
+    <app-comment-tree [commentTree]="item.comments"></app-comment-tree>
   </div>
 </div>

@@ -26,4 +26,9 @@ export class NewsApiService {
     return this.http.get(`${this.baseUrl}/item/${id}`)
     .map(response => response.json());
   }
+
+  fetchUser(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/user/${id}`)
+    .map(response => response.json());
+  }
 }

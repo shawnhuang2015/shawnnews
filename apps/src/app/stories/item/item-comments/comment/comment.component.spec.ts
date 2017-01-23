@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { CommentComponent } from './comment.component';
+import { AppModule } from '../../../../app.module';
 
 describe('CommentComponent', () => {
   let component: CommentComponent;
@@ -11,7 +12,8 @@ describe('CommentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CommentComponent ]
+      // declarations: [ CommentComponent ]
+      imports: [AppModule]
     })
     .compileComponents();
   }));
@@ -19,6 +21,11 @@ describe('CommentComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CommentComponent);
     component = fixture.componentInstance;
+
+    component.comment = {
+      deleted: false
+    };
+
     fixture.detectChanges();
   });
 
