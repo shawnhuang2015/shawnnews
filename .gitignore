@@ -85,3 +85,5 @@ src/realtime
 src/msg
 src/er
 src/doc
+
+node_modules/
