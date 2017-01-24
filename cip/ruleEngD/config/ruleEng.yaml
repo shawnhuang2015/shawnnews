@@ -1,0 +1,5 @@
+kafka:
+    ip: localhost
+    port:   9092
+    group:  "test"
+    topic:  "test"

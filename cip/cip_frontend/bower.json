@@ -1,0 +1,42 @@
+{
+  "name": "cip",
+  "version": "0.1.0",
+  "authors": [
+    "Shawn Huang", "Duc Hoai Le"
+  ],
+  "description": "CIP -  Customer Intelligence Platform",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "client/bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.5.0",
+    "json3": "~3.3.1",
+    "es5-shim": "~3.0.1",
+    "bootstrap": "~3.3.6",
+    "angular-resource": "~1.5.0",
+    "angular-cookies": "~1.5.0",
+    "angular-sanitize": "~1.5.0",
+    "angular-bootstrap": "~1.1.2",
+    "font-awesome": "~4.5.0",
+    "lodash": "~2.4.1",
+    "angular-ui-router": "~0.2.15",
+    "angular-ui-select": "~0.16.1",
+    "angular-validation-match": "~1.5.2",
+    "angular-animate": "~1.5.0",
+    "angular-sanitize": "~1.5.0",
+    "angular-messages": "~1.5.0",
+    "angular-aria": "~1.5.0",
+    "angular-translate": "~2.11.0",
+    "jquery": "~2.1.4",
+    "moment": "~2.10.6",
+    "animate.css": "~3.4.0",
+    "pace": "~1.0.2",
+    "metisMenu": "~2.0.2"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.5.0"
+  },
+  "main": "client/index.html"
+}

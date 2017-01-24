@@ -1,0 +1,11 @@
+r1_same_imsi_finger:
+-   start
+r2_same_imsiimei_diff_mac:
+-   start
+r3_same_md5:
+-   start
+
+end:
+-   r1_same_imsi_finger
+-   r2_same_imsiimei_diff_mac
+-   r3_same_md5 

@@ -1,0 +1,387 @@
+{
+   "example":{
+      "GET/POST":{
+         "function":"example",
+         "action":"query",
+         "target":"GPE",
+         "parameters":{
+            "start_id":{
+               "type":"STRING",
+               "min_count":1,
+               "max_count":1,
+               "min_length":1,
+               "max_length":256
+            }
+         },
+         "response_filter":"ResponseFilterExample",
+         "summary":"This is an example UDF to demonstrate how to write endpoint configuration"
+      }
+   },
+   "kstepsubgraph":{
+    "GET/POST":{
+      "function":"kstepsubgraph",
+      "action":"query",
+      "target":"GPE",
+      "parameters":{
+        "id":{
+          "type":"STRING",
+          "is_id":true,
+          "id_type":"$type"
+        },
+        "type": {
+          "type":"TYPENAME"
+        },
+        "depth":{
+          "type":"UINT32",
+          "min_count":0
+        },
+        "max":{
+          "type":"UINT32",
+          "min_count":0
+        }
+      },
+      "summary":"This is an UDF to output N depth neighborhood subgraph."
+    }
+   },
+
+  "semantic_def": {
+    "POST": {
+      "function": "semantic_def",
+      "parameters": {
+      },
+      "request_filter": "WrapPayloadFilter",
+      "summary": "json format definition of semantic layer."
+    }
+  },
+  "ontology_import": {
+    "POST": {
+      "function": "ontology_import",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "response_filter":"PostOntologyTree",
+      "summary": "json format ontology tree, call import_tree."
+    }
+  },
+  "import_tree": {
+    "POST": {
+      "function": "import_tree",
+      "parameters": {
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        }
+      },
+      "request_filter":"ImportTree",
+      "summary": "load the tree."
+    }
+  },
+  "get_ontology": {
+    "GET": {
+      "function": "get_ontology",
+      "parameters": {
+        "name": {
+          "type": "STRING",
+          "min_count": 1,
+          "max_count": 100
+        },
+        "threshold": {
+          "type": "UINT64",
+          "default": "100000"
+        }
+      },
+      "summary": "export the tree."
+    }
+  },
+  "get_profile": {
+    "GET": {
+      "function": "get_profile",
+      "parameters": {
+        "threshold": {
+          "type": "UINT64",
+          "default": "100000"
+        }
+      },
+      "summary": "export profile."
+    }
+  },
+  "set_item_tag": {
+    "POST": {
+      "function": "pre_set_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "1"
+        },
+        "tag_all": {
+          "type": "UINT32",
+          "default": "0"
+        }
+      },
+      "request_filter": "PreSetTagRequest",
+      "response_filter": "PreSetTagResponse",
+      "summary": "set item -> tags."
+    }
+  },
+  "set_user_tag": {
+    "POST": {
+      "function": "pre_set_tag",
+      "parameters": {
+        "object": {
+          "type": "STRING"
+        },
+        "name": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "1"
+        },
+        "tag_all": {
+          "type": "UINT32",
+          "default": "0"
+        }
+      },
+      "request_filter": "PreSetTagRequest",
+      "response_filter": "PreSetTagResponse",
+      "summary": "set user -> tags."
+    }
+  },
+  "post_user_tag": {
+    "POST": {
+      "function": "post_user_tag",
+      "parameters": {
+        "name": {
+          "type": "STRING"
+        },
+        "object_vtype": {
+          "type": "STRING"
+        },
+        "ontology_vtype": {
+          "type": "STRING"
+        },
+        "ontology_up_etype": {
+          "type": "STRING"
+        },
+        "ontology_down_etype": {
+          "type": "STRING"
+        },
+        "object_ontology_etype": {
+          "type": "STRING"
+        },
+        "sep": {
+          "type": "STRING",
+          "default": ";"
+        },
+        "tag_sep": {
+          "type": "STRING",
+          "default": ","
+        },
+        "weight_sep": {
+          "type": "STRING",
+          "default": "|"
+        },
+        "eol": {
+          "type": "STRING",
+          "default": "\n"
+        },
+        "inverted_tags": {
+          "type": "STRING",
+          "default": "{}"
+        },
+        "more": {
+          "type": "UINT32",
+          "default": "0"
+        },
+        "tag_all": {
+          "type": "UINT32",
+          "default": "0"
+        }
+      },
+      "request_filter": "PostTag",
+      "summary": "do the real POST, set user -> tags."
+    }
+  },
+  "get_tag": {
+    "GET": {
+      "function": "get_tag",
+      "parameters": {
+        "object": {
+          "type": "TYPENAME"
+        },
+        "id": {
+          "type": "STRING",
+          "is_id":true,
+          "id_type":"$object"
+        },
+        "name": {
+          "type": "STRING",
+          "max_count": 100000
+        },
+        "verbose": {
+          "type": "UINT32",
+          "default": "0"
+        }
+      },
+      "summary": "get object's tags."
+    }
+  },
+  "crowd": {
+    "v1": {
+      "user_search": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
+            }
+          },
+          "request_filter": "UserSearchFilter"
+        }
+      },
+      "create": {
+        "POST": {
+          "function": "user_search",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1
+            },
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
+            }
+          },
+          "request_filter": "CreateCrowdRequestFilter",
+          "response_filter": "CreateCrowdResponseFilter"
+        }
+      },
+      "create_crowd_update": {
+        "GET/POST":{
+            "action":"update",
+            "target":"GPE",
+            "request_filter":"CreateCrowdUpdateFilter",
+            "summary":""
+        }  
+      },
+      "get": {
+        "GET/POST": {
+          "function": "get_crowd_by_name",
+          "parameters": {
+            "name": {
+              "type": "STRING",
+              "min_count": 1,
+              "max_count": 1,
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type": "TYPENAME"
+            },
+            "limit": {
+              "type": "UINT32",
+              "min_count": 0
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
+            }
+          }
+        }
+      },
+      "delete": {
+        "GET/POST": {
+          "function": "delete_crowd_by_name",
+          "parameters": {
+            "name":{
+              "type":"STRING",
+              "is_id":true,
+              "id_type":"$type"
+            },
+            "type": {
+              "type":"TYPENAME"
+            },
+            "rid":{
+              "type":"STRING",
+              "min_count": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "clear_semantic": {
+    "POST": {
+      "function": "clear_semantic",
+      "summary": "clear semantic schema in GPE."
+    }
+  }
+}

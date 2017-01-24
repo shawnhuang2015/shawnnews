@@ -1,0 +1,3 @@
+separator="," DATA_EOL="\n"
+post_user_json
+{"user_id": "u0", "name": "u0_name", "age": 22, "gender": "female"}

@@ -1,0 +1,21 @@
+rule4:
+-   rule1
+-   rule2
+-   rule3
+-   load3
+load1: 
+-   start
+load2:
+-   start
+load3:
+-   load1
+-   load2
+rule1:
+-   load2
+rule2:
+-   load2
+rule3:
+-   load2
+-   load1
+end:
+-   rule4

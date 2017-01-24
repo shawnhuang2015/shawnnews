@@ -1,0 +1,118 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_user()">
+  <fieldset>
+      <!-- Show -->
+      <legend>{{'Crowd_create.CrowdCondition' | translate}}</legend>
+      <table class="table table-hover" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
+          <thead>
+          <tr>
+              <th>{{'Crowd_create.Index' | translate}}</th>
+              <th>{{'Crowd_create.CrowdCondition' | translate}}</th>
+              <th>{{'Crowd_create.CrowdAmount' | translate}}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr data-ng-repeat="condition in crowdDetail.selector.tag">
+              <td>{{$index+1}}</td>
+              <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}} {{condition.factor}}</b></td>
+              <td>{{condition.count}}</td>
+          </tr>
+          <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
+              <td>{{$index+1+crowdDetail.selector.tag.length}}</td>
+              <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
+                  {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestWeightIs' | translate}} <b>{{condition.operator}} {{condition.weight}}</b>
+              </td>
+              <td ng-if="condition.operator=='dislike' || condition.operator=='like'">
+                  {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestIs' | translate}} <b>{{condition.operator}}</b>
+              </td>
+              <td>{{condition.count}}</td>
+          </tr>
+          <tr data-ng-repeat="condition in crowdDetail.selector.behavior">
+              <td>{{$index+1+crowdDetail.selector.tag.length+crowdDetail.selector.ontology.length}}</td>
+              <td>
+                  {{condition_type[2].name}}:&nbsp;&nbsp;<b>{{condition.action}}</b>&nbsp;<b>{{condition.objectCategory}}</b>
+                  <nobr ng-if="condition.objectType=='Category'">&nbsp;&nbsp;
+                  {{'Crowd_create.In' | translate}}
+                  <b>{{condition.ontologyType}}/{{condition.objectId}}</b>
+                  {{'Crowd_create.Folder' | translate}}
+                  </nobr>
+                  <nobr ng-if="condition.objectType=='Contains'">&nbsp;&nbsp;
+                  {{'Crowd_create.ContainsCharacters' | translate}}
+                  <b>{{condition.ontologyType}}/{{condition.objectId}}</b></nobr>
+                  <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;
+                  {{'Crowd_create.Item' | translate}}
+                  <b>{{condition.objectId}}</b></nobr>
+                  &nbsp;&nbsp;
+                  {{'Crowd_create.Frequency' | translate}}
+                  <b>{{condition.operator}} {{condition.value}}</b>
+                  <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;
+                  {{'Crowd_create.DateBetween' | translate}}
+                  <b>{{condition.startTime | date:'shortDate'}}</b>
+                  {{'Crowd_create.To' | translate}}
+                  <b>{{condition.endTime | date:'shortDate'}}</b>
+                  {{Crowd_create.zh_Range | translate}}
+                  </nobr>
+                  <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;
+                  {{'Crowd_create.InThePassed' | translate}}
+                  <b>{{condition.startTime/86400000}}</b>
+                  {{'Crowd_create.Days' | translate}}
+                  {{Crowd_create.zh_Range | translate}}
+                  </nobr>
+                  <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;
+                  {{'Crowd_create.InThePassed' | translate}}
+                  <b>{{condition.startTime/3600000}}</b>
+                  {{'Crowd_create.Hours' | translate}}
+                  {{Crowd_create.zh_Range | translate}}
+                  </nobr>
+              </td>
+              <td>{{condition.count}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="col-md-offset-8 col-md-3">
+        <h4>
+            {{'Crowd_create.QueryMatchAmount' | translate}}
+            <span ng-if="crowdDetail.count >= 0">{{crowdDetail.count}}</span>
+            {{'Crowd_create.zh_People' | translate}}
+        </h4>
+        </div>
+  </fieldset>
+
+  <fieldset>
+      <legend>{{'Crowd_create.UserDetail' | translate}}</legend>
+      <div class="text-center row" ng-if="!userList && crowdDetail.type == 'static'">
+          <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>{{'Crowd_create.UserDataLoading' | translate}}
+      </div>
+      <div class="text-center row" ng-if="crowdDetail.type == 'dynamic'">
+          {{'Crowd_create.DynamicCrowdUserList' | translate}}
+      </div>
+      <div class="col-md-offset-3 col-md-6">
+          <table class="table table-hover table-bordered" ng-if="userList.length>=0 && crowdDetail.type == 'static'">
+              <thead>
+              <tr align="center">
+                  <th>{{'Crowd_create.Index' | translate}}</th>
+                  <th>UID</th>
+                  <th>{{'Crowd_create.Action' | translate}}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr data-ng-repeat="user in userList" align="center">
+                  <td>{{$index+1}}</td>
+                  <td>{{user}}</td>
+                  <td>
+                  <span>
+                      <button class="btn btn-info btn-xs" data-ng-click="comingSoon()">
+                      {{'Crowd_create.ExploreUser' | translate}}
+                      </button>
+                  </span>
+                  </td>
+              </tr>
+              </tbody>
+          </table>
+      </div>
+  </fieldset>
+
+  <div class="col-md-offset-3 col-md-6">
+      <a target="_self" id="downloadUserlist" href="/api/miscs/download?file={{crowdDetail.file}}" download="userlist.xml"
+         class="btn btn-info btn-block" ng-if="userList.length>0 && crowdDetail.type == 'static'">{{'Crowd_create.DownloadUserList' | translate}}</a>
+  </div>
+</div>

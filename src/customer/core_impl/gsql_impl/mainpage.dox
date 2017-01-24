@@ -1,0 +1,10 @@
+/**
+ * @mainpage GSQL Loader Libraries
+ * @copyright Copyright(c) 2015, GraphSQL Inc.
+ *
+ * @brief GSQL Shell built-in Loader libraries that can be used in loading statements.
+ *
+ *
+ * @date Mar 16, 2015
+ * @author Mingxi Wu, Zixuan Zhuang, solution team
+ */

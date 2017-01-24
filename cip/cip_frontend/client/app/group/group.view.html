@@ -1,0 +1,61 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_view()">
+<fieldset>
+  <legend>{{'Group_view.GroupList' | translate}}</legend>
+    <h4 class="text-center" ng-if="!crowd || crowd.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
+    <h4 class="text-center" ng-if="crowd.length>0 && (!group.list || group.list.length<=0)">{{'Group_view.NoGroupExist' | translate}}</h4>
+
+    <table class="table table-hover" ng-if="group.list.length>0">
+        <!-- <h4 ng-if="group.list.length>0">{{'Group_view.GroupList' | translate}}</h4> -->
+        <thead>
+        <tr>
+            <th>{{'Group_view.GroupIndex' | translate}}</th>
+            <th>{{'Group_view.GroupName' | translate}}</th>
+            <th>{{'Group_view.GroupType' | translate}}</th>
+            <th>{{'Group_view.GroupCoverAomunt' | translate}}</th>
+            <th>{{'Group_view.GroupCreateDate' | translate}}</th>
+            <th>{{'Group_view.GroupStatus' | translate}}</th>
+            <th>{{'Group_view.GroupAction' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="crowd in group.list">
+            <td>{{$index+1}}</td>
+            <td>{{crowd.crowdName}}</td>
+            <td>{{crowd.type}}</td>
+            <td>{{crowd.count}}</td>
+            <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd.tagAdded == 1" class="text-success">{{'Group_view.CreateComplete' | translate}}</td>
+            <td ng-if="crowd.tagAdded == 0" class="text-warning">{{'Group_view.CreateInProcessing' | translate}}</td>
+            <td ng-if="crowd.tagAdded == -1" class="text-danger">{{'Group_view.CreateFailed' | translate}}</td>
+            <td>
+                <span>
+                    <a class="btn btn-info btn-xs" data-ng-href="crowd/{{crowd._id}}/group_user">{{'Group_view.Detail' | translate}}</a>
+                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd._id);">{{'Group_view.Delete' | translate}}</button>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-center" ng-show="page.total_items>page.page_size">
+        <uib-pagination 
+        boundary-links="true" 
+        total-items="page.total_items" 
+        ng-model="page.current_page" 
+        class="pagination-sm"
+        ng-change="groupPageChanged()"
+        previous-text="&lsaquo;" 
+        next-text="&rsaquo;" 
+        first-text="&laquo;" 
+        last-text="&raquo;"
+        max-size="page.max_size"
+        items-per-page="page.page_size">
+        </uib-pagination>
+    </div>
+
+    <div class="col-md-offset-3 col-md-6">
+        <button data-ng-click="goToCreateGroup()" ng-if="crowd.length>0" class="btn btn-info btn-block">{{'Group_view.CreateGroup' | translate}}</button>
+    </div>
+
+</fieldset>
+
+</div>

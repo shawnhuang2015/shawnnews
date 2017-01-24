@@ -1,0 +1,423 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_create()">
+  <!-- <div class="row wrapper border-bottom white-bg page-heading ng-scope">
+        <div class="col-lg-10">
+            <h2>{{'Crowd_create.CrowdCondition' | translate}}</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/crowd/main">{{'Menu.CrowdManagement' | translate}}</a>
+                </li>
+                <li class="active">
+                    <strong>{{'Menu.CreateCrowd' | translate}}</strong>
+                </li>
+            </ol>
+        </div>
+    </div> -->
+
+  <fieldset>
+    <legend>{{'Crowd_create.CrowdCondition' | translate}}</legend>
+    
+    <!-- Edit -->
+    <!-- TAG/Interest_intent/Behavior-->
+    <div class='ibox-title'>
+        <div class="row">
+            <label class="col-sm-3 control-label">{{'Crowd_create.CrowdMethod' | translate}}</label>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <ui-select ng-model="factors.condition" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.Condition' | translate}}">{{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="x.id as x in condition_type | filter:$select.search">{{x.name}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag -->
+    <div class="ibox-content" ng-if="factors.condition == 'tag'">
+        <div class="row">
+            <!-- tag name -->
+            <div class="col-sm-4">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.TagName' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.name" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.TagName' | translate}}">{{factors.name}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="x in tag.name | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- logic -->
+            <div class="col-sm-4">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.ArithmeticLogic' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.operator" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.Logic' | translate}}">{{factors.operator}}</ui-select-match>
+                            <ui-select-choices repeat=" x in tag.operator | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- tag attribute -->
+            <div class="col-sm-4">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.TagAttribute' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.factor" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.TagName' | translate}}">{{factors.factor}}
+                            </ui-select-match>
+                            <ui-select-choices repeat=" x in tag.factor | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <!-- End Tag -->
+
+    <!-- Ontology -->
+    <div class="ibox-content" ng-if="factors.condition == 'ontology'">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.TagCategory' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.name">
+                            <ui-select-match placeholder="{{'Crowd_create.TagCategory' | translate}}">{{factors.name}}
+                            </ui-select-match>
+                            <ui-select-choices repeat=" x in ontology.type | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" ng-if="ontology.factor.length>0">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.Tag' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.factor" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.Tag' | translate}}">{{factors.factor}}</ui-select-match>
+                            <ui-select-choices repeat=" x in ontology.factor | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" ng-if="ontology.factor.length<=0">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.Tag' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input name="factor" type="text" class="form-control" ng-model="factors.factor" placeholder="{{'Crowd_create.Tag' | translate}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.ArithmeticLogic' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.operator" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.Logic' | translate}}">{{factors.operator}}</ui-select-match>
+                            <ui-select-choices repeat=" x in ontology.operator | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" ng-if="factors.operator != 'like' && factors.operator != 'dislike'">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.TagConfidenceWeight' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input name="weight" type="number" class="form-control" ng-model="factors.weight" placeholder="{{'Crowd_create.TagConfidenceWeight' | translate}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Ontology -->
+
+    <!-- Behavior-->
+    <div class="ibox-content" ng-if="factors.condition == 'behavior'">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.Behavior' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.action" append-to-body="'true'">
+                        <ui-select-match placeholder="{{'Crowd_create.Behavior' | translate}}">{{factors.action}}</ui-select-match>
+                        <ui-select-choices repeat=" x in ontology.action | filter:$select.search">{{x}}
+                        </ui-select-choices>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3" ng-if="ontology.object.category.length>0">
+                <div class="row">
+                    <label class="col-sm-12 control-label">{{'Crowd_create.Object' | translate}}</label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ui-select ng-model="factors.objectCategory" append-to-body="'true'">
+                            <ui-select-match placeholder="{{'Crowd_create.Object' | translate}}">{{factors.objectCategory}}</ui-select-match>
+                            <ui-select-choices repeat=" x in ontology.object.category | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row" ng-if="ontology.object.category.length>0">
+            <label class="col-sm-12 control-label">{{'Crowd_create.ObjectCategory' | translate}}</label>
+        </div>
+        <div class="row" ng-if="ontology.object.category.length>0">
+            <div class="col-sm-4" >
+                <ui-select ng-model="factors.objectType" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.QueryMethod' | translate}}">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="x.id as x in ontology.object.type | filter:$select.search">{{x.name}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-sm-4" ng-if="factors.objectType == 'Category' || factors.objectType == 'Contains'">
+                <ui-select ng-model="factors.ontologyType" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.ObjectCategory' | translate}}">{{factors.ontologyType}}</ui-select-match>
+                    <ui-select-choices repeat=" x in ontology.behavior_type | filter:$select.search">{{x}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-sm-4" ng-if="factors.objectType == 'Category' && ontology.object.category.length>0 && ontology.object.id.length>0">
+                <ui-select ng-model="factors.objectId" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.ObjectValue' | translate}}">{{factors.objectId}}</ui-select-match>
+                    <ui-select-choices repeat=" x in ontology.object.id | filter:$select.search">{{x}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-sm-4" ng-if="ontology.object.category.length>0 &&
+                (factors.objectType != 'Category' ||(factors.objectType == 'Category' && ontology.object.id.length<=0))">
+                <input name="item_id" type="text" class="form-control" ng-model="factors.objectId"
+                       placeholder="{{'Crowd_create.ObjectValue' | translate}}">
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row" ng-if="factors.action">
+            <label class="col-sm-12 control-label">{{'Crowd_create.Frequency' | translate}}</label>
+        </div>
+        <div class="row" ng-if="factors.action">
+            <div class="col-sm-4">
+                <ui-select ng-model="factors.operator" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.Logic' | translate}}">{{factors.operator}}</ui-select-match>
+                    <ui-select-choices repeat=" x in ontology.behavior_operator | filter:$select.search">{{x}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-sm-4">
+                <input name="object_value" type="number" class="form-control" ng-model="factors.value"
+                       placeholder="{{'Crowd_create.Logic' | translate}}值" ng-pattern="/^\d+$/">
+                <div ng-show="factors.value == null" class="help-block">
+                    <p class="text-danger">{{'Crowd_create.ValueBetween' | translate}} 0~2147483647</p>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row" ng-if="factors.action">
+            <label class="col-sm-12 control-label">{{'Crowd_create.OccurenceDate' | translate}}</label>
+        </div>
+        <div class="row">
+            <div class="col-sm-4" ng-if="factors.action">
+                <ui-select ng-model="factors.timeType" append-to-body="'true'">
+                    <ui-select-match placeholder="{{'Crowd_create.DateType' | translate}}">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat=" x.id as x in ontology.date_type | filter:$select.search">{{x.name}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="col-sm-4" ng-show="(factors.timeType == 'day' || factors.timeType == 'hour')">
+                <input name="time_start" type="text" class="form-control" ng-model="widget.startTime">
+            </div>
+            <div class="col-sm-4" ng-show="factors.timeType == 'absolute'">
+                <p class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                           ng-model="widget.startTime" is-open="widget.popup_start" min-date="minDate" max-date="maxDate"
+                           datepicker-options="widget.dateOptions" date-disabled="disabled(date, mode)"
+                           close-text="Close" alt-input-formats="altInputFormats" />
+                      <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="widget.date_start()"><i class="glyphicon glyphicon-calendar"></i></button>
+                      </span>
+                </p>
+            </div>
+            <div class="col-sm-4" ng-show="factors.timeType == 'absolute'">
+                <p class="input-group">
+                    <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                           ng-model="widget.endTime" is-open="widget.popup_end" min-date="minDate" max-date="maxDate"
+                           datepicker-options="widget.dateOptions" date-disabled="disabled(date, mode)"
+                           close-text="Close" alt-input-formats="altInputFormats" />
+                    <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="widget.date_end()"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- End Behavior-->
+    <hr />
+
+    <div class="col-sm-offset-9 col-sm-3">
+        <button mean-token="'create-add-factor'" type="button"
+            ng-click="addFactor(factors.condition)" class="btn btn-info btn-block">{{'Crowd_create.AddCondition' | translate}}
+        </button>
+    </div>
+    </fieldset>
+
+    <fieldset>
+    <!-- Show -->
+    <legend>{{'Crowd_create.ConditionList' | translate}}</legend>
+
+    <table class="table table-hover" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
+        <thead>
+        <tr>
+            <th>{{'Crowd_create.Index' | translate}}</th>
+            <th>{{'Crowd_create.CrowdCondition' | translate}}</th>
+            <th>{{'Crowd_create.CrowdAmount' | translate}}</th>
+            <th>{{'Crowd_create.Action' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-ng-repeat="condition in crowdDetail.selector.tag">
+            <td>{{$index+1}}</td>
+            <td>{{condition_type[0].name}}:&nbsp;&nbsp;<b>{{condition.name}} {{condition.operator}} {{condition.factor}}</b></td>
+            <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                <span ng-if="condition.count == -2">{{'Crowd_create.QueryFailed' | translate}}</span>
+                <span ng-if="condition.count >= 0">{{condition.count}}</span>
+            </td>
+            <td>
+                <span>
+                  <button class="btn btn-danger btn-xs"
+                          data-ng-click="deleteFactor(crowdDetail.selector.tag, $index);">{{'Crowd_create.DeleteCondition' | translate}}
+                  </button>
+                </span>
+            </td>
+        </tr>
+        <tr data-ng-repeat="condition in crowdDetail.selector.ontology">
+            <td>{{$index+1+crowdDetail.selector.tag.length}}</td>
+            <td ng-if="condition.operator!='dislike' && condition.operator!='like'">
+                {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestWeightIs' | translate}} <b>{{condition.operator}} {{condition.weight}}</b>
+            </td>
+            <td ng-if="condition.operator=='dislike' || condition.operator=='like'">
+                {{condition_type[1].name}}:&nbsp;&nbsp;<b>{{condition.name}}</b>{{'Crowd_create.Of' | translate}}<b>{{condition.factor}}</b>{{'Crowd_create.InterestIs' | translate}} <b>{{condition.operator}}</b>
+            </td>
+            <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                <span ng-if="condition.count == -2">{{'Crowd_create.QueryFailed' | translate}}</span>
+                <span ng-if="condition.count >= 0">{{condition.count}}</span>
+            <td>
+                <span>
+                  <button class="btn btn-danger btn-xs"
+                          data-ng-click="deleteFactor(crowdDetail.selector.ontology, $index);">{{'Crowd_create.DeleteCondition' | translate}}
+                  </button>
+                </span>
+            </td>
+        </tr>
+        <tr data-ng-repeat="condition in crowdDetail.selector.behavior">
+            <td>{{$index+1+crowdDetail.selector.tag.length+crowdDetail.selector.ontology.length}}</td>
+            <td>
+                {{condition_type[2].name}}:&nbsp;&nbsp;<b>{{condition.action}}</b>&nbsp;<b>{{condition.objectCategory}}</b>
+                <nobr ng-if="condition.objectType=='Category'">&nbsp;&nbsp;
+                {{'Crowd_create.In' | translate}}
+                <b>{{condition.ontologyType}}/{{condition.objectId}}</b>
+                {{'Crowd_create.Folder' | translate}}
+                </nobr>
+                <nobr ng-if="condition.objectType=='Contains'">&nbsp;&nbsp;
+                {{'Crowd_create.ContainsCharacters' | translate}}
+                <b>{{condition.ontologyType}}/{{condition.objectId}}</b></nobr>
+                <nobr ng-if="condition.objectType=='Item'">&nbsp;&nbsp;
+                {{'Crowd_create.Item' | translate}}
+                <b>{{condition.objectId}}</b></nobr>
+                &nbsp;&nbsp;
+                {{'Crowd_create.Frequency' | translate}}
+                <b>{{condition.operator}} {{condition.value}}</b>
+                <nobr ng-if="condition.timeType=='absolute'">&nbsp;&nbsp;
+                {{'Crowd_create.DateBetween' | translate}}
+                <b>{{condition.startTime | date:'shortDate'}}</b>
+                {{'Crowd_create.To' | translate}}
+                <b>{{condition.endTime | date:'shortDate'}}</b>
+                {{Crowd_create.zh_Range | translate}}
+                </nobr>
+                <nobr ng-if="condition.timeType=='day'">&nbsp;&nbsp;
+                {{'Crowd_create.InThePassed' | translate}}
+                <b>{{condition.startTime/86400000}}</b>
+                {{'Crowd_create.Days' | translate}}
+                {{Crowd_create.zh_Range | translate}}
+                </nobr>
+                <nobr ng-if="condition.timeType=='hour'">&nbsp;&nbsp;
+                {{'Crowd_create.InThePassed' | translate}}
+                <b>{{condition.startTime/3600000}}</b>
+                {{'Crowd_create.Hours' | translate}}
+                {{Crowd_create.zh_Range | translate}}
+                </nobr>
+            </td>
+            <td><span ng-if="condition.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                <span ng-if="condition.count == -2">{{'Crowd_create.QueryFailed' | translate}}</span>
+                <span ng-if="condition.count >= 0">{{condition.count}}</span>
+            <td>
+                <span>
+                  <button class="btn btn-danger btn-xs"
+                          data-ng-click="deleteFactor(crowdDetail.selector.behavior, $index);">{{'Crowd_create.DeleteCondition' | translate}}
+                  </button>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="col-sm-offset-8 col-sm-3" ng-if="crowdDetail.selector.ontology.length>0 || crowdDetail.selector.behavior.length>0 || crowdDetail.selector.tag.length>0">
+        <h5 ng-if="crowdDetail.count >= -1">
+            {{'Crowd_create.QueryMatchAmount' | translate}}
+            <span ng-if="crowdDetail.count >= 0">{{crowdDetail.count}}</span>
+            <span ng-if="crowdDetail.count == -1" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+            {{'Crowd_create.zh_People' | translate}}
+        </h5>
+        <h5 ng-if="crowdDetail.count == -2">
+            {{'Crowd_create.QueryAllCountFailed' | translate}}
+        </h5>
+    </div>
+    </fieldset>
+
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-3">
+            <button mean-token="'create-save'" type="button" ng-click="goCrowdSave()" ng-disabled="crowdDetail.selector.behavior.length <=0 && crowdDetail.selector.ontology.length<=0 && crowdDetail.selector.tag.length<=0 || crowdDetail.count < 0" class="btn btn-success btn-block">{{'Crowd_create.SaveCrowd' | translate}}</button>
+        </div>
+    </div>
+
+    <br />
+    <br />
+</div>

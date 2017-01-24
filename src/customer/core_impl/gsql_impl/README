@@ -1,0 +1,6 @@
+This directory stores
+
+- ddl/  /* ddl shell script source code for a POC case */
+- TokenBank  /* the token and condition UDFs for a POC case */
+- TokenLib /* the graph sql provided, generic and well-tested token UDFs */
+- graph_config.yaml /* ddl generate this when you do export schema graphname */

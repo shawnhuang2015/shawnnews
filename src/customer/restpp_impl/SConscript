@@ -1,0 +1,10 @@
+# -*- mode: python; -*-
+#  Customers gperun
+Import('env')
+
+src_files = Split("""restpprun.cpp
+				  """)
+
+restpprun_server_build = env.Program(target='poc_rest_server', 
+						source=src_files)
+Return ("restpprun_server_build")

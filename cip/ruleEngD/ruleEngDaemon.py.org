@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+import threading,logging, time
+
+from kafka.client import KafkaClient
+from kafka.consumer import SimpleConsumer
+from kafka.producer import SimpleProducer
+
+class RuleEngDProducer(threading.Thread):
+    daemon = True
+
+    def run(self):
+        client_prod = KafkaClient("localhost:9092")
+        producer = SimpleProducer(client_prod)
+
+        while True:
+            print 'producer run4\n'
+            producer.send_messages('test', "test")
+            producer.send_messages('test',"\xc2Hola, mundo!")
+            print 'send completed\n'
+
+            time.sleep(1)
+
+class RuleEngDConsumer(threading.Thread):
+    daemon = True
+
+    def run(self):
+        client_consume = KafkaClient("localhost:9092");
+        print 'here in consumer2\n'
+        consumer = SimpleConsumer(client_consume, "test-group", "test")
+        print 'here in consumer3\n'
+
+        for message in consumer:
+            print (message)
+
+        time.sleep(1)
+
+#  def main():
+    #  threads = [
+            #  RuleEngDProducer(),
+            #  RuleEngDConsumer()
+            #  ]
+    #  for t in threads:
+        #  t.start()
+def main():
+    client_consume = KafkaClient("localhost:9092");
+    consumer = SimpleConsumer(client_consume, "test-group", "test")
+
+    for message in consumer:
+        print (message)
+        time.sleep(0.01)
+
+if __name__ == "__main__":
+#      logging.basicConfig(
+            #  format='%(asctime)s.%(msecs)s:%(name)s:%(thread)d:%(levelname)s:%(process)d:%(message)s',
+            #  level = logging.DEBUG
+            #  )
+    main()
+
+

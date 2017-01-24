@@ -1,0 +1,70 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_view()">
+<fieldset>
+  <legend>{{'Crowd_view.CrowdList' | translate}}</legend>
+  <div class="row">
+    <h4 class="text-center" ng-if="!crowd.list || crowd.list.length<=0">{{'Crowd_view.NoCrowdExist' | translate}}</h4>
+
+    <!-- <div class="col-sm-offset-3 col-sm-6">
+        <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
+    </div> -->
+  </div>
+  <div class="row">
+    <table class="table table-hover" ng-if="crowd.list.length>0">
+        <!-- <h4 ng-if="crowd.list.length>0">{{'Crowd_view.CrowdList' | translate}}</h4> -->
+        <thead>
+        <tr>
+            <th>{{'Crowd_view.CrowdID' | translate}}</th>
+            <th>{{'Crowd_view.CrowdName' | translate}}</th>
+            <th>{{'Crowd_view.CrowdType' | translate}}</th>
+            <th>{{'Crowd_view.AmountPeople' | translate}}</th>
+            <th>{{'Crowd_view.CreateDate' | translate}}</th>
+            <th>{{'Crowd_view.Status' | translate}}</th>
+            <th>{{'Crowd_view.Operation' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="crowd_item in crowd.list">
+            <td>{{$index+1}}</td>
+            <td>{{crowd_item.crowdName}}</td>
+            <td>{{crowd_item.type}}</td>
+            <td>{{crowd_item.count}}</td>
+            <td>{{crowd_item.created | date:'yyyy-MM-dd'}}</td>
+            <td ng-if="crowd_item.tagAdded == 1" class="text-success">{{'Crowd_view.CreateComplete' | translate}}</td>
+            <td ng-if="crowd_item.tagAdded == 0" class="text-warning">{{'Crowd_view.CreateInProcessing' | translate}}</td>
+            <td ng-if="crowd_item.tagAdded == -1" class="text-danger">{{'Crowd_view.CreateFailed' | translate}}</td>
+            <td>
+                <span>
+                    <a class="btn btn-info btn-xs" data-ng-href="/crowd/{{crowd_item._id}}/crowd_user">{{ 'Crowd_view.CrowdDetail' | translate }}</a>
+                    <button class="btn btn-danger btn-xs" data-ng-click="remove(crowd_item._id);">{{ 'Crowd_view.CrowdDelete' | translate }}</button>
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-center " ng-show="page.total_items>page.page_size">
+        <uib-pagination 
+        boundary-links="true" 
+        total-items="page.total_items" 
+        ng-model="page.current_page" 
+        class="pagination-sm"
+        ng-change="crowdPageChanged()"
+        previous-text="&lsaquo;" 
+        next-text="&rsaquo;" 
+        first-text="&laquo;" 
+        last-text="&raquo;"
+        max-size="page.max_size"
+        items-per-page="page.page_size">
+        </uib-pagination>
+    </div>
+
+  </div>
+  <div class="row" ng-show="crowd.list.length>0">
+    <div class="col-sm-offset-3 col-sm-6">
+        <button data-ng-click="goCrowdCreate()" class="btn btn-info btn-block">{{ 'Crowd_view.CreateNewCrowdList' | translate }}</button>
+    </div>
+  </div>
+</fieldset>
+
+<br />
+<br />
+</div>

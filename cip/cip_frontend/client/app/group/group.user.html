@@ -1,0 +1,66 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_user()">
+    <fieldset>
+        <legend>{{'Group_user.CrowdList' | translate}}</legend>
+        <!-- Show -->
+        <div class="col-md-12 row">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>{{'Group_user.Index' | translate}}</th>
+                    <th>{{'Group_user.Name' | translate}}</th>
+                    <th>{{'Group_user.Amount' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="crowd in groupDetail.selector">
+                    <td>{{$index+1}}</td>
+                    <td>{{crowd.crowdName}}</td>
+                    <td>{{crowd.count}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="col-md-offset-8 col-md-3"><h5>{{'Group_user.QueryMatchAmount' | translate}} : <strong>{{groupDetail.count}}</strong></h5></div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>{{'Group_user.UserDetail' | translate}}</legend>
+        <div class="text-center row" ng-if="!userList && groupDetail.type == 'static'">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>{{'Group_user.UserDataLoading' | translate}}
+        </div>
+        <div class="text-center row" ng-if="crowdDetail.type == 'dynamic'">
+            {{'Group_user.DynamicCrowdUserList' | translate}}
+        </div>
+        <div class="col-md-offset-3 col-md-6">
+            <table class="table table-hover table-bordered" ng-if="userList.length>0 && groupDetail.type == 'static'">
+                <thead>
+                <tr align="center">
+                    <th>{{'Group_user.Index' | translate}}</th>
+                    <th>UID</th>
+                    <th>{{'Group_user.QueryMatchAmount' | translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-ng-repeat="user in userList" align="center">
+                    <td>{{$index+1}}</td>
+                    <td>{{user}}</td>
+                    <td>
+                    <span>
+                        <button class="btn btn-info btn-xs" data-ng-click="comingSoon()">{{'Group_user.ExploreUser' | translate}}
+                        </button>
+                    </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+
+    <div class="col-md-offset-3 col-md-6">
+        <a target="_self" id="downloadUserlist" href="/api/miscs/download?file={{groupDetail.file}}" download="userlist.xml"
+           class="btn btn-info btn-block" ng-if="userList.length>0 && groupDetail.type == 'static'">{{'Group_user.DownloadUserList' | translate}}</a>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,14 @@
+r1_merchant_continuous_txn_fail:
+-   start
+r2_merchant_large_small_txn:
+-   start
+r3_merchant_dc_amount_exceed:
+-   start
+r4_merchant_dup_txn_amount:
+-   start
+
+end:
+-   r1_merchant_continuous_txn_fail
+-   r2_merchant_large_small_txn
+-   r3_merchant_dc_amount_exceed
+-   r4_merchant_dup_txn_amount

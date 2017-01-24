@@ -1,0 +1,44 @@
+GRAPH:
+    graph_view_name: dummy
+    num_edge_attributes: 4
+    num_vertex_attributes: 3
+HOST:
+    engine_setting:
+        bucket_split_perpartition: 1
+        num_running_threads: 6
+    get_request_timeoutsec: 10
+    graph_partition_snapshot:
+        snapshot_interval: 3600
+        snapshot_path: /data/rc4/gstore/0/part
+    ip: 127.0.0.1
+    log_dir: /data/logs
+    machine_config:
+        disks:
+        -   compress_method: None
+            num_load_threads: 1
+            num_save_threads: 1
+            path: /data/gdisk
+            type: SSD
+        memory_limit: 32768
+        num_memory_server_threads: 2
+    name: GPE1
+    num_max_running_instances: 6
+    port: 5678
+    prefetch_request_limit: 12
+    prefetch_request_timeoutsec: 5
+    queue_client_name_prefix: gpe
+KAFKA:
+    machines:
+    -   host: 127.0.0.1
+        ip: 127.0.0.1
+        port: 9092
+QUEUE:
+    delta_queue: deltaQ
+    get_request_queue: requestQ
+    prefetch_request_queue: prefetchrequestQ
+    response_queue: responseQ
+    sleep_time: 250
+ZOOKEEPER:
+    machines:
+    -   ip: 127.0.0.1
+        port: 2181

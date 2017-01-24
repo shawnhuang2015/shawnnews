@@ -1,0 +1,10 @@
+# -*- mode: python; -*-
+#  Customers gpprun
+Import('env')
+
+src_files = Split("""gpprun.cpp
+				  """)
+
+gpprun_server_build = env.Program(target='poc_gpp_server', 
+						source=src_files)
+Return ("gpprun_server_build")

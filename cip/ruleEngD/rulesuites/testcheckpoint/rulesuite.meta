@@ -1,0 +1,12 @@
+#rule priority: HPW,MW,ALL
+resolution: ALL
+#resolution: HPW
+# supressed resolution: MW
+#Pri is only meaningful in case resolution is HPW
+pri:
+-   rule4
+-   rule2
+-   rule3
+checkpoint: testrulesuite
+owner:  Obama
+

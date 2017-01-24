@@ -1,0 +1,136 @@
+<div class="wrapper wrapper-content animated fadeInRight" data-ng-init="init_create()">
+
+    <form name="groupForm" class="form-horizontal" role="form" data-ng-submit="createGroup(groupForm.$valid)"
+          novalidate>
+        <fieldset>
+            <legend>{{ 'Group_create.BasicInformation' | translate }}</legend>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && groupForm.crowd_name.$invalid }">
+                <label mean-token="'create-group_name'" class="col-md-2 control-label">{{ 'Group_create.GroupName' | translate }}</label>
+                <div class="col-md-4">
+                    <input name="group_name" type="text" class="form-control" data-ng-model="groupDetail.crowdName"
+                           id="group_name" placeholder="Group Name" ng-pattern="/^\w+$/" required>
+                    <div ng-show="groupForm.group_name.$invalid" class="help-block">
+                        <p ng-show="groupForm.group_name.$error.required" class="text-danger">{{ 'Warning.CrowdNameNull' | translate}}</p>
+                        <p ng-show="!groupForm.group_name.$error.required" class="text-danger">{{ 'Warning.CrowdNameValid' | translate}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : submitted && crowdForm.description.$invalid }">
+                <label mean-token="'create-description'" class="col-md-2 control-label">{{ 'Group_create.Description' | translate}}</label>
+                <div class="col-md-4">
+                    <input name="description" type="text" class="form-control" data-ng-model="groupDetail.description"
+                           id="description" placeholder="{{ 'Group_create.Description' | translate}}" required>
+                    <div ng-show="groupForm.description.$invalid" class="help-block">
+                        <p ng-show="groupForm.description.$error.required" class="text-danger">{{ 'Warning.DescriptionNull' | translate}}</p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="scheduler-border">
+            <legend>{{ 'Group_create.SelectedGroup' | translate}}</legend>
+            <div class="row">
+                <table class="table table-hover" ng-if="groupDetail.selector.length>0">
+                    <label class="col-md-2 control-label">{{ 'Group_create.GroupLogic' | translate}}</label>
+                    <div class="col-md-4">
+                        <ui-select ng-model="groupDetail.logic" append-to-body="'true'">
+                            <ui-select-match placeholder="{{ 'Group_create.GroupLogic' | translate}}">{{groupDetail.logic}}</ui-select-match>
+                            <ui-select-choices repeat=" x in group.logic | filter:$select.search">{{x}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <thead>
+                    <tr>
+                        <th>{{ 'Group_create.Index' | translate}}</th>
+                        <th>{{ 'Group_create.Name' | translate}}</th>
+                        <th>{{ 'Group_create.Amount' | translate}}</th>
+                        <th>{{ 'Group_create.Action' | translate}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="crowd in groupDetail.selector">
+                        <td>{{$index+1}}</td>
+                        <td>{{crowd.crowdName}}</td>
+                        <td>{{crowd.count}}</td>
+                        <td>
+                    <span>
+                        <button class="btn btn-danger btn-xs" type="button" data-ng-click="removeFromList($index);">{{ 'Group_create.Remove' | translate}}
+                        </button>
+                    </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="col-md-offset-8 col-md-3">
+                    <h5 ng-if="groupDetail.count >= -1">{{ 'Group_create.QueryMatchAmount' | translate}} : 
+                        <strong ng-if="groupDetail.count >= 0">{{groupDetail.count}}</strong>
+                    <span ng-if="groupDetail.count == -1"
+                          class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+                        {{ 'Group_create.zh_People' | translate}}</h5>
+                    <h5 ng-if="groupDetail.count == -2">
+                        {{ 'Group_create.QueryAllCountFailed' | translate}}
+                    </h5>
+                </div>
+            </div>
+        </fieldset>
+
+        <br />
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-6">
+                <button mean-token="'create-save'" type="submit"
+                        ng-disabled="groupForm.$invalid || groupDetail.count < 0 || groupDetail.selector.length <= 0" class="btn btn-success btn-block">
+                    {{ 'Group_create.SaveGroup' | translate}}
+                </button>
+            </div>
+        </div>
+
+        <table class="table table-hover">
+            <h4>{{ 'Group_create.AvailableCrowd' | translate}}</h4>
+            <thead>
+            <tr>
+                <th>{{ 'Group_create.Index' | translate}}</th>
+                <th>{{ 'Group_create.Name' | translate}}</th>
+                <th>{{ 'Group_create.Type' | translate}}</th>
+                <th>{{ 'Group_create.Amount' | translate}}</th>
+                <th>{{ 'Group_create.CreateDate' | translate}}</th>
+                <th>{{ 'Group_create.Action' | translate}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="crowd in crowd.list">
+                <td>{{$index+1}}</td>
+                <td>{{crowd.crowdName}}</td>
+                <td>{{crowd.type}}</td>
+                <td>{{crowd.count}}</td>
+                <td>{{crowd.created | date:'yyyy-MM-dd'}}</td>
+                <td>
+                <span>
+                    <button ng-if="!crowd.__selected" class="btn btn-info btn-xs" type="button" data-ng-click="addToList(crowd);">{{ 'Group_create.AddCrowd' | translate}}</button>
+                    <button ng-if="crowd.__selected" class="btn btn-danger btn-xs" type="button">{{ 'Group_create.AlreadAddedCrowd' | translate}}</button>
+                </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-offset-5" ng-show="crowd_page.total_items>crowd_page.page_size">
+            <uib-pagination 
+            boundary-links="true" 
+            total-items="crowd_page.total_items" 
+            ng-model="crowd_page.current_page" 
+            class="pagination-sm"
+            ng-change="crowdPageChanged()"
+            previous-text="&lsaquo;" 
+            next-text="&rsaquo;" 
+            first-text="&laquo;" 
+            last-text="&raquo;"
+            max-size="crowd_page.max_size"
+            items-per-page="crowd_page.page_size">
+            </uib-pagination>
+        </div>
+
+    </form>
+
+    <br />
+    <br />
+</div>
