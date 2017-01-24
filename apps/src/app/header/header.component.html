@@ -1,0 +1,31 @@
+<header id="header">
+  <a class="home-link" href="/">
+    <img class="logo" src="https://cdn4.iconfinder.com/data/icons/social-messaging-productivity-1/128/play-icon-2-128.png">
+  </a>
+  <div class="header-text">
+    <div class="left">
+      <h1 class="name">
+        <a [routerLink]="['news', 1]">Angular 2 HN</a>
+      </h1>
+      <span class="header-nav">
+        <a [routerLink]="['newest', 1]">new</a>
+        <!-- <a href="/newest/1">new</a> -->
+        <span class="divider">
+          |
+        </span>
+        <a [routerLink]="['show', 1]">show</a>
+        <span class="divider">
+          |
+        </span>
+        <a [routerLink]="['ask', 1]">ask</a>
+        <span class="divider">
+          |
+        </span>
+        <a [routerLink]="['jobs', 1]">jobs</a>
+      </span>
+    </div>
+    <div class="info">
+      Built with <a href="https://cli.angular.io/" target="_blank">Angular CLI</a>
+    </div>
+  </div>
+</header>
