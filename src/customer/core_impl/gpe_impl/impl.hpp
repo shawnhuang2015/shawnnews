@@ -13,98 +13,169 @@
 #include <base/graphtypeinfo.hpp>
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-#include "kstepneighborhoodsubgraph.hpp"
-#include "querydispatcher.hpp"
-#include "export_ontology_tree.hpp"
-#include "business/UserSearchMain.hpp"
-#include "get_tag.hpp"
-#include "locate_tag.hpp"
+#include "udf/fraud_score.hpp"
+#include "udf/fraud_score_viz.hpp"
 
 using namespace gperun;
 
 namespace UDIMPL {
 
-// TODO(@alan): const for semantic layer, move to somewhere else
-const std::string OBJ("object");
-const std::string ONTO("ontology");
-const std::string OBJ_ONTO("object_ontology");
-const std::string PROF("profile");
-const std::string ONTO_VTYPE_PREF = "__onto_v_";
-const std::string ONTO_ETYPE_PREF_UP = "__onto_e_up_";
-const std::string ONTO_ETYPE_PREF_DOWN = "__onto_e_down_";
-const std::string OBJ_ONTO_ETYPE_PREF = "__obj_onto_e_";
-const std::string SEMANTIC_SCHEMA_PATH = "/tmp/semantic.json";
-const std::string SCHEMA_DIFF_PATH = "/tmp/diff.json";
-const std::string SCHEMA_CHANGE_SCRIPT_PATH = "/tmp/sc.sh";
-const std::string CROWD_INDEX("crowdIndex");
-const std::string CROWD_INDEX_VTYPE = "__crowd_index";
-const std::string USER_CROWD_INDEX_ETYPE = "__user_to_crowd_index";
-
-class UDFRunner : public ServiceImplBase {
- private:
-  Json::Value semantic_schema;
-  std::map<std::string, uint32_t> vertex_type_map;
-  std::map<uint32_t, std::string> vertex_type_reverse_map;
-  std::map<std::string, uint32_t> edge_type_map;
-  std::map<uint32_t, std::string> edge_type_reverse_map;
-  std::map<std::string, std::vector<VertexLocalId_t> > inverted_tag_cache;
-  bool refresh_inverted_tag_cache;
-
- public:
-  void Init(ServiceAPI& serviceapi) {
-    // check and load semantic schema
-    std::ifstream f(SEMANTIC_SCHEMA_PATH.c_str());
-    if (f.good()) {
-      Json::Reader reader;
-      bool success = false;
-      success = reader.parse(f, semantic_schema);
-      if (! success) {
-        std::cout << "fail to parse semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+  class UDFRunner : public ServiceImplBase{
+  public:
+    bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
+      if(request.request_function_== "kneighborsize")
+        return RunUDF_KNeighborSize(serviceapi, request);
+      else if(request.request_function_ == "transactionfraud") {
+        return RunUDF_TransactionFraud(serviceapi, request);
+      } else if(request.request_function_ == "transactionfraudviz") {
+        return RunUDF_TransactionFraudViz(serviceapi, request);
       }
-      std::cout << "parsed semantic schema file " << SEMANTIC_SCHEMA_PATH << std::endl;
+      return false; /// not a valid request
     }
 
-    // load graph meta
-    LoadGraphMeta(serviceapi);
+  private:
+    std::string typestring(int i) {
+      switch(i) {
+        case 0: return "TXN";
+        case 1: return "USERID";
+        case 2: return "SSN";
+        case 3: return "BANKID";
+        case 4: return "CELL";
+        case 5: return "IMEI";
+        case 6: return "IP";
+      }
+      return "UNKNOWN";
+    }
+    bool RunUDF_TransactionFraud(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
+        return false;
+      }
+      typedef lianlian_score_ns::FraudScoreUDF UDF_t;
 
-    // init some data member
-    refresh_inverted_tag_cache = true;
-  }
+      UDF_t udf(6, local_start, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
 
-  void LoadGraphMeta(ServiceAPI &serviceapi) {
-    // create a map: vertex/edge type name to id
-    topology4::TopologyMeta* topology = serviceapi.GetTopologyMeta();
-    uint32_t num_vertex_types = topology->vertextypemeta_.size();
+      gutil::JSONWriter* writer = request.outputwriter_; 
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
 
-    std::cout << "loading graph meta:" << std::endl;
-    for (uint32_t i = 0; i < num_vertex_types; ++i) {
-      std::string vertex_type_name = std::string(
-          topology->GetVertexType(i).typename_);
-      vertex_type_map[vertex_type_name] = i;
-      vertex_type_reverse_map[i] = vertex_type_name;
-      std::cout << vertex_type_name << " = " << i << std::endl;
+      writer->WriteStartObject();
+
+      writer->WriteName("score");
+      writer->WriteUnsignedInt(udf.get_score());
+
+      std::vector <VertexLocalId_t> vids;
+      writer->WriteName("vertices");
+      writer->WriteStartArray();
+      writer->WriteEndArray();
+
+      writer->WriteName("edges");
+      writer->WriteStartArray();
+      writer->WriteEndArray();
+      writer->WriteEndObject();
+
+      delete graphapi;
+      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+
+      return true;
     }
 
-    uint32_t num_edge_types = topology->edgetypemeta_.size();
-    for (uint32_t i = 0; i < num_edge_types; ++i) {
-      std::string edge_type_name =
-        std::string(topology->GetEdgeType(i).typename_);
-      edge_type_map[edge_type_name] = i;
-      edge_type_reverse_map[i] = edge_type_name;
-      std::cout << edge_type_name << " = " << i << std::endl;
+    bool RunUDF_TransactionFraudViz(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[2] + "_" + request.request_argv_[1], local_start)) {
+        return false;
+      }
+      typedef lianlian_score_viz_ns::FraudScoreVizUDF UDF_t;
+
+      UDF_t udf(12, local_start, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
+
+      const boost::unordered_set<VertexLocalId_t>& vertices = udf.get_vertices();
+      const boost::unordered_set<lianlian_score_viz_ns::edge_t>& edges = udf.get_edges();
+
+      gutil::JSONWriter* writer = request.outputwriter_; 
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
+
+      writer->WriteStartObject();
+
+      writer->WriteName("score");
+      writer->WriteUnsignedInt(udf.get_score());
+
+      std::vector <VertexLocalId_t> vids;
+      writer->WriteName("vertices");
+      writer->WriteStartArray();
+      for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = vertices.begin();
+           cit != vertices.end(); ++cit) {
+        vids.push_back(*cit);
+        writer->WriteStartObject();
+        writer->WriteName("id");
+        writer->WriteMarkVId(*cit);
+        writer->WriteName("type");
+        std::string tmp = typestring(graphapi->GetOneVertex(*cit)->type());
+        writer->WriteString(tmp);
+        writer->WriteName("attr");
+        writer->WriteStartObject();
+        if (*cit == local_start) {
+          writer->WriteName("score");
+          writer->WriteFloat(udf.get_score()); 
+        }
+        graphapi->GetOneVertex(*cit)->WriteAttributeToJson(*request.outputwriter_);
+        writer->WriteEndObject();
+        writer->WriteEndObject();
+      }
+      writer->WriteEndArray();
+
+      writer->WriteName("edges");
+      writer->WriteStartArray();
+      for (boost::unordered_set<lianlian_score_viz_ns::edge_t>::const_iterator cit = edges.begin();
+           cit != edges.end(); ++cit) {
+        gapi4::EdgesCollection results;
+        graphapi->GetSpecifiedEdges(cit->src_vid, cit->tgt_vid, results);
+        while(results.NextEdge()) {
+          writer->WriteStartObject();
+          writer->WriteName("src");
+          writer->WriteStartObject();
+          writer->WriteName("id");
+          writer->WriteMarkVId(cit->src_vid);
+          writer->WriteName("type");
+          std::string tmp =  typestring(graphapi->GetOneVertex(cit->src_vid)->type());
+          writer->WriteString(tmp);
+          writer->WriteEndObject();
+
+          writer->WriteName("tgt");
+          writer->WriteStartObject();
+          writer->WriteName("id");
+          writer->WriteMarkVId(cit->tgt_vid);
+          writer->WriteName("type");
+          tmp = typestring(graphapi->GetOneVertex(cit->tgt_vid)->type());
+          writer->WriteString(tmp);
+          writer->WriteEndObject();
+
+          writer->WriteName("type");
+          tmp = typestring(results.GetCurrentEdgeAttribute()->type());
+          writer->WriteString(tmp);
+          results.GetCurrentEdgeAttribute()->WriteAttributeToJson(*request.outputwriter_);
+
+          writer->WriteName("attr");
+          writer->WriteStartObject();
+          writer->WriteEndObject();
+
+          writer->WriteEndObject();
+        }
+      }
+      writer->WriteEndArray();
+      writer->WriteEndObject();
+
+      delete graphapi;
+      request.output_idservice_vids.insert(request.output_idservice_vids.begin(), vids.begin(), vids.end());
+
+      return true;
     }
 
-  }
-
-  bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request) {
-    if (request.request_function_ == "kneighborsize") {
-      return RunUDF_KNeighborSize(serviceapi, request);
-    } else if (request.request_function_ == "queryDispatcher") {
-#ifdef RUNQUERY
-        std::string queryName = request.jsoptions_["query_name"][0].asString();
-        QueryDispatcher qdp(queryName,serviceapi, request);
-        return qdp.RunQuery();
-#else
+    bool RunUDF_KNeighborSize(ServiceAPI& serviceapi, EngineServiceRequest& request){
+      // sample to convert vid.
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start))
         return false;
 #endif
     } else if (request.request_function_ == "semantic_def") {

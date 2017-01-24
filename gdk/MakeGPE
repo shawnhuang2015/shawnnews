@@ -68,7 +68,6 @@ LDFLAGS += -lpthread -ldl
 UNAME_S := $(shell uname -s)
 ifneq ($(UNAME_S),Darwin)
   LDFLAGS += -lcryptopp
-  LDFLAGS += -lrt
 endif
 
 ODIR = objs

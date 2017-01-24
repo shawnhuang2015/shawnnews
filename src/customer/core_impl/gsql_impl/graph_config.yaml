@@ -1,55 +1,96 @@
 AttributeEnumerators: 1
 EdgeTypes: 
-- Attributes: 
-  - AttributeName: role
-    AttributeType: STRING
-  EdgeId: 0
-  FromVertexTypeName: person
-  InitVersionAttributes: 
-  - AttributeName: role
-    AttributeType: STRING
-  IsDirected: true
-  Name: roles
-  ToVertexTypeName: movie
+- EdgeId: 0
+  FromVertexTypeName: '*'
+  IsDirected: false
+  Name: transtoentity
+  ToVertexTypeName: '*'
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: person_movie
+GraphName: lianlian
 SegSizeInBits: 20
 VertexTypes: 
 - Attributes: 
-  - AttributeName: name
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
     AttributeType: STRING
-  InitVersionAttributes: 
-  - AttributeName: name
-    AttributeType: STRING
-  Name: person
+  Name: transaction
   PrimaryId: 
-    AttributeName: id
-    AttributeType: UINT
-  SecondaryIds: 
-  - AttributeName: sid
-    AttributeType: UINT
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
   VertexId: 0
   VertexStatisticsType: 1
 - Attributes: 
-  - AttributeName: title
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
     AttributeType: STRING
-  - AttributeName: country
-    AttributeType: UINT
-    Enumerator: 1
-  - AttributeName: year
-    AttributeType: UINT
-  InitVersionAttributes: 
-  - AttributeName: title
-    AttributeType: STRING
-  - AttributeName: country
-    AttributeType: UINT
-    Enumerator: 2147483647
-  - AttributeName: year
-    AttributeType: UINT
-  Name: movie
+  Name: userid
   PrimaryId: 
-    AttributeName: id
-    AttributeType: UINT
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
   VertexId: 1
+  VertexStatisticsType: 1
+- Attributes: 
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
+  Name: ssn
+  PrimaryId: 
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 2
+  VertexStatisticsType: 1
+- Attributes: 
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
+  Name: bankid
+  PrimaryId: 
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 3
+  VertexStatisticsType: 1
+- Attributes: 
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
+  Name: cell
+  PrimaryId: 
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 4
+  VertexStatisticsType: 1
+- Attributes: 
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
+  Name: imei
+  PrimaryId: 
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 5
+  VertexStatisticsType: 1
+- Attributes: 
+  - AttributeName: isFraudulent
+    AttributeType: BOOL
+  - AttributeName: label
+    AttributeType: STRING
+  Name: ip
+  PrimaryId: 
+    AttributeName: value
+    AttributeType: STRING
+    Nullable: false
+  VertexId: 6
   VertexStatisticsType: 1

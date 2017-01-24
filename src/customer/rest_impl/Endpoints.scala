@@ -44,11 +44,173 @@ object EndpointDefinitions {
   //////////////////////////
   // REST ENDPOINTS       //
   //////////////////////////
+    ///UI END POINTS
+  
+  Endpoints.register(Endpoint(GET(), "UIpages", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => { 
+    
+    val formElements: JsValue = Json.parse("""
+    [ 
+      {
+        "tabname": "LLT Visualization Demo",
+        "index": 0,
+        "elements": [{ "label": { "name" : "ID"} }, { "textbox": {"name": "primaryKey", "length" : 20}},
+        { "label": { "name": "Type" } }, { "textbox": {"name" : "type", "length" : 20 } }
+        ],
+        "attributes": {
+          "depth" : 1
+        },
+        "setting" : {
+          "layout" : "tree",
+	        "graphType" : "undirected"
+        },
+        "initialization":{
+          "coloring" : [
+            {"selection":"isFraudulent == 'true'", "selectionType":"nodes", "color":"#fdd0a2"},
+            {"selection":"isFraudulent == 'true' && type == 'IP'", "selectionType":"nodes", "color":"#fdd0a2"},
+            {"selection":"isFraudulent == 'true' && type == 'BANKID'", "selectionType":"nodes", "color":"#fdae6b"},
+            {"selection":"isFraudulent == 'true' && type == 'SSN'", "selectionType":"nodes", "color":"#fd8d3c"},
+            {"selection":"isFraudulent == 'true' && type == 'TXN'", "selectionType":"nodes", "color":"#e6550d"}
+          ]
+        },
+        "events" : {
+          "submit" : {
+            "URL_head" : "engine/transactionfraudviz",
+            "URL_attrs" : {
+                "id" : {"usage":"input", "name":"primaryKey"},
+                "type" : {"usage":"input", "name":"type"}
+            }
+          },
+          "node_dblclick" : {
+            "URL_head" : "engine/transactionfraudviz",
+            "URL_attrs" : {
+                "id" : {"usage":"select", "name":"id"},
+                "type" : {"usage":"select", "name":"type"}
+            }
+          }
+        }  
+      }
+    ]
+    """); 
+ 
+    Some(Json.stringify(formElements));
+    //Some(Json.stringify(Json.obj("results" -> Json.stringify(formElements), "error" -> false, "message" -> ""))) 
+    //Some(Json.stringify(Json.obj("error" -> false, "message" -> "dummy!")))
+  }))
+  ///FINISH UI END POINTS
+
   Endpoints.register(Endpoint(GET(), "kneighborhood", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
     val request = GpeRequest(List("kneighborhood", uid), queryString)
     context.gpe.writeAndWait(request, List(uid))
   }))
 
+  Endpoints.register(Endpoint(GET(), "transactionfraud", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    
+    // Map of query id types, corresponds to typeId in graph_config.yaml
+    val type_mapping = Map("txn" -> 0,
+                           "userid" -> 1,
+                           "ssn" -> 2,
+                           "bankid" -> 3,
+                           "cell" -> 4,
+                           "imei" -> 5,
+                           "ip" -> 6)
+
+    if(queryString.contains("id")) {
+      val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
+      val raw_type: String = queryString.getOrElse("type", Seq()).headOption.getOrElse("txn")
+      val id_type = type_mapping.get(raw_type).getOrElse(0)
+      val request = GpeRequest(List("transactionfraud", uid, id_type.toString), queryString)
+      context.gpe.writeAndWait_TypedIds(request, List(uid -> id_type));
+    } else {
+      Some(Json.stringify(Json.obj("error" -> true, "message" -> "id is missing in query string")))
+    }
+  }))
+
+  Endpoints.register(Endpoint(GET(), "transactionfraudviz", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    
+    // Map of query id types, corresponds to typeId in graph_config.yaml
+    val type_mapping = Map("txn" -> 0,
+                           "userid" -> 1,
+                           "ssn" -> 2,
+                           "bankid" -> 3,
+                           "cell" -> 4,
+                           "imei" -> 5,
+                           "ip" -> 6)
+
+    if(queryString.contains("id")) {
+      val uid: String = queryString.getOrElse("id", Seq()).headOption.getOrElse("-1")
+      val raw_type: String = queryString.getOrElse("type", Seq()).headOption.getOrElse("txn")
+      val id_type = type_mapping.get(raw_type).getOrElse(0)
+      val request = GpeRequest(List("transactionfraudviz", uid, id_type.toString), queryString)
+      context.gpe.writeAndWait_TypedIds(request, List(uid -> id_type));
+    } else {
+      Some(Json.stringify(Json.obj("error" -> true, "message" -> "id is missing in query string")))
+    }
+  }))
+
+  Endpoints.register(Endpoint(POST(), "transaction", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val trans_str = "txn";
+    val user_str = "userid";
+    val ssn_str = "ssn";
+    val bank_str = "bankid";
+    val cell_str = "cell";
+    val imei_str = "imei";
+    val ip_str = "ip";
+    val fraud_str = "fraud";
+
+    var txn = "";
+    var userid = "";
+    var ssn = "";
+    var bankid = "";
+    var cell = "";
+    var imei = "";
+    var ip = "";
+    var isfraud = false;
+
+    if (dataPayload.keys.contains(trans_str)) {
+      txn = (dataPayload \ trans_str).as[String];
+    }
+    if (dataPayload.keys.contains(user_str)) {
+      userid = (dataPayload \ user_str).as[String];
+    }
+    if (dataPayload.keys.contains(ssn_str)) {
+      ssn = (dataPayload \ ssn_str).as[String];
+    }
+    if (dataPayload.keys.contains(bank_str)) {
+      bankid = (dataPayload \ bank_str).as[String];
+    }
+    if (dataPayload.keys.contains(cell_str)) {
+      cell = (dataPayload \ cell_str).as[String];
+    }
+    if (dataPayload.keys.contains(imei_str)) {
+      imei = (dataPayload \ imei_str).as[String];
+    }
+    if (dataPayload.keys.contains(ip_str)) {
+      ip = (dataPayload \ ip_str).as[String];
+    }
+    if (dataPayload.keys.contains(fraud_str)) {
+      isfraud = (dataPayload \ fraud_str).as[String].toBoolean;
+    }
+
+    var verSeq : Seq[Vertex] = List();
+    var edgeSeq : Seq[Edge] = List();
+    var idSeq : Seq[String] = List(txn,userid,ssn,bankid,cell,imei,ip);
+    for(i<-0 to (idSeq.length - 1))
+    {
+        if(idSeq(i)!="")
+        {
+            verSeq +:= Vertex(idSeq(i),Map("typeid" -> i, "isFraudulent" -> isfraud, "label" -> idSeq(i)), Some(i.toString));
+        }
+    }
+    if (txn != "") {
+      for (i<-1 to (idSeq.length - 1)) {
+        if (idSeq(i) != "") {
+          edgeSeq +:= Edge(0.toString + '_' + txn, i.toString + '_' + idSeq(i), Map("typeid" -> 0), Some(0.toString), Some(i.toString))
+        }
+      }
+    }
+    val gseRequest = GseRequest(verSeq++edgeSeq)
+    context.gse.writeAndWait(gseRequest)
+  }))
 
   /*
    * This endpoint is re-usable because it assumes that you are following a fixed format for graph update:

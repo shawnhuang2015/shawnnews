@@ -70,6 +70,16 @@ extern "C" bool SumGreaterThan3(const char* const iToken[], uint32_t iTokenLen[]
 
 }
 
+extern "C"  bool IsSSNIDTypeAndNotNull(const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum) {
+
+  int tmp = atoi(iToken[0]);
+
+  if (tmp != 7 && tmp != 0) {
+    return false;
+  }
+  return iTokenLen[1] != 0;
+}
+
 
 
 /**
