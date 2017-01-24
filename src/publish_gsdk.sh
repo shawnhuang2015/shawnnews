@@ -1,1 +1,0 @@
-er/buildenv/publish_gsdk.sh
