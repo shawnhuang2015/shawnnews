@@ -5,6 +5,8 @@
  * TokenBank1.cpp: a library of token conversion function declaration. 
  *
  * - It is a one-token-in, one-token-out function.
+ *     which means in ddl, it should be load .... values (...,funcName($1)..);
+ *     statements like load .... values (...,funcName($0,$1)..); will search funcName in TokenBankM.cpp
  * - All functions must use one of the following signatures, 
  *   but different function name.
  * - A token function can have nested other token function;
@@ -67,23 +69,23 @@
  * - All functions can be used in the loading job definition, in the VALUES caluse.
  *    e.g. Let a function named Reverse (), we can use it in the DDL shell as below
  *      values( $1, Reverse($2), $3...)
- *
- * - Once defined UDF, run the follow to compile a shared libary.
- *
- *    TokenBank/compile
- *
- *   GraphSQL loader binary will automatically use the library at runtime.
- *
- * - You can unit test your token function in the main function in this file.
- *   To run your test, you can do 
- *
- *     g++ TokenBank1.cpp 
- *     ./a.out
- *
- * Created on: Dec 11, 2014
- * Updated on: Feb 7, 2014
- * Author: Mingxi Wu
- ******************************************************************************/
+*
+* - Once defined UDF, run the follow to compile a shared libary.
+*
+*    TokenBank/compile
+*
+*   GraphSQL loader binary will automatically use the library at runtime.
+*
+* - You can unit test your token function in the main function in this file.
+*   To run your test, you can do 
+*
+*     g++ TokenBank1.cpp 
+*     ./a.out
+*
+* Created on: Dec 11, 2014
+* Updated on: Feb 7, 2014
+* Author: Mingxi Wu
+******************************************************************************/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -226,19 +228,20 @@ int main(){
 
   char c[14] = {'4',':','1',',','2','|','5',':','3','|','1','0',':','4'};
 
-  uint32_t alen = 0; 
-//ABC(c,14, b, alen);
+  /*
+     uint32_t alen = 0; 
+  //ABC(c,14, b, alen);
 
   cout<<"alen= "<<alen<<endl;
 
   for (int i = 0; i < alen; i++) {
-     if (b[i] == (char) 31) {
-         cout <<","; 
-     } else if (b[i] == (char) 30){
-         cout <<"|"; 
-     } else {
-       cout <<b[i];
-     }
+  if (b[i] == (char) 31) {
+  cout <<","; 
+  } else if (b[i] == (char) 30){
+  cout <<"|"; 
+  } else {
+  cout <<b[i];
+  }
   }
   cout <<endl;
 

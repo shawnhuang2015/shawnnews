@@ -144,40 +144,4 @@ extern "C" void gsql_split_by_space (const char* const iToken, uint32_t iTokenLe
  */
 extern "C"  bool gsql_to_bool(const char* const iToken, uint32_t iTokenLen);
 
-/**
- * This function converts a string to int64. Apply implicit conversion from double to int
- * Examples:
- * - "123" -> 123
- * - "-45" -> -45
- * - "24.35" -> 24
- * - ".34" -> 0
- * - "34e5" -> 3400000
- *
- * @par  Example
- *       load "source_file" to vertex v values ($0, $1, gsql_to_int($2));
- */
-//TODO: uncomment after upgrade to 4.3.3 
-//extern "C" int64_t gsql_to_int(const char* const iToken, uint32_t iTokenLen);
-
-/**
- * This function converts a string to unsigned int64. Apply implicit conversion from double to int
- * Examples:
- * - "123" -> 123
- * - "24.35" -> 24
- * - ".34" -> 0
- * - "34e5" -> 3400000
- *
- * @par  Example
- *       load "source_file" to vertex v values ($0, $1, gsql_to_uint($2));
- */
-extern "C" uint64_t gsql_to_uint(const char* const iToken, uint32_t iTokenLen);
-
-/**
- * This function returns the currect epoch time.
- *
- * @par Example
- *       load "source_file" to vertex v values ($0, $1, gsql_current_time_epoch(0));
- */
-extern "C"  uint64_t gsql_current_time_epoch (const char* const iToken, uint32_t iTokenLen);
-
 #endif /* TOKENLIB1_HPP_ */

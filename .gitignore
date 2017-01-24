@@ -58,13 +58,17 @@ mgnt_cli/
 gsql/.history
 gsql/config
 gsql/output
-gsql/logs/GSQL_LOG
+gsql/config
 
 # GTEST generated files#
 # ###################
 gtest/diff/*
 gtest/output/*
-gtest/.working_dir/*
+gtest/.working_dir
+ptest/diff/*
+ptest/output/*
+ptest/.working_dir
+ptest/resources/common/gsql/config
 
 # gdk generated
 deploy_gsdk/

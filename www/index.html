@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="visualization.ui">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,33 +14,234 @@
 </head>
 
 
-<body style="margin-left:10px; margin-right:10px">
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">GraphSQL</a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-        </ul>
-      </div>
+<body style="margin-left:15px; margin-right:15px;width:96%;" ng-controller="UIpages">
+  <nav id='bodyRow_1' class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href=""><!--img alt="GraphSQL" src="img/logo_0.png"-->GraphSQL</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <!--li ng-repeat="tab in tabs"><a href="#" id="{{tab.name}}" name="{{tab.name + $index}}" ng-click="initializeUI(tab, $index)">{{tab.tabname}}</a></li-->
+      </ul>
     </div>
   </nav>
 
-  <div id="content-page" class="starter-template">
+  <div id='bodyRow_2' class="row">
+    <div id="content-page" class="navbar-form" >
+      <!--div class="form-group" >
+        <span ng-repeat-start="e in object.elements"></span> 
+        <label>{{e.label}} :</label>
+        <input class="form-control" ng-repeat-end type ="text" name="{{e.name}}" size="{{e.length}}" ng-model="input[e.name]" placeholder="Please input {{e.name}}">
+      </div>
+      <button type="submit" ng-click="on_submit()" class="btn btn-default">Submit Query</button-->
+    </div>
+  </div>
+  <!-- Row 1 -->
+
+  <div id='bodyRow_hr' class="row" style="margin-left:0px;margin-right:0px;width:100%;height:1px; background-color: #9ecae1;margin-top:10px;margin-bottom:19px">
   </div>
 
   <!-- Visulization Component -->  
   <!-- Control Panel -->
-  <div class="container-fluid">
+  <!--div class="container-fluid"-->
 
-    <!-- first row for node action-->
+  <div id='bodyRow_3' class="row">
+    <!-- Begin Right Side -->
+    <div id="right_side" class="col-md-8" style="">
+      <div class="row" style="margin-bottom:19px">
+        <div class="col-md-4"> 
+          <div class="input-group">
+            <span class="input-group-addon">Node Labels: </span>
+            <select id="node_label_filtering" multiple="multiple">
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-4"> 
+          <div class="input-group">
+            <span class="input-group-addon">Edge Labels: </span>
+            <select id="edge_label_filtering" multiple="multiple">
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-1"> 
+          <a id="selectionDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-default">
+              Selection
+              <span class="caret"></span>
+            </button>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="selectionDropdown">
+            <li>
+              <a href="" id="b_highlightingNodes" onclick="highlightingNodes()">Highlight</a>
+            </li>
+            <li >
+              <a href="" onclick="hidingNodes()">Hide</a>
+            </li>
+            <li>    
+               <a href="" id="colorpicker" data-color="rgb(255, 0, 0)">
+                  Change Color
+               </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Control Panel Row 1 -->
+      <!--br /-->
+
+      <div class="row">
+        <!-- Tabs Area-->
+        <div id="viewport" class="col-md-12"> 
+          <div role="tabpanel" id="tapView" >
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active" ><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab" >Graph</a></li>
+              <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab" >JSON</a></li>
+              <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
+              <!--li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li-->
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <!-- Tab Graph -->
+              <div role="tabpanel" class="tab-pane fade in active" id="graph">
+                <br />
+                <div align='left' id="prototype1" style="float:left;">
+                </div>
+                <!--iframe id="desc_iframe" src="desc.html"></iframe-->
+                <!--pre id="desc_iframe" style="float:left;overflow:auto; margin-left:5px"></pre-->
+
+              </div>
+
+              <!-- Tab Json -->
+              <div role="tabpanel" class="tab-pane fade" id="json">
+                <style>
+                .key {
+                  color:red;
+                }
+                .string {
+                  color:green;
+                }
+                .number {
+                  color:blue;
+                }
+                </style>
+                <br />
+                <pre id="messageBox" style="float:left;overflow:auto;line-height: 90%;">
+                </pre>
+              </div>
+
+              <!-- Tab Summary -->
+              <div role="tabpanel" class="tab-pane fade" id="summary"> 
+                <br />
+                <div align='left' id="summaryInformationBox" stlye="float:left">
+                  <pre id="summaryOfAllNodes">Test</pre>
+                  <pre id="summaryOfSelectedNodes">Test</pre>
+                </div>
+              </div>
+
+              <!-- Tab More -->
+              <div role="tabpanel" class="tab-pane fade" id="more">
+                <br />
+                Coming Soon ...
+              </div>
+            </div>
+            <!-- End Tab panes -->
+
+          </div>
+        </div>
+      </div>
+      <!-- Viewport Row 2 -->
+    </div>
+    <!-- End Right Side -->
+
+    <!-- Begin Left Side -->
+    <div id='left_side' class="col-md-4" style=""> 
+      <div id="layoutport" class="row" style="background-color:#ecebe7;">
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4" align="center">
+            <a id="layoutDropdown" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <button class="btn btn-default">
+                Graph Layout
+                <span class="caret"></span>
+              </button>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="layoutDropdown">
+              <li><a href="" onclick="layoutChanged('force')">Force layout</a></li>
+              <li><a href="" onclick="layoutChanged('tree')">Tree layout</a></li>
+              <li><a href="" onclick="layoutChanged('hierarchical')">Hierarchical layout</a></li>
+              <li><a href="" onclick="layoutChanged('circle')">Circle layout</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Layout Port -->
+        <div class="row" >
+          <div class="col-md-10 col-md-offset-1" style=""> <!-- border-style:solid;border-color: #ecebe7; -->
+            <div id="layoutProperty" align="center">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br/>
+
+      <div id="tableBox" class="row" style="overflow:auto;">  
+        
+      </div>
+    </div>
+    <!-- End Right Side -->
+
+  </div>
+  <!-- Row 2 -->
+
+    <!--div ng-controller="PopoverDemoCtrl" style="float:left">
+      <button popover-placement="bottom" popover-template="dynamicPopover.templateUrl2" popover-title="{{dynamicPopover.title}}" class="btn btn-default" ng-click="on_click()">Popover With Template 0</button>
+
+      <script type="text/ng-template" id="myPopoverTemplate2.html">
+          <div>{{dynamicPopover.content}}</div>
+          <div class="form-group">
+            <label>Popup Title: 000000000</label>
+            <input type="text" ng-model="dynamicPopover.title" class="form-control">
+          </div>
+      </script>
+    </div--> 
+    <!--div ng-controller="displayAttributesCtrl" style="float:left">
+      <style>
+        .caret-right {
+            border-left: 4px solid;
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+        }
+      </style>
+      <button popover-placement="right" popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" class="btn btn-primary" ng-click="on_click()">{{dynamicPopover.content}} &nbsp;<span class="caret caret-right"></span></button>
+
+      <script type="text/ng-template" id="labelMultiselection.html">
+        <div>
+        <label>Node Labels :</label>
+        <select id="node_label_filtering" multiple="multiple">
+        </select>
+        </div>
+        <div>
+        <label>Edge Labels :</label>
+        <select id="edge_label_filtering" multiple="multiple">   
+        </select>
+        </div>
+      </script>
+    </div--> 
+
+  <!-- old -->
+  <!--
+  <div class="container-fluid">
+    
+    first row for node action
     <div class="row">
         <div class="col-md-4"> 
         <div class="input-group">
@@ -50,9 +251,9 @@
         </div>
       </div>
       <div class="col-md-6">
-        <!--key press event will be assigned in document.ready()-->
+        <key press event will be assigned in document.ready()>
         <input id="selectionCondition" type="text" class="form-control" placeholder="Enter selection condition">
-        <!--/form-->
+
       </div>
       <div class="col-md-2"> 
         <select class="form-control" id="selectionType">
@@ -61,8 +262,9 @@
         </select>
       </div>
     </div>
+    -->
 
-    <!-- second row for edge action -->
+    <!-- second row for edge action >
     <div class="row">
       <div class="col-md-4"> 
         <div class="input-group">
@@ -102,67 +304,7 @@
         </select>
       </div>
     </div>  
-
-  </div>
-
-  <br />
-
-  <!-- Tabs Area-->
-  <div role="tabpanel" id="tapView">
-
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#graph" aria-controls="graph" role="tab" data-toggle="tab">Graph</a></li>
-      <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON</a></li>
-      <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
-      <li role="presentation"><a href="#more" aria-controls="more" role="tab" data-toggle="tab">More ...</a></li>
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content">
-      <!-- Tab Graph -->
-      <div role="tabpanel" class="tab-pane active" id="graph">
-        <br />
-        <div align='left' id="prototype1" style="float:left;">
-        </div>
-      </div>
-
-      <!-- Tab Json -->
-      <div role="tabpanel" class="tab-pane" id="json">
-        <style>
-        .key {
-          color:red;
-        }
-        .string {
-          color:green;
-        }
-        .number {
-          color:blue;
-        }
-        </style>
-        <br />
-        <pre id="messageBox" style="float:left;overflow:auto;line-height: 90%;">
-        </pre>
-      </div>
-
-      <!-- Tab Summary -->
-      <div role="tabpanel" class="tab-pane" id="summary"> 
-        <br />
-        <div align='left' id="summaryInformationBox" stlye="float:left">
-          <pre id="summaryOfAllNodes">Test</pre>
-          <pre id="summaryOfSelectedNodes">Test</pre>
-        </div>
-      </div>
-
-      <!-- Tab More -->
-      <div role="tabpanel" class="tab-pane" id="more">
-        <br />
-        Coming Soon ...</div>
-    </div>
-    <!-- End Tab panes -->
-
-  </div>
-  <!-- End Visulization Component --> 
+  -->
 
   <!-- script src="graphAPI/data/data.js"></script -->
   <!-- script src="data/graph.js"></script -->
@@ -170,6 +312,8 @@
   <!-- Include 3rd Party Library -->
   <script src="graphAPI/lib/d3.js"></script>
   <script src="graphAPI/lib/jquery-2.1.3.js"></script>
+  <script type="text/javascript" src="graphAPI/lib/angular.js"></script>
+  <script type="text/javascript" src="graphAPI/lib/ui-bootstrap-tpls-0.13.0.js"></script>
 
   <script src="bt/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="bt/js/bootstrap-multiselect.js"></script>
@@ -179,6 +323,10 @@
   <script src="graphAPI/js/utlis.js"></script>
   <script src="graphAPI/js/gsqlv.v2.0.js"></script>
   <script src="graphAPI/js/main.js"></script>
+
+  <!-- Include UI componenets -->
+  <script type="text/javascript" src="graphAPI/js/ui_main.js"></script>
+  <script type="text/javascript" src="graphAPI/data/message.js"></script>
 </body>
 </html>
 

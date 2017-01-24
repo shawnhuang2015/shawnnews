@@ -1,33 +1,52 @@
-HOW TO GUIDE
+USER GUIDE
 
 In below struct, users will only work under src directory.
 1) in src/TokenBank, implement input token UDFs, compile to generate "*.so" files
    Note this step is optional.
-2) under src/ddl, create DDL scripts 
+2) in src/ReducerBank, implement reduce UDFs, compile to generate "*.so" files
+   Note this step is optional.
+3) under src/ddl, create DDL scripts 
 Then invokes gsql shell to generate graph schema and load the data.
 
 ==================================================================================
 
 gsql              /* this folder is dev folder on both in-house and customer site */
-├── README        /* readme */
 ├── config        /* gsql shell launch config */
 ├── gsql -> ../src/utility/tools/gshell/gsql.sh   /* user type this to launch shell */
-├── lib/          /* this folder contains compiled .so file and .gsql.jar */
-│   ├── .gsql.jar -> ../../src/utility/tools/gshell/gsql.jar   /* DDL driver */
-│   ├── boost -> ../../src/third_party/boost               /* boost static lib */
-│   ├──    ConditionBank1.so*    /* produced by TokenBank/compile */
-│   ├──    ConditionBankM.so*    /* produced by TokenBank/compile */
-│   ├──    TokenBank1.so*        /* produced by TokenBank/compile */
-│   └──    TokenBankM.so*        /* produced by TokenBank/compile */
-├── src
-│   └── TokenBank     /* user implement below cpp files, and compile them with *compile*, the output will be put in gsql/lib/ */
-│       │   ├── ConditionBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBank1.cpp
-│       │   ├── ConditionBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBankM.cpp
-│       │   ├── TokenBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBank1.cpp
-│       │   ├── TokenBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBankM.cpp
-│       │   └── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh /* user run this to compile this folder's cpp file */
-│       └── ddl -> ../../src/customer/core_impl/gsql_impl/ddl    /* user provides their ddl scripts in this folder */
-|            └── example -> ../../../../utility/tools/gshell/example /* many ddl examples showing the language */
+├── lib/          /* contains .so files, which is the libary for token udfs */
+│   ├── ConditionBank1.so
+│   ├── ConditionBankM.so
+│   ├── ReducerBank.so
+│   ├── TokenBank1.so
+│   └── TokenBankM.so
 └── output    /* shell output: graph_config.yaml by loading job or export cmd; and loading job log; */
-      ├── graph_config.yaml -> ../../src/customer/core_impl/gsql_impl/graph_config.yaml  
-      └── load_output.log  /* log of loading job */
+│   ├── graph_config.yaml -> ../../src/customer/core_impl/gsql_impl/graph_config.yaml  
+│   └── load_output.log  /* log of loading job */
+├── README
+└── src
+    ├── ddl -> ../../src/customer/core_impl/gsql_impl/ddl /* put your gsql script here */
+    ├── ReducerBank  /* compile command and udf reducer file */
+    │   ├── compileReducerBank.sh -> ../../../src/utility/tools/gshell/compileReducerBank.sh
+    │   └── ReducerBank.cpp -> ../../../src/customer/core_impl/gsql_impl/ReducerBank/ReducerBank.cpp
+    ├── ReducerLib /* graphsql provided build-in reducers */
+    │   ├── main.cpp -> ../../../src/customer/core_impl/gsql_impl/ReducerLib/main.cpp  /* test driver */
+    │   ├── ReducerLib.cpp -> ../../../src/customer/core_impl/gsql_impl/ReducerLib/ReducerLib.cpp
+    │   └── ReducerLib.hpp -> ../../../src/customer/core_impl/gsql_impl/ReducerLib/ReducerLib.hpp
+    ├── TokenBank  /* compile command and udf token and condition function files */
+    │   ├── compile -> ../../../src/utility/tools/gshell/compileTokenBank.sh
+    │   ├── ConditionBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBank1.cpp
+    │   ├── ConditionBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/ConditionBankM.cpp
+    │   ├── TokenBank1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBank1.cpp
+    │   └── TokenBankM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenBank/TokenBankM.cpp
+    └── TokenLib /* graphsql provided build-in token and condition functions */
+        ├── ConditionLib1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/ConditionLib1.cpp
+        ├── ConditionLib1.hpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/ConditionLib1.hpp
+        ├── ConditionLibM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/ConditionLibM.cpp
+        ├── ConditionLibM.hpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/ConditionLibM.hpp
+        ├── main.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/main.cpp
+        ├── TokenLib1.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/TokenLib1.cpp
+        ├── TokenLib1.hpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/TokenLib1.hpp
+        ├── TokenLibM.cpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/TokenLibM.cpp
+        └── TokenLibM.hpp -> ../../../src/customer/core_impl/gsql_impl/TokenLib/TokenLibM.hpp
+
+8 directories, 28 files

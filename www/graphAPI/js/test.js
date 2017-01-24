@@ -2,222 +2,222 @@ var width = 960,
     height = 500;
 
 function generateGraphData(tg) {
-	var dataset = {}
-	dataset.nodes = [];
-	dataset.edges = [];
+    var dataset = {}
+    dataset.nodes = [];
+    dataset.edges = [];
 
-	tg.nodes.forEach(function(n, i) {
-		var newNode = {};
-			newNode.type = "type"+i%3;
-			newNode.key = "key"+i.toString();
-			newNode.attr = {}
-			newNode.attr.weight = Math.random().toFixed(1);
-			newNode.attr.name = "name" + Math.random().toFixed(1);
-			//newNode.x = n.x;
-			//newNode.y = n.y;
-			//newNode.x = Math.random() * width;
-			//newNode.y = Math.random() * height;
+    tg.nodes.forEach(function(n, i) {
+        var newNode = {};
+            newNode.type = "type"+i%3;
+            newNode.key = "key"+i.toString();
+            newNode.attr = {}
+            newNode.attr.weight = Math.random().toFixed(1);
+            newNode.attr.name = "name" + Math.random().toFixed(1);
+            //newNode.x = n.x;
+            //newNode.y = n.y;
+            //newNode.x = Math.random() * width;
+            //newNode.y = Math.random() * height;
 
-			dataset.nodes.push(newNode);
-	})
+            dataset.nodes.push(newNode);
+    })
 
-	tg.links.forEach(function(l, i) {
-		var newEdge = {};
+    tg.links.forEach(function(l, i) {
+        var newEdge = {};
 
-		newEdge.source = {}
-		newEdge.target = {}
+        newEdge.source = {}
+        newEdge.target = {}
 
-		newEdge.source.type = dataset.nodes[l.source].type;
-		newEdge.source.key = dataset.nodes[l.source].key;
+        newEdge.source.type = dataset.nodes[l.source].type;
+        newEdge.source.key = dataset.nodes[l.source].key;
 
-		newEdge.target.type = dataset.nodes[l.target].type;
-		newEdge.target.key = dataset.nodes[l.target].key;
+        newEdge.target.type = dataset.nodes[l.target].type;
+        newEdge.target.key = dataset.nodes[l.target].key;
 
-		newEdge.attr = {}
-		newEdge.attr.weight = Math.random().toFixed(1);
-		newEdge.attr.name = "name"+Math.random().toFixed(1);
+        newEdge.attr = {}
+        newEdge.attr.weight = Math.random().toFixed(1);
+        newEdge.attr.name = "name"+Math.random().toFixed(1);
 
-		dataset.edges.push(newEdge);
-	})
+        dataset.edges.push(newEdge);
+    })
 
 
-	return dataset;
+    return dataset;
 }
 
 function generateRandomGraphData(nn, nt) {
-	var dataset = {};
-	dataset.nodes = [];
-	dataset.edges = [];
-	var numberofnodes = nn;
-	var numberoftype = nt;
+    var dataset = {};
+    dataset.nodes = [];
+    dataset.edges = [];
+    var numberofnodes = nn;
+    var numberoftype = nt;
 
-	var tempn = numberofnodes * numberoftype;
+    var tempn = numberofnodes * numberoftype;
 
-	// randomly generate nodes.
-	for (var i=0; i<numberoftype; ++i) {
-		for (var j=0; j<numberofnodes; ++j) {
-			var newNode = {};
-			newNode.type = "type"+i.toString();
-			newNode.key = "key"+j.toString();
-			newNode.attr = {}
-			newNode.attr.weight = "weight" + Math.random().toFixed(1);
-			newNode.attr.name = "name" + Math.random().toFixed(1);
+    // randomly generate nodes.
+    for (var i=0; i<numberoftype; ++i) {
+        for (var j=0; j<numberofnodes; ++j) {
+            var newNode = {};
+            newNode.type = "type"+i.toString();
+            newNode.key = "key"+j.toString();
+            newNode.attr = {}
+            newNode.attr.weight = "weight" + Math.random().toFixed(1);
+            newNode.attr.name = "name" + Math.random().toFixed(1);
 
-			dataset.nodes.push(newNode);
-		}
-	}
+            dataset.nodes.push(newNode);
+        }
+    }
 
-	// randomly generate edges for all nodes.
-	for (var i=0; i<tempn; ++i) {
+    // randomly generate edges for all nodes.
+    for (var i=0; i<tempn; ++i) {
 
-		var newEdge = {};
+        var newEdge = {};
 
-		newEdge.source = {}
-		newEdge.target = {}
+        newEdge.source = {}
+        newEdge.target = {}
 
-		newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
-		newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
+        newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
+        newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
 
-		newEdge.target.type = "type"+Math.floor(Math.random()*numberoftype).toString();
-		newEdge.target.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
+        newEdge.target.type = "type"+Math.floor(Math.random()*numberoftype).toString();
+        newEdge.target.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
 
-		newEdge.attr = {}
-		newEdge.attr.weight = "weight"+Math.random().toFixed(1);
-		newEdge.attr.name = "name"+Math.random().toFixed(1);
+        newEdge.attr = {}
+        newEdge.attr.weight = "weight"+Math.random().toFixed(1);
+        newEdge.attr.name = "name"+Math.random().toFixed(1);
 
 
-		if (newEdge.source.type == newEdge.target.type &&
-			newEdge.source.key == newEdge.target.key) {
-			continue;
-		}
-		else {
-			dataset.edges.push(newEdge)
-		}
-	}
+        if (newEdge.source.type == newEdge.target.type &&
+            newEdge.source.key == newEdge.target.key) {
+            continue;
+        }
+        else {
+            dataset.edges.push(newEdge)
+        }
+    }
 
-	// randomly generate edges for several nodes;
-	for (var i=0; i<tempn; ++i) {
+    // randomly generate edges for several nodes;
+    for (var i=0; i<tempn; ++i) {
 
-		var newEdge = {};
+        var newEdge = {};
 
-		newEdge.source = {}
-		newEdge.target = {}
+        newEdge.source = {}
+        newEdge.target = {}
 
-		newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
-		newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
+        newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
+        newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
 
-		newEdge.target.type = "type"+Math.floor(Math.random()*2).toString();
-		newEdge.target.key = "key"+Math.floor(Math.random()*15).toString();
+        newEdge.target.type = "type"+Math.floor(Math.random()*2).toString();
+        newEdge.target.key = "key"+Math.floor(Math.random()*15).toString();
 
-		newEdge.attr = {}
-		newEdge.attr.weight = "weight"+Math.random().toFixed(1);
-		newEdge.attr.name = "name"+Math.random().toFixed(1);
+        newEdge.attr = {}
+        newEdge.attr.weight = "weight"+Math.random().toFixed(1);
+        newEdge.attr.name = "name"+Math.random().toFixed(1);
 
-		if (newEdge.source.type == newEdge.target.type &&
-			newEdge.source.key == newEdge.target.key) {
-			continue;
-		}
-		else {
-			dataset.edges.push(newEdge)
-		}
-	}
+        if (newEdge.source.type == newEdge.target.type &&
+            newEdge.source.key == newEdge.target.key) {
+            continue;
+        }
+        else {
+            dataset.edges.push(newEdge)
+        }
+    }
 
-	// randomly generate edges for a small part of nodes which will be the sink nodes.
-	for (var i=0; i<tempn; ++i) {
+    // randomly generate edges for a small part of nodes which will be the sink nodes.
+    for (var i=0; i<tempn; ++i) {
 
-		var newEdge = {};
+        var newEdge = {};
 
-		newEdge.source = {}
-		newEdge.target = {}
+        newEdge.source = {}
+        newEdge.target = {}
 
-		newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
-		newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
+        newEdge.source.type = "type"+Math.floor(Math.random()*numberoftype).toString();
+        newEdge.source.key = "key"+Math.floor(Math.random()*numberofnodes).toString();
 
-		newEdge.target.type = "type"+Math.floor(Math.random()*1).toString();
-		newEdge.target.key = "key"+Math.floor(Math.random()*5).toString();
+        newEdge.target.type = "type"+Math.floor(Math.random()*1).toString();
+        newEdge.target.key = "key"+Math.floor(Math.random()*5).toString();
 
-		newEdge.attr = {}
-		newEdge.attr.weight = "weight"+Math.random().toFixed(1);
-		newEdge.attr.name = "name"+Math.random().toFixed(1);
+        newEdge.attr = {}
+        newEdge.attr.weight = "weight"+Math.random().toFixed(1);
+        newEdge.attr.name = "name"+Math.random().toFixed(1);
 
-		if (newEdge.source.type == newEdge.target.type &&
-			newEdge.source.key == newEdge.target.key) {
-			continue;
-		}
-		else {
-			dataset.edges.push(newEdge)
-		}
-	}
+        if (newEdge.source.type == newEdge.target.type &&
+            newEdge.source.key == newEdge.target.key) {
+            continue;
+        }
+        else {
+            dataset.edges.push(newEdge)
+        }
+    }
 
-	// remove the duplicate edges.
-	dataset.edges = dataset.edges.filter(function(item, index) {
-		var pos = 0;
-		dataset.edges.some(function(d, i) {
-			if (item.source.type ==  d.source.type &&
-				item.source.key == d.source.key &&
-				item.target.type == d.target.type &&
-				item.target.key == d.target.key) {
-				pos = i;
-				return true;
-			}
-		})
+    // remove the duplicate edges.
+    dataset.edges = dataset.edges.filter(function(item, index) {
+        var pos = 0;
+        dataset.edges.some(function(d, i) {
+            if (item.source.type ==  d.source.type &&
+                item.source.key == d.source.key &&
+                item.target.type == d.target.type &&
+                item.target.key == d.target.key) {
+                pos = i;
+                return true;
+            }
+        })
 
-		return index == pos;
-	})
-	
+        return index == pos;
+    })
+    
 
-	// remove the duplicate bidirectional deges.
-	dataset.edges = dataset.edges.filter(function(item, index) {
-		var pos = 0;
-		dataset.edges.some(function(d, i) {
-			if (item.source.type ==  d.target.type &&
-				item.source.key == d.target.key &&
-				item.target.type == d.source.type &&
-				item.target.key == d.source.key) {
-				pos = i;
-				return true;
-			}
-		})
+    // remove the duplicate bidirectional deges.
+    dataset.edges = dataset.edges.filter(function(item, index) {
+        var pos = 0;
+        dataset.edges.some(function(d, i) {
+            if (item.source.type ==  d.target.type &&
+                item.source.key == d.target.key &&
+                item.target.type == d.source.type &&
+                item.target.key == d.source.key) {
+                pos = i;
+                return true;
+            }
+        })
 
-		return 0 == pos;
-	})
+        return 0 == pos;
+    })
 
-	return dataset;
+    return dataset;
 }
 
 function testInitializedGraphDataSet(rawData) {
-	var result = {};
-	result.nodes = []
-	result.links = []
+    var result = {};
+    result.nodes = []
+    result.links = []
 
-	rawData.nodes.forEach(function(d) {
-		d.x = Math.random()*width;
-		d.y = Math.random()*height;
+    rawData.nodes.forEach(function(d) {
+        d.x = Math.random()*width;
+        d.y = Math.random()*height;
 
-		result.nodes.push(d);
-	})
+        result.nodes.push(d);
+    })
 
-	rawData.edges.forEach(function(d) {
-		var sourceID = d.source;
-		var targetID = d.target;
+    rawData.edges.forEach(function(d) {
+        var sourceID = d.source;
+        var targetID = d.target;
 
-		rawData.nodes.forEach(function(n, index) {
-			if (d.target.key == n.key && d.target.type == n.type) targetID = index;
-			if (d.source.key == n.key && d.source.type == n.type) sourceID = index;
-		}) 
+        rawData.nodes.forEach(function(n, index) {
+            if (d.target.key == n.key && d.target.type == n.type) targetID = index;
+            if (d.source.key == n.key && d.source.type == n.type) sourceID = index;
+        }) 
 
-		var newLink = {};
-		newLink.attr = d.attr;
-		newLink.target = targetID;
-		newLink.source = sourceID;
+        var newLink = {};
+        newLink.attr = d.attr;
+        newLink.target = targetID;
+        newLink.source = sourceID;
 
-		newLink.source = sourceID;
-		newLink.target = targetID;
+        newLink.source = sourceID;
+        newLink.target = targetID;
 
-		result.links.push(newLink);
-	})
+        result.links.push(newLink);
+    })
 
-	return result;
+    return result;
 }
 
 
@@ -250,11 +250,11 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
         on("zoomstart", zoomstart).
         on("zoom", redraw).
         on("zoomend", function() {
-        	console.log("zoomend")
+            console.log("zoomend")
         })
 
     function zoomstart() {
-    	//force.stop();
+        //force.stop();
         console.log("zoomstart")
     }
 
@@ -289,35 +289,35 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
         });
 
         if (metaKey) {
-	        ;
+            ;
         }
         else {
-	        node.classed("fixed", function(d) {
-	        	var temp = (extent[0][0] <= d.x && d.x < extent[1][0]
-	             && extent[0][1] <= d.y && d.y < extent[1][1]);
-	        	d.fixed |= temp;
+            node.classed("fixed", function(d) {
+                var temp = (extent[0][0] <= d.x && d.x < extent[1][0]
+                 && extent[0][1] <= d.y && d.y < extent[1][1]);
+                d.fixed |= temp;
 
-	        	return d.fixed;
-	        })
+                return d.fixed;
+            })
         }
 
-		
+        
 
         console.log("brush event")
     })
     .on("brushend", function() {
         d3.event.target.clear();
         d3.select(this).call(d3.event.target);
-		var extent = tempExtent
+        var extent = tempExtent
 
         if (metaKey) {
-	        node.classed("fixed", function(d) {
-	        	var temp = (extent[0][0] <= d.x && d.x < extent[1][0]
-	             && extent[0][1] <= d.y && d.y < extent[1][1]);
-	        	d.fixed = temp ? !d.fixed: d.fixed;
+            node.classed("fixed", function(d) {
+                var temp = (extent[0][0] <= d.x && d.x < extent[1][0]
+                 && extent[0][1] <= d.y && d.y < extent[1][1]);
+                d.fixed = temp ? !d.fixed: d.fixed;
 
-	        	return d.fixed;
-	        })
+                return d.fixed;
+            })
         }
 
         force.resume();
@@ -325,7 +325,7 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
 
     var svg_graph = svg.append('svg:g')
     .on("mousedown", function() {
-    	console.log("svg graph mousedown")
+        console.log("svg graph mousedown")
         node.each(function(d) {
             d.selected = false;
             d.previouslySelected = false;
@@ -333,9 +333,9 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
         node.classed("selected", false);
 
         link.each(function(d) {
-        	d.selected = false;
-        	d.previouslySelected = false;
-        	d3.select(this).classed("selected", false);
+            d.selected = false;
+            d.previouslySelected = false;
+            d3.select(this).classed("selected", false);
         });
 
     })
@@ -449,7 +449,7 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
     .charge(-120)
     //.chargeDistance(200)
     .linkDistance(function(d) {
-    	return d.attr.weight * 100;
+        return d.attr.weight * 100;
     })
     //.friction(0.5)
     //.gravity(0.1)
@@ -502,26 +502,26 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
 
     function dragended(d) {
         //d3.event.sourceEvent.stopPropagation();
-    	//d3.select(self).classed("dragging", false);
+        //d3.select(self).classed("dragging", false);
 
         console.log("dragended")
 
-	}
+    }
 
     node = node.data(nodeGraph.nodes).enter().append("circle")
     .attr("r", 4)
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .on("dblclick", function(d) { 
-    	d3.event.stopPropagation(); 
+        d3.event.stopPropagation(); 
 
-    	d3.select(this).classed("fixed", d.fixed = false);
-    	force.resume()
-    	console.log("dbclick event")
+        d3.select(this).classed("fixed", d.fixed = false);
+        force.resume()
+        console.log("dbclick event")
     })
     .on("click", function(d) {
-    	//d3.event.stopPropagation();
-    	console.log("click event")
+        //d3.event.stopPropagation();
+        console.log("click event")
         if (d3.event.defaultPrevented) return;
 
         if (!shiftKey) {
@@ -548,10 +548,10 @@ function testForceDirectedLayoutGraph(div_id, graph_data, tabindex) {
         console.log("mouseup event")
     })
     .on("mouseover", function(){
-    	console.log("mouseover a node")
+        console.log("mouseover a node")
     })
     .on("mouseout", function() {
-    	console.log("mouseout a node")
+        console.log("mouseout a node")
     })
     .call(d3.behavior.drag()
           .on("dragstart", dragstarted)
@@ -564,14 +564,14 @@ link = link.data(nodeGraph.links).enter().append("line")
     .attr("x2", function(d) { return d.target.x; })
     .attr("y2", function(d) { return d.target.y; })
     .on("dblclick", function(d) { 
-    	d3.event.stopPropagation(); 
-    	console.log("Link dbclick event")
+        d3.event.stopPropagation(); 
+        console.log("Link dbclick event")
 
-    	force.resume()
+        force.resume()
     })
     .on("click", function(d) {
-    	//d3.event.stopPropagation();
-    	console.log("link click event")
+        //d3.event.stopPropagation();
+        console.log("link click event")
         if (d3.event.defaultPrevented) return;
 
         if (!shiftKey) {
@@ -598,10 +598,10 @@ link = link.data(nodeGraph.links).enter().append("line")
         console.log("link mouseup event")
     })
     .on("mouseover", function(){
-    	console.log("mouseover a link")
+        console.log("mouseover a link")
     })
     .on("mouseout", function() {
-    	console.log("mouseout a link")
+        console.log("mouseout a link")
     });
   function tick() {
       link.attr("x1", function(d) { return d.source.x; })
@@ -618,11 +618,11 @@ link = link.data(nodeGraph.links).enter().append("line")
       //setTimeout(function(){force.stop();console.log("force stop")}, 4000);
           /*
           node.call(force.drag().origin(function() {
-          	var x = d3.select(this).attr("cx");
-          	var y = d3.select(this).attr("cy");
-    		return {x: x, y: y};
+            var x = d3.select(this).attr("cx");
+            var y = d3.select(this).attr("cy");
+            return {x: x, y: y};
           }))
-			*/
+            */
     //});
 
 
@@ -638,13 +638,13 @@ link = link.data(nodeGraph.links).enter().append("line")
         }
 
         if (d3.event.keyCode == 88) { // the 'x' key
-        	force.resume();
-        	//force.alpha(.1);
+            force.resume();
+            //force.alpha(.1);
         }
 
         if (d3.event.keyCode == 90) { // the 'x' key
-        	force.stop();
-        	//force.alpha(.1);
+            force.stop();
+            //force.alpha(.1);
         }
 
         if (shiftKey) {

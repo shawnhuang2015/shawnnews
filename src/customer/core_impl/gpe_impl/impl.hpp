@@ -13,8 +13,7 @@
 #include <base/graphtypeinfo.hpp>
 #include <gpe/serviceimplbase.hpp>
 #include "kneighborsize.hpp"
-#include "udf/fraud_score.hpp"
-#include "udf/fraud_score_viz.hpp"
+#include "udf/yeepay.hpp"
 
 using namespace gperun;
 
@@ -23,12 +22,10 @@ namespace UDIMPL {
   class UDFRunner : public ServiceImplBase{
   public:
     bool RunQuery(ServiceAPI& serviceapi, EngineServiceRequest& request){
-      if(request.request_function_== "kneighborsize")
+      if(request.request_function_== "kneighborsize") {
         return RunUDF_KNeighborSize(serviceapi, request);
-      else if(request.request_function_ == "transactionfraud") {
-        return RunUDF_TransactionFraud(serviceapi, request);
-      } else if(request.request_function_ == "transactionfraudviz") {
-        return RunUDF_TransactionFraudViz(serviceapi, request);
+      } else if (request.request_function_ == "check_ip") {
+        return RunUDF_CheckIP(serviceapi, request);
       }
       return false; /// not a valid request
     }
@@ -1337,42 +1334,120 @@ namespace UDIMPL {
       tags_by_onto[it->vtype_id].push_back(*it);
     }
 
-    bool verbose = jsoptions["verbose"][0].asBool();
 
-    JSONWriter *writer = request.outputwriter_;
-    writer->WriteStartObject();
-    for (std::map<uint32_t, tag_vec_t>::iterator it = tags_by_onto.begin();
-        it != tags_by_onto.end(); ++it) {
-      if (vertex_type_reverse_map.find(it->first) == vertex_type_reverse_map.end()) {
-        request.error_ = true;
-        request.message_ += it->first + " not found in reverse vertex map of graph meta";
+    bool RunUDF_CheckIP(ServiceAPI& serviceapi, EngineServiceRequest& request) {
+      VertexLocalId_t local_start;
+      if (!serviceapi.UIdtoVId(request, request.request_argv_[1], local_start)) {
         return false;
       }
-      std::string name;
-      GetOntologyNameByVType(vertex_type_reverse_map[it->first], name);
-      writer->WriteName(name.c_str());
-      writer->WriteStartArray();
-      for (tag_vec_t::iterator it1 = it->second.begin(); it1 != it->second.end(); ++it1) {
-        writer->WriteStartObject();
-        writer->WriteName("tag");
-        writer->WriteString(it1->name);
-        if (verbose) {
-          writer->WriteName("weight");
-          writer->WriteFloat(it1->weight);
-        }
-        writer->WriteEndObject();
+
+      typedef yeepay_ns::YeepaySubGraphExtractUDF UDF_t;
+
+      size_t depth = request.jsoptions_.isMember("depth") ? 
+        strtoul(request.jsoptions_["depth"][0].asString().c_str(), NULL, 10) : 1;
+      size_t start_time = request.jsoptions_.isMember("starttime") ? 
+        strtoul(request.jsoptions_["starttime"][0].asString().c_str(), NULL, 10) : 0;
+      size_t end_time = request.jsoptions_.isMember("endtime") ? 
+        strtoul(request.jsoptions_["endtime"][0].asString().c_str(), NULL, 10) : yeepay_ns::INF;
+
+      GraphAPI* graphapi = serviceapi.CreateGraphAPI(&request);
+
+      UDF_t udf(depth * 2, local_start, start_time, end_time, request.outputwriter_);
+      serviceapi.RunUDF(&request, &udf);
+
+      boost::unordered_set<VertexLocalId_t> vertices = udf.vertices_;
+      yeepay_ns::vertex_map_t edges = udf.group_by_vertex;
+
+      gutil::JSONWriter* writer_ = request.outputwriter_; 
+
+      std::vector <VertexLocalId_t> vids;
+
+      writer_->WriteStartObject();
+
+      // fill vertices info into json.
+      writer_->WriteName("vertices");
+      writer_->WriteStartArray();
+
+      for (boost::unordered_set<VertexLocalId_t>::const_iterator cit = vertices.begin(); cit != vertices.end(); ++cit) {
+          vids.push_back(*cit);
+
+          writer_->WriteStartObject();
+          writer_->WriteName("id");
+          writer_->WriteMarkVId(*cit);
+          writer_->WriteName("type");
+          writer_->WriteUnsignedInt<unsigned>(0);
+
+          writer_->WriteName("attr");
+          writer_->WriteStartObject();
+          //graphapi->GetOneVertex(*cit)->WriteAttributeToJson(*request.outputwriter_);
+          writer_->WriteEndObject();
+
+          writer_->WriteName("other");
+          writer_->WriteStartObject();
+          writer_->WriteName("log");
+          writer_->WriteString(graphapi->GetOneVertex(*cit)->GetString(0));
+          writer_->WriteEndObject();
+          writer_->WriteEndObject();
       }
-      writer->WriteEndArray();
+
+      // end filling vertices.
+      writer_->WriteEndArray();
+
+      // fill edges info into json.
+      writer_->WriteName("edges");
+      writer_->WriteStartArray();
+
+      for (yeepay_ns::vertex_map_t::const_iterator cit = edges.begin();
+           cit != edges.end(); ++cit) {
+        writer_->WriteStartObject();
+
+        writer_->WriteName("type");
+        writer_->WriteUnsignedInt<unsigned>(0);
+
+        writer_->WriteName("src");
+        writer_->WriteStartObject();
+        writer_->WriteName("id");
+        writer_->WriteMarkVId(cit->first.first);
+        writer_->WriteName("type");
+        writer_->WriteUnsignedInt<unsigned>(0);
+        writer_->WriteEndObject();
+
+        writer_->WriteName("tgt");
+        writer_->WriteStartObject();
+        writer_->WriteName("id");
+        writer_->WriteMarkVId(cit->first.second);
+        writer_->WriteName("type");
+        writer_->WriteUnsignedInt<unsigned>(0);
+        writer_->WriteEndObject();
+
+        writer_->WriteName("attr");
+        writer_->WriteStartObject();
+        writer_->WriteName("sids");
+        writer_->WriteStartArray();
+        for (boost::unordered_set<VertexLocalId_t>::const_iterator cit1 = cit->second.begin();
+             cit1 != cit->second.end(); ++cit1) {
+          writer_->WriteMarkVId(*cit1);
+          vids.push_back(*cit1);
+        }
+        writer_->WriteEndArray();
+        writer_->WriteEndObject();
+
+        writer_->WriteEndObject();
+      }
+
+      // end filling edges.
+      writer_->WriteEndArray();
+
+      // end writing json.
+      writer_->WriteEndObject();
+
+      request.output_idservice_vids.push_back(local_start);
+      for (std::vector<VertexLocalId_t>::const_iterator cit = vids.begin();
+           cit != vids.end(); ++cit) {
+        request.output_idservice_vids.push_back(*cit);
+      }
+      return true;
     }
-    writer->WriteEndObject();
-    return true;
-  }
-
-  bool AutoTag(ServiceAPI& serviceapi,
-                EngineServiceRequest& request) {
-    return true;
-  }
-
-};
-}  // namespace UDIMPL
-#endif  // SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_
+  };
+}    // namespace UDIMPL
+#endif    // SRC_CUSTOMER_COREIMPL_GPEIMPL_IMPL_HPP_

@@ -24,7 +24,7 @@ fi
 
 touch ./resources/common/gsql/config
 
-VAL=$(echo ~/.ptest/bin_root/generic_batch_loader)
+VAL=$(echo ~/.ptest/bin_root/gse_canonnical_loader)
 echo "CanonnicalLoader="$VAL >>./resources/common/gsql/config
 
 VAL=$(echo ~/.ptest/config_root/gse_loader/gse_loader1.conf)

@@ -5,6 +5,8 @@
  * TokenBankM.cpp: a library of token conversion function declaration. 
  *
  * - It is an M-tokens-in boolean function.
+ *     which means in ddl, it should be load .... where funcName($0,$1)...;
+ *     statements like load .... where funcName($0)...; will search funcName in ConditionBank1.cpp
  * - All functions must have the same funcion signature, but different func name.
  *
  *     extern "C" bool conditionFuncName (const char* const iToken[], uint32_t iTokenLen[], uint32_t iTokenNum)

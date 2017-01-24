@@ -1,8 +1,31 @@
-CanonnicalLoader=/home/xun.yang/.ptest/bin_root/generic_batch_loader
-GSELoaderConfig=/home/xun.yang/.ptest/config_root/gse_loader/gse_loader1.conf
+# IUM will geneate this config when onsite deployment
+
+# IUM will modify graph yaml file on site automatically for SegSizeInBits
+
+# To generate visiualization of the graph schema in pdf format, you need to install graphviz (http://www.graphviz.org/) 
+# on your system, then use "which dot" to find "dot" path, and set the DotDir property like below 
+# e.g. DotDir=/usr/bin/
+
+
+# IUM will create this
+CanonnicalLoader=~/.ptest/bin_root
+
+
+# IUM will create this
+GSELoaderConfig=~/.ptest/config_root/gse_loader/gse_loader1.conf
+
+# IUM generate this.
+# This is tokenUDF string->string function's output buffer size
 OutputTokenBufferSize=50000
+
+# This is a flag to prevent persist to the disk
 DoNotPersistCatalog=true
+
+# TokenBank cpp file dir
 TokenBankSrc=./resources/common/TokenBank
 TokenLibSrc=./resources/common/TokenLib
 ReducerBankSrc=./resources/common/ReducerBank
 ReducerLibSrc=./resources/common/ReducerLib
+
+# Set Root Dir
+RootDir=./

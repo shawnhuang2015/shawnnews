@@ -64,18 +64,14 @@ extern "C"  bool GreaterThan3(const char* const iToken, uint32_t iTokenLen) {
   return false;
 }
 
-extern "C" bool NotNull(const char* const iToken, uint32_t iTokenLen) {
-  return iTokenLen != 0;
-}
-
-extern "C"  bool IsSSNIDType(const char* const iToken, uint32_t iTokenLen) {
-
-  int tmp = atoi(iToken);
-
-  if (tmp == 7 || tmp == 0) {
-    return true;
-  }
-  return false;
+/**
+ * POC: Aliapy Anti Money Laundry
+ * IsValidRecord(): This function will test whether the current record is a valid
+ * one. "Y": yes. "N" not a valid one. -- Eric Chu 03/10/2015
+ */
+extern "C" bool IsValidRecord(const char* const iToken, uint32_t iTokenLen) {
+    std::string is_use(iToken, iTokenLen);
+    return is_use == "Y";
 }
 
 

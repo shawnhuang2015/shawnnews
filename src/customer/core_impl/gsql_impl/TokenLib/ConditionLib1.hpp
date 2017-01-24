@@ -76,14 +76,4 @@ extern "C"  bool gsql_is_false(const char* const iToken, uint32_t iTokenLen);
  */
 extern "C"  bool gsql_is_not_empty_string(const char* const iToken, uint32_t iTokenLen);
 
-/**
- * This function checks if a given token is a valid timestamp 
- * format.
- *
- * @par  Example
- *       load "source_file" to vertex v values ($0, $1) 
- *           where gsql_is_valid_timestamp($2);
- */
-extern "C"  bool gsql_is_valid_timestamp(const char* const iToken, uint32_t iTokenLen);
-
 #endif /* CONDITIONLIB1_HPP_ */

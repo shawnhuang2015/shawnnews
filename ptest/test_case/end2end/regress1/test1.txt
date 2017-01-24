@@ -1,0 +1,23 @@
+# ptest assumes you have done the following 
+#  - gsql_admin --configure   (configure deployment enviroment)
+#  - gpkg.sh  (package your dev work)
+#  - mv output from gpkg.sh to IUM package.pool location (move pkg to deployment folder)
+#  - gsql_admin pkg-install (install pkg)
+
+# 1. Put your graph setup ddl in ptest/resources folder, and replace "tango_load.gsql" 
+#    Put your test data set in ptest/resources/data folder, and make your sys.data_root
+#    point to ptest/resources/data. Then use sys.data_root in your loading job ddl.
+#
+./resources/common/gsql/gsql ./resources/tango_load.gsql
+
+# keep this line intact, which restart all service including REST, GPE and GSE.
+~/.gium/gsql_admin restart -f -y
+
+# 2. Delete the samples below first. Then put your curl test cases line by line below. 
+curl -s -X GET 'http://localhost:9000/fromUser/0'
+curl -s -X GET 'http://localhost:9000/fromUser/4'
+curl -s -X GET 'http://localhost:9000/fromUser/5'
+curl -s -X GET 'http://localhost:9000/toUser/4'
+
+# keep this line intact which stop all service
+~/.gium/gsql_admin stop -f -y

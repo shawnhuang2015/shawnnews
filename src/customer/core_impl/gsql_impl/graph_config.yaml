@@ -1,96 +1,28 @@
 AttributeEnumerators: 1
 EdgeTypes: 
-- EdgeId: 0
-  FromVertexTypeName: '*'
+- Attributes: 
+  - AttributeName: time
+    AttributeType: UINT
+  EdgeId: 0
+  EdgeName: e_thru
+  FromVertexTypeName: v_ip
   IsDirected: false
-  Name: transtoentity
-  ToVertexTypeName: '*'
+  ToVertexTypeName: v_session
 GraphConfigVersion: 1
 GraphId: 0
-GraphName: lianlian
+GraphName: poc_graph
 SegSizeInBits: 20
 VertexTypes: 
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: transaction
-  PrimaryId: 
-    AttributeName: value
+- PrimaryId: 
+    AttributeName: ip
     AttributeType: STRING
     Nullable: false
   VertexId: 0
+  VertexName: v_ip
   VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
+- PrimaryId: 
+    AttributeName: sid
     AttributeType: STRING
-  Name: userid
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
   VertexId: 1
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: ssn
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
-  VertexId: 2
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: bankid
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
-  VertexId: 3
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: cell
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
-  VertexId: 4
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: imei
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
-  VertexId: 5
-  VertexStatisticsType: 1
-- Attributes: 
-  - AttributeName: isFraudulent
-    AttributeType: BOOL
-  - AttributeName: label
-    AttributeType: STRING
-  Name: ip
-  PrimaryId: 
-    AttributeName: value
-    AttributeType: STRING
-    Nullable: false
-  VertexId: 6
+  VertexName: v_session
   VertexStatisticsType: 1

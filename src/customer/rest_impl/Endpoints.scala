@@ -10,7 +10,7 @@ package com.graphsql.endpoints
   *
   * 2.  Endpoint name, as a string.
   *
-  * 3.  Additional endpoint extensions that may be strings or VAR() types.
+  * 3.  Additional endpoint extensions that may be strings or VAR() typ€es.
   *     For example for the endpoint:  https://SERVERNAME/ *endpoint1* /uid/full,
   *     you would have the arguments "endpoint1",VAR("uid"), "full"
   *
@@ -40,6 +40,66 @@ object EndpointDefinitions {
   //////////////////////////
 
   // TODO: add helper functions here
+
+  ///UI END POINTS
+  
+  Endpoints.register(Endpoint(GET(), "UIpages", (queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => { 
+    // User defined configure object for the web base graph visualization (gsqlv)
+    val formElements: JsValue = Json.parse("""
+    [ 
+      {
+        "tabname": "Explore N Step Neighborhood",
+        "index": 0,
+        "elements": [ { "label": { "name": "IP" } }, { "textbox": {"name" : "id", "length" : 20 } },
+            { "label": { "name" : "Depth"} }, { "textbox": {"name": "depth", "length" : 10}},
+            { "label": { "name": "Start Time" } }, { "textbox": {"name" : "starttime", "length" : 20 } },
+            { "label": { "name": "End Time" } }, { "textbox": {"name" : "endtime", "length" : 20 } }
+        ],
+        "attributes": {
+          "depth" : 1
+        },
+        "setting" : {
+          "layout" : "circle",
+          "edgeDirectedType" : {"0":"undirected"}
+        },
+        "initialization":{
+          "coloring" : []
+        },
+        "events" : {
+          "submit" : {
+            "URL_head" : "/engine/check_ip",
+            "URL_attrs" : {
+              "vars" : [
+                {"attr":"id", "usage":"input", "name":"id"}
+              ],
+              "maps" : [
+                {"attr":"depth", "usage":"input", "name":"depth"},
+                {"attr":"starttime", "usage":"input", "name":"starttime"},
+                {"attr":"endtime", "usage":"input", "name":"endtime"}
+              ]  
+            }
+          },
+          "node_dblclick" : {
+            "URL_head" : "/engine/check_ip",
+            "URL_attrs" : {
+              "vars" : [
+                {"attr":"id", "usage":"select", "name":"id"}
+              ],
+              "maps" : [
+                {"attr":"depth", "usage":"attributes", "name":"depth"},
+                {"attr":"starttime", "usage":"input", "name":"starttime"},
+                {"attr":"endtime", "usage":"input", "name":"endtime"}
+              ] 
+            }
+          }
+        } 
+      }
+    ]
+    """);
+ 
+    Some(Json.stringify(formElements));
+  }))
+  ///FINISH UI END POINTS
 
   //////////////////////////
   // REST ENDPOINTS       //
@@ -265,6 +325,16 @@ object EndpointDefinitions {
 
   Endpoints.register(Endpoint(GET(), "debug_neighbors", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
     val request = GpeRequest(List("debug_neighbors", uid), Map())
+    context.gpe.writeAndWait(request, List(uid))
+  }))
+
+  Endpoints.register(Endpoint(GET(), "rec", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("rec", uid), Map())
+    context.gpe.writeAndWait(request, List(uid))
+  }))
+
+  Endpoints.register(Endpoint(GET(), "check_ip", VAR(), (uid: String, queryString: Map[String,Seq[String]], dataPayload: JsObject, context: EndpointContext) => {
+    val request = GpeRequest(List("check_ip", uid), queryString)
     context.gpe.writeAndWait(request, List(uid))
   }))
 
