@@ -31,4 +31,9 @@ export class NewsApiService {
     return this.http.get(`${this.baseUrl}/user/${id}`)
     .map(response => response.json());
   }
+
+  fetchSchema(): Observable<any> {
+    return this.http.get('http://192.168.55.101:8079/engine/graph/schema')
+    .map(response => response.toString());
+  }
 }

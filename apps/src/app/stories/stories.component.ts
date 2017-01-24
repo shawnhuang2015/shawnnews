@@ -53,6 +53,11 @@ export class StoriesComponent implements OnInit {
     //   },
     //   error => console.log(`Error Fetching Stories: ${JSON.stringify(error)}`)
     // );
+
+    // console.log('fetch schema');
+    // this.newsService.fetchSchema().subscribe(data => {
+    //   console.log(data);
+    // });
   }
 
 }
