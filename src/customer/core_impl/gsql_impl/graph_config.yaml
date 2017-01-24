@@ -1,0 +1,248 @@
+EdgeTypes: 
+- Attributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  EdgeId: 0
+  FromVertexTypeName: BUS
+  InitVersionAttributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  IsDirected: false
+  Name: BRANCH
+  ToVertexTypeName: BUS
+GraphConfigVersion: 0
+GraphId: 0
+GraphName: PowerFlow
+InitVersionEdgeTypes: 
+- Attributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  EdgeId: 0
+  FromVertexTypeName: BUS
+  InitVersionAttributes: 
+  - AttributeName: CID
+    AttributeType: STRING
+  - AttributeName: R
+    AttributeType: REAL
+  - AttributeName: X
+    AttributeType: REAL
+  - AttributeName: hB
+    AttributeType: REAL
+  - AttributeName: Ratio
+    AttributeType: REAL
+  - AttributeName: Shift
+    AttributeType: REAL
+  - AttributeName: Type
+    AttributeType: REAL
+  - AttributeName: MVALimitA
+    AttributeType: REAL
+  - AttributeName: MVALimitB
+    AttributeType: REAL
+  - AttributeName: MVALimitC
+    AttributeType: REAL
+  IsDirected: false
+  Name: BRANCH
+  ToVertexTypeName: BUS
+InitVersionVertexTypes: 
+- Attributes: 
+  - AttributeName: exId
+    AttributeType: STRING
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  InitVersionAttributes: 
+  - AttributeName: exId
+    AttributeType: STRING
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  Name: BUS
+  PrimaryId: 
+    AttributeName: BusId
+    AttributeType: STRING
+  VertexId: 0
+  VertexStatisticsType: 2
+LatestEdgeId: 1
+LatestVertexId: 1
+SegSizeInBits: 20
+VertexTypes: 
+- Attributes: 
+  - AttributeName: exId
+    AttributeType: STRING
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  InitVersionAttributes: 
+  - AttributeName: exId
+    AttributeType: STRING
+  - AttributeName: BusName
+    AttributeType: STRING
+  - AttributeName: NominalV
+    AttributeType: REAL
+  - AttributeName: PuV
+    AttributeType: REAL
+  - AttributeName: VAngle
+    AttributeType: REAL
+  - AttributeName: LoadP
+    AttributeType: REAL
+  - AttributeName: LoadQ
+    AttributeType: REAL
+  - AttributeName: GenP
+    AttributeType: REAL
+  - AttributeName: GenQ
+    AttributeType: REAL
+  - AttributeName: Switched
+    AttributeType: REAL
+  - AttributeName: GShunt
+    AttributeType: REAL
+  - AttributeName: BShunt
+    AttributeType: REAL
+  - AttributeName: Vr
+    AttributeType: REAL
+  - AttributeName: Vi
+    AttributeType: REAL
+  - AttributeName: Latitude
+    AttributeType: REAL
+  - AttributeName: Longitude
+    AttributeType: REAL
+  Name: BUS
+  PrimaryId: 
+    AttributeName: BusId
+    AttributeType: STRING
+  VertexId: 0
+  VertexStatisticsType: 2

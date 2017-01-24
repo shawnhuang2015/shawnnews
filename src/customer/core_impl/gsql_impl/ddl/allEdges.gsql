@@ -1,0 +1,18 @@
+drop query allEdges
+
+create query allEdges() for graph PowerFlow
+{
+    SumAccum<Set<String>> @@edgeSet;
+
+    Start = {BUS.*};
+
+    all = SELECT b
+          FROM Start:s-(BRANCH:e)-BUS:b
+          WHERE s > b
+          ACCUM @@edgeSet += s.exId + "," + b.exId;
+
+    print all;
+    print @@edgeSet;
+}
+
+install query allEdges

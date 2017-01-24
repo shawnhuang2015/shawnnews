@@ -3,40 +3,72 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-//var isDebugging = true; // false;
 
 require.config({
     //For development purposes, We force RequireJS to bypass the cache by appending a timestamp.
     //Delete this for release version.
-    urlArgs: /*isDebugging*/ true ? "bust=" + (new Date()).getTime() : "",
+    urlArgs: /*isDebugging*/ false ? "bust=" + (new Date()).getTime() : "",
     baseUrl: 'scripts',
     paths: {
+        ol: 'lib/ol',
         jquery: 'lib/jquery-2.1.3',
         d3: 'lib/d3.v3',
         dataToExcel : 'lib/dataToExcel',
         tipsy: 'lib/jquery.tipsy',
         xlsx: 'lib/xlsx.core.min',
         config: '../config/config',
-        gsqlv: 'gvis/gvis',
-        language: 'gvis/language',
+        language: 'main/language',
         bootstrap: 'bootstrap/js/bootstrap',
         multiselect:'bootstrap/js/bootstrap-multiselect',
         datetime: 'bootstrap/js/bootstrap-datetimepicker',
         datetime_zhCN: 'bootstrap/js/locales/bootstrap-datetimepicker.zh-CN',
         colorpicker: 'bootstrap/js/bootstrap-colorpicker',
         slider: 'bootstrap/js/bootstrap-slider',
-        helper: 'gvis/utlis',
         donuts:'lib/Donut3D',
-        ui:'gvis/ui',
+        ui:'main/ui',
+
+        core: 'main/gvis/gvis.core',
+        utils: 'main/gvis/gvis.utils',
+        data: 'main/gvis/gvis.graph',
+        settings: 'main/gvis/gvis.settings',
+        behaviors: 'main/gvis/gvis.behaviors',
+        renders: 'main/gvis/gvis.renders',
+        layouts: 'main/gvis/gvis.layouts',
+        events: 'main/gvis/gvis.events',
+        gvis: 'main/gvis/gvis'
     },
     shim: {
-        // ui: {
-        //     deps: ['jquery', 'd3', 'helper']
-        // },
-        gsqlv: {
-            deps: ['config', 'tipsy', 'donuts', 'd3', 'helper', 'language'],
-            exports: 'gsqlv',
+        ol: {
+            exports: 'ol'
         },
+        ui: {
+            deps: ['core', 'multiselect', 'datetime_zhCN', 'colorpicker', 'slider']
+        },
+        data: {
+            deps: ['utils'],
+        },
+        settings: {
+            deps: ['utils']
+        },
+        behaviors: {
+            deps: ['utils']
+        },
+        renders: {
+            deps: ['utils', 'ol']
+        },
+        layouts: {
+            deps: ['utils']
+        },
+        events: {
+            deps: ['utils']
+        },
+        core: {
+            deps: ['config', 'tipsy', 'donuts', 'd3', 'language', 'data', 'utils', 'settings', 'behaviors', 'renders', 'layouts', 'events'],
+        },
+        utils: {
+            deps: ['gvis', 'd3']
+        },
+
         bootstrap:  {
             deps: ['jquery'],
         },
@@ -63,9 +95,6 @@ require.config({
         },
         donuts : {
             deps : ['d3']
-        },
-        helper : {
-            deps : ['multiselect', 'datetime_zhCN', 'colorpicker', 'slider']
         }
     }
 });

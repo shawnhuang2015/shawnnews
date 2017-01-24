@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>scripts/main/ui.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: scripts/main/ui.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/******************************************************************************
+ * Copyright (c) 2015, GraphSQL Inc.                                          *
+ * All rights reserved                                                        *
+ * Unauthorized copying of this file, via any medium is strictly prohibited   *
+ * Proprietary and confidential                                               *
+ ******************************************************************************/
+require([], function(){
+  //test();
+
+  d3.select(&#x27;#prototype1&#x27;).style(&#x27;height&#x27;, ($(window).height()-220)+&#x27;px&#x27;);
+
+  this.visualization = new gvis({
+    configure: config,
+    container: &#x27;prototype1&#x27;,
+    //render_type: &#x27;svg&#x27;,
+  });
+
+
+  visualization.setNodeToolTipFormat(function(type, id, attrs) {
+    var template = &#x27;&lt;span style=&quot;color:{{color}}&quot;&gt;{{key}}{{value}}&lt;/span&gt;&lt;br /&gt;&#x27;; 
+
+    var result = &#x27;&lt;span style=&quot;color:#ff0000&quot;&gt;Node&lt;/span&gt;&lt;br /&gt;&#x27;;
+
+    result += gvis.utils.applyTemplate(template, {color:&#x27;#fec44f&#x27;, key:&#x27;&#x27;, value:type + &#x27;-&#x27; + id});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:&#x27;#99d8c9&#x27;, key:key+&#x27;:&#x27;, value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  visualization.setLinkToolTipFormat(function(type, attrs) {
+    var template = &#x27;&lt;span style=&quot;color:{{color}}&quot;&gt;{{key}}{{value}}&lt;/span&gt;&lt;br /&gt;&#x27;; 
+
+    var result = &#x27;&lt;span style=&quot;color:#ff0000&quot;&gt;Link&lt;/span&gt;&lt;br /&gt;&#x27;;
+
+    result += gvis.utils.applyTemplate(template, {color:&#x27;#fec44f&#x27;, key:&#x27;&#x27;, value:type});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:&#x27;#99d8c9&#x27;, key:key+&#x27;:&#x27;, value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+
+  visualization
+  .on(&#x27;nodeClick&#x27;, function(d, renderer) {
+    //console.log(&#x27;customized click&#x27;, d, renderer)
+    d3.select(&quot;#tableBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#tableBox&quot;)
+    .html(outputTableforSelectedElements([d], []))
+  })
+  .on(&#x27;nodeDblClick&#x27;, function(d, renderer) {
+    //console.log(&#x27;customized dblclick&#x27;, d)
+    d3.select(&quot;#tableBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#tableBox&quot;)
+    .html(outputTableforSelectedElements([d], []))
+  })
+  .on(&#x27;linkClick&#x27;, function(d, renderer) {
+    //console.log(&#x27;customized click&#x27;, d)
+    d3.select(&quot;#tableBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#tableBox&quot;)
+    .html(outputTableforSelectedElements([], [d]))
+  })
+  .on(&#x27;linkDblClick&#x27;, function(d, renderer) {
+    //console.log(&#x27;customized dblclick&#x27;, d)
+    d3.select(&quot;#tableBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#tableBox&quot;)
+    .html(outputTableforSelectedElements([], [d]))
+  })
+  .on(&#x27;multiSelect&#x27;, function(nodes, links, renderer) {
+    //console.log(&#x27;multiSelect : &#x27;, nodes.length, &#x27;,&#x27;, links.length);
+    d3.select(&quot;#tableBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#tableBox&quot;)
+    .html(outputTableforSelectedElements(nodes, links))
+  })
+
+  var rootNodeType = &#x27;&#x27;;
+  var rootNodeID = &#x27;&#x27;;
+  var targetNodeType = &#x27;&#x27;;
+  var targetNodeID = &#x27;&#x27;;
+
+  var button_height = 230;
+  var filteringStatus = {
+    node:{
+        transaction: {type:true, id:true}, 
+        phone : {type:true, id:true},
+        client : {type:true, id:true},
+        user : {type:true, id:true},
+        bankcard : {type:true, id:true, name:true, idCard:true}
+        // app:{score:false, name:true}, 
+        // friend:{count:true},
+        // location:{count:true},
+        // enterprise:{group_count:true, count:true, name:true},
+        // warning:{is_warning:true},
+        // phone_no:{importance:true,has_friend:true,fraction_of_callees_has_friends:true},
+        // reason:{reason:true},
+        // level:{complaint_count:true},
+        // bypass_complaint:{bypass_complaint_count:true},
+        // srtype:{category:true, complaint_count:false},
+        // solution:{product_list:true}
+      }, 
+    edge:{
+        transactionphone:{type:true},
+        //phone_no_phone_no:{call_times:true}
+    }
+  };
+
+  window.selectionBoxLabels = filteringStatus
+
+  this.messageArray = [];  
+
+  // The configure object of the node label multiselecting list box.
+  var nodeLabelFiltering = {
+    maxHeight: 600,
+    buttonWidth: &#x27;100%&#x27;,
+    enableClickableOptGroups: true,
+    // Call back function once the selection changed.
+    buttonText: function(options, select) {
+      var labels = [];
+
+      if (visualization.data().nodes().length != 0) {
+        for (var key in selectionBoxLabels.node){
+          for (var item in selectionBoxLabels.node[key]) {
+            selectionBoxLabels.node[key][item] = false;
+          }   
+        } 
+      }
+
+      options.each(function() {      
+        var key = $(this).val();
+        var type = &quot;&quot;;
+
+        if ($(this).parent().is(&#x27;select&#x27;)) {
+          type = &quot;__key&quot;
+          key = key;
+        }
+        else if ($(this).parent().is(&#x27;optgroup&#x27;)){
+          type = $(this).parent().attr(&quot;value&quot;);
+          key = key.split(&#x27;&amp;&#x27;)[0]
+        }
+        else {
+          type = &quot;&quot;;
+        }
+
+        try {
+          selectionBoxLabels.node[type][key] = true;
+        }
+        catch (err) {
+          console.log(err);
+        }
+
+        labels.push(key);      
+      });
+
+      Object.keys(selectionBoxLabels.node).forEach(function(type) {
+        var labels = Object.keys(selectionBoxLabels.node[type]).filter(function(key) {
+          return selectionBoxLabels.node[type][key];
+        })
+
+        visualization.showNodeLabelByType(type, labels);
+      })
+
+      visualization.update(0, 0);
+
+      // test.showNodeLabel(&#x27;tag&#x27;, &#x27;1&#x27;, [&#x27;type&#x27;, &#x27;a1&#x27;, &#x27;a2&#x27;, &#x27;asdf&#x27;]);
+      // test.showNodeLabelByType(&#x27;usr&#x27;, [&#x27;id&#x27;, &#x27;a1&#x27;, &#x27;a2&#x27;]);
+
+      // test.showLinkLabel(&#x27;tag&#x27;, &#x27;4&#x27;, &#x27;movie&#x27;, &#x27;11&#x27;, &#x27;bbs&#x27;, [&#x27;type&#x27;, &#x27;aa1&#x27;, &#x27;aa2&#x27;]);
+      // test.showLinkLabelByType(&#x27;bbc&#x27;, [&#x27;aa1&#x27;, &#x27;aa2&#x27;, &#x27;11123&#x27;]);
+
+      if (options.length === 0) {
+        return toLanguage(&#x27;No option selected ...&#x27;, &quot;ui_component&quot;, &quot;label&quot;);
+      }
+      else if (options.length &gt; 3) {
+        return toLanguage(&#x27;More than 3 options selected!&#x27;, &quot;ui_component&quot;, &quot;label&quot;);
+      }
+      else {
+        return labels.map(function(d){return toLanguage(d, &quot;ui_component&quot;, &quot;label&quot;)}).join(&#x27;,&#x27;) + &#x27;&#x27;;
+      }
+    },
+      //includeSelectAllOption: true,
+      //selectAllText: &#x27;Check all!&#x27;
+  }
+
+
+    // The configure object of the edge label multiselecting list box.
+  var edgeLabelFiltering = {
+    maxHeight: 600,
+    buttonWidth: &#x27;100%&#x27;,
+    enableClickableOptGroups: true,
+    // Call back function once the selection changed
+    buttonText: function(options, select) {
+      var labels = [];
+
+      if (visualization.data().links().length != 0) {
+        for (var key in selectionBoxLabels.edge){
+          for (var item in selectionBoxLabels.edge[key]) {
+            selectionBoxLabels.edge[key][item] = false;
+          }   
+        }
+      }
+
+      options.each(function() {      
+        var key = $(this).val();
+        var type = &quot;&quot;;
+
+         if ($(this).parent().is(&#x27;select&#x27;)) {
+          type = &quot;__key&quot;
+          key = key;
+        }
+        else if ($(this).parent().is(&#x27;optgroup&#x27;)){
+          type = $(this).parent().attr(&quot;value&quot;);
+          key = key.split(&#x27;&amp;&#x27;)[0]
+        }
+        else {
+          type = &quot;&quot;;
+        }
+
+        try {
+          selectionBoxLabels.edge[type][key] = true;
+        }
+        catch (err) {
+          console.log(err);
+        }
+
+        labels.push(key);      
+      });
+
+      Object.keys(selectionBoxLabels.edge).forEach(function(type) {
+        var labels = Object.keys(selectionBoxLabels.edge[type]).filter(function(key) {
+          return selectionBoxLabels.edge[type][key];
+        })
+
+        visualization.showLinkLabelByType(type, labels);
+      })
+
+      visualization.update(0, 0);
+
+      if (options.length === 0) {
+        return toLanguage(&#x27;No option selected ...&#x27;, &quot;ui_component&quot;, &quot;label&quot;);
+      }
+      else if (options.length &gt; 4) {
+        return toLanguage(&#x27;More than 4 options selected!&#x27;, &quot;ui_component&quot;, &quot;label&quot;);
+      }
+      else {
+        return labels.map(function(d){return toLanguage(d, &quot;ui_component&quot;, &quot;label&quot;)}).join(&#x27;, &#x27;) + &#x27;&#x27;;
+      }
+    },
+    //includeSelectAllOption: true,
+    //selectAllText: &#x27;Check all!&#x27;
+  }
+
+
+  function topology4VertexAttribute_to_json(vattr) {
+    var result = {};
+    var reggie = /(.*)\((\d*)\)$/;  // for degree(0) =&gt; degree, 0
+
+    if (vattr == &quot;&quot; || vattr == undefined) {
+      return result;
+    }
+    else if (typeof(vattr) == &#x27;object&#x27;) {
+      return clone(vattr);
+    }
+    else {
+      var attrs = vattr.split(&#x27;|&#x27;);
+      attrs.forEach(function(attr, i) {
+        //var items = attr.split(&#x27;:&#x27;);
+        var items = attr.split(&#x27;:&#x27;, 1);
+        items[1] = attr.substring(attr.indexOf(&quot;:&quot;)+1);
+
+        if (items.length &gt; 1 &amp;&amp; items[0] != &quot;&quot; &amp;&amp; items[0] != items[1]) {
+          if (items[0] == &#x27;type&#x27;) { //|| items[0].indexOf(&quot;od_et&quot;) &gt; -1 || items[0] == &#x27;outdegree&#x27;) {
+            //items[0] = &#x27;type_index&#x27;;
+            //console.log(items[0])
+            return; // ignore the type attributes.
+          }
+
+          var tempAttr = reggie.exec(items[0]); // &quot;degree(0)&quot; =&gt; &quot;degree(0)&quot;, &quot;degree&quot;, &quot;0&quot;;
+          if (tempAttr == null) {
+            result[items[0]] = items[1];
+          }
+          else {
+            result[tempAttr[1]] = items[1];
+          }
+        }
+      })
+      return result; 
+    }
+  }
+
+  function refineDataName(newData) {
+
+    var color = d3.scale.category10();
+    
+    // the result should be as nodes and edges.
+    var result = {&quot;nodes&quot;:[], &quot;links&quot;:[]};
+    var arrResult = []
+    newData.vertices.forEach(function(n) {
+      // Example of a node :
+      // {&quot;type&quot;:&quot;newType1&quot;,&quot;id&quot;:&quot;newKey1&quot;,&quot;attr&quot;:{&quot;weight&quot;:&quot;0.2&quot;,&quot;name&quot;:&quot;newNode1newNode1newNode1&quot;}};
+      tempNode = {};
+      tempNode.type = n.type
+      tempNode.id = n.id
+      tempNode[gvis.settings.attrs] = topology4VertexAttribute_to_json(n.attr);
+      tempNode[gvis.settings.styles] = {fill:color(n.type)};
+      tempNode.other = gvis.utils.clone(n.other)
+
+      arrResult.push(tempNode);
+    }) 
+
+    var tempResult = {};
+    arrResult.forEach(function(n, i){
+      tempResult[n.id + &#x27;-&#x27;+ n.type] = n; 
+    })
+
+    for (var key in tempResult) {
+      result.nodes.push(tempResult[key]);
+    }
+
+    newData.edges.forEach(function(e) {
+      // Example of a link :
+      // {&quot;source&quot;:{&quot;type&quot;:&quot;newType1&quot;,&quot;id&quot;:&quot;newKey1&quot;},&quot;target&quot;:{&quot;type&quot;:&quot;type0&quot;,&quot;id&quot;:&quot;key45&quot;},&quot;attr&quot;:{&quot;weight&quot;:&quot;0.01&quot;,&quot;name&quot;:&quot;name0.7&quot;}, &quot;type&quot;:0};
+      tempEdge = {&quot;source&quot;:{&quot;type&quot;:&quot;&quot;,&quot;id&quot;:&quot;&quot;}, &quot;target&quot;:{&quot;type&quot;:&quot;&quot;,&quot;id&quot;:&quot;&quot;}, directed:true};
+      tempEdge.source.type = e.src.type
+      tempEdge.source.id = e.src.id
+      tempEdge.target.type = e.tgt.type
+      tempEdge.target.id = e.tgt.id
+
+      // Check whether a edge includes &#x27;type&#x27; attribute. 
+      if (&quot;type&quot; in e) {
+        tempEdge.type = e.type
+      }
+      else {
+        tempEdge.type = &quot;Undefined&quot;
+      }
+      
+      //deep copy the object of the attributes.
+      tempEdge[gvis.settings.attrs] = topology4VertexAttribute_to_json(e.attr) //The way to parse edge and vertex attrs are same.
+      tempEdge[gvis.settings.styles] = {fill:color(e.type)};
+      tempEdge.other = gvis.utils.clone(e.other)
+
+      result.links.push(tempEdge);
+    })
+    
+    return result
+  }
+
+  // remove space function.
+  this.removeSpaces = function(s) {
+    return s.replace(/\s/g, &#x27;&#x27;);
+  }
+
+  this.deleteNodes = function() {
+    visualization.getSelectedNodes().forEach(function(n) {
+      visualization.dropNode(n);
+    })
+
+    visualization.update(500, 500);
+  }
+
+  this.coloringNodes = function(color) {
+    visualization.getSelectedNodes().forEach(function(n) {
+      n[gvis.settings.styles].fill = color;
+    })
+
+    visualization.update(0, 0);
+  }
+
+  this.JSONMessageOutput = function() {
+
+
+    // remove the previous json message 
+    d3.select(&quot;#messageBox&quot;).selectAll(&quot;*&quot;).remove();
+
+    d3.select(&quot;#messageBox&quot;)
+    .style(&quot;width&quot;, $(&#x27;#viewport&#x27;).width() + &quot;px&quot;)
+    .style(&quot;height&quot;, $(window).height()-button_height+&quot;px&quot;)
+
+    d3.select(&quot;#messageBox&quot;)
+    .html(&quot;&lt;span&gt; JSON Message &quot; + messageArray.length + &quot; :&lt;/span&gt; \n&quot; + syntaxHighlight(messageArray[messageArray.length-1]))
+  }
+
+  this.syntaxHighlight = function (json) {
+      if (typeof json != &#x27;string&#x27;) {
+           json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&amp;/g, &#x27;&amp;amp;&#x27;).replace(/&lt;/g, &#x27;&amp;lt;&#x27;).replace(/&gt;/g, &#x27;&amp;gt;&#x27;);
+      return json.replace(/(&quot;(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\&quot;])*&quot;(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var cls = &#x27;number&#x27;;
+          if (/^&quot;/.test(match)) {
+              if (/:$/.test(match)) {
+                  cls = &#x27;key&#x27;;
+              } else {
+                  cls = &#x27;string&#x27;;
+              }
+          } else if (/true|false/.test(match)) {
+              cls = &#x27;boolean&#x27;;
+          } else if (/null/.test(match)) {
+              cls = &#x27;null&#x27;;
+          }
+          return &#x27;&lt;span class=&quot;&#x27; + cls + &#x27;&quot;&gt;&#x27; + match + &#x27;&lt;/span&gt;&#x27;; // style=&quot;font-family: Times&quot;
+      });
+  }
+
+  // Generate the data object for creating the main menu.
+  // Specifiy the onclick event for submit button as onclick_submit(index).
+  this.generateForm = function(pagesObject){
+
+    elements = pagesObject.elements;
+    URL = pagesObject.URL
+
+    var s = &#x27;&lt;div class=&quot;form-group&quot; &gt;&#x27;;
+    for (var i=0; i &lt; elements.length; i++){
+      if (elements[i][&quot;label&quot;]){
+        s += &#x27;&lt;label&gt;&#x27;+toLanguage(elements[i][&quot;label&quot;][&quot;name&quot;], &quot;ui_component&quot;, &quot;label&quot;)+&#x27;:&lt;/label&gt;&#x27;;
+      }
+      if (elements[i][&quot;textbox&quot;]){
+        s = s + &#x27;&amp;nbsp;&amp;nbsp;&lt;input onkeypress=&quot;onkeypress_submit()&quot; type =&quot;text&quot; class=&quot;form-control&quot; placeholder=&quot;&#x27; + toLanguage(elements[i][&quot;textbox&quot;][&quot;placeholder&quot;], &quot;ui_component&quot;, &quot;label&quot;) + &#x27;&quot; name=&quot;&#x27; + elements[i][&quot;textbox&quot;][&quot;name&quot;] + &#x27;&quot; size=&#x27; + elements[i][&quot;textbox&quot;][&quot;length&quot;] + &#x27;&gt;&amp;nbsp;&amp;nbsp;&#x27;;
+      }
+      if (elements[i][&quot;selection&quot;]) {
+        s += &#x27;&amp;nbsp;&amp;nbsp;&lt;select class=&quot;form-control&quot; name=&#x27;+ elements[i][&quot;selection&quot;][&quot;name&quot;] +&#x27;&gt;&#x27;
+
+        elements[i][&quot;selection&quot;].value.forEach(function(type_name, i) {
+           s += &quot;&lt;option value=&#x27;&quot; + type_name + &quot;&#x27;&gt; &quot; + type_name +&quot;&lt;/option&gt; &quot;;
+        });
+
+        s += &#x27;&lt;/select&gt;&amp;nbsp;&amp;nbsp;&#x27;
+      }
+      if (elements[i][&quot;datetimebox&quot;]) {
+        var date_time_template = &#x27;&lt;div class=&quot;input-group date form_datetime &quot; data-date=&quot;2015-03-16 00:00:00&quot; data-date-format=&quot;yyyy-mm-dd hh:ii:ss&quot; data-link-field=&quot;{id}&quot;&gt;\
+          &lt;input class=&quot;form-control&quot; size=&quot;{size}&quot; type=&quot;text&quot; value=&quot;&quot; name=&quot;{name}&quot; placeholder=&quot;{placeholder}&quot;&gt;\
+          &lt;span class=&quot;input-group-addon&quot;&gt;&lt;span class=&quot;glyphicon glyphicon-remove&quot;&gt;&lt;/span&gt;&lt;/span&gt;\
+          &lt;span class=&quot;input-group-addon&quot;&gt;&lt;span class=&quot;glyphicon glyphicon-th&quot;&gt;&lt;/span&gt;&lt;/span&gt;\
+          &lt;/div&gt;\
+          &lt;input type=&quot;hidden&quot; id=&quot;{id}&quot; value=&quot;&quot; /&gt;&#x27;
+
+        s += date_time_template
+            .replace(/\{name\}/g, elements[i][&quot;datetimebox&quot;][&quot;name&quot;])
+            .replace(/\{size\}/g, elements[i][&quot;datetimebox&quot;][&quot;length&quot;])
+            .replace(/\{id\}/g, elements[i][&quot;datetimebox&quot;][&quot;name&quot;] + &quot;_datetimebox&quot;)
+            .replace(/\{placeholder\}/g, elements[i][&quot;datetimebox&quot;][&quot;placeholder&quot;])
+
+      }
+
+      if (elements[i][&quot;dropdown&quot;]) {
+        s += generateDropDown(elements[i][&quot;dropdown&quot;]);
+      }
+
+      if (elements[i][&quot;slider&quot;]) {
+        s += &#x27;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&#x27;
+        s += &#x27;&lt;input id=&quot;slider_&#x27;+elements[i][&quot;slider&quot;][&#x27;name&#x27;]+&#x27;&quot; type=&quot;text&quot;/&gt;&#x27;
+        s += &#x27;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&#x27;
+      }
+    }
+    s += &#x27;&amp;nbsp;&amp;nbsp;&lt;button type = &quot;submit&quot; class=&quot;btn btn-primary&quot;&#x27;
+
+    s += &#x27;onclick = onclick_submit(&#x27;+ pagesObject.index + &#x27;)&#x27;;
+    s +=&#x27;&gt; &#x27;+toLanguage(&#x27;Submit Query&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/button&gt;&lt;/div&gt;&#x27;; 
+    return s; 
+  }
+
+  this.generateDropDown = function(dropdown) {
+    var result = &#x27;&lt;div id=&quot;button_&#x27;+dropdown.name+&#x27;&quot; class=&quot;dropdown form-group&quot;&gt;\
+                  &lt;button class=&quot;btn btn-default dropdown-toggle&quot; type=&quot;button&quot; data-toggle=&quot;dropdown&quot; style=&quot;width:&#x27;+dropdown.length*10+&#x27;px&quot;&gt;&lt;b&gt;&#x27;+toLanguage(dropdown.placeholder, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/b&gt;\
+                  &lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/button&gt;\
+                  &lt;/button&gt;\
+                  &lt;ul id=&quot;dropdown_&#x27;+dropdown.name+&#x27;&quot; class=&quot;dropdown-menu&quot; style=&quot;width:200%&quot;&gt;&#x27;;
+
+    var content = dropdown.content;
+    var elements = content.elements;
+
+    /*
+      &lt;label class=&quot;col-sm-1 control-label&quot; for=&quot;lg&quot;&gt;Type&lt;/label&gt;
+      &lt;div class=&quot;col-sm-3&quot;&gt;
+        &lt;input class=&quot;form-control&quot; type=&quot;text&quot; id=&quot;lg&quot;&gt;
+      &lt;/div&gt;
+    */
+
+    if (content.type == &quot;dynamic&quot;) {
+      result += generateDynamicDropdownItem(elements)
+
+      result += &#x27;&lt;div class=&quot;&quot;&gt;&#x27;
+      result += &#x27;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&#x27;
+      result += &#x27;&lt;button name=&quot;dropdown_item_add&quot; type=&quot;button&quot; class=&quot;btn btn-success btn-xs&quot; aria-label=&quot;Close&quot;&gt;\
+                  &lt;span class=&quot;glyphicon glyphicon-plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;\
+                  &lt;/button&gt;&#x27;
+      result += &#x27;&lt;/div&gt;&#x27;
+    }  
+    else if (content.type == &quot;static&quot;){
+      result += &quot;Coming Soon.&quot;
+    }  
+    else {
+      result += &quot;Not Defined Yet.&quot;
+    }
+
+    result += &#x27;&lt;/ul&gt;&lt;/div&gt;&amp;nbsp;&amp;nbsp;&#x27;;
+    return result;
+  }
+
+  this.generateDynamicDropdownItem = function(elements) {
+      var result = &#x27;&lt;div name=&quot;dropdown_item&quot; class=&quot;form-group&quot;&gt;&#x27;;
+      result += &#x27;&amp;nbsp;&#x27;
+
+      for (var i=0; i &lt; elements.length; i++){
+        if (elements[i][&quot;label&quot;]){
+          result += &#x27;&amp;nbsp;&lt;label class=&quot;control-lable&quot;&gt;&#x27;+toLanguage(elements[i][&quot;label&quot;][&quot;name&quot;], &quot;ui_component&quot;, &quot;label&quot;)+&#x27;:&lt;/label&gt;&amp;nbsp;&#x27;;
+        }
+        if (elements[i][&quot;textbox&quot;]){
+          result += &#x27;&lt;input class=&quot;form-control&quot; type =&quot;text&quot; placeholder=&quot;&#x27; + toLanguage(elements[i][&quot;textbox&quot;][&quot;placeholder&quot;], &quot;ui_component&quot;, &quot;label&quot;) + &#x27;&quot; name=&quot;&#x27; + elements[i][&quot;textbox&quot;][&quot;name&quot;] + &#x27;&quot; size=&#x27; + elements[i][&quot;textbox&quot;][&quot;length&quot;] + &#x27;&gt;&amp;nbsp;&amp;nbsp;&#x27;;
+        }
+        if (elements[i][&quot;selection&quot;]) {
+          result += &#x27;&lt;select class=&quot;form-control&quot; name=&#x27;+ elements[i][&quot;selection&quot;][&quot;name&quot;] +&#x27;&gt;&#x27;
+
+          elements[i][&quot;selection&quot;].value.forEach(function(type_name, i) {
+             result += &quot;&lt;option value=&#x27;&quot; + type_name + &quot;&#x27;&gt; &quot; + type_name +&quot;&lt;/option&gt; &quot;;
+          });
+
+          result += &#x27;&lt;/select&gt;&#x27;
+        }
+      }
+
+      result += &#x27;&lt;button name=&quot;dropdown_item_remove&quot; tabindex=&quot;-1&quot; type=&quot;button&quot; class=&quot;btn btn-danger btn-xs&quot; aria-label=&quot;Close&quot;&gt;\
+                  &lt;span class=&quot;glyphicon glyphicon-remove&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;\
+                &lt;/button&gt;&#x27;
+
+      result += &#x27;&lt;/div&gt;&#x27;
+
+      return result;
+  }
+
+  this.initializeUIComponent = function(d) {
+    // initializing label filtering selection box.
+    var parent = $(&#x27;#node_label_filtering&#x27;).parent();
+    $(&#x27;#node_label_filtering&#x27;).next().remove();
+    $(&#x27;#node_label_filtering&#x27;).remove();
+
+    parent.append(&#x27;&lt;select id=&quot;node_label_filtering&quot; multiple=&quot;multiple&quot;&gt;&#x27;) 
+    $(&#x27;#node_label_filtering&#x27;).multiselect(nodeLabelFiltering);
+
+    parent = $(&#x27;#edge_label_filtering&#x27;).parent();
+    $(&#x27;#edge_label_filtering&#x27;).next().remove();
+    $(&#x27;#edge_label_filtering&#x27;).remove();
+
+    parent.append(&#x27;&lt;select id=&quot;edge_label_filtering&quot; multiple=&quot;multiple&quot;&gt;&#x27;) 
+    $(&#x27;#edge_label_filtering&#x27;).multiselect(edgeLabelFiltering);
+
+    // initializing dropbown box for multi-condition, if it is exist.
+    d.elements.forEach(function(e) {
+      if(e.dropdown) {
+        e = e.dropdown;
+        var eID = &quot;#dropdown_&quot; + e.name;
+    
+        $(eID).click(function(event){
+          event.stopPropagation();
+        })
+
+        $(eID).find(&quot;[name=&#x27;dropdown_item_add&#x27;]&quot;)
+        .click(function(event) {
+          event.stopPropagation();
+
+          var name = this.parentElement.parentElement.parentElement.id.split(&quot;_&quot;)[1];
+          var content = window.pages_obj[window.page_index].elements.filter(function(e){
+            return e[Object.keys(e)[0]].name == name
+          })[0]
+
+          var item = generateDynamicDropdownItem(content.dropdown.content.elements);
+          
+          $(item).insertBefore(this.parentElement)
+          .find(&quot;[name=&#x27;dropdown_item_remove&#x27;]&quot;)
+          .click(function(event) {
+            event.stopPropagation();
+            this.parentElement.remove()
+          })
+        });
+
+        $(eID).find(&quot;[name=&#x27;dropdown_item_remove&#x27;]&quot;)
+        .click(function(event) {
+          event.stopPropagation();
+          this.parentElement.remove()
+        })
+      }
+      else if (e.slider) {
+        e = e.slider;
+        $(&quot;#slider_&quot;+e.name).slider(e.value);
+      }
+    })
+
+    // Initializeing date time picker box.
+    $(&#x27;.form_datetime&#x27;).datetimepicker({
+        language:  language==&#x27;chinese&#x27;?&#x27;zh-CN&#x27;:undefined,
+        weekStart: 0,
+        todayBtn:  0,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: &#x27;month&#x27;,
+        forceParse: 1,
+        showMeridian: 0
+    });
+  }
+
+  this.updateLabelFilteringListBox = function(graph) {
+    // if graph data is empty return.
+    if (graph.nodes().length === 0) {
+      return;
+    }
+
+    // store the previous status of the selectionBoxLabels. The status is like whether a label is selected or not.
+    nodelabels = selectionBoxLabels.node;
+
+    // initialize the selectionBoxLabels of node.
+    // &quot;__key&quot; is the type for &quot;type&quot; and &quot;id&quot;, which is the key of a node and edge.
+    selectionBoxLabels.node = {};
+
+    // for each nodes &#x27;type&#x27;,&#x27;id&#x27; are default for every nodes.
+    // Then get what attribtues each type of node has.
+    graph.nodes().forEach(function(n){
+      if (n.type in selectionBoxLabels.node) {
+        ;
+      }
+      else {
+        selectionBoxLabels.node[n.type] = {};
+      }
+
+      [&#x27;type&#x27;, &#x27;id&#x27;].forEach(function(d, i) {
+        if (d in n) {
+          if (typeof nodelabels[n.type] == &#x27;object&#x27; &amp;&amp; d in nodelabels[n.type]) {
+            selectionBoxLabels.node[n.type][d] = nodelabels[n.type][d];
+          }
+          else {
+            selectionBoxLabels.node[n.type][d] = false;
+          }
+        }
+        else {
+          ;
+        }
+      })
+
+      for (var key in n[gvis.settings.attrs]) {
+        try {
+          if (typeof nodelabels[n.type] == &#x27;object&#x27; &amp;&amp; key in nodelabels[n.type]) {
+            selectionBoxLabels.node[n.type][key] = nodelabels[n.type][key];
+          }
+          else {
+            //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == &#x27;undefined&#x27;) ? false : filteringStatus.node[key];
+            selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[n.type][key] == &#x27;undefined&#x27;) ? false : filteringStatus.node[n.type][key];
+          }
+        }
+        catch (err) {
+          selectionBoxLabels.node[n.type][key] = false;
+          //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[key] == &#x27;undefined&#x27;) ? false : filteringStatus.node[key];
+          //selectionBoxLabels.node[n.type][key] = (typeof filteringStatus.node[n.type][key] == &#x27;undefined&#x27;) ? false : filteringStatus.node[n.type][key];
+        }   
+      }
+    })
+
+    // if there is not a links in the graph, skip the labels generation process for links
+    if (graph.links().length === 0) {
+      ;
+    }
+
+    // store the previous status of the selectionBoxLabels of edge. The status is like whether a label is selected or not.
+    edgelabels = selectionBoxLabels.edge;
+    selectionBoxLabels.edge = {};
+
+    // initialize the selectionBoxLabels of edge.
+    // &quot;__key&quot; is the type for &quot;type&quot; and &quot;id&quot;, which is the key of a edge.
+    // for each nodes &#x27;type&#x27;,&#x27;id&#x27; are default for every edges.
+    // Then get what attribtues each type of edge has.
+    graph.links().forEach(function(n){
+      if (n.type in selectionBoxLabels.edge) {
+        ;
+      }
+      else {
+        selectionBoxLabels.edge[n.type] = {};
+      }
+
+      [&#x27;type&#x27;, &#x27;id&#x27;].forEach(function(d, i) {
+        if (d in n) {
+          if (edgelabels[n.type] !== undefined &amp;&amp; d in edgelabels[n.type]) {
+            selectionBoxLabels.edge[n.type][d] = edgelabels[n.type][d];
+          }
+          else {
+            selectionBoxLabels.edge[n.type][d] = false;
+          }
+        }
+        else {
+          ;
+        }
+      })
+
+      for (var key in n.attr) {
+        try {
+          if (edgelabels[n.type] !== undefined &amp;&amp; key in edgelabels[n.type]) {
+            selectionBoxLabels.edge[n.type][key] = edgelabels[n.type][key];
+          }
+          else {
+            selectionBoxLabels.edge[n.type][key] = false;
+          }
+        }
+        catch (err) {
+          //selectionBoxLabels.edge[n.type][key] = false;
+          selectionBoxLabels.edge[n.type][key] = (typeof filteringStatus.edge[key] == &#x27;undefined&#x27;) ? false : filteringStatus.edge[key];
+        }   
+      }
+    })
+
+    // update node label list box.
+    // 1. Get the multi-selection list box container (.parent());
+    // 2. Remove the next sibling of multi-selection list box.
+    // 3. Remove the multi-selection list box itself.
+    // 4. Append a new multi-selection list box.
+    // 5. Append keys in the begin of the list box.
+    // 6. Append attribute for each type in the list box.
+    // 7. call the multi-selection box initialization.
+
+    //1.2.3
+    parent = $(&#x27;#node_label_filtering&#x27;).parent();
+    $(&#x27;#node_label_filtering&#x27;).next().remove();
+    $(&#x27;#node_label_filtering&#x27;).remove();
+
+    //4.
+    parent.append(&#x27;&lt;select id=&quot;node_label_filtering&quot; multiple=&quot;multiple&quot;&gt;&#x27;)
+
+
+    //5.
+    for (var key in selectionBoxLabels.node.__key) {
+      var tempOptionHTML = &#x27;&lt;option value=&quot;&#x27; + key + &#x27;&quot;&#x27;;
+      if (selectionBoxLabels.node.__key[key]) {
+        tempOptionHTML += &#x27;selected=&quot;selected&quot;&gt;&#x27;
+      }
+      else {
+        tempOptionHTML += &#x27;&gt;&#x27;
+      }
+
+      if (key == &#x27;id&#x27;) {
+        tempOptionHTML += toLanguage(&#x27;Node id&#x27;, &quot;ui_component&quot;, &quot;label&quot;) + &#x27;&lt;/option&gt;&#x27;
+      }
+      else {
+        tempOptionHTML += toLanguage(key, &quot;ui_component&quot;, &quot;label&quot;) + &#x27;&lt;/option&gt;&#x27;
+      }
+      
+      $(&#x27;#node_label_filtering&#x27;).append(tempOptionHTML)
+    } 
+
+    //6.
+    for (var type in selectionBoxLabels.node) {
+
+      if (Object.keys(selectionBoxLabels.node[type]).length == 0) {
+        continue;
+      }
+
+      var groupList;
+
+      if (type == &quot;__key&quot;) {
+        continue;
+      } 
+      else {
+        groupList = $(&#x27;&lt;optgroup value=&quot;&#x27;+type+&#x27;&quot; label=&quot;&#x27; + toLanguage(&#x27;type&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;: &#x27; + toLanguage(type, type, type) + &#x27;&quot;&gt;&lt;/optgroup&gt;&#x27;)
+        $(&#x27;#node_label_filtering&#x27;).append(groupList);
+      }
+
+      for (var key in selectionBoxLabels.node[type]) {
+        var tempOptionHTML = &#x27;&lt;option value=&quot;&#x27; + key +&#x27;&amp;&#x27;+type + &#x27;&quot;&#x27;;
+        if (selectionBoxLabels.node[type][key]) {
+          tempOptionHTML += &#x27;selected=&quot;selected&quot;&gt;&#x27;
+        }
+        else {
+          tempOptionHTML += &#x27;&gt;&#x27;
+        }
+
+        tempOptionHTML += toLanguage(key, type, key) + &#x27;&lt;/option&gt;&#x27;
+        groupList.append(tempOptionHTML)
+      } 
+
+
+    }
+
+    // Call the multiselec function for node label filtering.
+    $(&#x27;#node_label_filtering&#x27;).multiselect(nodeLabelFiltering);
+
+    // update edge label list box.
+    // 1. Get the multi-selection list box container (.parent());
+    // 2. Remove the next sibling of multi-selection list box.
+    // 3. Remove the multi-selection list box itself.
+    // 4. Append a new multi-selection list box.
+    // 5. Append keys in the begin of the list box.
+    // 6. Append attribute for each type in the list box.
+    // 7. call the multi-selection box initialization.
+
+    //1.2.3
+    parent = $(&#x27;#edge_label_filtering&#x27;).parent();
+    $(&#x27;#edge_label_filtering&#x27;).next().remove();
+    $(&#x27;#edge_label_filtering&#x27;).remove();
+
+    //4.
+    parent.append(&#x27;&lt;select id=&quot;edge_label_filtering&quot; multiple=&quot;multiple&quot;&gt;&#x27;) 
+
+    //5.
+    for (var key in selectionBoxLabels.edge.__key) {
+      var tempOptionHTML = &#x27;&lt;option value=&quot;&#x27; + key + &#x27;&quot;&#x27;;
+      if (selectionBoxLabels.edge.__key[key]) {
+        tempOptionHTML += &#x27;selected=&quot;selected&quot;&gt;&#x27;
+      }
+      else {
+        tempOptionHTML += &#x27;&gt;&#x27;
+      }
+
+      tempOptionHTML += toLanguage(key, &quot;ui_component&quot;, &quot;label&quot;) + &#x27;&lt;/option&gt;&#x27;
+      $(&#x27;#edge_label_filtering&#x27;).append(tempOptionHTML)
+    } 
+
+    //6.
+    for (var type in selectionBoxLabels.edge) {
+
+      if (Object.keys(selectionBoxLabels.edge[type]).length == 0) {
+        continue;
+      }
+
+      var groupList;
+
+      if (type == &quot;__key&quot;) {
+        continue;
+      } 
+      else {
+        groupList = $(&#x27;&lt;optgroup value=&quot;&#x27;+type+&#x27;&quot; label=&quot;&#x27; + toLanguage(&#x27;type&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;: &#x27; + toLanguage(type, type, type) + &#x27;&quot;&gt;&lt;/optgroup&gt;&#x27;)
+        $(&#x27;#edge_label_filtering&#x27;).append(groupList);
+      }
+
+      for (var key in selectionBoxLabels.edge[type]) {
+        var tempOptionHTML = &#x27;&lt;option value=&quot;&#x27; + key +&#x27;&amp;&#x27;+type + &#x27;&quot;&#x27;;
+        if (selectionBoxLabels.edge[type][key]) {
+          tempOptionHTML += &#x27;selected=&quot;selected&quot;&gt;&#x27;
+        }
+        else {
+          tempOptionHTML += &#x27;&gt;&#x27;
+        }
+
+        tempOptionHTML += toLanguage(key, type, key) + &#x27;&lt;/option&gt;&#x27;
+        groupList.append(tempOptionHTML)
+      }   
+    }
+
+    //7.
+    $(&#x27;#edge_label_filtering&#x27;).multiselect(edgeLabelFiltering);
+  }
+
+  //onkeypress=&quot;onkeypress_submit()&quot;
+  this.onkeypress_submit = function() {
+
+    //enter key
+    if (event.keyCode == 13) {
+      onclick_submit(page_index);
+    }
+  }
+
+  this.onclick_submit = function(index) {
+
+
+    // test for post
+    /*
+    var testData = {&quot;function&quot;:&quot;vattr&quot;, &quot;translate_ids&quot;:[&quot;1&quot;, &quot;25&quot;, &quot;27&quot;]};
+    testData.translate_ids.push(&quot;30&quot;);
+    
+    $.ajax({
+        url : &quot;http://shawnhuang.graphsql.com:8080/engine/builtins&quot;,
+        type: &quot;POST&quot;,
+        data : JSON.stringify(testData), //&#x27;{&quot;function&quot;:&quot;vattr&quot;, &quot;translate_ids&quot;: [&quot;1&quot;, &quot;25&quot;, &quot;27&quot;]}&#x27;,
+        dataType   : &#x27;json&#x27;,
+        beforeSend: function(xhr) {
+                console.log(&quot;Before Send&quot;);
+                    xhr.setRequestHeader(&quot;Content-Type&quot;,&quot;application/json&quot;);
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log(data.results)//data - response from server
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            console.log(textStatus)
+        }
+    });
+    */
+    
+    var myObject = window.pages_obj[index]
+
+    // initialize the multi-selection box label for new coming data.
+    // window.selectionBoxLabels = {node:{&quot;__key&quot;:{&#x27;type&#x27;:checkUndefinedForBool(filteringStatus.node.type), &#x27;id&#x27;:checkUndefinedForBool(filteringStatus.node.id)}}, 
+    // edge:{&quot;__key&quot;:{&#x27;type&#x27;:checkUndefinedForBool(filteringStatus.edge.type), &#x27;id&#x27;:checkUndefinedForBool(filteringStatus.edge.id)}} }
+
+
+    // for each events create coresponding URL and Payload.
+    var submit_URL = &quot;&quot;;
+    var submit_payload = {};
+
+    for (var key in myObject.events) {
+      if (key == &quot;submit&quot;) {
+        // setting URL for submit button.
+        temp_event = myObject.events[key]; 
+        submit_URL = temp_event.URL_head;
+
+        URL_attrs =  temp_event.URL_attrs
+
+        for (var attr in URL_attrs.vars) {
+          submit_URL += &quot;/&quot; + document.getElementsByName(URL_attrs.vars[attr].name)[0].value.trim();
+        }
+
+        submit_URL += &quot;?&quot;;
+        
+        for (var attr in URL_attrs.maps) {
+          name = URL_attrs.maps[attr].attr;
+          attr = URL_attrs.maps[attr];
+
+          //if (name == &quot;id&quot;) continue;
+
+          if (attr.usage == &quot;input&quot;) {
+            if (document.getElementsByName(attr.name)[0].value==&quot;&quot;) {
+              ; 
+              if (name == &quot;max&quot;) {
+                maxNumberOfNodes = 500; 
+              }  
+            }
+            else{
+              if (name == &quot;type&quot;) {
+                submit_URL += name + &quot;=&quot; + document.getElementsByName(attr.name)[0].value.trim() +&quot;&amp;&quot;;
+              }
+              else if (name == &quot;endtime&quot; || name == &quot;starttime&quot;) {
+                try {
+                  var reggie = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
+                  var dateString = document.getElementsByName(attr.name)[0].value.trim();
+                  var dateArray = reggie.exec(dateString); 
+                  var dateObject = new Date(
+                      (+dateArray[1]),
+                      (+dateArray[2])-1, // Careful, month starts at 0!
+                      (+dateArray[3]),
+                      (+dateArray[4]),
+                      (+dateArray[5]),
+                      (+dateArray[6])
+                  );
+
+                  var epochSecond = dateObject.getTime() / 1000 - dateObject.getTimezoneOffset() * 60;
+
+                  submit_URL += name + &quot;=&quot; + epochSecond +&quot;&amp;&quot;;
+                }
+                catch (err) {
+                  ;
+                }
+
+              }
+              else {
+                submit_URL += name + &quot;=&quot; + document.getElementsByName(attr.name)[0].value.trim() +&quot;&amp;&quot;;
+                if (name == &quot;max&quot;) {
+                  maxNumberOfNodes = parseInt(document.getElementsByName(attr.name)[0].value.trim());
+                }  
+              } 
+            } 
+            //submit_URL += name + &quot;=&quot; + (document.getElementsByName(attr.name)[0].value==&quot;&quot;?1:document.getElementsByName(attr.name)[0].value) +&quot;&amp;&quot;;
+          }
+          else if (attr.usage == &quot;attributes&quot;) {
+            submit_URL += name+ &quot;=&quot; + myObject.attributes[attr.name] + &quot;&amp;&quot;;
+          }
+        }
+
+        for (var payload in URL_attrs.payload) {
+          payload = URL_attrs.payload[payload];
+
+          switch (payload.usage) {
+            case &quot;array_input&quot; :
+              submit_payload[payload.name] = [];
+
+              var dropdown_id = &quot;#dropdown_&quot; + payload.name;
+
+              $(dropdown_id).find(&quot;[name=&#x27;dropdown_item&#x27;]&quot;).each(function(i, e){
+                var payload_item = {}
+                var isExist = true;
+
+                payload.attr.forEach(function(a){
+                  payload_item[a] = $(e).find(&#x27;[name=&quot;&#x27;+a+&#x27;&quot;]&#x27;).val().trim();
+
+                  if (payload_item[a] == &quot;&quot;) {
+                    isExist = false;
+                  }
+                })
+                
+                if (isExist) {
+                  var isDuplicate = false;
+                  submit_payload[payload.name].forEach(function(d, i) {
+                    if (d.type == payload_item.type &amp;&amp; d.id == payload_item.id) {
+                      isDuplicate |= true;
+                    }                
+                  })
+
+                  if (!isDuplicate) {
+                    submit_payload[payload.name].push(payload_item);
+                  }
+                }
+              })
+              
+              break;
+            case &quot;object_input&quot; :
+              submit_payload[payload.name] = {};
+              break;
+            case &quot;post&quot; :
+              submit_payload = payload.template;
+              for (var attr in payload.attr) {
+                //tab_template.replace(/\{id\}/g, temp_id)
+                attr = payload.attr[attr]
+                if (attr.usage == &quot;input&quot;) {
+                  tempInput = document.getElementsByName(attr.name)[0].value.trim();
+                  submit_payload = submit_payload.replace(new RegExp(&quot;{{&quot;+attr.attr+&quot;}}&quot;, &quot;g&quot;), tempInput)
+                }
+                else if (attr.usage == &quot;attributes&quot;){
+                  tempInput = myObject.attributes[attr.name];
+                  submit_payload = submit_payload.replace(new RegExp(&quot;{{&quot;+attr.attr+&quot;}}&quot;, &quot;g&quot;), tempInput)
+                }
+                else if (attr.usage == &quot;select&quot;) {
+
+                }
+              }
+            default:
+              break;
+          }
+        }
+
+        //remove the last &quot;&amp;&quot; or &quot;?&quot;
+        submit_URL = submit_URL.slice(0, -1);
+
+        // initialize the root node as the query node.
+        //  a. create rootNode id.
+        //  b. set root node by id.
+        //  c. rootNode is = Type + &quot;&amp;&quot; + ID;
+
+        // Get type from Input box. Sometimes, we don&#x27;t use type as input for query.
+        // But type is another key for the retrieve the node in graph. Default is &#x27;0&#x27;;
+
+        // Get id from Inputbox. The &#x27;id&#x27; usually is used as input for query.
+        // Default is &#x27;0&#x27;
+
+        var isTypeExist = false;
+        var tempArray = URL_attrs.vars.concat(URL_attrs.maps);
+        var tempRootID = &quot;id&quot;  // &quot;id&quot;
+        var tempTargetID = &quot;tgt_pid&quot;
+
+        for (var i in tempArray) {
+          var item = tempArray[i];
+          if (item.attr == &quot;type&quot;) {
+            isTypeExist = true;
+
+            if (item.usage == &quot;input&quot;) {
+              rootNodeType = document.getElementsByName(item.name)[0].value==&quot;&quot;?&quot;0&quot;:document.getElementsByName(item.name)[0].value;
+              targetNodeType = document.getElementsByName(item.name)[0].value==&quot;&quot;?&quot;0&quot;:document.getElementsByName(item.name)[0].value;
+            }
+            else if (item.usage == &quot;attributes&quot;) {
+              rootNodeType = targetNodeType = myObject.attributes[item.attr]
+            }
+          }
+
+          // Only for one project.
+          if (item.attr == tempRootID || item.attr == &quot;pid_id&quot;) {
+            rootNodeID = document.getElementsByName(item.name)[0].value;
+          }
+
+          if (item.attr == tempTargetID) {
+            targetNodeID = document.getElementsByName(item.name)[0].value;
+          }
+        }
+        if (isTypeExist) {
+          //rootNodeType = document.getElementsByName(type.name)[0].value;
+          // type default is txn;
+          ;
+        }
+        else {
+          rootNodeType = &quot;phone_no&quot;;
+          targetNodeType = &quot;phone_no&quot;;
+        }
+
+        if (!isTypeExist &amp;&amp; rootNodeID == undefined) {
+          var inputArray = $(&#x27;#button_&#x27;+URL_attrs.payload[0].name).find(&quot;[name=&#x27;type&#x27;]&quot;);
+          var inputIdArray = $(&#x27;#button_&#x27;+URL_attrs.payload[0].name).find(&quot;[name=&#x27;id&#x27;]&quot;);
+
+          for (var k=0; k&lt;inputArray.length; ++k) {
+            rootNodeType = inputArray[k].value;
+            rootNodeID = inputIdArray[k].value;
+            if (rootNodeType != &quot;&quot; &amp;&amp; rootNodeID != &quot;&quot;) {
+              break;
+            }
+          }
+        }
+      }
+      else {
+
+        // setting URL for other events, such as double left click on nodes.
+        // mygv.setURL(myObject, key);
+      }
+    }
+
+    $.ajax({
+      url : submit_URL,
+      type : &quot;post&quot;,
+      data : submit_payload,//JSON.stringify(submit_payload),//&#x27;{&quot;function&quot;:&quot;vattr&quot;, &quot;translate_ids&quot;: [&quot;1&quot;, &quot;25&quot;, &quot;27&quot;]}&#x27;,
+      dataType   : &#x27;json&#x27;,
+      error: function(jqXHR, textStatus, errorThrown){
+        // will fire when timeout is reached
+        // mygv.clean();
+        if (jqXHR.responseText.indexOf(&#x27;error_: invalid / deleted&#x27;) != -1) {
+          alert(&quot;输入的节点不存在，请重新输入。&quot;);
+        }
+        else if (jqXHR.responseText.indexOf(&#x27;Adding ID failed.&#x27;) != -1) {
+          alert(&quot;输入的节点类型不存在，请重新输入。&quot;);
+        }
+        else {
+          alert(jqXHR.responseText);
+        }   
+      },
+      success: function(message, textStatus, jqXHR){
+        //do something
+        if (typeof message == &#x27;object&#x27;) {
+          ;
+        }
+        else {
+          try {
+            message = JSON.parse(message);
+          }
+          catch (err){
+            console.log(&quot;REST query result is not a vaild JSON format&quot;)
+            return ;
+          }
+        }
+
+
+        if (!message.error &amp;&amp; message.error != undefined) {
+          // get the json object of the result.
+          newData = message.results;
+
+          updateQueryInputInfoBox(submit_payload, page_index);
+
+          if (newData.neighborhood_size &gt; maxNumberOfNodes) {
+            switch (language) {
+              case &quot;chinese&quot;:
+              alert (&quot;找到 &quot; + newData.neighborhood_size + &quot; 个相邻节点， 但是只有 &quot; + maxNumberOfNodes + &quot; 个节点被显示. 请提高最大节点个数。&quot;)
+              break;
+              case &quot;english&quot;:
+              alert (&quot;Found &quot; + newData.neighborhood_size + &quot; nodes. But only &quot; + maxNumberOfNodes + &quot; nodes are shown in the visualization. Please increase the Max number.&quot;)
+              break;
+              default:
+              alert (&quot;Found &quot; + newData.neighborhood_size + &quot; nodes. But only &quot; + maxNumberOfNodes + &quot; nodes are shown in the visualization. Please increase the Max number.&quot;)
+            }
+          }
+
+          // initialize the graph visualization by using the new data.
+          // run the visualization.
+          // mygv
+          // .data(newData)
+          // .run()
+
+          newData = refineDataName(newData);
+
+          visualization
+          .read(newData)
+          .layout(UIObject.setting.layout)
+          .setRootNode(rootNodeType, rootNodeID)
+          .render()
+
+          // update the multi-selection lable box base on the graph data.
+          updateLabelFilteringListBox(visualization.data());
+
+          // store the new message in the messageArray.
+          messageArray.push(message);
+
+          // out put the JSON message in the json tab.
+          JSONMessageOutput()
+        }
+        else { // if is error message
+          if (language == &quot;chinese&quot;) {
+            if (message.message.indexOf(&#x27;error_: invalid / deleted&#x27;) != -1) {
+              alert(&quot;输入的查询节点不存在，请重新输入。&quot;);
+            }
+            else if (message.message.indexOf(&#x27;Adding ID failed.&#x27;) != -1) {
+              alert(&quot;输入的查询节点类型不存在，请重新输入。&quot;);
+            }
+            else {
+              alert(message.message);
+            }
+          }
+          else if (language == &quot;english&quot;) {
+            alert(message.message);
+          }
+          else {
+            alert(message.message);
+          }
+        }
+      }
+    })
+  }
+
+  this.updateQueryInputInfoBox = function(payload, page_index) {
+    var table = &quot;&lt;h3&gt;&quot;+toLanguage(window.pages_obj[page_index][&#x27;tabname&#x27;], &#x27;tab&#x27;, &#x27;tab name&#x27;)+&quot;&lt;/h3&gt;&quot;
+    if (typeof payload != &#x27;object&#x27; || Object.keys(payload).length &gt;= 0) {
+      //return;
+    }
+    else {
+      //$(&#x27;#queryInputInfoBox&#x27;).html(JSON.stringify(payload));
+      table += &#x27;&lt;table class=&quot;table table-condensed table-bordered&quot;&gt;&#x27;
+      table += &#x27;&lt;tr&gt;&lt;th&gt;&#x27;+toLanguage(&#x27;Query Type&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/th&gt;&lt;th&gt;&#x27;+toLanguage(&#x27;Query ID&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/th&gt;&lt;/tr&gt;&#x27;;
+      payload[&#x27;input&#x27;].forEach(function(d){
+        table += &#x27;&lt;tr&gt;&lt;td&gt;&#x27;+d.type+&#x27;&lt;/td&gt;&lt;td&gt;&#x27;+d.id+&#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+      })
+      table += &#x27;&lt;/table&gt;&#x27;
+    }
+
+    $(&#x27;#queryInputInfoBox&#x27;).html(table);
+
+    $(&#x27;#tableBox&#x27;).height($(&#x27;#left_side&#x27;).height() - $(&#x27;#layoutport&#x27;).height() - $(&#x27;#queryInputInfoBox&#x27;).height() - 20)
+  }
+
+  this.layoutChanged = function(newLayout) {
+    visualization
+    .layout(newLayout)
+    .render(1000, 500)
+  }
+
+
+  window.page_index = 0;
+  window.pages_obj = config; 
+  //sort on index
+  window.pages_obj.sort(function(a,b) {return (a.index - b.index);});
+
+  for (var i=0; i &lt; window.pages_obj.length; i++) {
+    var tabname = window.pages_obj[i].tabname;
+    var removedSpaces = removeSpaces(tabname);
+    tabline = &#x27;&lt;li&gt;&lt;a href=&quot;#&quot; id=&quot;&#x27; + removedSpaces  + &#x27;&quot; name=&quot;&#x27;+removedSpaces+&#x27;_&#x27;+ i + &#x27;&quot;&gt;&#x27; + toLanguage(tabname, &#x27;tab&#x27;, &#x27;tab name&#x27;) + &#x27;&lt;/a&gt;&lt;/li&gt;&#x27;;
+    
+    window.pages_obj[removedSpaces] = &#x27;&#x27; + generateForm(window.pages_obj[i]) + &#x27;&#x27;;
+
+    $(document).on(&#x27;click&#x27;, &#x27;#&#x27;+removedSpaces, function(event){ 
+      if (window.page_index == parseInt(event.target.name.split(&quot;_&quot;)[1])) {
+        event.stopPropagation();
+        return;
+      }
+      else {
+        window.page_index = parseInt(event.target.name.split(&quot;_&quot;)[1]);
+      }
+      //console.log(&quot;click&quot; + event.target.id);
+      //console.log(&quot;form data is &quot; + window.pages_obj[event.target.id]);
+      $(&#x27;#urlLab&#x27;).val(&quot;&quot;);
+      $(&#x27;#content-page&#x27;).empty();
+      $(&#x27;#content-page&#x27;).append(window.pages_obj[event.target.id]);
+
+      var UIObject = window.pages_obj[window.page_index];
+
+      initializeUIComponent(UIObject);
+    })
+
+    if (i == 0) {
+      //Index 0 is activated by default
+      $(&#x27;#content-page&#x27;).empty();
+      $(&#x27;#content-page&#x27;).append(window.pages_obj[removedSpaces]);
+
+      // initialize the multi selection list box for displaying labels of nodes and edges.
+      $(&#x27;#node_label_filtering&#x27;).multiselect(nodeLabelFiltering);
+      $(&#x27;#edge_label_filtering&#x27;).multiselect(edgeLabelFiltering);
+
+      UIObject = window.pages_obj[i]
+      
+      // mygv.clean()
+      // layoutChanged(UIObject.setting.layout)
+      // mygv.edgeDirectedType(UIObject.setting.edgeDirectedType)
+      // mygv.preDefinition(UIObject.initialization)
+
+      //window.selectionBoxLabels = mygv.label();
+      //window.selectionBoxLabels = {node:{&quot;__key&quot;:{&#x27;type&#x27;:filteringStatus.node.type, &#x27;id&#x27;:filteringStatus.node.id}}, edge:{&quot;__key&quot;:{&#x27;type&#x27;:filteringStatus.edge.type, &#x27;id&#x27;:filteringStatus.edge.id}} }
+      // window.selectionBoxLabels = {node:{&quot;__key&quot;:{&#x27;type&#x27;:checkUndefinedForBool(filteringStatus.node.type), &#x27;id&#x27;:checkUndefinedForBool(filteringStatus.node.id)}}, 
+      //               edge:{&quot;__key&quot;:{&#x27;type&#x27;:checkUndefinedForBool(filteringStatus.edge.type), &#x27;id&#x27;:checkUndefinedForBool(filteringStatus.edge.id)}} }
+      
+      $(&#x27;#layoutType&#x27;).val(UIObject.setting.layout);
+      initializeUIComponent(UIObject);
+
+      updateQueryInputInfoBox({}, page_index);
+    }
+
+    $(&quot;#navbar ul&quot;).append(tabline);  
+  }
+
+  this.outputTableforSelectedElements = function(nodes, links) {
+    var selectedNodes = nodes;
+    var selectedEdges = links;
+
+    var result = &#x27;&#x27;
+
+    if (selectedNodes.length == 0 &amp;&amp; selectedEdges.length == 0) {
+      result += &#x27;&lt;span style=&quot;color:#636363;font-size:15px;font-family: Times&quot;&gt;&#x27;+toLanguage(&#x27;No Selected Node&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/span&gt;\n&#x27;;
+      return result;
+    }
+
+    for (var node in selectedNodes) {
+      node = selectedNodes[node];
+
+      var nodeItem = &#x27;&lt;table class=&quot;table table-hover table-bordered&quot; style=&quot;table-layout: fixed;word-wrap: break-word&quot;&gt;&#x27;;
+      nodeItem += &#x27;&lt;tr name=&quot;element_name&quot; onclick=&quot;onClick_table_head(this,\&#x27;node\&#x27;,\&#x27;&#x27;
+        +node.id+&#x27;\&#x27;,\&#x27;&#x27;+node.type
+        +&#x27;\&#x27;)&quot;&gt;&lt;td style=&quot;color: #fff;background-color: #337ab7;border-color: #2e6da4;width:25%;line-height:1.0;padding:4px&quot;&gt;&#x27; 
+        +toLanguage(&#x27;Node Name&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/td&gt;&lt;td style=&quot;width:75%;line-height:1.0;padding:4px&quot;&gt;&#x27;
+        +toLanguage(node.id)+&#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+      //nodeItem += &#x27;&lt;tr&gt;&lt;th&gt;Attribute Name&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&#x27;; //style=&quot;color: #fff;background-color: #337ab7;border-color: #2e6da4;&quot;
+
+      nodeItem += &#x27;&lt;tr name=&quot;attribute_name&quot; onclick=&quot;onClick_table(this,\&#x27;node\&#x27;)&quot;&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27;
+        + toLanguage(&#x27;type&#x27;, &quot;ui_component&quot;, &quot;label&quot;) +&#x27;&lt;/td&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27; 
+        + toLanguage(node.type) + &#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;
+      for (var key in Object.keys(node[gvis.settings.attrs])) {
+        key = Object.keys(node[gvis.settings.attrs])[key];
+        nodeItem += &#x27;&lt;tr name=&quot;attribute_name&quot; onclick=&quot;onClick_table(this,\&#x27;node\&#x27;)&quot;&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27;
+        + toLanguage(key, node.type) +&#x27;&lt;/td&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27; 
+        + toLanguage(node[gvis.settings.attrs][key], node.type, key) + &#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;
+      }
+
+      nodeItem += &#x27;&lt;/table&gt;&#x27;;
+      result += nodeItem;
+      
+    }
+
+    for (var link in selectedEdges) {
+      link = selectedEdges[link]
+
+      var linkItem = &#x27;&lt;table class=&quot;table table-hover table-bordered&quot; style=&quot;table-layout: fixed;word-wrap: break-word&quot;&gt;&#x27;;
+      linkItem += &#x27;&lt;tr name=&quot;element_name&quot; onclick=&quot;onClick_table_head(this,\&#x27;link\&#x27;,\&#x27;&#x27;
+        +link.source.id+&#x27;\&#x27;,\&#x27;&#x27;+link.source.type+&#x27;\&#x27;,\&#x27;&#x27;+link.target.id+&#x27;\&#x27;,\&#x27;&#x27;+link.target.type+&#x27;\&#x27;,\&#x27;&#x27;+link.type+
+        &#x27;\&#x27;)&quot;&gt;&lt;td style=&quot;color: #fff;background-color: #5bc0de;border-color: #46b8da;width:25%;line-height:1.0;padding:4px&quot;&gt;&#x27;+toLanguage(&#x27;Link Name&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/td&gt;&lt;td style=&quot;width:75%;line-height:1.0;padding:4px&quot;&gt;&#x27;+link.source.id+&#x27;=&gt;&#x27;+link.target.id+&#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+      //linkItem += &#x27;&lt;tr&gt;&lt;th&gt;Attribute Name&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;/tr&gt;&#x27;;
+      linkItem += &#x27;&lt;tr name=&quot;attribute_name&quot; onclick=&quot;onClick_table(this,\&#x27;link\&#x27;)&quot;&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27;+toLanguage(&#x27;type&#x27;, &quot;ui_component&quot;, &quot;label&quot;)+&#x27;&lt;/td&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27; + toLanguage(link.type) + &#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+
+      for (var key in Object.keys(link[gvis.settings.attrs])) {
+        key = Object.keys(link[gvis.settings.attrs])[key];
+
+        if (link[gvis.settings.attrs][key] instanceof Array) {
+          link[gvis.settings.attrs][key] = link[gvis.settings.attrs][key].join(&quot;,&lt;br&gt;&quot;);
+        }
+
+        linkItem += &#x27;&lt;tr name=&quot;attribute_name&quot; onclick=&quot;onClick_table(this,\&#x27;link\&#x27;)&quot;&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27;+toLanguage(key, link.type)+&#x27;&lt;/td&gt;&lt;td style=&quot;line-height:1.0;padding:4px&quot;&gt;&#x27; + toLanguage(link[gvis.settings.attrs][key],link.type, key) + &#x27;&lt;/td&gt;&lt;/tr&gt;&#x27;
+      }
+
+      linkItem += &quot;&lt;/table&gt;&quot;
+      result += linkItem;
+    }
+
+    return result;
+  }
+
+  //initialize the color picker.
+  // set the colorchange event for changing the color of selected nodes and edges.
+  $(&#x27;#colorpicker&#x27;).colorpicker({
+      color: &quot;#1f77b4&quot;  //bodyStyle.backgroundColor
+  }).on(&#x27;changeColor&#x27;, function(ev) {
+      //bodyStyle.backgroundColor = ev.color.toHex();
+      coloringNodes(ev.color.toHex())
+  });
+
+  // window.addEventListener(&#x27;resize&#x27;, function() {
+  //   console.log(&#x27;resizing&#x27;)
+  //   d3.select(&#x27;#prototype1&#x27;).style(&#x27;height&#x27;, $(window).height()-220+&#x27;px&#x27;);
+  //   visualization.update(0, 0);
+  // });
+});
+
+
+function test() {
+    var data = {
+    &quot;nodes&quot;: [
+      {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 100, &quot;shape&quot;: &quot;square&quot;, &quot;fill&quot;: &quot;#ff5500&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}},
+      {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 100, &quot;shape&quot;: &quot;circle&quot;, &quot;fill&quot;: &quot;#005500&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.8}},
+      {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 10, &quot;shape&quot;: &quot;cross&quot;, &quot;fill&quot;: &quot;#0055ff&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.7}},
+      {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 60, &quot;shape&quot;: &quot;circle&quot;, &quot;fill&quot;: &quot;#ff5500&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.6}},
+      {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;tag&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 10, &quot;shape&quot;: &quot;diamond&quot;, &quot;fill&quot;: &quot;#E377C2&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}},
+      {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 60, &quot;shape&quot;: &quot;circle&quot;, &quot;fill&quot;: &quot;#E377C2&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.9}},
+      {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 10,&quot;shape&quot;: &quot;cross&quot;, &quot;fill&quot;: &quot;#E377C2&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.5}},
+      {&quot;id&quot;: &quot;7&quot;, &quot;type&quot;: &quot;tag&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 20, &quot;shape&quot;: &quot;circle&quot;, &quot;fill&quot;: &quot;#1F77B4&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.4}},
+      {&quot;id&quot;: &quot;8&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2, &quot;a3&quot;: 4, &quot;a4&quot;: 5}, &quot;_styles&quot;: {&quot;size&quot;: 60, &quot;shape&quot;: &quot;square&quot;, &quot;fill&quot;: &quot;#1F77B4&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}},
+      {&quot;id&quot;: &quot;9&quot;, &quot;type&quot;: &quot;tag&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 10, &quot;shape&quot;: &quot;diamond&quot;, &quot;fill&quot;: &quot;#1F77B4&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.9}},
+      {&quot;id&quot;: &quot;10&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 60, &quot;shape&quot;: &quot;square&quot;, &quot;fill&quot;: &quot;#2CA02C&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.8}},
+      {&quot;id&quot;: &quot;11&quot;, &quot;type&quot;: &quot;movie&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 10, &quot;shape&quot;: &quot;diamond&quot;, &quot;fill&quot;: &quot;#2CA02C&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.7}},
+      {&quot;id&quot;: &quot;12&quot;, &quot;type&quot;: &quot;usr&quot;, &quot;_attrs&quot;: {&quot;a1&quot;: 1, &quot;a2&quot;: 2}, &quot;_styles&quot;: {&quot;size&quot;: 60, &quot;shape&quot;: &quot;cross&quot;, &quot;fill&quot;: &quot;#2CA02C&quot;, &quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.6}}],
+    &quot;links&quot;: [
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;aaa&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;bbb&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;ccc&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;aaa&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.9}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;bbb&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.9}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;type&quot;: &quot;dds&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#E377C2&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.8}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;adx&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#1F77B4&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.7}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;fdd&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.6}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;eew&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.5}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;type&quot;: &quot;eer&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#E377C2&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.4}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;dff&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.3}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;sdf&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#E377C2&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;sdd&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.9}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;eeq&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.8}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;type&quot;: &quot;cca&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.7}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;dfa&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#E377C2&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.6}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;type&quot;: &quot;ccq&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.5}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;ccb&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#1F77B4&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.4}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;6&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;ccr&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.3}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;0&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;7&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;ccw&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#2CA02C&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 1}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;1&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;8&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;ssa&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.9}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;2&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;9&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;type&quot;: &quot;ssb&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#E377C2&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.8}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;3&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;10&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;bbc&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: false, &quot;opacity&quot;: 0.7}, &quot;directed&quot;: false},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;4&quot;, &quot;type&quot;: &quot;tag&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;11&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;type&quot;: &quot;bbs&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#1F77B4&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.6}, &quot;directed&quot;: true},
+      {&quot;source&quot;: {&quot;id&quot;: &quot;5&quot;, &quot;type&quot;: &quot;movie&quot;}, &quot;target&quot;: {&quot;id&quot;: &quot;12&quot;, &quot;type&quot;: &quot;usr&quot;}, &quot;type&quot;: &quot;bbc&quot;, &quot;_attrs&quot;: {&quot;aa1&quot;: 3, &quot;aa2&quot;: 4}, &quot;_styles&quot;: {&quot;stroke&quot;: &quot;#ccc&quot;, &quot;strokeWidth&quot;: 1, &quot;dashed&quot;: true, &quot;opacity&quot;: 0.5}, &quot;directed&quot;: true}]
+  };
+
+
+  d3.select(&#x27;#prototype1&#x27;).style(&#x27;height&#x27;, ($(window).height()-220)+&#x27;px&#x27;);
+
+  this.test = new gvis({
+    configure: config,
+    container: &#x27;prototype1&#x27;,
+    //render_type: &#x27;svg&#x27;,
+  });
+
+
+  // for (var node in data.nodes) {
+  //   test.addNode(data.nodes[node]);
+  // }
+
+  // for (var link in data.links) {
+  //   test.addLink(data.links[link]);
+  // }
+
+  test
+  .read(data)
+  .layout(&#x27;circle&#x27;)
+  //.layout(&#x27;tree&#x27;)
+  //.layout(&#x27;force&#x27;)
+  //.render()
+
+  test.addLayout(&#x27;cluster&#x27;, function() {
+    var size = this.createTreeBFS();
+
+    var rootNode = this._graph.nodes(this._rootNodeKey);
+    rootNode.x = gvis.settings.domain_width / 2.0;
+    rootNode.y = gvis.settings.domain_height / 2.0;
+
+    var layoutNodes = d3.layout.cluster()
+    .size([size[0] * gvis.settings.domain_width / 4.0, size[1] * gvis.settings.domain_height / 4.0])
+    .separation(function(a, b) {
+      return (a.parent == b.parent ? 1 : 2) / a.depth / a.depth;
+    })
+    .nodes(this._tree)
+
+    layoutNodes.forEach(function(node) {
+      node.node.x = node.x
+      node.node.y = node.y
+    })
+  })
+
+
+  test.showNodeLabel(&#x27;tag&#x27;, &#x27;1&#x27;, [&#x27;type&#x27;, &#x27;a1&#x27;, &#x27;a2&#x27;, &#x27;asdf&#x27;]);
+  test.showNodeLabelByType(&#x27;usr&#x27;, [&#x27;id&#x27;, &#x27;a1&#x27;, &#x27;a2&#x27;]);
+
+  test.showLinkLabel(&#x27;tag&#x27;, &#x27;4&#x27;, &#x27;movie&#x27;, &#x27;11&#x27;, &#x27;bbs&#x27;, [&#x27;type&#x27;, &#x27;aa1&#x27;, &#x27;aa2&#x27;]);
+  test.showLinkLabelByType(&#x27;bbc&#x27;, [&#x27;aa1&#x27;, &#x27;aa2&#x27;, &#x27;11123&#x27;]);
+
+  test.setNodeToolTipFormat(function(type, id, attrs) {
+    var template = &#x27;&lt;span style=&quot;color:{{color}}&quot;&gt;{{key}}{{value}}&lt;/span&gt;&lt;br /&gt;&#x27;; 
+
+    var result = &#x27;&lt;span style=&quot;color:#ff0000&quot;&gt;Node&lt;/span&gt;&lt;br /&gt;&#x27;;
+
+    result += gvis.utils.applyTemplate(template, {color:&#x27;#fec44f&#x27;, key:&#x27;&#x27;, value:type + &#x27;-&#x27; + id});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:&#x27;#99d8c9&#x27;, key:key+&#x27;:&#x27;, value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  test.setLinkToolTipFormat(function(type, attrs) {
+    var template = &#x27;&lt;span style=&quot;color:{{color}}&quot;&gt;{{key}}{{value}}&lt;/span&gt;&lt;br /&gt;&#x27;; 
+
+    var result = &#x27;&lt;span style=&quot;color:#ff0000&quot;&gt;Link&lt;/span&gt;&lt;br /&gt;&#x27;;
+
+    result += gvis.utils.applyTemplate(template, {color:&#x27;#fec44f&#x27;, key:&#x27;&#x27;, value:type});
+
+    for (var key in attrs) {
+      result += gvis.utils.applyTemplate(template, {color:&#x27;#99d8c9&#x27;, key:key+&#x27;:&#x27;, value:attrs[key]})
+    }
+    
+    return result;
+  })
+
+  test.render(1000, 500);
+
+  test
+  .on(&#x27;nodeClick&#x27;, function(d, renderer) {
+    console.log(&#x27;customized click&#x27;, d, renderer)
+  })
+  .on(&#x27;nodeDblClick&#x27;, function(d, renderer) {
+    console.log(&#x27;customized dblclick&#x27;, d)
+  })
+  .on(&#x27;linkClick&#x27;, function(d, renderer) {
+    console.log(&#x27;customized click&#x27;, d)
+  })
+  .on(&#x27;linkDblClick&#x27;, function(d, renderer) {
+    console.log(&#x27;customized dblclick&#x27;, d)
+  })
+  .on(&#x27;multiSelect&#x27;, function(nodes, links, renderer) {
+    console.log(&#x27;multiSelect : &#x27;, nodes.length, &#x27;,&#x27;, links.length);
+  })
+
+  window.addEventListener(&#x27;resize&#x27;, function() {
+    console.log(&#x27;resizing&#x27;)
+    d3.select(&#x27;#prototype1&#x27;).style(&#x27;height&#x27;, $(window).height()-220+&#x27;px&#x27;);
+    test.update(0);
+  });
+}
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

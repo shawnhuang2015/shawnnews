@@ -1,0 +1,28 @@
+drop query subgraph
+
+create query subgraph(float minLevel, float latMin, float lonMin, float latMax, float lonMax) for graph PowerFlow
+{
+    SumAccum<Set<String>> @@edgeSet;
+
+    Start = {BUS.*};
+    #NominalV
+    all = SELECT t
+          FROM Start:s-(BRANCH:e)-BUS:t
+          WHERE 
+          ((s.Latitude > latMin
+          AND s.Latitude < latMax
+          AND s.Longitude > lonMin
+          AND s.Longitude < lonMax)
+          OR (t.Latitude > latMin
+          AND t.Latitude < latMax
+          AND t.Longitude > lonMin
+          AND t.Longitude < lonMax))
+          AND s.NominalV > minLevel
+          AND t.NominalV > minLevel
+          ACCUM @@edgeSet += s.exId + "," + t.exId+","+to_string(e.hB);
+
+    print all;
+    print @@edgeSet;
+}
+
+install query subgraph
