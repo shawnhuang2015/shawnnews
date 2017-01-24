@@ -1,1 +1,0 @@
-../../src/gle/bin/gsql_run_ptest.sh

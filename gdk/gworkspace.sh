@@ -1,1 +1,0 @@
-../gworkspace.sh

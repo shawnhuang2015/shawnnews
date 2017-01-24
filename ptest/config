@@ -1,6 +1,0 @@
-# The working directory, the default is '.'
-WorkDir=.
-# This is the number of thread you need to run the tests, the default is 1
-numThreads=1
-# The max waiting time for all threads to finish, the default is 10 min
-TimeOutMinutes=10

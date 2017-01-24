@@ -1,1 +1,0 @@
-../../../src/customer/core_impl/gsql_impl/ReducerBank/ReducerBank.cpp
