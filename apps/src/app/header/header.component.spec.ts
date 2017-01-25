@@ -32,6 +32,6 @@ describe('HeaderComponent', () => {
 
   it('should create', () => {
     let compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.info').textContent).toContain('Angular CLI');
+    expect(compiled.querySelector('.info').textContent).toContain('Angular');
   });
 });

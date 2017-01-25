@@ -9,7 +9,9 @@
     "lint": "tslint \"src/**/*.ts\"",
     "test": "ng test",
     "pree2e": "webdriver-manager update",
-    "e2e": "protractor"
+    "e2e": "protractor",
+    "stest": "ng test --single-run --code-coverage --lint",
+    "webdriver-manager": "webdriver-manager"
   },
   "private": true,
   "dependencies": {

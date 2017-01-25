@@ -8,11 +8,22 @@ describe('NewsApiService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [NewsApiService],
-      imports: [ AppModule ]
+      imports: [AppModule]
     });
   });
 
   it('should ...', inject([NewsApiService], (service: NewsApiService) => {
     expect(service).toBeTruthy();
+
+    // return service.fetchUser((<any>'capocannoniere')).subscribe(result => {
+    //   expect(result).toBeDefined();
+    // });
+
+  }));
+
+  it('Observable Test ...', inject([NewsApiService], (service: NewsApiService) => {
+    return service.fetchSchema().subscribe(result => {
+      expect(result).toBeDefined();
+    });
   }));
 });

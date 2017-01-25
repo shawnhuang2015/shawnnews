@@ -8,5 +8,8 @@ describe('DomainPipe', () => {
     let pipe = new DomainPipe();
     expect(pipe).toBeTruthy();
     expect(pipe.transform).toBeDefined();
+    expect(pipe.transform('http://www.test.com/a/b?c;d=2')).toEqual('(test.com)');
+    expect(pipe.transform('something wrong')).toEqual('');
+    expect(pipe.transform(false)).toEqual('');
   });
 });

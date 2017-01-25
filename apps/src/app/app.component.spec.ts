@@ -27,6 +27,7 @@ describe('AppComponent', () => {
     let fixture = TestBed.createComponent(AppComponent);
     let app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
+    expect(app.OnInit).toBeDefined();
   }));
 
   it(`should have as title 'app works!'`, async(() => {
@@ -39,6 +40,6 @@ describe('AppComponent', () => {
     let fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     let compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Angular 2 HN');
+    expect(compiled.querySelector('h1').textContent).toContain('Xiaoke');
   }));
 });

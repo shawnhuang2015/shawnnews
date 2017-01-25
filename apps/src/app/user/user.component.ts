@@ -13,7 +13,7 @@ export class UserComponent implements OnInit {
   sub: any;
   user;
 
-  constructor(private service: NewsApiService, private route: ActivatedRoute, private location: Location) { }
+  constructor(public service: NewsApiService, private route: ActivatedRoute, private location: Location) { }
 
   ngOnInit() {
     this.sub = this.route.params.subscribe(params => {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/observable';
+// import { Observable } from 'rxjs/observable';
 
 import { ActivatedRoute } from '@angular/router';
 
@@ -44,6 +44,10 @@ export class StoriesComponent implements OnInit {
           this.listStart = ((this.pageNum - 1) * 30) + 1;
           window.scrollTo(0, 0);
         });
+
+      // this.newsService.fetchSchema().subscribe(result => {
+      //   console.log(result.text());
+      // });
     });
 
     // this.newsService.fetchItems('news', 1).subscribe(

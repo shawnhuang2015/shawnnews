@@ -27,5 +27,10 @@ describe('UserComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(component.goBack).toBeDefined();
+
+    component.service.fetchUser((<any>'capocannoniere')).subscribe(result => {
+      expect(result).toBeDefined();
+    });
   });
 });
