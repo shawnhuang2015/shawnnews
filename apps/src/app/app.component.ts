@@ -13,5 +13,6 @@ export class AppComponent {
   }
 
   OnInit() {
+    this.title = 'Testing case';
   }
 }

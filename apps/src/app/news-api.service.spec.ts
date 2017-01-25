@@ -15,14 +15,20 @@ describe('NewsApiService', () => {
   it('should ...', inject([NewsApiService], (service: NewsApiService) => {
     expect(service).toBeTruthy();
 
-    // return service.fetchUser((<any>'capocannoniere')).subscribe(result => {
-    //   expect(result).toBeDefined();
-    // });
+    return service.fetchUser((<any>'capocannoniere')).subscribe(result => {
+      expect(result).toBeDefined();
+    });
 
   }));
 
   it('Observable Test ...', inject([NewsApiService], (service: NewsApiService) => {
     return service.fetchSchema().subscribe(result => {
+      expect(result).toBeDefined();
+    });
+  }));
+
+  it('Observable Test ...', inject([NewsApiService], (service: NewsApiService) => {
+    service.fetchComments(13484372).subscribe(result => {
       expect(result).toBeDefined();
     });
   }));

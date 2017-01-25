@@ -25,9 +25,9 @@ describe('AppComponent', () => {
 
   it('should create the app', async(() => {
     let fixture = TestBed.createComponent(AppComponent);
+    // let app = fixture.componentInstance;
     let app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
-    expect(app.OnInit).toBeDefined();
   }));
 
   it(`should have as title 'app works!'`, async(() => {
@@ -40,6 +40,11 @@ describe('AppComponent', () => {
     let fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     let compiled = fixture.debugElement.nativeElement;
+    let app = fixture.componentInstance;
+
+    expect(app).toBeTruthy();
+    app.OnInit();
+    expect(app.title).toContain('Test');
     expect(compiled.querySelector('h1').textContent).toContain('Xiaoke');
   }));
 });
