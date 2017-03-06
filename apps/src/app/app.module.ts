@@ -21,6 +21,7 @@ import { routing } from './app.routes';
 import { CommentComponent } from './stories/item/item-comments/comment/comment.component';
 import { CommentTreeComponent } from './stories/item/item-comments/comment-tree/comment-tree.component';
 import { UserComponent } from './user/user.component';
+import { ClickOutSideDirective } from './click-out-side.directive';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { UserComponent } from './user/user.component';
     ItemCommentsComponent,
     CommentComponent,
     CommentTreeComponent,
-    UserComponent
+    UserComponent,
+    ClickOutSideDirective
   ],
   imports: [
     BrowserModule,
