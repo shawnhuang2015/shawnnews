@@ -27,7 +27,7 @@ $mobile-only: "only screen and (max-width : 768px)";
   color: #f00;
 }
 
-:host(.testhost) {
+:host(.testhost p) {
   color: #0f0;
-  background-color: darkgrey;
+  background-color: #000;
 }

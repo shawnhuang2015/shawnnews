@@ -5,7 +5,7 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './foot.component.html',
   styleUrls: ['./foot.component.scss'],
   host: {
-    'class': 'testhost'
+    // 'class': 'testhost'
   }
 })
 
