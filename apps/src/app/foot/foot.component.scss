@@ -22,3 +22,12 @@ $mobile-only: "only screen and (max-width : 768px)";
     display: none;
   }
 }
+
+.testhost {
+  color: #f00;
+}
+
+:host(.testhost) {
+  color: #0f0;
+  background-color: darkgrey;
+}
