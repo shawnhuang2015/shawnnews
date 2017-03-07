@@ -1,5 +1,7 @@
 import { Directive, ElementRef, Output, EventEmitter, HostListener, HostBinding } from '@angular/core';
 
+import { NewsApiService } from './news-api.service';
+
 @Directive({
   selector: '[appClickOutSide]'
 })
@@ -28,10 +30,12 @@ export class ClickOutSideDirective {
   }
 
 
-  constructor(private _elementRef: ElementRef) {
+  constructor(private _elementRef: ElementRef, private service: NewsApiService) {
     this.valueValue = 'Host binding value';
     this.colorValue = '#f00';
     this.testClass = true;
+
+    console.log(this.service.testService(), this._elementRef);
   }
 
 

@@ -36,4 +36,8 @@ export class NewsApiService {
         return response;
       });
   }
+
+  testService(): string {
+    return 'test service.';
+  }
 }
