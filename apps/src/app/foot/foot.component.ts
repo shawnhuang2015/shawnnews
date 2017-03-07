@@ -38,7 +38,7 @@ export class Config {
       })),
       state('b', style({
         backgroundColor: '#0f080c',
-        transform: 'scale(1.0)'
+        transform: 'scale(3.0)'
       })),
       state('c', style({
         backgroundColor: '#f00',
@@ -47,7 +47,8 @@ export class Config {
       transition('b => a', animate('200ms ease-in')),
       transition('a => b', animate('200ms ease-out')),
       transition('b => c', animate('200ms ease-out')),
-      transition('c => *', animate('1000ms ease-in'))
+      transition('c => *', animate('1000ms ease-in')),
+      transition('b => void', animate('2000ms ease-in'))
     ])
   ]
 })
@@ -89,7 +90,7 @@ export class FootComponent implements OnInit {
         this.stateValue = 'b';
       break;
       default:
-        this.stateValue = 'c';
+        this.stateValue = 'void';
       break;
     }
   }
