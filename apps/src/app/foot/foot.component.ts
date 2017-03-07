@@ -44,10 +44,10 @@ export class Config {
         backgroundColor: '#f00',
         transform: 'scale(1.5)'
       })),
-      transition('b => a', animate('1000ms ease-in')),
-      transition('a => b', animate('1000ms ease-out')),
-      transition('b => c', animate('1000ms ease-out')),
-      transition('c => a', animate('1000ms ease-in'))
+      transition('b => a', animate('200ms ease-in')),
+      transition('a => b', animate('200ms ease-out')),
+      transition('b => c', animate('200ms ease-out')),
+      transition('c => *', animate('1000ms ease-in'))
     ])
   ]
 })
@@ -75,7 +75,7 @@ export class FootComponent implements OnInit {
   onKeyUp(ev: any) {
     this.state++;
 
-    switch (this.state % 3) {
+    switch (this.state % 5) {
       case 0:
         this.stateValue = 'a';
       break;
@@ -85,7 +85,11 @@ export class FootComponent implements OnInit {
       case 2:
         this.stateValue = 'c';
       break;
+      case 3:
+        this.stateValue = 'b';
+      break;
       default:
+        this.stateValue = 'c';
       break;
     }
   }
