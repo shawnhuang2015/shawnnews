@@ -8,7 +8,8 @@ import {
   state,
   style,
   transition,
-  animate
+  animate,
+  keyframes
 } from '@angular/core';
 
 @Injectable()
@@ -38,17 +39,52 @@ export class Config {
       })),
       state('b', style({
         backgroundColor: '#0f080c',
-        transform: 'scale(3.0)'
+        transform: 'scale(1.0)'
       })),
       state('c', style({
         backgroundColor: '#f00',
         transform: 'scale(1.5)'
       })),
       transition('b => a', animate('200ms 200ms ease-in')),
-      transition('a => b', animate('200ms ease-out')),
+      transition('a => b', animate(500, keyframes([
+          style({
+            backgroundColor: '#0f080c',
+            transform: 'scale(1.1)'
+          }),
+          style({
+            backgroundColor: '#0f080c',
+            transform: 'scale(.9)'
+          }),
+          style({
+            backgroundColor: '#0f080c',
+            transform: 'scale(1.05)'
+          }),
+          style({
+            backgroundColor: '#0f080c',
+            transform: 'scale(0.95)'
+          })
+        ]))),
       transition('b => c', animate('200ms 1200ms ease-out')),
       transition('c => *', animate('1000ms ease-in')),
-      transition('b => void', animate('2000ms ease-in'))
+      transition('b => void', animate('2000ms ease-in')),
+      transition('void => *', animate(500, keyframes([
+          style({
+            backgroundColor: '##f00',
+            transform: 'scale(1.1)',
+          }),
+          style({
+            backgroundColor: '##f00',
+            transform: 'scale(.9)',
+          }),
+          style({
+            backgroundColor: '##f00',
+            transform: 'scale(1.05)',
+          }),
+          style({
+            backgroundColor: '##f00',
+            transform: 'scale(0.95)',
+          })
+        ]))),
     ])
   ]
 })
