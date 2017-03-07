@@ -44,9 +44,9 @@ export class Config {
         backgroundColor: '#f00',
         transform: 'scale(1.5)'
       })),
-      transition('b => a', animate('200ms ease-in')),
+      transition('b => a', animate('200ms 200ms ease-in')),
       transition('a => b', animate('200ms ease-out')),
-      transition('b => c', animate('200ms ease-out')),
+      transition('b => c', animate('200ms 1200ms ease-out')),
       transition('c => *', animate('1000ms ease-in')),
       transition('b => void', animate('2000ms ease-in'))
     ])
