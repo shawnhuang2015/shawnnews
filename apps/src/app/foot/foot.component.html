@@ -4,7 +4,7 @@
         GraphSQL {{value2}} !
       </a>
     </p>
-    <p class='testhost' [@State]='stateValue'>
+    <p class='testhost' [@State]='stateValue' (@State.start)='test("animation start")' (@State.done)='test("animation done")'>
       Test host for something.
     </p>
 </div>

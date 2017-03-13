@@ -9,7 +9,8 @@ import {
   style,
   transition,
   animate,
-  keyframes
+  keyframes,
+  group
 } from '@angular/core';
 
 @Injectable()
@@ -47,44 +48,36 @@ export class Config {
       })),
       transition('b => a', animate('200ms 200ms ease-in')),
       transition('a => b', animate(500, keyframes([
-          style({
-            backgroundColor: '#0f080c',
-            transform: 'scale(1.1)'
-          }),
-          style({
-            backgroundColor: '#0f080c',
-            transform: 'scale(.9)'
-          }),
-          style({
-            backgroundColor: '#0f080c',
-            transform: 'scale(1.05)'
-          }),
-          style({
-            backgroundColor: '#0f080c',
-            transform: 'scale(0.95)'
-          })
-        ]))),
-      transition('b => c', animate('200ms 1200ms ease-out')),
+        style({
+          backgroundColor: '#0f080c',
+          transform: 'scale(1.1)'
+        }),
+        style({
+          backgroundColor: '#0f080c',
+          transform: 'scale(.9)'
+        }),
+        style({
+          backgroundColor: '#0f080c',
+          transform: 'scale(1.05)'
+        }),
+        style({
+          backgroundColor: '#0f080c',
+          transform: 'scale(0.95)'
+        })
+      ]))),
+      transition('b => c', animate('200ms 200ms ease-out')),
       transition('c => *', animate('1000ms ease-in')),
       transition('b => void', animate('2000ms ease-in')),
-      transition('void => *', animate(500, keyframes([
-          style({
-            backgroundColor: '##f00',
-            transform: 'scale(1.1)',
-          }),
-          style({
-            backgroundColor: '##f00',
-            transform: 'scale(.9)',
-          }),
-          style({
-            backgroundColor: '##f00',
-            transform: 'scale(1.05)',
-          }),
-          style({
-            backgroundColor: '##f00',
-            transform: 'scale(0.95)',
-          })
-        ]))),
+      transition('void => *',
+        group([
+          animate('3s ease', style({
+            transform: 'translateX(50%)',
+            width: 10
+          })),
+          animate('3s 2s ease', style({
+            opacity: 0
+          }))
+        ])),
     ])
   ]
 })
@@ -115,19 +108,23 @@ export class FootComponent implements OnInit {
     switch (this.state % 5) {
       case 0:
         this.stateValue = 'a';
-      break;
+        break;
       case 1:
         this.stateValue = 'b';
-      break;
+        break;
       case 2:
         this.stateValue = 'c';
-      break;
+        break;
       case 3:
         this.stateValue = 'b';
-      break;
+        break;
       default:
         this.stateValue = 'void';
-      break;
+        break;
     }
+  }
+
+  test(a: any) {
+    console.log(a);
   }
 }

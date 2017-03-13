@@ -25,6 +25,8 @@ $mobile-only: "only screen and (max-width : 768px)";
 
 .testhost {
   color: #f00;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 :host(.testhost p) {
