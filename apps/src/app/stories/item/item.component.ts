@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, NgZone } from '@angular/core';
+import { Component, Input, OnInit, NgZone, ViewChild, ElementRef } from '@angular/core';
 // import { NewsApiService } from '../../news-api.service';
 
 @Component({
@@ -9,6 +9,8 @@ import { Component, Input, OnInit, NgZone } from '@angular/core';
 export class ItemComponent implements OnInit {
   @Input() item;
 
+  @ViewChild('container') container: ElementRef;
+
   constructor(private ngZone: NgZone) { }
   // constructor(private newsService: NewsApiService) { }
 
@@ -18,5 +20,12 @@ export class ItemComponent implements OnInit {
     //     return this.item = data;
     //   },
     //   error => console.log(`Could not load item : ${this.itemID}. Error: ${JSON.stringify(error)}`));
+    this.ngZone.runOutsideAngular(() => {
+      this.container.nativeElement.addEventListener('mousemove', this.mouseMove.bind(this));
+    });
+  }
+
+  mouseMove(event) {
+    console.log(event);
   }
 }
