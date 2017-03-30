@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { NewsApiService } from './news-api.service';
 
 @Component({
@@ -9,7 +9,13 @@ import { NewsApiService } from './news-api.service';
 export class AppComponent {
   title = 'Hello World app works!';
 
-  constructor(private service: NewsApiService) {
+  constructor(private service: NewsApiService, private ngZone:NgZone) {
+    this.ngZone.onStable.subscribe(() => {
+      console.log('We are stable');
+    });
+    this.ngZone.onUnstable.subscribe(() => {
+      console.log('We are unstable');
+    });
   }
 
   OnInit() {

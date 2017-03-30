@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, NgZone } from '@angular/core';
 // import { NewsApiService } from '../../news-api.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ItemComponent implements OnInit {
   @Input() item;
 
-  constructor() { }
+  constructor(private ngZone: NgZone) { }
   // constructor(private newsService: NewsApiService) { }
 
   ngOnInit() {

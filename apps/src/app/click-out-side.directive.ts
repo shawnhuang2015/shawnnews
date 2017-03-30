@@ -29,6 +29,10 @@ export class ClickOutSideDirective {
     }
   }
 
+  @HostListener('mousemove', ['$event.target'])
+  public onMouseMover(targetElement) {
+    console.log(targetElement)
+  }
 
   constructor(private _elementRef: ElementRef, private service: NewsApiService) {
     this.valueValue = 'Host binding value';
