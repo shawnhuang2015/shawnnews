@@ -1,0 +1,35 @@
+{
+  "include": [
+    "./**/*.ts"
+  ],
+  "compilerOptions": {
+    "preserveConstEnums": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs", //'commonjs', 'amd', 'system', 'umd', 'es6', or 'es2015'
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "allowJs":false,
+    // "outFile": "gvis.js",
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types/"
+    ],
+    "types": [
+      "hapi"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    "debug",
+    "test",
+    "documentation"
+  ]
+}
+
